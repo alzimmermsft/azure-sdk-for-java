@@ -1,0 +1,191 @@
+<!-- Copyright (c) Microsoft Corporation. All rights reserved.
+     Licensed under the MIT License. -->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>com.azure</groupId>
+  <artifactId>aggregate-report</artifactId>
+  <packaging>pom</packaging>
+  <version>1.0.0</version><!-- Need not change for every release-->
+
+  <parent>
+    <groupId>com.azure</groupId>
+    <artifactId>azure-client-sdk-parent</artifactId>
+    <version>1.7.0</version> <!-- {x-version-update;com.azure:azure-client-sdk-parent;current} -->
+    <relativePath>sdk/parents/azure-client-sdk-parent</relativePath>
+  </parent>
+
+  <reporting>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-checkstyle-plugin</artifactId>
+        <version>3.1.0</version> <!-- {x-version-update;org.apache.maven.plugins:maven-checkstyle-plugin;external_dependency} -->
+        <configuration>
+          <configLocation>eng/code-quality-reports/src/main/resources/checkstyle/checkstyle.xml</configLocation>
+          <suppressionsLocation>eng/code-quality-reports/src/main/resources/checkstyle/checkstyle-suppressions.xml</suppressionsLocation>
+          <headerLocation>eng/code-quality-reports/src/main/resources/checkstyle/java.header</headerLocation>
+          <propertyExpansion>samedir=</propertyExpansion>
+          <encoding>UTF-8</encoding>
+          <consoleOutput>true</consoleOutput>
+          <includeTestSourceDirectory>true</includeTestSourceDirectory>
+          <linkXRef>true</linkXRef>
+          <failsOnError>true</failsOnError>
+          <failOnViolation>true</failOnViolation>
+        </configuration>
+        <reportSets>
+          <reportSet>
+            <id>non-aggregate</id>
+            <reports>
+              <report>checkstyle</report>
+            </reports>
+          </reportSet>
+          <reportSet>
+            <id>aggregate</id>
+            <inherited>false</inherited>
+            <reports>
+              <report>checkstyle-aggregate</report>
+            </reports>
+          </reportSet>
+        </reportSets>
+      </plugin>
+      <plugin>
+        <groupId>com.github.spotbugs</groupId>
+        <artifactId>spotbugs-maven-plugin</artifactId>
+        <version>3.1.12.2</version> <!-- {x-version-update;com.github.spotbugs:spotbugs-maven-plugin;external_dependency} -->
+        <configuration>
+          <effort>max</effort>
+          <threshold>Low</threshold>
+          <xmlOutput>true</xmlOutput>
+          <spotbugsXmlOutputDirectory>${project.build.directory}/spotbugs</spotbugsXmlOutputDirectory>
+          <excludeFilterFile>eng/code-quality-reports/src/main/resources/spotbugs/spotbugs-exclude.xml</excludeFilterFile>
+          <failOnError>true</failOnError>
+          <fork>true</fork>
+          <!-- Set this to true when src/samples and src/test are spotbugs clean in all Track 2 SDKs -->
+          <includeTests>false</includeTests>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <version>3.1.1</version> <!-- {x-version-update;org.apache.maven.plugins:maven-javadoc-plugin;external_dependency} -->
+        <reportSets>
+          <reportSet>
+            <id>non-aggregate</id>
+            <reports>
+              <report>javadoc</report>
+            </reports>
+          </reportSet>
+          <reportSet>
+            <id>aggregate</id>
+            <inherited>false</inherited>
+            <reports>
+              <report>aggregate-no-fork</report>
+            </reports>
+            <configuration>
+              <!-- codesnippets4javadoc does not support scanning sub-directories and doesn't support wildcards for filepaths.
+                  So, path for aggregate reports have to be defined relative to parent pom -->
+              <additionalOptions>-maxLineLength 120
+                -snippetpath sdk/appconfiguration/azure-data-appconfiguration/src/samples/java
+                -snippetpath sdk/core/azure-core/src/samples/java
+                -snippetpath sdk/core/azure-core-http-netty/src/samples/java
+                -snippetpath sdk/core/azure-core-http-okhttp/src/samples/java
+                -snippetpath sdk/core/azure-core-serializer-avro-apache/src/samples/java
+                -snippetpath sdk/core/azure-core-serializer-avro-jackson/src/samples/java
+                -snippetpath sdk/core/azure-core-serializer-json-gson/src/samples/java
+                -snippetpath sdk/core/azure-core-serializer-json-jackson/src/samples/java
+                -snippetpath sdk/cosmos/azure-cosmos/src/samples/java
+                -snippetpath sdk/core/azure-digitaltwins-core/src/samples/java
+                -snippetpath sdk/eventhubs/azure-messaging-eventhubs/src/samples/java
+                -snippetpath sdk/formrecognizer/azure-ai-formrecognizer/src/samples/java
+                -snippetpath sdk/keyvault/azure-security-keyvault-certificates/src/samples/java
+                -snippetpath sdk/keyvault/azure-security-keyvault-keys/src/samples/java
+                -snippetpath sdk/keyvault/azure-security-keyvault-secrets/src/samples/java
+                -snippetpath sdk/servicebus/azure-messaging-servicebus/src/samples/java
+                -snippetpath sdk/storage/azure-storage-blob/src/samples/java
+                -snippetpath sdk/storage/azure-storage-blob-batch/src/samples/java
+                -snippetpath sdk/storage/azure-storage-blob-changefeed/src/samples/java
+                -snippetpath sdk/storage/azure-storage-blob-cryptography/src/samples/java
+                -snippetpath sdk/storage/azure-storage-common/src/samples/java
+                -snippetpath sdk/storage/azure-storage-file-datalake/src/samples/java
+                -snippetpath sdk/storage/azure-storage-file-share/src/samples/java
+                -snippetpath sdk/storage/azure-storage-queue/src/samples/java
+                -snippetpath sdk/textanalytics/azure-ai-textanalytics/src/samples/java
+              </additionalOptions>
+              <doclint>all</doclint>
+            </configuration>
+          </reportSet>
+        </reportSets>
+        <configuration>
+          <!-- Reporting is run for JDK 11 - https://github.com/Azure/azure-sdk-for-java/blob/master/.azure-pipelines/client.yml#L90
+               Disabling failOnWarnings for reporting for now due to CodeSnippets4Java issue reported for JDK 9+
+               https://github.com/Azure/azure-sdk-for-java/issues/3851 -->
+          <failOnWarnings>false</failOnWarnings>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-project-info-reports-plugin</artifactId>
+        <version>3.0.0</version> <!-- {x-version-update;org.apache.maven.plugins:maven-project-info-reports-plugin;external_dependency} -->
+        <reportSets>
+          <reportSet>
+            <reports>
+              <report>index</report>
+              <report>summary</report>
+              <report>dependency-info</report>
+              <report>dependency-management</report>
+              <report>dependency-convergence</report>
+              <report>ci-management</report>
+              <report>dependencies</report>
+              <report>issue-management</report>
+            </reports>
+          </reportSet>
+        </reportSets>
+      </plugin>
+      <plugin>
+        <groupId>org.revapi</groupId>
+        <artifactId>revapi-maven-plugin</artifactId>
+        <version>0.11.2</version> <!-- {x-version-update;org.revapi:revapi-maven-plugin;external_dependency} -->
+        <configuration>
+          <analysisConfigurationFiles>
+            <configurationFile>
+              <resource>revapi/revapi.json</resource>
+            </configurationFile>
+          </analysisConfigurationFiles>
+          <versionFormat>^\d+\.\d+\.\d+$</versionFormat>
+          <checkDependencies>false</checkDependencies>
+          <failBuildOnProblemsFound>true</failBuildOnProblemsFound>
+        </configuration>
+        <reportSets>
+          <reportSet>
+            <reports>
+              <report>report</report>
+            </reports>
+          </reportSet>
+          <reportSet>
+            <inherited>false</inherited>
+            <reports>
+              <report>report-aggregate</report>
+            </reports>
+          </reportSet>
+        </reportSets>
+      </plugin>
+    </plugins>
+  </reporting>
+
+  <modules>
+    <module>sdk/core/azure-core</module>
+    <module>sdk/core/azure-core-amqp</module>
+    <!--    <module>sdk/core/azure-core-amqp-experimental</module>-->
+    <!--    <module>sdk/core/azure-core-experimental</module>-->
+    <!--    <module>sdk/core/azure-core-http-jdk-httpclient</module>-->
+    <module>sdk/core/azure-core-http-netty</module>
+    <module>sdk/core/azure-core-http-okhttp</module>
+    <!--    <module>sdk/core/azure-core-management</module>-->
+    <!--    <module>sdk/core/azure-core-serializer-avro-apache</module>-->
+    <!--    <module>sdk/core/azure-core-serializer-json-gson</module>-->
+    <!--    <module>sdk/core/azure-core-serializer-json-jackson</module>-->
+    <module>sdk/core/azure-core-test</module>
+    <module>sdk/core/azure-core-tracing-opentelemetry</module>
+  </modules>
+</project>
