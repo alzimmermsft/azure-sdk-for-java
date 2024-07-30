@@ -7,11 +7,9 @@ import com.azure.data.appconfiguration.models.ComplexConfiguration;
 import com.azure.data.appconfiguration.models.ConfigurationSetting;
 import com.azure.data.appconfiguration.models.SettingSelector;
 import com.azure.json.JsonProviders;
-import com.azure.json.JsonWriter;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
 /**
@@ -102,14 +100,11 @@ public class ConfigurationSets {
             .setLabel(configurationSet)
             .setValue(storageEndpoint);
 
-        try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-             JsonWriter writer = JsonProviders.createWriter(outputStream)) {
-            complexConfiguration.toJson(writer).flush();
-
+        try {
             ConfigurationSetting keyVaultSetting = new ConfigurationSetting()
                 .setKey(COMPLEX_SETTING_KEY)
                 .setLabel(configurationSet)
-                .setValue(outputStream.toString())
+                .setValue(complexConfiguration.toJsonString())
                 .setContentType("application/json");
 
             return Flux.merge(client.addConfigurationSetting(keyVaultSetting.getKey(), keyVaultSetting.getLabel(),

@@ -17,13 +17,11 @@ import com.azure.core.util.serializer.TypeReference;
 import com.azure.json.JsonProviders;
 import com.azure.json.JsonReader;
 import com.azure.json.JsonSerializable;
-import com.azure.json.JsonWriter;
 import com.azure.search.documents.indexes.SearchIndexClient;
 import com.azure.search.documents.indexes.SearchIndexClientBuilder;
 import com.azure.search.documents.indexes.models.SearchIndex;
 import com.azure.search.documents.test.environment.models.NonNullableModel;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.lang.reflect.Array;
@@ -144,11 +142,8 @@ public final class TestHelpers {
             return new byte[0];
         }
 
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-
-        try (JsonWriter writer = JsonProviders.createWriter(outputStream)) {
-            jsonSerializable.toJson(writer).flush();
-            return outputStream.toByteArray();
+        try {
+            return jsonSerializable.toJsonBytes();
         } catch (IOException ex) {
             throw new UncheckedIOException(ex);
         }

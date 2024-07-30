@@ -92,9 +92,8 @@ public final class SecretReferenceConfigurationSetting extends ConfigurationSett
     public String getValue() {
         // Lazily update: Update 'value' by all latest property values when this getValue() method is called.
         String newValue = null;
-        try {
-            final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-            final JsonWriter writer = JsonProviders.createWriter(outputStream);
+        try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+             JsonWriter writer = JsonProviders.createWriter(outputStream)) {
 
             boolean isUriWritten = false;
 
@@ -126,7 +125,6 @@ public final class SecretReferenceConfigurationSetting extends ConfigurationSett
             writer.flush();
 
             newValue = outputStream.toString(StandardCharsets.UTF_8.name());
-            outputStream.close();
         } catch (IOException exception) {
             LOGGER.logExceptionAsError(new IllegalArgumentException(
                 "Can't parse Secret Reference configuration setting value.", exception));

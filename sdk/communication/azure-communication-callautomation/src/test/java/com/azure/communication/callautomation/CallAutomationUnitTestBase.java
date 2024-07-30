@@ -2,25 +2,15 @@
 // Licensed under the MIT License.
 package com.azure.communication.callautomation;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.nio.ByteBuffer;
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.AbstractMap.SimpleEntry;
-import java.util.Arrays;
-import java.util.Collections;
-
 import com.azure.communication.callautomation.implementation.models.AddParticipantResponseInternal;
 import com.azure.communication.callautomation.implementation.models.CallConnectionPropertiesInternal;
 import com.azure.communication.callautomation.implementation.models.CallConnectionStateModelInternal;
 import com.azure.communication.callautomation.implementation.models.CallParticipantInternal;
-import com.azure.communication.callautomation.implementation.models.GetParticipantsResponseInternal;
 import com.azure.communication.callautomation.implementation.models.DialogStateResponse;
+import com.azure.communication.callautomation.implementation.models.GetParticipantsResponseInternal;
 import com.azure.communication.callautomation.models.MediaStreamingAudioChannel;
-import com.azure.communication.callautomation.models.MediaStreamingOptions;
 import com.azure.communication.callautomation.models.MediaStreamingContent;
+import com.azure.communication.callautomation.models.MediaStreamingOptions;
 import com.azure.communication.callautomation.models.MediaStreamingTransport;
 import com.azure.communication.callautomation.models.TranscriptionOptions;
 import com.azure.communication.callautomation.models.TranscriptionTransportType;
@@ -29,12 +19,18 @@ import com.azure.core.http.HttpClient;
 import com.azure.core.http.HttpHeaders;
 import com.azure.core.http.HttpRequest;
 import com.azure.core.http.HttpResponse;
-
-import com.azure.json.JsonProviders;
 import com.azure.json.JsonSerializable;
-import com.azure.json.JsonWriter;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+
+import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import java.util.AbstractMap.SimpleEntry;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 
 public class CallAutomationUnitTestBase {
     static final String MOCK_ENDPOINT = "https://REDACTED.communication.azure.com/";
@@ -200,11 +196,8 @@ public class CallAutomationUnitTestBase {
     }
 
     static String serializeObject(JsonSerializable<?> o) {
-        try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-             JsonWriter writer = JsonProviders.createWriter(outputStream)) {
-            o.toJson(writer);
-            writer.flush();
-            return outputStream.toString();
+        try {
+            return o.toJsonString();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

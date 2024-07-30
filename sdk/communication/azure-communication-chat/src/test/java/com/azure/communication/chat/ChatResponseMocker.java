@@ -294,11 +294,8 @@ public class ChatResponseMocker {
     }
 
     private static String serializeObject(JsonSerializable<?> o) {
-        try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-             JsonWriter writer = JsonProviders.createWriter(outputStream)) {
-            o.toJson(writer);
-            writer.flush();
-            return outputStream.toString();
+        try {
+            return o.toJsonString();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

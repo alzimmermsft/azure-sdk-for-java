@@ -4,8 +4,6 @@ package com.azure.search.documents;
 
 import com.azure.core.credential.AzureKeyCredential;
 import com.azure.core.util.Configuration;
-import com.azure.json.JsonProviders;
-import com.azure.json.JsonWriter;
 import com.azure.search.documents.indexes.SearchIndexClient;
 import com.azure.search.documents.indexes.SearchIndexClientBuilder;
 import com.azure.search.documents.indexes.models.CorsOptions;
@@ -29,9 +27,7 @@ import com.azure.search.documents.indexes.models.TagScoringFunction;
 import com.azure.search.documents.indexes.models.TagScoringParameters;
 import com.azure.search.documents.indexes.models.TextWeights;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.util.Arrays;
 import java.util.Collections;
@@ -61,10 +57,8 @@ public class IndexAndServiceStatisticsExample {
         SearchServiceStatistics searchServiceStatistics = client.getServiceStatistics();
 
         System.out.println(":" + searchServiceStatistics);
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        try (JsonWriter jsonWriter = JsonProviders.createWriter(outputStream)) {
-            searchServiceStatistics.toJson(jsonWriter).flush();
-            System.out.println(new String(outputStream.toByteArray(), StandardCharsets.UTF_8));
+        try {
+            System.out.println(searchServiceStatistics.toJsonString());
         } catch (IOException ex) {
             ex.printStackTrace();
         }

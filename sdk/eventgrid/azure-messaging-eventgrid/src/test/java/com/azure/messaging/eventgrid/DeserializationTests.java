@@ -9,7 +9,6 @@ import com.azure.core.util.BinaryData;
 import com.azure.core.util.serializer.TypeReference;
 import com.azure.json.JsonProviders;
 import com.azure.json.JsonReader;
-import com.azure.json.JsonWriter;
 import com.azure.messaging.eventgrid.implementation.models.ContosoItemReceivedEventData;
 import com.azure.messaging.eventgrid.implementation.models.ContosoItemSentEventData;
 import com.azure.messaging.eventgrid.implementation.models.DroneShippingInfo;
@@ -111,7 +110,6 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.time.Duration;
@@ -151,18 +149,12 @@ public class DeserializationTests {
     public void testEventGridRoundTripStreamSerialization(BinaryData payload) {
         EventGridEvent eventGridEvent = new EventGridEvent("subject", "eventType", payload,
             "dataVersion");
-        ByteArrayOutputStream stream = new ByteArrayOutputStream();
-        try {
-            JsonWriter writer = JsonProviders.createWriter(stream);
-            eventGridEvent.toJson(writer);
-            writer.flush();
-            try (JsonReader reader = JsonProviders.createReader(stream.toByteArray())) {
-                EventGridEvent deserializedEvent = EventGridEvent.fromJson(reader);
-                assertEquals(eventGridEvent.getSubject(), deserializedEvent.getSubject());
-                assertEquals(eventGridEvent.getEventType(), deserializedEvent.getEventType());
-                assertArrayEquals(eventGridEvent.getData().toBytes(), deserializedEvent.getData().toBytes());
-                assertEquals(eventGridEvent.getDataVersion(), deserializedEvent.getDataVersion());
-            }
+        try (JsonReader reader = JsonProviders.createReader(eventGridEvent.toJsonString())) {
+            EventGridEvent deserializedEvent = EventGridEvent.fromJson(reader);
+            assertEquals(eventGridEvent.getSubject(), deserializedEvent.getSubject());
+            assertEquals(eventGridEvent.getEventType(), deserializedEvent.getEventType());
+            assertArrayEquals(eventGridEvent.getData().toBytes(), deserializedEvent.getData().toBytes());
+            assertEquals(eventGridEvent.getDataVersion(), deserializedEvent.getDataVersion());
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

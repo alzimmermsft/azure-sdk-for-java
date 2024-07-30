@@ -5,7 +5,6 @@ package com.azure.security.keyvault.keys.models;
 
 import com.azure.core.util.CoreUtils;
 import com.azure.core.util.logging.ClientLogger;
-import com.azure.json.JsonProviders;
 import com.azure.json.JsonReader;
 import com.azure.json.JsonSerializable;
 import com.azure.json.JsonToken;
@@ -14,10 +13,8 @@ import com.azure.security.keyvault.keys.implementation.KeyVaultKeysUtils;
 
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.math.BigInteger;
-import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
 import java.security.KeyFactory;
 import java.security.KeyPair;
@@ -416,10 +413,8 @@ public class JsonWebKey implements JsonSerializable<JsonWebKey> {
 
     @Override
     public String toString() {
-        try (ByteArrayOutputStream baos = new ByteArrayOutputStream();
-             JsonWriter writer = JsonProviders.createWriter(baos)) {
-            this.toJson(writer).flush();
-            return baos.toString(StandardCharsets.UTF_8.name());
+        try {
+            return toJsonString();
         } catch (IOException e) {
             throw LOGGER.logExceptionAsError(new IllegalStateException(e));
         }

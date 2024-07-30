@@ -12,10 +12,8 @@ import com.azure.json.JsonSerializable;
 import com.azure.json.JsonToken;
 import com.azure.json.JsonWriter;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.UncheckedIOException;
-import java.nio.charset.StandardCharsets;
 import java.time.OffsetDateTime;
 import java.util.Objects;
 
@@ -164,10 +162,8 @@ public class ChangefeedCursor implements JsonSerializable<ChangefeedCursor> {
      * @return The resulting serialized cursor.
      */
     public String serialize() {
-        try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-            JsonWriter jsonWriter = JsonProviders.createWriter(outputStream)) {
-            jsonWriter.writeJson(this).flush();
-            return outputStream.toString(StandardCharsets.UTF_8.name());
+        try {
+            return toJsonString();
         } catch (IOException e) {
             throw LOGGER.logExceptionAsError(new UncheckedIOException(e));
         }

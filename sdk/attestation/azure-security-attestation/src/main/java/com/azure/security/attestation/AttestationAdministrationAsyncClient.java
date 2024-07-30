@@ -12,8 +12,6 @@ import com.azure.core.util.BinaryData;
 import com.azure.core.util.Context;
 import com.azure.core.util.FluxUtil;
 import com.azure.core.util.logging.ClientLogger;
-import com.azure.json.JsonProviders;
-import com.azure.json.JsonWriter;
 import com.azure.security.attestation.implementation.AttestationClientImpl;
 import com.azure.security.attestation.implementation.PoliciesImpl;
 import com.azure.security.attestation.implementation.PolicyCertificatesImpl;
@@ -40,7 +38,6 @@ import com.azure.security.attestation.models.PolicyManagementCertificateOptions;
 import com.azure.security.attestation.models.PolicyResult;
 import reactor.core.publisher.Mono;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.security.InvalidParameterException;
@@ -465,10 +462,8 @@ public final class AttestationAdministrationAsyncClient {
             policyToSet.setAttestationPolicy(policy.getBytes(StandardCharsets.UTF_8));
 
             // Serialize the StoredAttestationPolicy.
-            try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-                JsonWriter jsonWriter = JsonProviders.createWriter(outputStream)) {
-                policyToSet.toJson(jsonWriter).flush();
-                serializedPolicy = outputStream.toString(StandardCharsets.UTF_8.name());
+            try {
+                serializedPolicy = policyToSet.toJsonString();
             } catch (IOException e) {
                 throw logger.logExceptionAsError(new RuntimeException(e.getMessage()));
             }
@@ -859,10 +854,8 @@ public final class AttestationAdministrationAsyncClient {
             .setPolicyCertificate(jwk);
 
         AttestationToken addToken;
-        try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-            JsonWriter jsonWriter = JsonProviders.createWriter(outputStream)) {
-            certificateBody.toJson(jsonWriter).flush();
-            addToken = AttestationTokenImpl.createSecuredToken(outputStream.toString(StandardCharsets.UTF_8.name()),
+        try {
+            addToken = AttestationTokenImpl.createSecuredToken(certificateBody.toJsonString(),
                 options.getAttestationSigner());
         } catch (IOException e) {
             throw logger.logExceptionAsError(new RuntimeException(e.getMessage()));
@@ -1001,10 +994,8 @@ public final class AttestationAdministrationAsyncClient {
             .setPolicyCertificate(jwk);
 
         AttestationToken addToken;
-        try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-            JsonWriter jsonWriter = JsonProviders.createWriter(outputStream)) {
-            certificateBody.toJson(jsonWriter).flush();
-            addToken = AttestationTokenImpl.createSecuredToken(outputStream.toString(StandardCharsets.UTF_8.name()),
+        try {
+            addToken = AttestationTokenImpl.createSecuredToken(certificateBody.toJsonString(),
                 options.getAttestationSigner());
         } catch (IOException e) {
             throw logger.logExceptionAsError(new RuntimeException(e.getMessage()));
