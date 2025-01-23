@@ -1,0 +1,102 @@
+/*
+ * ====================================================================
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ * ====================================================================
+ *
+ * This software consists of voluntary contributions made by many
+ * individuals on behalf of the Apache Software Foundation.  For more
+ * information on the Apache Software Foundation, please see
+ * <http://www.apache.org/>.
+ *
+ */
+package io.clientcore.core.http.client.implementation.apachehttpclient.core5.http2.impl;
+
+import io.clientcore.core.http.client.implementation.apachehttpclient.core5.http.impl.HttpProcessors;
+import io.clientcore.core.http.client.implementation.apachehttpclient.core5.http.protocol.HttpProcessor;
+import io.clientcore.core.http.client.implementation.apachehttpclient.core5.http.protocol.HttpProcessorBuilder;
+import io.clientcore.core.http.client.implementation.apachehttpclient.core5.http.protocol.RequestConformance;
+import io.clientcore.core.http.client.implementation.apachehttpclient.core5.http.protocol.RequestExpectContinue;
+import io.clientcore.core.http.client.implementation.apachehttpclient.core5.http.protocol.RequestUserAgent;
+import io.clientcore.core.http.client.implementation.apachehttpclient.core5.http.protocol.ResponseConformance;
+import io.clientcore.core.http.client.implementation.apachehttpclient.core5.http.protocol.ResponseDate;
+import io.clientcore.core.http.client.implementation.apachehttpclient.core5.http.protocol.ResponseServer;
+import io.clientcore.core.http.client.implementation.apachehttpclient.core5.http2.protocol.H2RequestConformance;
+import io.clientcore.core.http.client.implementation.apachehttpclient.core5.http2.protocol.H2RequestConnControl;
+import io.clientcore.core.http.client.implementation.apachehttpclient.core5.http2.protocol.H2RequestContent;
+import io.clientcore.core.http.client.implementation.apachehttpclient.core5.http2.protocol.H2RequestTargetHost;
+import io.clientcore.core.http.client.implementation.apachehttpclient.core5.http2.protocol.H2RequestValidateHost;
+import io.clientcore.core.http.client.implementation.apachehttpclient.core5.http2.protocol.H2ResponseConformance;
+import io.clientcore.core.http.client.implementation.apachehttpclient.core5.http2.protocol.H2ResponseConnControl;
+import io.clientcore.core.http.client.implementation.apachehttpclient.core5.http2.protocol.H2ResponseContent;
+import io.clientcore.core.http.client.implementation.apachehttpclient.core5.util.TextUtils;
+import io.clientcore.core.http.client.implementation.apachehttpclient.core5.util.VersionInfo;
+
+/**
+ * @since 5.0
+ */
+public final class H2Processors {
+
+    private final static String SOFTWARE = "Apache-HttpCore";
+
+    public static HttpProcessorBuilder customServer(final String serverInfo) {
+        return HttpProcessorBuilder.create()
+                .addAll(
+                        ResponseConformance.INSTANCE,
+                        H2ResponseConformance.INSTANCE,
+                        ResponseDate.INSTANCE,
+                        new ResponseServer(!TextUtils.isBlank(serverInfo) ? serverInfo :
+                                VersionInfo.getSoftwareInfo(SOFTWARE, "io.clientcore.core.http.client.implementation.apachehttpclient.core5", H2Processors.class)),
+                        H2ResponseContent.INSTANCE,
+                        H2ResponseConnControl.INSTANCE)
+                .addAll(
+                        H2RequestValidateHost.INSTANCE,
+                        H2RequestConformance.INSTANCE,
+                        RequestConformance.INSTANCE);
+    }
+
+    public static HttpProcessor server(final String serverInfo) {
+        return customServer(serverInfo).build();
+    }
+
+    public static HttpProcessor server() {
+        return customServer(null).build();
+    }
+
+    public static HttpProcessorBuilder customClient(final String agentInfo) {
+        return HttpProcessorBuilder.create()
+                .addAll(
+                        H2ResponseConformance.INSTANCE)
+                .addAll(
+                        H2RequestConformance.INSTANCE,
+                        H2RequestTargetHost.INSTANCE,
+                        H2RequestContent.INSTANCE,
+                        H2RequestConnControl.INSTANCE,
+                        new RequestUserAgent(!TextUtils.isBlank(agentInfo) ? agentInfo :
+                                VersionInfo.getSoftwareInfo(SOFTWARE, "io.clientcore.core.http.client.implementation.apachehttpclient.core5", HttpProcessors.class)),
+                        RequestExpectContinue.INSTANCE);
+    }
+
+    public static HttpProcessor client(final String agentInfo) {
+        return customClient(agentInfo).build();
+    }
+
+    public static HttpProcessor client() {
+        return customClient(null).build();
+    }
+
+}

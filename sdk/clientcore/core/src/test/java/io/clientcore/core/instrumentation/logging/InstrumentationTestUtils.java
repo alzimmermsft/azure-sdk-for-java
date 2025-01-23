@@ -16,10 +16,12 @@ import java.io.OutputStream;
 import java.io.PrintStream;
 import java.io.UncheckedIOException;
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -45,7 +47,9 @@ public final class InstrumentationTestUtils {
 
     public static List<Map<String, Object>> parseLogMessages(AccessibleByteArrayOutputStream logCaptureStream) {
         String fullLog = logCaptureStream.toString(StandardCharsets.UTF_8);
-        return fullLog.lines().map(InstrumentationTestUtils::parseLogLine).toList();
+        return Arrays.stream(fullLog.split("\\R"))
+            .map(InstrumentationTestUtils::parseLogLine)
+            .collect(Collectors.toList());
     }
 
     private static Map<String, Object> parseLogLine(String logLine) {

@@ -1,0 +1,93 @@
+/*
+ * ====================================================================
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ * ====================================================================
+ *
+ * This software consists of voluntary contributions made by many
+ * individuals on behalf of the Apache Software Foundation.  For more
+ * information on the Apache Software Foundation, please see
+ * <http://www.apache.org/>.
+ *
+ */
+
+package io.clientcore.core.http.client.implementation.apachehttpclient.core5.http.protocol;
+
+import java.io.IOException;
+import java.net.URISyntaxException;
+
+import io.clientcore.core.http.client.implementation.apachehttpclient.core5.annotation.Contract;
+import io.clientcore.core.http.client.implementation.apachehttpclient.core5.annotation.ThreadingBehavior;
+import io.clientcore.core.http.client.implementation.apachehttpclient.core5.http.EntityDetails;
+import io.clientcore.core.http.client.implementation.apachehttpclient.core5.http.Header;
+import io.clientcore.core.http.client.implementation.apachehttpclient.core5.http.HttpException;
+import io.clientcore.core.http.client.implementation.apachehttpclient.core5.http.HttpHeaders;
+import io.clientcore.core.http.client.implementation.apachehttpclient.core5.http.HttpRequest;
+import io.clientcore.core.http.client.implementation.apachehttpclient.core5.http.HttpRequestInterceptor;
+import io.clientcore.core.http.client.implementation.apachehttpclient.core5.http.HttpVersion;
+import io.clientcore.core.http.client.implementation.apachehttpclient.core5.http.ProtocolException;
+import io.clientcore.core.http.client.implementation.apachehttpclient.core5.http.ProtocolVersion;
+import io.clientcore.core.http.client.implementation.apachehttpclient.core5.net.URIAuthority;
+import io.clientcore.core.http.client.implementation.apachehttpclient.core5.util.Args;
+
+/**
+ * This request interceptor is responsible for copying {@code Host} header value to
+ * {@link HttpRequest#setAuthority(URIAuthority)} of incoming request messages.
+ * <p>
+ * This interceptor is essential for the HTTP protocol conformance and
+ * the correct operation of the server-side message processing pipeline.
+ * </p>
+ *
+ * @since 5.0
+ */
+@Contract(threading = ThreadingBehavior.IMMUTABLE)
+public class RequestValidateHost implements HttpRequestInterceptor {
+
+    public static final RequestValidateHost INSTANCE = new RequestValidateHost();
+
+    public RequestValidateHost() {
+        super();
+    }
+
+    @Override
+    public void process(final HttpRequest request, final EntityDetails entity, final HttpContext context)
+            throws HttpException, IOException {
+        Args.notNull(request, "HTTP request");
+
+        // Request authority already specified (likely in an absolute request URI)
+        if (request.getAuthority() != null) {
+            return;
+        }
+
+        final Header header = request.getHeader(HttpHeaders.HOST);
+        if (header != null) {
+            final URIAuthority authority;
+            try {
+                authority = URIAuthority.create(header.getValue());
+            } catch (final URISyntaxException ex) {
+                throw new ProtocolException(ex.getMessage(), ex);
+            }
+            request.setAuthority(authority);
+        } else {
+            final ProtocolVersion version = request.getVersion() != null ? request.getVersion() : HttpVersion.HTTP_1_1;
+            if (version.greaterEquals(HttpVersion.HTTP_1_1)) {
+                throw new ProtocolException("Host header is absent");
+            }
+        }
+    }
+
+}

@@ -1,0 +1,88 @@
+/*
+ * ====================================================================
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ * ====================================================================
+ *
+ * This software consists of voluntary contributions made by many
+ * individuals on behalf of the Apache Software Foundation.  For more
+ * information on the Apache Software Foundation, please see
+ * <http://www.apache.org/>.
+ *
+ */
+package io.clientcore.core.http.client.implementation.apachehttpclient.core5.http.nio.support;
+
+import java.io.IOException;
+
+import io.clientcore.core.http.client.implementation.apachehttpclient.core5.annotation.Contract;
+import io.clientcore.core.http.client.implementation.apachehttpclient.core5.annotation.ThreadingBehavior;
+import io.clientcore.core.http.client.implementation.apachehttpclient.core5.http.EntityDetails;
+import io.clientcore.core.http.client.implementation.apachehttpclient.core5.http.HttpException;
+import io.clientcore.core.http.client.implementation.apachehttpclient.core5.http.HttpRequest;
+import io.clientcore.core.http.client.implementation.apachehttpclient.core5.http.HttpResponse;
+import io.clientcore.core.http.client.implementation.apachehttpclient.core5.http.HttpStatus;
+import io.clientcore.core.http.client.implementation.apachehttpclient.core5.http.message.BasicHttpResponse;
+import io.clientcore.core.http.client.implementation.apachehttpclient.core5.http.nio.AsyncDataConsumer;
+import io.clientcore.core.http.client.implementation.apachehttpclient.core5.http.nio.AsyncEntityProducer;
+import io.clientcore.core.http.client.implementation.apachehttpclient.core5.http.nio.AsyncFilterChain;
+import io.clientcore.core.http.client.implementation.apachehttpclient.core5.http.nio.AsyncFilterHandler;
+import io.clientcore.core.http.client.implementation.apachehttpclient.core5.http.support.ExpectSupport;
+import io.clientcore.core.http.client.implementation.apachehttpclient.core5.http.support.Expectation;
+import io.clientcore.core.http.client.implementation.apachehttpclient.core5.http.protocol.HttpContext;
+
+/**
+ * @since 5.0
+ */
+@Contract(threading = ThreadingBehavior.STATELESS)
+public class AsyncServerExpectationFilter implements AsyncFilterHandler {
+
+    protected boolean verify(final HttpRequest request, final HttpContext context) throws HttpException {
+        return true;
+    }
+
+    protected AsyncEntityProducer generateResponseContent(final HttpResponse expectationFailed) throws HttpException {
+        return null;
+    }
+
+    @Override
+    public final AsyncDataConsumer handle(
+            final HttpRequest request,
+            final EntityDetails entityDetails,
+            final HttpContext context,
+            final AsyncFilterChain.ResponseTrigger responseTrigger,
+            final AsyncFilterChain chain) throws HttpException, IOException {
+        final Expectation expectation = ExpectSupport.parse(request, entityDetails);
+        if (expectation == Expectation.CONTINUE) {
+            final boolean verified = verify(request, context);
+            if (verified) {
+                responseTrigger.sendInformation(new BasicHttpResponse(HttpStatus.SC_CONTINUE));
+            } else {
+                final HttpResponse expectationFailed = new BasicHttpResponse(HttpStatus.SC_EXPECTATION_FAILED);
+                final AsyncEntityProducer responseContentProducer = generateResponseContent(expectationFailed);
+                responseTrigger.submitResponse(expectationFailed, responseContentProducer);
+                return null;
+            }
+        } else if (expectation == Expectation.UNKNOWN) {
+            final HttpResponse expectationFailed = new BasicHttpResponse(HttpStatus.SC_EXPECTATION_FAILED);
+            final AsyncEntityProducer responseContentProducer = generateResponseContent(expectationFailed);
+            responseTrigger.submitResponse(expectationFailed, responseContentProducer);
+            return null;
+        }
+        return chain.proceed(request, entityDetails, context, responseTrigger);
+    }
+
+}

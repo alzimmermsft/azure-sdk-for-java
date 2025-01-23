@@ -1,0 +1,96 @@
+/*
+ * ====================================================================
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ * ====================================================================
+ *
+ * This software consists of voluntary contributions made by many
+ * individuals on behalf of the Apache Software Foundation.  For more
+ * information on the Apache Software Foundation, please see
+ * <http://www.apache.org/>.
+ *
+ */
+
+package io.clientcore.core.http.client.implementation.apachehttpclient.core5.http.protocol;
+
+import java.io.IOException;
+
+import io.clientcore.core.http.client.implementation.apachehttpclient.core5.annotation.Contract;
+import io.clientcore.core.http.client.implementation.apachehttpclient.core5.annotation.ThreadingBehavior;
+import io.clientcore.core.http.client.implementation.apachehttpclient.core5.http.EntityDetails;
+import io.clientcore.core.http.client.implementation.apachehttpclient.core5.http.HttpException;
+import io.clientcore.core.http.client.implementation.apachehttpclient.core5.http.HttpHeaders;
+import io.clientcore.core.http.client.implementation.apachehttpclient.core5.http.HttpRequest;
+import io.clientcore.core.http.client.implementation.apachehttpclient.core5.http.HttpRequestInterceptor;
+import io.clientcore.core.http.client.implementation.apachehttpclient.core5.http.HttpVersion;
+import io.clientcore.core.http.client.implementation.apachehttpclient.core5.http.Method;
+import io.clientcore.core.http.client.implementation.apachehttpclient.core5.http.ProtocolException;
+import io.clientcore.core.http.client.implementation.apachehttpclient.core5.http.ProtocolVersion;
+import io.clientcore.core.http.client.implementation.apachehttpclient.core5.net.URIAuthority;
+import io.clientcore.core.http.client.implementation.apachehttpclient.core5.util.Args;
+
+/**
+ * This request interceptor is responsible for adding {@code Host} header to
+ * outgoing request messages.
+ * <p>
+ * This interceptor is essential for the HTTP protocol conformance and
+ * the correct operation of the client-side message processing pipeline.
+ * </p>
+ * @since 4.0
+ */
+@Contract(threading = ThreadingBehavior.IMMUTABLE)
+public class RequestTargetHost implements HttpRequestInterceptor {
+
+    /**
+     * Singleton instance.
+     * @since 5.2
+     */
+    public static final HttpRequestInterceptor INSTANCE = new RequestTargetHost();
+
+    public RequestTargetHost() {
+        super();
+    }
+
+    @SuppressWarnings("deprecation")
+    @Override
+    public void process(final HttpRequest request, final EntityDetails entity, final HttpContext context)
+            throws HttpException, IOException {
+        Args.notNull(request, "HTTP request");
+        Args.notNull(context, "HTTP context");
+
+        final ProtocolVersion ver = context.getProtocolVersion();
+        final String method = request.getMethod();
+        if (Method.CONNECT.isSame(method) && ver.lessEquals(HttpVersion.HTTP_1_0)) {
+            return;
+        }
+
+        if (!request.containsHeader(HttpHeaders.HOST)) {
+            URIAuthority authority = request.getAuthority();
+            if (authority == null) {
+                if (ver.lessEquals(HttpVersion.HTTP_1_0)) {
+                    return;
+                }
+                throw new ProtocolException("Target host is unknown");
+            }
+            if (authority.getUserInfo() != null) {
+                authority = new URIAuthority(authority.getHostName(), authority.getPort());
+            }
+            request.addHeader(HttpHeaders.HOST, authority);
+        }
+    }
+
+}

@@ -1,0 +1,446 @@
+/*
+ * ====================================================================
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ * ====================================================================
+ *
+ * This software consists of voluntary contributions made by many
+ * individuals on behalf of the Apache Software Foundation.  For more
+ * information on the Apache Software Foundation, please see
+ * <http://www.apache.org/>.
+ *
+ */
+package io.clientcore.core.http.client.implementation.apachehttpclient.core5.http.impl.bootstrap;
+
+import java.net.InetAddress;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.net.ServerSocketFactory;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLParameters;
+import javax.net.ssl.SSLServerSocketFactory;
+
+import io.clientcore.core.http.client.implementation.apachehttpclient.core5.function.Callback;
+import io.clientcore.core.http.client.implementation.apachehttpclient.core5.http.ClassicHttpResponse;
+import io.clientcore.core.http.client.implementation.apachehttpclient.core5.http.ConnectionReuseStrategy;
+import io.clientcore.core.http.client.implementation.apachehttpclient.core5.http.ExceptionListener;
+import io.clientcore.core.http.client.implementation.apachehttpclient.core5.http.HttpRequestMapper;
+import io.clientcore.core.http.client.implementation.apachehttpclient.core5.http.HttpResponseFactory;
+import io.clientcore.core.http.client.implementation.apachehttpclient.core5.http.URIScheme;
+import io.clientcore.core.http.client.implementation.apachehttpclient.core5.http.config.CharCodingConfig;
+import io.clientcore.core.http.client.implementation.apachehttpclient.core5.http.config.Http1Config;
+import io.clientcore.core.http.client.implementation.apachehttpclient.core5.http.config.NamedElementChain;
+import io.clientcore.core.http.client.implementation.apachehttpclient.core5.http.impl.DefaultConnectionReuseStrategy;
+import io.clientcore.core.http.client.implementation.apachehttpclient.core5.http.impl.Http1StreamListener;
+import io.clientcore.core.http.client.implementation.apachehttpclient.core5.http.impl.HttpProcessors;
+import io.clientcore.core.http.client.implementation.apachehttpclient.core5.http.impl.io.DefaultBHttpServerConnection;
+import io.clientcore.core.http.client.implementation.apachehttpclient.core5.http.impl.io.DefaultBHttpServerConnectionFactory;
+import io.clientcore.core.http.client.implementation.apachehttpclient.core5.http.impl.io.DefaultClassicHttpResponseFactory;
+import io.clientcore.core.http.client.implementation.apachehttpclient.core5.http.impl.io.HttpService;
+import io.clientcore.core.http.client.implementation.apachehttpclient.core5.http.impl.routing.RequestRouter;
+import io.clientcore.core.http.client.implementation.apachehttpclient.core5.http.io.HttpConnectionFactory;
+import io.clientcore.core.http.client.implementation.apachehttpclient.core5.http.io.HttpFilterHandler;
+import io.clientcore.core.http.client.implementation.apachehttpclient.core5.http.io.HttpRequestHandler;
+import io.clientcore.core.http.client.implementation.apachehttpclient.core5.http.io.HttpServerRequestHandler;
+import io.clientcore.core.http.client.implementation.apachehttpclient.core5.http.io.SocketConfig;
+import io.clientcore.core.http.client.implementation.apachehttpclient.core5.http.io.ssl.DefaultTlsSetupHandler;
+import io.clientcore.core.http.client.implementation.apachehttpclient.core5.http.io.support.BasicHttpServerExpectationDecorator;
+import io.clientcore.core.http.client.implementation.apachehttpclient.core5.http.io.support.BasicHttpServerRequestHandler;
+import io.clientcore.core.http.client.implementation.apachehttpclient.core5.http.io.support.HttpServerExpectationFilter;
+import io.clientcore.core.http.client.implementation.apachehttpclient.core5.http.io.support.HttpServerFilterChainElement;
+import io.clientcore.core.http.client.implementation.apachehttpclient.core5.http.io.support.HttpServerFilterChainRequestHandler;
+import io.clientcore.core.http.client.implementation.apachehttpclient.core5.http.io.support.TerminalServerFilter;
+import io.clientcore.core.http.client.implementation.apachehttpclient.core5.http.protocol.HttpProcessor;
+import io.clientcore.core.http.client.implementation.apachehttpclient.core5.http.protocol.UriPatternType;
+import io.clientcore.core.http.client.implementation.apachehttpclient.core5.net.InetAddressUtils;
+import io.clientcore.core.http.client.implementation.apachehttpclient.core5.net.URIAuthority;
+import io.clientcore.core.http.client.implementation.apachehttpclient.core5.util.Args;
+
+/**
+ * {@link HttpServer} bootstrap.
+ *
+ * @since 4.4
+ */
+@SuppressWarnings("deprecation")
+public class ServerBootstrap {
+
+    private final List<RequestRouter.Entry<HttpRequestHandler>> routeEntries;
+    private final List<FilterEntry<HttpFilterHandler>> filters;
+    private String canonicalHostName;
+    private HttpRequestMapper<HttpRequestHandler> requestRouter;
+    private io.clientcore.core.http.client.implementation.apachehttpclient.core5.http.protocol.LookupRegistry<HttpRequestHandler> lookupRegistry;
+    private int listenerPort;
+    private InetAddress localAddress;
+    private SocketConfig socketConfig;
+    private Http1Config http1Config;
+    private CharCodingConfig charCodingConfig;
+    private HttpProcessor httpProcessor;
+    private ConnectionReuseStrategy connStrategy;
+    private HttpResponseFactory<ClassicHttpResponse> responseFactory;
+    private ServerSocketFactory serverSocketFactory;
+    private SSLContext sslContext;
+    private Callback<SSLParameters> sslSetupHandler;
+    private HttpConnectionFactory<? extends DefaultBHttpServerConnection> connectionFactory;
+    private ExceptionListener exceptionListener;
+    private Http1StreamListener streamListener;
+
+    private ServerBootstrap() {
+        this.routeEntries = new ArrayList<>();
+        this.filters = new ArrayList<>();
+    }
+
+    public static ServerBootstrap bootstrap() {
+        return new ServerBootstrap();
+    }
+
+    /**
+     * Sets canonical name (fully qualified domain name) of the server.
+     *
+     * @since 5.0
+     */
+    public final ServerBootstrap setCanonicalHostName(final String canonicalHostName) {
+        this.canonicalHostName = canonicalHostName;
+        return this;
+    }
+
+    /**
+     * Sets listener port number.
+     */
+    public final ServerBootstrap setListenerPort(final int listenerPort) {
+        this.listenerPort = listenerPort;
+        return this;
+    }
+
+    /**
+     * Sets local interface for the listener.
+     */
+    public final ServerBootstrap setLocalAddress(final InetAddress localAddress) {
+        this.localAddress = localAddress;
+        return this;
+    }
+
+    /**
+     * Sets socket configuration.
+     */
+    public final ServerBootstrap setSocketConfig(final SocketConfig socketConfig) {
+        this.socketConfig = socketConfig;
+        return this;
+    }
+
+    /**
+     * Sets HTTP/1 protocol configuration.
+     */
+    public final ServerBootstrap setHttp1Config(final Http1Config http1Config) {
+        this.http1Config = http1Config;
+        return this;
+    }
+
+    /**
+     * Sets connection configuration.
+     */
+    public final ServerBootstrap setCharCodingConfig(final CharCodingConfig charCodingConfig) {
+        this.charCodingConfig = charCodingConfig;
+        return this;
+    }
+
+    /**
+     * Sets {@link HttpProcessor} instance.
+     */
+    public final ServerBootstrap setHttpProcessor(final HttpProcessor httpProcessor) {
+        this.httpProcessor = httpProcessor;
+        return this;
+    }
+
+    /**
+     * Sets {@link ConnectionReuseStrategy} instance.
+     */
+    public final ServerBootstrap setConnectionReuseStrategy(final ConnectionReuseStrategy connStrategy) {
+        this.connStrategy = connStrategy;
+        return this;
+    }
+
+    /**
+     * Sets {@link HttpResponseFactory} instance.
+     */
+    public final ServerBootstrap setResponseFactory(final HttpResponseFactory<ClassicHttpResponse> responseFactory) {
+        this.responseFactory = responseFactory;
+        return this;
+    }
+
+    /**
+     * @deprecated Use {@link RequestRouter}.
+     */
+    @Deprecated
+    public final ServerBootstrap setLookupRegistry(final io.clientcore.core.http.client.implementation.apachehttpclient.core5.http.protocol.LookupRegistry<HttpRequestHandler> lookupRegistry) {
+        this.lookupRegistry = lookupRegistry;
+        return this;
+    }
+
+    /**
+     * Registers the given {@link HttpRequestHandler} as a default handler for URIs
+     * matching the given pattern.
+     *
+     * @param uriPattern the pattern to register the handler for.
+     * @param requestHandler the handler.
+     */
+    public final ServerBootstrap register(final String uriPattern, final HttpRequestHandler requestHandler) {
+        Args.notBlank(uriPattern, "URI pattern");
+        Args.notNull(requestHandler, "Supplier");
+        routeEntries.add(new RequestRouter.Entry<>(uriPattern, requestHandler));
+        return this;
+    }
+
+    /**
+     * Registers the given {@link HttpRequestHandler} as a handler for URIs
+     * matching the given host and the pattern.
+     *
+     * @param hostname
+     * @param uriPattern the pattern to register the handler for.
+     * @param requestHandler the handler.
+     *
+     * @since 5.3
+     */
+    public final ServerBootstrap register(final String hostname, final String uriPattern, final HttpRequestHandler requestHandler) {
+        Args.notBlank(hostname, "Hostname");
+        Args.notBlank(uriPattern, "URI pattern");
+        Args.notNull(requestHandler, "Request handler");
+        routeEntries.add(new RequestRouter.Entry<>(hostname, uriPattern, requestHandler));
+        return this;
+    }
+
+    /**
+     * @deprecated Use {@link #register(String, String, HttpRequestHandler)}.
+     */
+    @Deprecated
+    public final ServerBootstrap registerVirtual(final String hostname, final String uriPattern, final HttpRequestHandler requestHandler) {
+        return register(hostname, uriPattern, requestHandler);
+    }
+
+    /**
+     * Sets {@link HttpRequestMapper} instance.
+     *
+     * @see org.apache.hc.core5.http.impl.routing.RequestRouter
+     * @since 5.3
+     */
+    public final ServerBootstrap setRequestRouter(final HttpRequestMapper<HttpRequestHandler> requestRouter) {
+        this.requestRouter = requestRouter;
+        return this;
+    }
+
+    /**
+     * Sets {@link HttpConnectionFactory} instance.
+     */
+    public final ServerBootstrap setConnectionFactory(
+            final HttpConnectionFactory<? extends DefaultBHttpServerConnection> connectionFactory) {
+        this.connectionFactory = connectionFactory;
+        return this;
+    }
+
+    /**
+     * Sets {@link ServerSocketFactory} instance.
+     */
+    public final ServerBootstrap setServerSocketFactory(final ServerSocketFactory serverSocketFactory) {
+        this.serverSocketFactory = serverSocketFactory;
+        return this;
+    }
+
+    /**
+     * Sets {@link SSLContext} instance.
+     * <p>
+     * Please note this value can be overridden by the {@link #setServerSocketFactory(
+     *   ServerSocketFactory)} method.
+     */
+    public final ServerBootstrap setSslContext(final SSLContext sslContext) {
+        this.sslContext = sslContext;
+        return this;
+    }
+
+    /**
+     * Sets {@link Callback} for {@link SSLParameters}.
+     */
+    public final ServerBootstrap setSslSetupHandler(final Callback<SSLParameters> sslSetupHandler) {
+        this.sslSetupHandler = sslSetupHandler;
+        return this;
+    }
+
+    /**
+     * Sets {@link ExceptionListener} instance.
+     */
+    public final ServerBootstrap setExceptionListener(final ExceptionListener exceptionListener) {
+        this.exceptionListener = exceptionListener;
+        return this;
+    }
+
+    /**
+     * Sets {@link ExceptionListener} instance.
+     */
+    public final ServerBootstrap setStreamListener(final Http1StreamListener streamListener) {
+        this.streamListener = streamListener;
+        return this;
+    }
+
+    /**
+     * Adds the filter before the filter with the given name.
+     */
+    public final ServerBootstrap addFilterBefore(final String existing, final String name, final HttpFilterHandler filterHandler) {
+        Args.notBlank(existing, "Existing");
+        Args.notBlank(name, "Name");
+        Args.notNull(filterHandler, "Filter handler");
+        filters.add(new FilterEntry<>(FilterEntry.Position.BEFORE, name, filterHandler, existing));
+        return this;
+    }
+
+    /**
+     * Adds the filter after the filter with the given name.
+     */
+    public final ServerBootstrap addFilterAfter(final String existing, final String name, final HttpFilterHandler filterHandler) {
+        Args.notBlank(existing, "Existing");
+        Args.notBlank(name, "Name");
+        Args.notNull(filterHandler, "Filter handler");
+        filters.add(new FilterEntry<>(FilterEntry.Position.AFTER, name, filterHandler, existing));
+        return this;
+    }
+
+    /**
+     * Replace an existing filter with the given name with new filter.
+     */
+    public final ServerBootstrap replaceFilter(final String existing, final HttpFilterHandler filterHandler) {
+        Args.notBlank(existing, "Existing");
+        Args.notNull(filterHandler, "Filter handler");
+        filters.add(new FilterEntry<>(FilterEntry.Position.REPLACE, existing, filterHandler, existing));
+        return this;
+    }
+
+    /**
+     * Add an filter to the head of the processing list.
+     */
+    public final ServerBootstrap addFilterFirst(final String name, final HttpFilterHandler filterHandler) {
+        Args.notNull(name, "Name");
+        Args.notNull(filterHandler, "Filter handler");
+        filters.add(new FilterEntry<>(FilterEntry.Position.FIRST, name, filterHandler, null));
+        return this;
+    }
+
+    /**
+     * Add an filter to the tail of the processing list.
+     */
+    public final ServerBootstrap addFilterLast(final String name, final HttpFilterHandler filterHandler) {
+        Args.notNull(name, "Name");
+        Args.notNull(filterHandler, "Filter handler");
+        filters.add(new FilterEntry<>(FilterEntry.Position.LAST, name, filterHandler, null));
+        return this;
+    }
+
+    public HttpServer create() {
+        final String actualCanonicalHostName = canonicalHostName != null ? canonicalHostName : InetAddressUtils.getCanonicalLocalHostName();
+        final HttpRequestMapper<HttpRequestHandler> requestRouterCopy;
+        if (lookupRegistry != null && requestRouter == null) {
+            final io.clientcore.core.http.client.implementation.apachehttpclient.core5.http.protocol.RequestHandlerRegistry<HttpRequestHandler> handlerRegistry = new org.apache.hc.core5.http.protocol.RequestHandlerRegistry<>(
+                    actualCanonicalHostName,
+                    () -> lookupRegistry != null ? lookupRegistry : new org.apache.hc.core5.http.protocol.UriPatternMatcher<>());
+            for (final RequestRouter.Entry<HttpRequestHandler> entry: routeEntries) {
+                handlerRegistry.register(entry.uriAuthority != null ? entry.uriAuthority.getHostName() : null, entry.route.pattern, entry.route.handler);
+            }
+            requestRouterCopy = handlerRegistry;
+        } else {
+            if (routeEntries.isEmpty()) {
+                requestRouterCopy = requestRouter;
+            } else {
+                requestRouterCopy = RequestRouter.create(
+                        new URIAuthority(actualCanonicalHostName),
+                        UriPatternType.URI_PATTERN,
+                        routeEntries,
+                        RequestRouter.IGNORE_PORT_AUTHORITY_RESOLVER,
+                        requestRouter);
+            }
+        }
+
+        final HttpServerRequestHandler requestHandler;
+        if (!filters.isEmpty()) {
+            final NamedElementChain<HttpFilterHandler> filterChainDefinition = new NamedElementChain<>();
+            filterChainDefinition.addLast(
+                    new TerminalServerFilter(
+                            requestRouterCopy,
+                            this.responseFactory != null ? this.responseFactory : DefaultClassicHttpResponseFactory.INSTANCE),
+                    StandardFilter.MAIN_HANDLER.name());
+            filterChainDefinition.addFirst(
+                    new HttpServerExpectationFilter(),
+                    StandardFilter.EXPECT_CONTINUE.name());
+
+            for (final FilterEntry<HttpFilterHandler> entry: filters) {
+                switch (entry.position) {
+                    case AFTER:
+                        filterChainDefinition.addAfter(entry.existing, entry.filterHandler, entry.name);
+                        break;
+                    case BEFORE:
+                        filterChainDefinition.addBefore(entry.existing, entry.filterHandler, entry.name);
+                        break;
+                    case REPLACE:
+                        filterChainDefinition.replace(entry.existing, entry.filterHandler);
+                        break;
+                    case FIRST:
+                        filterChainDefinition.addFirst(entry.filterHandler, entry.name);
+                        break;
+                    case LAST:
+                        // Don't add last, after TerminalServerFilter, as that does not delegate to the chain
+                        // Instead, add the filter just before it, making it effectively the last filter
+                        filterChainDefinition.addBefore(StandardFilter.MAIN_HANDLER.name(), entry.filterHandler, entry.name);
+                        break;
+                }
+            }
+
+            NamedElementChain<HttpFilterHandler>.Node current = filterChainDefinition.getLast();
+            HttpServerFilterChainElement filterChain = null;
+            while (current != null) {
+                filterChain = new HttpServerFilterChainElement(current.getValue(), filterChain);
+                current = current.getPrevious();
+            }
+            requestHandler = new HttpServerFilterChainRequestHandler(filterChain);
+        } else {
+            requestHandler = new BasicHttpServerExpectationDecorator(new BasicHttpServerRequestHandler(
+                    requestRouterCopy,
+                    this.responseFactory != null ? this.responseFactory : DefaultClassicHttpResponseFactory.INSTANCE));
+        }
+
+        final HttpService httpService = new HttpService(
+                this.httpProcessor != null ? this.httpProcessor : HttpProcessors.server(),
+                requestHandler,
+                this.http1Config,
+                this.connStrategy != null ? this.connStrategy : DefaultConnectionReuseStrategy.INSTANCE,
+                this.streamListener);
+
+        HttpConnectionFactory<? extends DefaultBHttpServerConnection> connectionFactoryCopy = this.connectionFactory;
+        if (connectionFactoryCopy == null) {
+            final String scheme = serverSocketFactory instanceof SSLServerSocketFactory || sslContext != null ?
+                    URIScheme.HTTPS.id : URIScheme.HTTP.id;
+            connectionFactoryCopy = new DefaultBHttpServerConnectionFactory(scheme, this.http1Config, this.charCodingConfig);
+        }
+
+        return new HttpServer(
+                Math.max(this.listenerPort, 0),
+                httpService,
+                this.localAddress,
+                this.socketConfig != null ? this.socketConfig : SocketConfig.DEFAULT,
+                serverSocketFactory,
+                connectionFactoryCopy,
+                sslContext,
+                sslSetupHandler != null ? sslSetupHandler : DefaultTlsSetupHandler.SERVER,
+                this.exceptionListener != null ? this.exceptionListener : ExceptionListener.NO_OP);
+    }
+
+}

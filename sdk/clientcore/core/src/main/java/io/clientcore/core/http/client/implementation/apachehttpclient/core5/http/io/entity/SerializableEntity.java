@@ -1,0 +1,151 @@
+/*
+ * ====================================================================
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ * ====================================================================
+ *
+ * This software consists of voluntary contributions made by many
+ * individuals on behalf of the Apache Software Foundation.  For more
+ * information on the Apache Software Foundation, please see
+ * <http://www.apache.org/>.
+ *
+ */
+
+package io.clientcore.core.http.client.implementation.apachehttpclient.core5.http.io.entity;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.ObjectOutputStream;
+import java.io.OutputStream;
+import java.io.Serializable;
+
+import io.clientcore.core.http.client.implementation.apachehttpclient.core5.annotation.Contract;
+import io.clientcore.core.http.client.implementation.apachehttpclient.core5.annotation.ThreadingBehavior;
+import io.clientcore.core.http.client.implementation.apachehttpclient.core5.http.ContentType;
+import io.clientcore.core.http.client.implementation.apachehttpclient.core5.util.Args;
+
+/**
+ * A streamed entity that obtains its content from a {@link Serializable}.
+ * <p>
+ * This class contains {@link ThreadingBehavior#IMMUTABLE_CONDITIONAL immutable attributes} but subclasses may contain
+ * additional immutable or mutable attributes.
+ * </p>
+ *
+ * @since 4.0
+ */
+@Contract(threading = ThreadingBehavior.IMMUTABLE_CONDITIONAL)
+public class SerializableEntity extends AbstractHttpEntity {
+
+    private final Serializable serializable;
+
+    /**
+     * Creates new instance of this class.
+     * <p>
+     * The new instance:
+     * </p>
+     * <ul>
+     * <li>is not chunked.</li>
+     * </ul>
+     *
+     * @param serializable the serializable object.
+     * @param contentType the content type.
+     * @param contentEncoding the content encoding.
+     */
+    public SerializableEntity(
+            final Serializable serializable, final ContentType contentType, final String contentEncoding) {
+        super(contentType, contentEncoding);
+        this.serializable = Args.notNull(serializable, "Source object");
+    }
+
+    /**
+     * Creates new instance of this class.
+     * <p>
+     * The new instance:
+     * </p>
+     * <ul>
+     * <li>is not chunked.</li>
+     * <li>does not define a content encoding.</li>
+     * </ul>
+     *
+     * @param serializable the serializable object.
+     * @param contentType the content type.
+     */
+    public SerializableEntity(final Serializable serializable, final ContentType contentType) {
+        this(serializable, contentType, null);
+    }
+
+    @Override
+    public final InputStream getContent() throws IOException, IllegalStateException {
+        final ByteArrayOutputStream buf = new ByteArrayOutputStream();
+        writeTo(buf);
+        return new ByteArrayInputStream(buf.toByteArray());
+    }
+
+    /**
+     * {@inheritDoc}
+     * <p>
+     * This implementation always returns {@code -1}.
+     * </p>
+     */
+    @Override
+    public final long getContentLength() {
+        return -1;
+    }
+
+    /**
+     * {@inheritDoc}
+     * <p>
+     * This implementation always returns {@code true}.
+     * </p>
+     */
+    @Override
+    public final boolean isRepeatable() {
+        return true;
+    }
+
+    /**
+     * {@inheritDoc}
+     * <p>
+     * This implementation always returns {@code false}.
+     * </p>
+     */
+    @Override
+    public final boolean isStreaming() {
+        return false;
+    }
+
+    @Override
+    public final void writeTo(final OutputStream outStream) throws IOException {
+        Args.notNull(outStream, "Output stream");
+        final ObjectOutputStream out = new ObjectOutputStream(outStream);
+        out.writeObject(this.serializable);
+        out.flush();
+    }
+
+    /**
+     * {@inheritDoc}
+     * <p>
+     * This implementation is a no-op.
+     * </p>
+     */
+    @Override
+    public final void close() throws IOException {
+    }
+
+}

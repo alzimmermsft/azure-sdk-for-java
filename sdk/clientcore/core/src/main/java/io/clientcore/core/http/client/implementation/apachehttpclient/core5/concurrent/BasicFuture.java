@@ -1,0 +1,195 @@
+/*
+ * ====================================================================
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ * ====================================================================
+ *
+ * This software consists of voluntary contributions made by many
+ * individuals on behalf of the Apache Software Foundation.  For more
+ * information on the Apache Software Foundation, please see
+ * <http://www.apache.org/>.
+ *
+ */
+package io.clientcore.core.http.client.implementation.apachehttpclient.core5.concurrent;
+
+import java.util.concurrent.CancellationException;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
+import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.ReentrantLock;
+
+import io.clientcore.core.http.client.implementation.apachehttpclient.core5.util.Args;
+import io.clientcore.core.http.client.implementation.apachehttpclient.core5.util.TimeoutValueException;
+
+/**
+ * Basic implementation of the {@link Future} interface. {@code BasicFuture}
+ * can be put into a completed state by invoking any of the following methods:
+ * {@link #cancel()}, {@link #failed(Exception)}, or {@link #completed(Object)}.
+ *
+ * @param <T> the future result type of an asynchronous operation.
+ * @since 4.2
+ */
+public class BasicFuture<T> implements Future<T>, Cancellable {
+
+    private final FutureCallback<T> callback;
+
+    private volatile boolean completed;
+    private volatile boolean cancelled;
+    private volatile T result;
+    private volatile Exception ex;
+
+    private final ReentrantLock lock;
+    private final Condition condition;
+
+    /**
+     * Constructs a new instance for a FutureCallback.
+     *
+     * @param callback the FutureCallback, may be {@code null}.
+     */
+    public BasicFuture(final FutureCallback<T> callback) {
+        super();
+        this.callback = callback;
+        this.lock = new ReentrantLock();
+        this.condition = lock.newCondition();
+    }
+
+    @Override
+    public boolean isCancelled() {
+        return this.cancelled;
+    }
+
+    @Override
+    public boolean isDone() {
+        return this.completed;
+    }
+
+    private T getResult() throws ExecutionException {
+        if (this.ex != null) {
+            throw new ExecutionException(this.ex);
+        }
+        if (cancelled) {
+            throw new CancellationException();
+        }
+        return this.result;
+    }
+
+    @Override
+    public T get() throws InterruptedException, ExecutionException {
+        lock.lock();
+        try {
+            while (!this.completed) {
+                condition.await();
+            }
+            return getResult();
+        } finally {
+            lock.unlock();
+        }
+    }
+
+    @Override
+    public T get(final long timeout, final TimeUnit unit)
+            throws InterruptedException, ExecutionException, TimeoutException {
+        Args.notNull(unit, "Time unit");
+        final long msecs = unit.toMillis(timeout);
+        final long startTime = (msecs <= 0) ? 0 : System.currentTimeMillis();
+        long waitTime = msecs;
+        try {
+            lock.lock();
+            if (this.completed) {
+                return getResult();
+            } else if (waitTime <= 0) {
+                throw TimeoutValueException.fromMilliseconds(msecs, msecs + Math.abs(waitTime));
+            } else {
+                for (; ; ) {
+                    condition.await(waitTime, TimeUnit.MILLISECONDS);
+                    if (this.completed) {
+                        return getResult();
+                    }
+                    waitTime = msecs - (System.currentTimeMillis() - startTime);
+                    if (waitTime <= 0) {
+                        throw TimeoutValueException.fromMilliseconds(msecs, msecs + Math.abs(waitTime));
+                    }
+                }
+            }
+        } finally {
+            lock.unlock();
+        }
+    }
+
+    public boolean completed(final T result) {
+        lock.lock();
+        try {
+            if (this.completed) {
+                return false;
+            }
+            this.completed = true;
+            this.result = result;
+            condition.signalAll();
+        } finally {
+            lock.unlock();
+        }
+        if (this.callback != null) {
+            this.callback.completed(result);
+        }
+        return true;
+    }
+
+    public boolean failed(final Exception exception) {
+        lock.lock();
+        try {
+            if (this.completed) {
+                return false;
+            }
+            this.completed = true;
+            this.ex = exception;
+            condition.signalAll();
+        } finally {
+            lock.unlock();
+        }
+        if (this.callback != null) {
+            this.callback.failed(exception);
+        }
+        return true;
+    }
+
+    @Override
+    public boolean cancel(final boolean mayInterruptIfRunning) {
+        lock.lock();
+        try {
+            if (this.completed) {
+                return false;
+            }
+            this.completed = true;
+            this.cancelled = true;
+            condition.signalAll();
+        } finally {
+            lock.unlock();
+        }
+        if (this.callback != null) {
+            this.callback.cancelled();
+        }
+        return true;
+    }
+
+    @Override
+    public boolean cancel() {
+        return cancel(true);
+    }
+
+}

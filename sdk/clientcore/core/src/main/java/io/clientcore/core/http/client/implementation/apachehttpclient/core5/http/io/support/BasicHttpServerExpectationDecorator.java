@@ -1,0 +1,93 @@
+/*
+ * ====================================================================
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ * ====================================================================
+ *
+ * This software consists of voluntary contributions made by many
+ * individuals on behalf of the Apache Software Foundation.  For more
+ * information on the Apache Software Foundation, please see
+ * <http://www.apache.org/>.
+ *
+ */
+
+package io.clientcore.core.http.client.implementation.apachehttpclient.core5.http.io.support;
+
+import java.io.IOException;
+
+import io.clientcore.core.http.client.implementation.apachehttpclient.core5.http.ClassicHttpRequest;
+import io.clientcore.core.http.client.implementation.apachehttpclient.core5.http.ClassicHttpResponse;
+import io.clientcore.core.http.client.implementation.apachehttpclient.core5.http.HttpException;
+import io.clientcore.core.http.client.implementation.apachehttpclient.core5.http.HttpStatus;
+import io.clientcore.core.http.client.implementation.apachehttpclient.core5.http.io.HttpServerRequestHandler;
+import io.clientcore.core.http.client.implementation.apachehttpclient.core5.http.message.BasicClassicHttpResponse;
+import io.clientcore.core.http.client.implementation.apachehttpclient.core5.http.support.ExpectSupport;
+import io.clientcore.core.http.client.implementation.apachehttpclient.core5.http.support.Expectation;
+import io.clientcore.core.http.client.implementation.apachehttpclient.core5.http.protocol.HttpContext;
+import io.clientcore.core.http.client.implementation.apachehttpclient.core5.util.Args;
+
+/**
+ * {@link HttpServerRequestHandler} implementation that adds support
+ * for the Expect-Continue handshake to an existing
+ * {@link HttpServerRequestHandler}.
+ *
+ * @since 5.0
+ */
+public class BasicHttpServerExpectationDecorator implements HttpServerRequestHandler {
+
+    private final HttpServerRequestHandler requestHandler;
+
+    public BasicHttpServerExpectationDecorator(final HttpServerRequestHandler requestHandler) {
+        this.requestHandler = Args.notNull(requestHandler, "Request handler");
+    }
+
+    /**
+     * Verifies the HTTP request and decides whether it meets server expectations and the request
+     * processing can continue.
+     *
+     * @param request the incoming HTTP request.
+     * @param context the actual execution context.
+     * @return {@code null} if the request meets expectations or a final HTTP response
+     *  with an error status representing the cause of expectation failure.
+     */
+    protected ClassicHttpResponse verify(final ClassicHttpRequest request, final HttpContext context) {
+        return null;
+    }
+
+    @Override
+    public final void handle(
+            final ClassicHttpRequest request,
+            final ResponseTrigger responseTrigger,
+            final HttpContext context) throws HttpException, IOException {
+        final Expectation expectation = ExpectSupport.parse(request, request.getEntity());
+        if (expectation == Expectation.CONTINUE) {
+            final ClassicHttpResponse response = verify(request, context);
+            if (response == null) {
+                responseTrigger.sendInformation(new BasicClassicHttpResponse(HttpStatus.SC_CONTINUE));
+            } else {
+                responseTrigger.submitResponse(response);
+                return;
+            }
+        } else if (expectation == Expectation.UNKNOWN) {
+            final ClassicHttpResponse expectationFailed = new BasicClassicHttpResponse(HttpStatus.SC_EXPECTATION_FAILED);
+            responseTrigger.submitResponse(expectationFailed);
+            return;
+        }
+        requestHandler.handle(request, responseTrigger, context);
+    }
+
+}

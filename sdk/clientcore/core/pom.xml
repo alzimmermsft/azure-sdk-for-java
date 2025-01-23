@@ -228,5 +228,77 @@
         </plugins>
       </build>
     </profile>
+
+    <profile>
+      <id>shade-apache-httpclient</id>
+      <activation>
+        <property>
+          <name>shade-apache-httpclient</name>
+        </property>
+      </activation>
+
+      <dependencies>
+        <dependency>
+          <groupId>org.apache.httpcomponents.client5</groupId>
+          <artifactId>httpclient5</artifactId>
+          <version>5.4.1</version> <!-- {x-version-update;com.fasterxml.jackson.core:jackson-core;external_dependency} -->
+        </dependency>
+      </dependencies>
+
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-shade-plugin</artifactId>
+            <version>3.6.0</version> <!-- {x-version-update;org.apache.maven.plugins:maven-shade-plugin;external_dependency} -->
+
+            <executions>
+              <execution>
+                <id>shade</id>
+                <phase>package</phase>
+                <goals>
+                  <goal>shade</goal>
+                </goals>
+              </execution>
+            </executions>
+
+            <configuration>
+              <createSourcesJar>true</createSourcesJar>
+              <shadeSourcesContent>true</shadeSourcesContent>
+
+              <artifactSet>
+                <includes>
+                  <include>org.apache.httpcomponents.client5:httpclient5</include>
+                  <include>org.apache.httpcomponents.core5:httpcore5</include>
+                  <include>org.apache.httpcomponents.core5:httpcore5-h2</include>
+                </includes>
+              </artifactSet>
+
+              <relocations>
+                <relocation>
+                  <pattern>org.apache.hc</pattern>
+                  <shadedPattern>io.clientcore.core.http.client.implementation.apachehttpclient</shadedPattern>
+                </relocation>
+              </relocations>
+            </configuration>
+          </plugin>
+
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-enforcer-plugin</artifactId>
+            <version>3.5.0</version> <!-- {x-version-update;org.apache.maven.plugins:maven-enforcer-plugin;external_dependency} -->
+            <configuration>
+              <rules>
+                <bannedDependencies>
+                  <includes>
+                    <include>org.apache.httpcomponents.client5:httpclient5:[5.4.1]</include> <!-- {x-include-update;com.fasterxml.jackson.core:jackson-core;external_dependency} -->
+                  </includes>
+                </bannedDependencies>
+              </rules>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
   </profiles>
 </project>

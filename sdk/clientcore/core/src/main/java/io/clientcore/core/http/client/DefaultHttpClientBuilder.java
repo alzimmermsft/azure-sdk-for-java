@@ -3,30 +3,16 @@
 
 package io.clientcore.core.http.client;
 
-import io.clientcore.core.http.client.implementation.JdkHttpClientProxySelector;
 import io.clientcore.core.http.models.ProxyOptions;
 import io.clientcore.core.instrumentation.logging.ClientLogger;
 import io.clientcore.core.util.SharedExecutorService;
 import io.clientcore.core.util.configuration.Configuration;
 
 import javax.net.ssl.SSLContext;
-import java.io.IOException;
-import java.io.Reader;
-import java.net.Authenticator;
-import java.net.PasswordAuthentication;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.time.Duration;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Locale;
 import java.util.Objects;
-import java.util.Properties;
-import java.util.Set;
 import java.util.concurrent.Executor;
 
-import static io.clientcore.core.http.client.implementation.JdkHttpUtils.getDefaultTimeoutFromEnvironment;
 import static io.clientcore.core.util.configuration.Configuration.PROPERTY_REQUEST_CONNECT_TIMEOUT;
 import static io.clientcore.core.util.configuration.Configuration.PROPERTY_REQUEST_READ_TIMEOUT;
 import static io.clientcore.core.util.configuration.Configuration.PROPERTY_REQUEST_RESPONSE_TIMEOUT;
@@ -45,34 +31,62 @@ public class DefaultHttpClientBuilder {
     private static final Duration DEFAULT_RESPONSE_TIMEOUT;
     private static final Duration DEFAULT_READ_TIMEOUT;
 
-    private static final String JAVA_HOME = System.getProperty("java.home");
-    private static final String JDK_HTTPCLIENT_ALLOW_RESTRICTED_HEADERS = "jdk.httpclient.allowRestrictedHeaders";
-
-    // These headers are restricted by default in native JDK12 HttpClient.
-    // These headers can be whitelisted by setting jdk.httpclient.allowRestrictedHeaders
-    // property in the network properties file: 'JAVA_HOME/conf/net.properties'
-    // e.g. white listing 'host' header.
-    //
-    // jdk.httpclient.allowRestrictedHeaders=host
-    // Also see - https://bugs.openjdk.java.net/browse/JDK-8213189
-    static final Set<String> DEFAULT_RESTRICTED_HEADERS;
-
     static {
         Configuration configuration = Configuration.getGlobalConfiguration();
 
-        DEFAULT_CONNECTION_TIMEOUT = getDefaultTimeoutFromEnvironment(configuration, PROPERTY_REQUEST_CONNECT_TIMEOUT,
-            Duration.ofSeconds(10), LOGGER);
-        DEFAULT_WRITE_TIMEOUT = getDefaultTimeoutFromEnvironment(configuration, PROPERTY_REQUEST_WRITE_TIMEOUT,
-            Duration.ofSeconds(60), LOGGER);
+        DEFAULT_CONNECTION_TIMEOUT
+            = getDefaultTimeoutFromEnvironment(configuration, PROPERTY_REQUEST_CONNECT_TIMEOUT, Duration.ofSeconds(10));
+        DEFAULT_WRITE_TIMEOUT
+            = getDefaultTimeoutFromEnvironment(configuration, PROPERTY_REQUEST_WRITE_TIMEOUT, Duration.ofSeconds(60));
         DEFAULT_RESPONSE_TIMEOUT = getDefaultTimeoutFromEnvironment(configuration, PROPERTY_REQUEST_RESPONSE_TIMEOUT,
-            Duration.ofSeconds(60), LOGGER);
-        DEFAULT_READ_TIMEOUT = getDefaultTimeoutFromEnvironment(configuration, PROPERTY_REQUEST_READ_TIMEOUT,
-            Duration.ofSeconds(60), LOGGER);
-
-        DEFAULT_RESTRICTED_HEADERS = Set.of("connection", "content-length", "expect", "host", "upgrade");
+            Duration.ofSeconds(60));
+        DEFAULT_READ_TIMEOUT
+            = getDefaultTimeoutFromEnvironment(configuration, PROPERTY_REQUEST_READ_TIMEOUT, Duration.ofSeconds(60));
     }
 
-    private java.net.http.HttpClient.Builder httpClientBuilder;
+    /**
+     * Attempts to load an environment configured default timeout.
+     * <p>
+     * If the environment default timeout isn't configured, {@code defaultTimeout} will be returned. If the environment
+     * default timeout is a string that isn't parseable by {@link Long#parseLong(String)}, {@code defaultTimeout} will
+     * be returned. If the environment default timeout is less than 0, {@link Duration#ZERO} will be returned indicated
+     * that there is no timeout period.
+     *
+     * @param configuration The environment configurations.
+     * @param timeoutPropertyName The default timeout property name.
+     * @param defaultTimeout The fallback timeout to be used.
+     * @return Either the environment configured default timeout, {@code defaultTimeoutMillis}, or 0.
+     */
+    private static Duration getDefaultTimeoutFromEnvironment(Configuration configuration, String timeoutPropertyName,
+        Duration defaultTimeout) {
+        String environmentTimeout = configuration.get(timeoutPropertyName);
+
+        // Environment wasn't configured with the timeout property.
+        if (environmentTimeout == null || environmentTimeout.isEmpty()) {
+            return defaultTimeout;
+        }
+
+        try {
+            long timeoutMillis = Long.parseLong(environmentTimeout);
+            if (timeoutMillis < 0) {
+                DefaultHttpClientBuilder.LOGGER.atVerbose()
+                    .addKeyValue(timeoutPropertyName, timeoutMillis)
+                    .log("Negative timeout values are not allowed. Using 'Duration.ZERO' to indicate no timeout.");
+                return Duration.ZERO;
+            }
+
+            return Duration.ofMillis(timeoutMillis);
+        } catch (NumberFormatException ex) {
+            DefaultHttpClientBuilder.LOGGER.atInfo()
+                .addKeyValue(timeoutPropertyName, environmentTimeout)
+                .addKeyValue("defaultTimeout", defaultTimeout)
+                .log("Timeout is not valid number. Using default value.", ex);
+
+            return defaultTimeout;
+        }
+    }
+
+    private Object httpClientBuilder;
     private ProxyOptions proxyOptions;
     private Configuration configuration;
     private Executor executor;
@@ -88,16 +102,6 @@ public class DefaultHttpClientBuilder {
      */
     public DefaultHttpClientBuilder() {
         this.executor = SharedExecutorService.getInstance();
-    }
-
-    /**
-     * Creates DefaultHttpClientBuilder from the builder of an existing {@link java.net.http.HttpClient.Builder}.
-     *
-     * @param httpClientBuilder the HttpClient builder to use
-     * @throws NullPointerException if {@code httpClientBuilder} is null
-     */
-    public DefaultHttpClientBuilder(java.net.http.HttpClient.Builder httpClientBuilder) {
-        this.httpClientBuilder = Objects.requireNonNull(httpClientBuilder, "'httpClientBuilder' cannot be null.");
     }
 
     /**
@@ -262,13 +266,13 @@ public class DefaultHttpClientBuilder {
      * @return a {@link HttpClient}.
      */
     public HttpClient build() {
-        java.net.http.HttpClient.Builder httpClientBuilder
-            = this.httpClientBuilder == null ? java.net.http.HttpClient.newBuilder() : this.httpClientBuilder;
-
-        // Client Core JDK http client supports HTTP 1.1 by default.
-        httpClientBuilder.version(java.net.http.HttpClient.Version.HTTP_1_1);
-
-        httpClientBuilder = httpClientBuilder.connectTimeout(getTimeout(connectionTimeout, DEFAULT_CONNECTION_TIMEOUT));
+        //        java.net.http.HttpClient.Builder httpClientBuilder
+        //            = this.httpClientBuilder == null ? java.net.http.HttpClient.newBuilder() : this.httpClientBuilder;
+        //
+        //        // Client Core JDK http client supports HTTP 1.1 by default.
+        //        httpClientBuilder.version(java.net.http.HttpClient.Version.HTTP_1_1);
+        //
+        //        httpClientBuilder = httpClientBuilder.connectTimeout(getTimeout(connectionTimeout, DEFAULT_CONNECTION_TIMEOUT));
 
         Duration writeTimeout = getTimeout(this.writeTimeout, DEFAULT_WRITE_TIMEOUT);
         Duration responseTimeout = getTimeout(this.responseTimeout, DEFAULT_RESPONSE_TIMEOUT);
@@ -280,81 +284,27 @@ public class DefaultHttpClientBuilder {
         ProxyOptions buildProxyOptions
             = (proxyOptions == null) ? ProxyOptions.fromConfiguration(buildConfiguration) : proxyOptions;
 
-        if (executor != null) {
-            httpClientBuilder.executor(executor);
-        }
-
-        if (sslContext != null) {
-            httpClientBuilder.sslContext(sslContext);
-        }
+        //        if (executor != null) {
+        //            httpClientBuilder.executor(executor);
+        //        }
+        //
+        //        if (sslContext != null) {
+        //            httpClientBuilder.sslContext(sslContext);
+        //        }
 
         if (buildProxyOptions != null) {
-            httpClientBuilder
-                = httpClientBuilder.proxy(new JdkHttpClientProxySelector(buildProxyOptions.getType().toProxyType(),
-                    buildProxyOptions.getAddress(), buildProxyOptions.getNonProxyHosts()));
-
-            if (buildProxyOptions.getUsername() != null) {
-                httpClientBuilder.authenticator(
-                    new ProxyAuthenticator(buildProxyOptions.getUsername(), buildProxyOptions.getPassword()));
-            }
+            // TODO (alzimmer): Add proxying back
+            //            httpClientBuilder
+            //                = httpClientBuilder.proxy(new JdkHttpClientProxySelector(buildProxyOptions.getType().toProxyType(),
+            //                    buildProxyOptions.getAddress(), buildProxyOptions.getNonProxyHosts()));
+            //
+            //            if (buildProxyOptions.getUsername() != null) {
+            //                httpClientBuilder.authenticator(
+            //                    new ProxyAuthenticator(buildProxyOptions.getUsername(), buildProxyOptions.getPassword()));
+            //            }
         }
 
-        return new DefaultHttpClient(httpClientBuilder.build(), Collections.unmodifiableSet(getRestrictedHeaders()),
-            writeTimeout, responseTimeout, readTimeout);
-    }
-
-    Set<String> getRestrictedHeaders() {
-        // Compute the effective restricted headers by removing the allowed headers from default restricted headers
-        Set<String> restrictedHeaders = new HashSet<>(DEFAULT_RESTRICTED_HEADERS);
-        removeAllowedHeaders(restrictedHeaders);
-        return restrictedHeaders;
-    }
-
-    private void removeAllowedHeaders(Set<String> restrictedHeaders) {
-        Properties properties = getNetworkProperties();
-        String[] allowRestrictedHeadersNetProperties
-            = properties.getProperty(JDK_HTTPCLIENT_ALLOW_RESTRICTED_HEADERS, "").split(",");
-
-        // Read all allowed restricted headers from configuration
-        Configuration config = (this.configuration == null) ? Configuration.getGlobalConfiguration() : configuration;
-        String[] allowRestrictedHeadersSystemProperties
-            = config.get(JDK_HTTPCLIENT_ALLOW_RESTRICTED_HEADERS, "").split(",");
-
-        // Combine the set of all allowed restricted headers from both sources
-        for (String header : allowRestrictedHeadersSystemProperties) {
-            restrictedHeaders.remove(header.trim().toLowerCase(Locale.ROOT));
-        }
-
-        for (String header : allowRestrictedHeadersNetProperties) {
-            restrictedHeaders.remove(header.trim().toLowerCase(Locale.ROOT));
-        }
-    }
-
-    Properties getNetworkProperties() {
-        // Read all allowed restricted headers from JAVA_HOME/conf/net.properties
-        Path path = Paths.get(JAVA_HOME, "conf", "net.properties");
-        Properties properties = new Properties();
-        try (Reader reader = Files.newBufferedReader(path)) {
-            properties.load(reader);
-        } catch (IOException e) {
-            LOGGER.atWarning().addKeyValue("path", path).log("Cannot read net properties.", e);
-        }
-        return properties;
-    }
-
-    private static class ProxyAuthenticator extends Authenticator {
-        private final String userName;
-        private final String password;
-
-        ProxyAuthenticator(String userName, String password) {
-            this.userName = userName;
-            this.password = password;
-        }
-
-        @Override
-        protected PasswordAuthentication getPasswordAuthentication() {
-            return new PasswordAuthentication(this.userName, password.toCharArray());
-        }
+        return new DefaultHttpClient(null, writeTimeout, responseTimeout, readTimeout);
     }
 
     private static Duration getTimeout(Duration configuredTimeout, Duration defaultTimeout) {

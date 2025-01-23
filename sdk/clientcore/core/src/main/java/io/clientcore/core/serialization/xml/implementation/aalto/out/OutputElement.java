@@ -242,7 +242,7 @@ public final class OutputElement {
         // Note: it's quite difficult to properly resolve masking
 
         if (rootNsContext != null) {
-            Iterator<String> it = rootNsContext.getPrefixes(uri);
+            Iterator<String> it = getPrefixes(rootNsContext, uri);
             while (it.hasNext()) {
                 String prefix = it.next();
                 if (prefix.isEmpty()) { // default NS already checked
@@ -261,6 +261,13 @@ public final class OutputElement {
             return Collections.emptyIterator();
         }
         return l.iterator();
+    }
+
+    // NamespaceContext.getPrefixes(String) in Java 8 returned Iterator, not Iterator<String> so this is needed to avoid
+    // a compilation warning.
+    @SuppressWarnings("unchecked")
+    private static Iterator<String> getPrefixes(NamespaceContext namespaceContext, String uri) {
+        return namespaceContext.getPrefixes(uri);
     }
 
     /**

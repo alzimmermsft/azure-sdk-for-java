@@ -1,0 +1,145 @@
+/*
+ * ====================================================================
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ * ====================================================================
+ *
+ * This software consists of voluntary contributions made by many
+ * individuals on behalf of the Apache Software Foundation.  For more
+ * information on the Apache Software Foundation, please see
+ * <http://www.apache.org/>.
+ *
+ */
+
+package io.clientcore.core.http.client.implementation.apachehttpclient.core5.http2.hpack;
+
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+
+import io.clientcore.core.http.client.implementation.apachehttpclient.core5.http.Header;
+import io.clientcore.core.http.client.implementation.apachehttpclient.core5.util.Args;
+import io.clientcore.core.http.client.implementation.apachehttpclient.core5.util.Asserts;
+
+final class OutboundDynamicTable {
+
+    private final StaticTable staticTable;
+    private final FifoLinkedList headers;
+    private final Map<String, LinkedList<HPackEntry>> mapByName;
+
+    private int maxSize;
+    private int currentSize;
+
+    OutboundDynamicTable(final int maxSize, final StaticTable staticTable) {
+        this.staticTable = staticTable;
+        this.headers = new FifoLinkedList();
+        this.mapByName = new HashMap<>();
+        this.maxSize = maxSize;
+        this.currentSize = 0;
+    }
+
+    OutboundDynamicTable(final int maxSize) {
+        this(maxSize, StaticTable.INSTANCE);
+    }
+
+    OutboundDynamicTable() {
+        this(Integer.MAX_VALUE);
+    }
+
+    public int getMaxSize() {
+        return maxSize;
+    }
+
+    public void setMaxSize(final int maxSize) {
+        this.maxSize = maxSize;
+        evict();
+    }
+
+    public int getCurrentSize() {
+        return currentSize;
+    }
+
+    int staticLength() {
+        return staticTable.length();
+    }
+
+    int dynamicLength() {
+        return headers.size();
+    }
+
+    Header getDynamicEntry(final int index) {
+        return headers.get(index);
+    }
+
+    public int length() {
+        return staticTable.length() + headers.size();
+    }
+
+    public Header getHeader(final int index) {
+        final int length = length();
+        Args.check(index >= 1, "index %s cannot be less then 1", index);
+        Args.check(index <= length, "index %s cannot be greater then length %s ", index, length);
+        return index <= staticTable.length()
+                        ? staticTable.get(index)
+                        : headers.get(index - staticTable.length() - 1);
+    }
+
+    public void add(final HPackHeader header) {
+        final int entrySize = header.getTotalSize();
+        if (entrySize > this.maxSize) {
+            clear();
+            this.mapByName.clear();
+            return;
+        }
+        final String key = header.getName();
+        final FifoLinkedList.InternalNode node = headers.addFirst(header);
+        final LinkedList<HPackEntry> nodes = mapByName.computeIfAbsent(key, k -> new LinkedList<>());
+        nodes.addFirst(node);
+        currentSize += entrySize;
+        evict();
+    }
+
+    private void clear() {
+        currentSize = 0;
+        headers.clear();
+    }
+
+    public List<HPackEntry> getByName(final String key) {
+        return this.mapByName.get(key);
+    }
+
+    private void evict() {
+        while (currentSize > maxSize) {
+            final FifoLinkedList.InternalNode node = headers.removeLast();
+            if (node != null) {
+                final HPackHeader header = node.getHeader();
+                currentSize -= header.getTotalSize();
+
+                final String key = header.getName();
+                final LinkedList<HPackEntry> nodes = mapByName.get(key);
+                if (nodes != null) {
+                    nodes.remove(node);
+                }
+            } else {
+                Asserts.check(currentSize == 0, "Current table size must be zero");
+                break;
+            }
+        }
+    }
+
+}

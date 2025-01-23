@@ -1,0 +1,379 @@
+/*
+ * ====================================================================
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ * ====================================================================
+ *
+ * This software consists of voluntary contributions made by many
+ * individuals on behalf of the Apache Software Foundation.  For more
+ * information on the Apache Software Foundation, please see
+ * <http://www.apache.org/>.
+ *
+ */
+
+package io.clientcore.core.http.client.implementation.apachehttpclient.core5.http.impl.io;
+
+import java.io.IOException;
+import java.util.concurrent.atomic.AtomicBoolean;
+
+import io.clientcore.core.http.client.implementation.apachehttpclient.core5.annotation.Contract;
+import io.clientcore.core.http.client.implementation.apachehttpclient.core5.annotation.ThreadingBehavior;
+import io.clientcore.core.http.client.implementation.apachehttpclient.core5.http.ClassicHttpRequest;
+import io.clientcore.core.http.client.implementation.apachehttpclient.core5.http.ClassicHttpResponse;
+import io.clientcore.core.http.client.implementation.apachehttpclient.core5.http.ConnectionReuseStrategy;
+import io.clientcore.core.http.client.implementation.apachehttpclient.core5.http.ContentType;
+import io.clientcore.core.http.client.implementation.apachehttpclient.core5.http.HeaderElements;
+import io.clientcore.core.http.client.implementation.apachehttpclient.core5.http.HttpException;
+import io.clientcore.core.http.client.implementation.apachehttpclient.core5.http.HttpHeaders;
+import io.clientcore.core.http.client.implementation.apachehttpclient.core5.http.HttpRequestMapper;
+import io.clientcore.core.http.client.implementation.apachehttpclient.core5.http.HttpResponseFactory;
+import io.clientcore.core.http.client.implementation.apachehttpclient.core5.http.HttpStatus;
+import io.clientcore.core.http.client.implementation.apachehttpclient.core5.http.HttpVersion;
+import io.clientcore.core.http.client.implementation.apachehttpclient.core5.http.ProtocolVersion;
+import io.clientcore.core.http.client.implementation.apachehttpclient.core5.http.UnsupportedHttpVersionException;
+import io.clientcore.core.http.client.implementation.apachehttpclient.core5.http.config.Http1Config;
+import io.clientcore.core.http.client.implementation.apachehttpclient.core5.http.impl.DefaultConnectionReuseStrategy;
+import io.clientcore.core.http.client.implementation.apachehttpclient.core5.http.impl.Http1StreamListener;
+import io.clientcore.core.http.client.implementation.apachehttpclient.core5.http.impl.ServerSupport;
+import io.clientcore.core.http.client.implementation.apachehttpclient.core5.http.io.HttpRequestHandler;
+import io.clientcore.core.http.client.implementation.apachehttpclient.core5.http.io.HttpServerConnection;
+import io.clientcore.core.http.client.implementation.apachehttpclient.core5.http.io.HttpServerRequestHandler;
+import io.clientcore.core.http.client.implementation.apachehttpclient.core5.http.io.entity.EntityUtils;
+import io.clientcore.core.http.client.implementation.apachehttpclient.core5.http.io.entity.StringEntity;
+import io.clientcore.core.http.client.implementation.apachehttpclient.core5.http.io.support.BasicHttpServerExpectationDecorator;
+import io.clientcore.core.http.client.implementation.apachehttpclient.core5.http.io.support.BasicHttpServerRequestHandler;
+import io.clientcore.core.http.client.implementation.apachehttpclient.core5.http.message.BasicClassicHttpResponse;
+import io.clientcore.core.http.client.implementation.apachehttpclient.core5.http.message.MessageSupport;
+import io.clientcore.core.http.client.implementation.apachehttpclient.core5.http.protocol.HttpContext;
+import io.clientcore.core.http.client.implementation.apachehttpclient.core5.http.protocol.HttpCoreContext;
+import io.clientcore.core.http.client.implementation.apachehttpclient.core5.http.protocol.HttpProcessor;
+import io.clientcore.core.http.client.implementation.apachehttpclient.core5.util.Args;
+
+/**
+ * {@code HttpService} is a server side HTTP protocol handler based on
+ * the classic (blocking) I/O model.
+ * <p>
+ * {@code HttpService} relies on {@link HttpProcessor} to generate mandatory
+ * protocol headers for all outgoing messages and apply common, cross-cutting
+ * message transformations to all incoming and outgoing messages, whereas
+ * individual {@link HttpRequestHandler}s are expected to implement
+ * application specific content generation and processing.
+ * <p>
+ * {@code HttpService} uses {@link HttpRequestMapper} to map
+ * matching request handler for a particular request URI of an incoming HTTP
+ * request.
+ *
+ * @since 4.0
+ */
+@Contract(threading = ThreadingBehavior.IMMUTABLE_CONDITIONAL)
+public class HttpService {
+
+    private final HttpProcessor processor;
+    private final Http1Config http1Config;
+    private final HttpServerRequestHandler requestHandler;
+    private final ConnectionReuseStrategy connReuseStrategy;
+    private final Http1StreamListener streamListener;
+
+    /**
+     * Create a new HTTP service.
+     * @param processor the processor to use on requests and responses
+     * @param handlerMapper  the handler mapper
+     * @param responseFactory  the response factory. If {@code null}
+     *   {@link DefaultClassicHttpResponseFactory#INSTANCE} will be used.
+     * @param connReuseStrategy the connection reuse strategy. If {@code null}
+     *   {@link DefaultConnectionReuseStrategy#INSTANCE} will be used.
+     * @param streamListener message stream listener.
+     */
+    public HttpService(
+            final HttpProcessor processor,
+            final HttpRequestMapper<HttpRequestHandler> handlerMapper,
+            final ConnectionReuseStrategy connReuseStrategy,
+            final HttpResponseFactory<ClassicHttpResponse> responseFactory,
+            final Http1StreamListener streamListener) {
+        this(processor,
+                new BasicHttpServerExpectationDecorator(new BasicHttpServerRequestHandler(handlerMapper, responseFactory)),
+                Http1Config.DEFAULT,
+                connReuseStrategy,
+                streamListener);
+    }
+
+    /**
+     * Create a new HTTP service.
+     *
+     * @param processor the processor to use on requests and responses
+     * @param handlerMapper  the handler mapper
+     * @param connReuseStrategy the connection reuse strategy. If {@code null}
+     *   {@link DefaultConnectionReuseStrategy#INSTANCE} will be used.
+     * @param responseFactory  the response factory. If {@code null}
+     *   {@link DefaultClassicHttpResponseFactory#INSTANCE} will be used.
+     */
+    public HttpService(
+            final HttpProcessor processor,
+            final HttpRequestMapper<HttpRequestHandler> handlerMapper,
+            final ConnectionReuseStrategy connReuseStrategy,
+            final HttpResponseFactory<ClassicHttpResponse> responseFactory) {
+        this(processor, handlerMapper, connReuseStrategy, responseFactory, null);
+    }
+
+    /**
+     * Create a new HTTP service.
+     *
+     * @param processor the processor to use on requests and responses
+     * @param requestHandler  the request handler.
+     * @param connReuseStrategy the connection reuse strategy. If {@code null}
+     *   {@link DefaultConnectionReuseStrategy#INSTANCE} will be used.
+     * @param streamListener message stream listener.
+     */
+    public HttpService(
+            final HttpProcessor processor,
+            final HttpServerRequestHandler requestHandler,
+            final ConnectionReuseStrategy connReuseStrategy,
+            final Http1StreamListener streamListener) {
+        this(processor, requestHandler, Http1Config.DEFAULT, connReuseStrategy, streamListener);
+    }
+
+    /**
+     * Create a new HTTP service.
+     *
+     * @param processor the processor to use on requests and responses
+     * @param requestHandler  the request handler.
+     * @param http1Config HTTP/1 protocol configuration.
+     * @param connReuseStrategy the connection reuse strategy. If {@code null}
+     *   {@link DefaultConnectionReuseStrategy#INSTANCE} will be used.
+     * @param streamListener message stream listener.
+     *
+     * @since 5.3
+     */
+    public HttpService(
+            final HttpProcessor processor,
+            final HttpServerRequestHandler requestHandler,
+            final Http1Config http1Config,
+            final ConnectionReuseStrategy connReuseStrategy,
+            final Http1StreamListener streamListener) {
+        super();
+        this.processor =  Args.notNull(processor, "HTTP processor");
+        this.requestHandler =  Args.notNull(requestHandler, "Request handler");
+        this.http1Config = http1Config != null ? http1Config : Http1Config.DEFAULT;
+        this.connReuseStrategy = connReuseStrategy != null ? connReuseStrategy : DefaultConnectionReuseStrategy.INSTANCE;
+        this.streamListener = streamListener;
+    }
+
+    /**
+     * Create a new HTTP service.
+     *
+     * @param processor the processor to use on requests and responses
+     * @param requestHandler  the request handler.
+     */
+    public HttpService(
+            final HttpProcessor processor, final HttpServerRequestHandler requestHandler) {
+        this(processor, requestHandler, Http1Config.DEFAULT, null, null);
+    }
+
+    /**
+     * Handles receives one HTTP request over the given connection within the
+     * given execution context and sends a response back to the client.
+     *
+     * @param conn the active connection to the client
+     * @param localContext the actual execution context.
+     * @throws IOException in case of an I/O error.
+     * @throws HttpException in case of HTTP protocol violation or a processing
+     *   problem.
+     */
+    public void handleRequest(
+            final HttpServerConnection conn,
+            final HttpContext localContext) throws IOException, HttpException {
+
+        final AtomicBoolean responseSubmitted = new AtomicBoolean();
+        final HttpCoreContext context = HttpCoreContext.cast(localContext);
+        try {
+            final ClassicHttpRequest request = conn.receiveRequestHeader();
+            if (request == null) {
+                conn.close();
+                return;
+            }
+            if (streamListener != null) {
+                streamListener.onRequestHead(conn, request);
+            }
+            conn.receiveRequestEntity(request);
+            final ProtocolVersion transportVersion = request.getVersion();
+            if (transportVersion != null && transportVersion.greaterEquals(HttpVersion.HTTP_2)) {
+                throw new UnsupportedHttpVersionException(transportVersion);
+            }
+            context.setProtocolVersion(transportVersion != null ? transportVersion : http1Config.getVersion());
+            context.setRequest(request);
+            context.setSSLSession(conn.getSSLSession());
+            context.setEndpointDetails(conn.getEndpointDetails());
+            this.processor.process(request, request.getEntity(), context);
+
+            this.requestHandler.handle(request, new HttpServerRequestHandler.ResponseTrigger() {
+
+                @Override
+                public void sendInformation(final ClassicHttpResponse response) throws HttpException, IOException {
+                    if (responseSubmitted.get()) {
+                        throw new HttpException("Response already submitted");
+                    }
+                    if (response.getCode() >= HttpStatus.SC_SUCCESS) {
+                        throw new HttpException("Invalid intermediate response");
+                    }
+                    if (streamListener != null) {
+                        streamListener.onResponseHead(conn, response);
+                    }
+                    conn.sendResponseHeader(response);
+                    conn.flush();
+                }
+
+                @Override
+                public void submitResponse(final ClassicHttpResponse response) throws HttpException, IOException {
+                    try {
+                        final ProtocolVersion transportVersion = response.getVersion();
+                        if (transportVersion != null) {
+                            if (!transportVersion.lessEquals(http1Config.getVersion())) {
+                                throw new UnsupportedHttpVersionException(transportVersion);
+                            }
+                            context.setProtocolVersion(transportVersion);
+                        }
+                        context.setResponse(response);
+                        processor.process(response, response.getEntity(), context);
+
+                        responseSubmitted.set(true);
+                        conn.sendResponseHeader(response);
+                        if (streamListener != null) {
+                            streamListener.onResponseHead(conn, response);
+                        }
+                        if (MessageSupport.canResponseHaveBody(request.getMethod(), response)) {
+                            conn.sendResponseEntity(response);
+                        }
+                        // Make sure the request content is fully consumed
+                        EntityUtils.consume(request.getEntity());
+                        final boolean keepAlive = connReuseStrategy.keepAlive(request, response, context);
+                        if (streamListener != null) {
+                            streamListener.onExchangeComplete(conn, keepAlive);
+                        }
+                        if (!keepAlive) {
+                            conn.close();
+                        }
+                        conn.flush();
+                    } finally {
+                        response.close();
+                    }
+                }
+
+            }, context);
+
+        } catch (final HttpException ex) {
+            if (responseSubmitted.get()) {
+                throw ex;
+            }
+            try (final ClassicHttpResponse errorResponse = new BasicClassicHttpResponse(HttpStatus.SC_INTERNAL_SERVER_ERROR)) {
+                handleException(ex, errorResponse);
+                errorResponse.setHeader(HttpHeaders.CONNECTION, HeaderElements.CLOSE);
+                context.setResponse(errorResponse);
+                this.processor.process(errorResponse, errorResponse.getEntity(), context);
+
+                conn.sendResponseHeader(errorResponse);
+                if (streamListener != null) {
+                    streamListener.onResponseHead(conn, errorResponse);
+                }
+                conn.sendResponseEntity(errorResponse);
+                conn.close();
+            }
+        }
+    }
+
+    /**
+     * Handles the given exception and generates an HTTP response to be sent
+     * back to the client to inform about the exceptional condition encountered
+     * in the course of the request processing.
+     *
+     * @param ex the exception.
+     * @param response the HTTP response.
+     */
+    protected void handleException(final HttpException ex, final ClassicHttpResponse response) {
+        response.setCode(toStatusCode(ex));
+        response.setEntity(new StringEntity(ServerSupport.toErrorMessage(ex), ContentType.TEXT_PLAIN));
+    }
+
+    protected int toStatusCode(final Exception ex) {
+        return ServerSupport.toStatusCode(ex);
+    }
+
+
+    /**
+     * Create a new {@link Builder}.
+     *
+     * @since 5.2
+     */
+    public static Builder builder() {
+        return new Builder();
+    }
+
+    /**
+     * Builder for {@link HttpService}.
+     *
+     * @since 5.2
+     */
+    public static final class Builder {
+
+        private HttpProcessor processor;
+        private HttpServerRequestHandler requestHandler;
+        private Http1Config http1Config;
+        private ConnectionReuseStrategy connReuseStrategy;
+        private Http1StreamListener streamListener;
+
+        private Builder() {}
+
+        public Builder withHttpProcessor(final HttpProcessor processor) {
+            this.processor = processor;
+            return this;
+        }
+
+        public Builder withHttpServerRequestHandler(final HttpServerRequestHandler requestHandler) {
+            this.requestHandler = requestHandler;
+            return this;
+        }
+
+        public Builder withHttp1Config(final Http1Config http1Config) {
+            this.http1Config = http1Config;
+            return this;
+        }
+
+        public Builder withConnectionReuseStrategy(final ConnectionReuseStrategy connReuseStrategy) {
+            this.connReuseStrategy = connReuseStrategy;
+            return this;
+        }
+
+        public Builder withHttp1StreamListener(final Http1StreamListener streamListener) {
+            this.streamListener = streamListener;
+            return this;
+        }
+
+        /**
+         * Create a new HTTP service.
+         *
+         * @since 5.2
+         */
+        public HttpService build() {
+            return new HttpService(
+                    processor,
+                    requestHandler,
+                    http1Config,
+                    connReuseStrategy,
+                    streamListener);
+        }
+    }
+
+}
