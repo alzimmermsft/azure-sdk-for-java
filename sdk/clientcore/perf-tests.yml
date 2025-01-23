@@ -6,6 +6,7 @@ PrimaryPackage: 'io.clientcore:core'
 
 PackageVersions:
 - 'io.clientcore:core': 1.0.0-beta.1 # {x-version-update;io.clientcore:core;dependency}
+  'io.clientcore:http-jdk-httpclient': 1.0.0-beta.1 # {x-version-update;io.clientcore:http-jdk-httpclient;dependency}
   'io.clientcore:http-okhttp3': 1.0.0-beta.1 # {x-version-update;io.clientcore:http-okhttp3;dependency}
 
 Tests:
@@ -14,3 +15,4 @@ Tests:
   Arguments:
   - --sync --http-client default
   - --sync --http-client okhttp
+  - --sync --http-client jdk

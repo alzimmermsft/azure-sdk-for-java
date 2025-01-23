@@ -199,6 +199,7 @@
     "sdk/devcenter/azure-developer-devcenter/**",
     "sdk/loadtesting/azure-developer-loadtesting/**",
     "sdk/clientcore/core/**",
+    "sdk/clientcore/http-jdk-httpclient/**",
     "sdk/clientcore/http-okhttp3/**",
     "sdk/clientcore/tools/**",
     "sdk/serialization/azure-json-gson/**",

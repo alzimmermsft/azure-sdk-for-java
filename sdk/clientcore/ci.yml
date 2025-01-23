@@ -26,7 +26,11 @@ parameters:
     displayName: 'core'
     type: boolean
     default: true
-  - name: release_clientcorehttpokhttp3
+  - name: release_httpjdkhttpclient
+    displayName: 'http-jdk-httpclient'
+    type: boolean
+    default: false
+  - name: release_httpokhttp3
     displayName: 'http-okhttp3'
     type: boolean
     default: false
@@ -46,10 +50,14 @@ extends:
         groupId: io.clientcore
         safeName: core
         releaseInBatch: ${{ parameters.release_core }}
+      - name: http-jdk-httpclient
+        groupId: io.clientcore
+        safeName: httpjdkhttpclient
+        releaseInBatch: ${{ parameters.release_httpjdkhttpclient }}
       - name: http-okhttp3
         groupId: io.clientcore
         safeName: httpokhttp3
-        releaseInBatch: ${{ parameters.release_clientcorehttpokhttp3 }}
+        releaseInBatch: ${{ parameters.release_httpokhttp3 }}
     AdditionalModules:
       - name: optional-dependency-tests
         groupId: io.clientcore

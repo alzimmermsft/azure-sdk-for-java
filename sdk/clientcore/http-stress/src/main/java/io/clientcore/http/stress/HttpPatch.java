@@ -93,6 +93,8 @@ public class HttpPatch extends ScenarioBase<StressOptions> {
 
         if (options.getHttpClient() == PerfStressOptions.HttpClientType.OKHTTP) {
             builder.httpClient(new OkHttpHttpClientProvider().getSharedInstance());
+        } else if (options.getHttpClient() == PerfStressOptions.HttpClientType.JDK) {
+            builder.httpClient(new JdkHttpClientProvider().getSharedInstance());
         } else {
             builder.httpClient(new DefaultHttpClientBuilder().build());
         }
