@@ -59,10 +59,6 @@ public final class PublicSuffixList {
         this.exceptions = Collections.unmodifiableList(exceptions != null ? exceptions : Collections.emptyList());
     }
 
-    public PublicSuffixList(final List<String> rules, final List<String> exceptions) {
-        this(DomainType.UNKNOWN, rules, exceptions);
-    }
-
     /**
      * @since 4.5
      */

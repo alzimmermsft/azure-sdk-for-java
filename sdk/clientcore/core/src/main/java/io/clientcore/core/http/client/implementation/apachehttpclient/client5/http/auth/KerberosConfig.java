@@ -57,13 +57,6 @@ public class KerberosConfig implements Cloneable {
     private final Option useCanonicalHostname;
     private final Option requestDelegCreds;
 
-    /**
-     * Intended for CDI compatibility
-    */
-    protected KerberosConfig() {
-        this(Option.DEFAULT, Option.DEFAULT, Option.DEFAULT);
-    }
-
     KerberosConfig(
             final Option stripPort,
             final Option useCanonicalHostname,
@@ -93,13 +86,8 @@ public class KerberosConfig implements Cloneable {
 
     @Override
     public String toString() {
-        final StringBuilder builder = new StringBuilder();
-        builder.append("[");
-        builder.append("stripPort=").append(stripPort);
-        builder.append(", useCanonicalHostname=").append(useCanonicalHostname);
-        builder.append(", requestDelegCreds=").append(requestDelegCreds);
-        builder.append("]");
-        return builder.toString();
+        return "[stripPort=" + stripPort + ", useCanonicalHostname=" + useCanonicalHostname
+            + ", requestDelegCreds=" + requestDelegCreds + "]";
     }
 
     public static Builder custom() {
@@ -131,18 +119,8 @@ public class KerberosConfig implements Cloneable {
             return this;
         }
 
-        public Builder setStripPort(final boolean stripPort) {
-            this.stripPort = stripPort ? Option.ENABLE : Option.DISABLE;
-            return this;
-        }
-
         public Builder setUseCanonicalHostname(final Option useCanonicalHostname) {
             this.useCanonicalHostname = useCanonicalHostname;
-            return this;
-        }
-
-        public Builder setUseCanonicalHostname(final boolean useCanonicalHostname) {
-            this.useCanonicalHostname = useCanonicalHostname ? Option.ENABLE : Option.DISABLE;
             return this;
         }
 

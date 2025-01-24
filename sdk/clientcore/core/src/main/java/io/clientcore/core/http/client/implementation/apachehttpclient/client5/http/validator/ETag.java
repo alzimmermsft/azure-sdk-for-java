@@ -54,30 +54,12 @@ public final class ETag {
         this.type = Args.notNull(type, "Validator type");
     }
 
-    public ETag(final String value) {
-        this(value, ValidatorType.STRONG);
-    }
-
     public ValidatorType getType() {
         return type;
     }
 
     public String getValue() {
         return value;
-    }
-
-    public static boolean strongCompare(final ETag t1, final ETag t2) {
-        if (t1 == null || t2 == null) {
-            return false;
-        }
-        return t1.type == ValidatorType.STRONG && t1.type == t2.type && t1.value.equals(t2.value);
-    }
-
-    public static boolean weakCompare(final ETag t1, final ETag t2) {
-        if (t1 == null || t2 == null) {
-            return false;
-        }
-        return t1.value.equals(t2.value);
     }
 
     static ETag parse(final CharSequence buf, final Tokenizer.Cursor cursor) {

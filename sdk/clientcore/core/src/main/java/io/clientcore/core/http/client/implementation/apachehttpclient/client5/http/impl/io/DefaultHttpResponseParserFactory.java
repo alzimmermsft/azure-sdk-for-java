@@ -75,16 +75,6 @@ public class DefaultHttpResponseParserFactory implements HttpMessageParserFactor
         this(h1Config, null, null);
     }
 
-    public DefaultHttpResponseParserFactory(
-            final LineParser lineParser,
-            final HttpResponseFactory<ClassicHttpResponse> responseFactory) {
-        this(null, lineParser, responseFactory);
-    }
-
-    public DefaultHttpResponseParserFactory(final HttpResponseFactory<ClassicHttpResponse> responseFactory) {
-        this(null, null, responseFactory);
-    }
-
     public DefaultHttpResponseParserFactory() {
         this(null, null, null);
     }

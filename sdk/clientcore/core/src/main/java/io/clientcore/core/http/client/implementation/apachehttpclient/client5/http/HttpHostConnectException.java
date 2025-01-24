@@ -41,14 +41,6 @@ public class HttpHostConnectException extends ConnectException {
 
     private final NamedEndpoint namedEndpoint;
 
-    /**
-     * Creates a HttpHostConnectException with the specified detail message.
-     */
-    public HttpHostConnectException(final String message) {
-        super(message);
-        this.namedEndpoint = null;
-    }
-
     public HttpHostConnectException(final String message, final NamedEndpoint namedEndpoint) {
         super(message);
         this.namedEndpoint = namedEndpoint;

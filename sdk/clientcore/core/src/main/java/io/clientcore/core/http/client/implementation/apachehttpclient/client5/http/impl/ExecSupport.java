@@ -38,10 +38,6 @@ public final class ExecSupport {
 
     private static final PrefixedIncrementingId INCREMENTING_ID = new PrefixedIncrementingId("ex-");
 
-    public static long getNextExecNumber() {
-        return INCREMENTING_ID.getNextNumber();
-    }
-
     public static String getNextExchangeId() {
         return INCREMENTING_ID.getNextId();
     }

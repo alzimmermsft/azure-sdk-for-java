@@ -301,18 +301,8 @@ public final class HttpRoute implements RouteInfo, Cloneable {
     }
 
     @Override
-    public TunnelType getTunnelType() {
-        return this.tunnelled;
-    }
-
-    @Override
     public boolean isTunnelled() {
         return (this.tunnelled == TunnelType.TUNNELLED);
-    }
-
-    @Override
-    public LayerType getLayerType() {
-        return this.layered;
     }
 
     @Override

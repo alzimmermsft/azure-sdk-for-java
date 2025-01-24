@@ -22,10 +22,10 @@ class DefaultHttpClient implements HttpClient {
     private final Duration readTimeout;
     private final boolean hasReadTimeout;
 
-    final Object jdkHttpClient;
+    final io.clientcore.core.http.client.implementation.apachehttpclient.client5.http.classic.HttpClient httpClient;
 
     DefaultHttpClient(Object httpClient, Duration writeTimeout, Duration responseTimeout, Duration readTimeout) {
-        this.jdkHttpClient = httpClient;
+        this.httpClient = httpClient;
 
         // Set the write and response timeouts to null if they are negative or zero.
         // The writeTimeout is used with 'Flux.timeout(Duration)' which uses thread switching, always. When the timeout

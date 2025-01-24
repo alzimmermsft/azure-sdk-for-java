@@ -125,14 +125,6 @@ public interface RouteInfo {
     HttpHost getProxyHost();
 
     /**
-     * Obtains the tunnel type of this route.
-     * If there is a proxy chain, only end-to-end tunnels are considered.
-     *
-     * @return  the tunnelling type
-     */
-    TunnelType getTunnelType();
-
-    /**
      * Checks whether this route is tunnelled through a proxy.
      * If there is a proxy chain, only end-to-end tunnels are considered.
      *
@@ -141,15 +133,6 @@ public interface RouteInfo {
      *          {@code false} otherwise
      */
     boolean isTunnelled();
-
-    /**
-     * Obtains the layering type of this route.
-     * In the presence of proxies, only layering over an end-to-end tunnel
-     * is considered.
-     *
-     * @return  the layering type
-     */
-    LayerType getLayerType();
 
     /**
      * Checks whether this route includes a layered protocol.

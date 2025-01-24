@@ -85,20 +85,6 @@ public class DefaultHttpClientConnectionOperator implements HttpClientConnection
     private final SchemePortResolver schemePortResolver;
     private final DnsResolver dnsResolver;
 
-    /**
-     * @deprecated Provided for backward compatibility
-     */
-    @Deprecated
-    static Lookup<TlsSocketStrategy> adapt(final Lookup<io.clientcore.core.http.client.implementation.apachehttpclient.client5.http.socket.ConnectionSocketFactory> lookup) {
-
-        return name -> {
-            final io.clientcore.core.http.client.implementation.apachehttpclient.client5.http.socket.ConnectionSocketFactory sf = lookup.lookup(name);
-            return sf instanceof org.apache.hc.client5.http.socket.LayeredConnectionSocketFactory ? (socket, target, port, attachment, context) ->
-                    (SSLSocket) ((io.clientcore.core.http.client.implementation.apachehttpclient.client5.http.socket.LayeredConnectionSocketFactory) sf).createLayeredSocket(socket, target, port, attachment, context) : null;
-        };
-
-    }
-
 
     public DefaultHttpClientConnectionOperator(
             final DetachedSocketFactory detachedSocketFactory,
@@ -112,17 +98,6 @@ public class DefaultHttpClientConnectionOperator implements HttpClientConnection
                 DefaultSchemePortResolver.INSTANCE;
         this.dnsResolver = dnsResolver != null ? dnsResolver :
                 SystemDefaultDnsResolver.INSTANCE;
-    }
-
-    /**
-     * @deprecated Do not use.
-     */
-    @Deprecated
-    public DefaultHttpClientConnectionOperator(
-            final Lookup<io.clientcore.core.http.client.implementation.apachehttpclient.client5.http.socket.ConnectionSocketFactory> socketFactoryRegistry,
-            final SchemePortResolver schemePortResolver,
-            final DnsResolver dnsResolver) {
-        this(PLAIN_SOCKET_FACTORY, schemePortResolver, dnsResolver, adapt(socketFactoryRegistry));
     }
 
     public DefaultHttpClientConnectionOperator(

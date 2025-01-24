@@ -387,23 +387,9 @@ public class ClassicRequestBuilder extends AbstractRequestBuilder<ClassicHttpReq
 
     @Override
     public String toString() {
-        final StringBuilder builder = new StringBuilder();
-        builder.append("ClassicRequestBuilder [method=");
-        builder.append(getMethod());
-        builder.append(", scheme=");
-        builder.append(getScheme());
-        builder.append(", authority=");
-        builder.append(getAuthority());
-        builder.append(", path=");
-        builder.append(getPath());
-        builder.append(", parameters=");
-        builder.append(getParameters());
-        builder.append(", headerGroup=");
-        builder.append(Arrays.toString(getHeaders()));
-        builder.append(", entity=");
-        builder.append(entity != null ? entity.getClass() : null);
-        builder.append("]");
-        return builder.toString();
+        return "ClassicRequestBuilder [method=" + getMethod() + ", scheme=" + getScheme() + ", authority="
+            + getAuthority() + ", path=" + getPath() + ", parameters=" + getParameters() + ", headerGroup="
+            + Arrays.toString(getHeaders()) + ", entity=" + (entity != null ? entity.getClass() : null) + "]";
     }
 
 }

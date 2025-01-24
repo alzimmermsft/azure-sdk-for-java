@@ -28,16 +28,13 @@
 package io.clientcore.core.http.client.implementation.apachehttpclient.client5.http.impl.cookie;
 
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import io.clientcore.core.http.client.implementation.apachehttpclient.client5.http.cookie.CommonCookieAttributeHandler;
 import io.clientcore.core.http.client.implementation.apachehttpclient.client5.http.cookie.CookieAttributeHandler;
 import io.clientcore.core.http.client.implementation.apachehttpclient.client5.http.cookie.CookieSpec;
 import io.clientcore.core.http.client.implementation.apachehttpclient.core5.annotation.Contract;
 import io.clientcore.core.http.client.implementation.apachehttpclient.core5.annotation.ThreadingBehavior;
-import io.clientcore.core.http.client.implementation.apachehttpclient.core5.util.Asserts;
 
 /**
  * Abstract cookie specification which can delegate the job of parsing,
@@ -63,26 +60,6 @@ public abstract class AbstractCookieSpec implements CookieSpec {
     }
 
     /**
-     * @since 4.4
-     */
-    protected AbstractCookieSpec(final HashMap<String, CookieAttributeHandler> map) {
-        super();
-        Asserts.notNull(map, "Attribute handler map");
-        this.attribHandlerMap = new ConcurrentHashMap<>(map);
-    }
-
-    /**
-     * @since 4.4
-     */
-    protected AbstractCookieSpec(final CommonCookieAttributeHandler... handlers) {
-        super();
-        this.attribHandlerMap = new ConcurrentHashMap<>(handlers.length);
-        for (final CommonCookieAttributeHandler handler: handlers) {
-            this.attribHandlerMap.put(handler.getAttributeName(), handler);
-        }
-    }
-
-    /**
      * Finds an attribute handler {@link CookieAttributeHandler} for the
      * given attribute. Returns {@code null} if no attribute handler is
      * found for the specified attribute.
@@ -92,21 +69,6 @@ public abstract class AbstractCookieSpec implements CookieSpec {
      */
     protected CookieAttributeHandler findAttribHandler(final String name) {
         return this.attribHandlerMap.get(name);
-    }
-
-    /**
-     * Gets attribute handler {@link CookieAttributeHandler} for the
-     * given attribute.
-     *
-     * @param name attribute name. e.g. Domain, Path, etc.
-     * @throws IllegalStateException if handler not found for the
-     *          specified attribute.
-     */
-    protected CookieAttributeHandler getAttribHandler(final String name) {
-        final CookieAttributeHandler handler = findAttribHandler(name);
-        Asserts.check(handler != null, "Handler not registered for " +
-                name + " attribute");
-        return handler;
     }
 
     protected Collection<CookieAttributeHandler> getAttribHandlers() {

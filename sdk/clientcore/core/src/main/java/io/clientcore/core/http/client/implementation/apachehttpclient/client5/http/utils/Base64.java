@@ -84,33 +84,11 @@ public class Base64 {
     }
 
     /**
-     * Decodes a Base64 String into octets.
-     * <p>
-     * <b>Note:</b> this method does NOT accept URL-safe encodings
-     */
-
-    public static byte[] decodeBase64(final String base64) {
-        return CODEC.decode(base64);
-    }
-
-    /**
      * Encodes binary data using the base64 algorithm but does not chunk the output.
      */
 
     public static byte[] encodeBase64(final byte[] base64) {
         return CODEC.encode(base64);
-    }
-
-    /**
-     * Encodes binary data using the base64 algorithm but does not chunk the output.
-     */
-
-    public static String encodeBase64String(final byte[] bytes) {
-        if (null == bytes) {
-            return null;
-        }
-
-        return getEncoder().encodeToString(bytes);
     }
 
     /**

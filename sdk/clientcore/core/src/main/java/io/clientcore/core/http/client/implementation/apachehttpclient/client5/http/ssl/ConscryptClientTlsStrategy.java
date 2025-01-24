@@ -106,10 +106,6 @@ public class ConscryptClientTlsStrategy extends AbstractClientTlsStrategy {
         this(sslContext, null, null, SSLBufferMode.STATIC, hostnameVerificationPolicy, hostnameVerifier);
     }
 
-    public ConscryptClientTlsStrategy(final SSLContext sslContext) {
-        this(sslContext, HttpsSupport.getDefaultHostnameVerifier());
-    }
-
     @Override
     void applyParameters(final SSLEngine sslEngine, final SSLParameters sslParameters, final String[] appProtocols) {
         if (Conscrypt.isConscrypt(sslEngine)) {

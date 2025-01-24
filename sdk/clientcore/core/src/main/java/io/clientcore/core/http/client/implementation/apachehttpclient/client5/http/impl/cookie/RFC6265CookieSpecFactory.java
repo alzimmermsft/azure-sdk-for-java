@@ -72,14 +72,6 @@ public class RFC6265CookieSpecFactory implements CookieSpecFactory {
         this.lock = new ReentrantLock();
     }
 
-    public RFC6265CookieSpecFactory(final PublicSuffixMatcher publicSuffixMatcher) {
-        this(CompatibilityLevel.RELAXED, publicSuffixMatcher);
-    }
-
-    public RFC6265CookieSpecFactory() {
-        this(CompatibilityLevel.RELAXED, null);
-    }
-
     @Override
     public CookieSpec create(final HttpContext context) {
         if (cookieSpec == null) {

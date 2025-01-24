@@ -344,13 +344,6 @@ public final class BasicClientCookie implements SetCookie, Cloneable, Serializab
         return this.attribs.containsKey(name);
     }
 
-    /**
-     * @since 4.4
-     */
-    public boolean removeAttribute(final String name) {
-        return this.attribs.remove(name) != null;
-    }
-
     @Override
     public Object clone() throws CloneNotSupportedException {
         final BasicClientCookie clone = (BasicClientCookie) super.clone();

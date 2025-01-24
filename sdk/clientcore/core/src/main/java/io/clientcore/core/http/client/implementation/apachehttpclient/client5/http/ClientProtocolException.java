@@ -37,10 +37,6 @@ public class ClientProtocolException extends IOException {
 
     private static final long serialVersionUID = -5596590843227115865L;
 
-    public ClientProtocolException() {
-        super();
-    }
-
     public ClientProtocolException(final String s) {
         super(s);
     }

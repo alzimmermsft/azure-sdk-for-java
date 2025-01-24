@@ -28,7 +28,6 @@
 package io.clientcore.core.http.client.implementation.apachehttpclient.client5.http.impl.cookie;
 
 import io.clientcore.core.http.client.implementation.apachehttpclient.client5.http.cookie.CommonCookieAttributeHandler;
-import io.clientcore.core.http.client.implementation.apachehttpclient.client5.http.utils.DateUtils;
 import io.clientcore.core.http.client.implementation.apachehttpclient.core5.annotation.Contract;
 import io.clientcore.core.http.client.implementation.apachehttpclient.core5.annotation.ThreadingBehavior;
 
@@ -41,15 +40,6 @@ import io.clientcore.core.http.client.implementation.apachehttpclient.core5.anno
  */
 @Contract(threading = ThreadingBehavior.SAFE)
 public class RFC6265StrictSpec extends RFC6265CookieSpecBase {
-
-    public RFC6265StrictSpec() {
-        super(BasicPathHandler.INSTANCE,
-                BasicDomainHandler.INSTANCE,
-                BasicMaxAgeHandler.INSTANCE,
-                BasicSecureHandler.INSTANCE,
-                BasicHttpOnlyHandler.INSTANCE,
-                new BasicExpiresHandler(DateUtils.STANDARD_PATTERNS));
-    }
 
     RFC6265StrictSpec(final CommonCookieAttributeHandler... handlers) {
         super(handlers);

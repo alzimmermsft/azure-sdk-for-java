@@ -68,17 +68,6 @@ public class LenientHttpResponseParser extends DefaultHttpResponseParser {
         super(h1Config, lineParser, responseFactory);
     }
 
-    /**
-     * Creates new instance of DefaultHttpResponseParser.
-     *
-     * @param h1Config        HTTP/1.1 parameters. If {@code null}. {@link Http1Config#DEFAULT} will be used.
-     *
-     * @since 4.3
-     */
-    public LenientHttpResponseParser(final Http1Config h1Config) {
-        this(null, null, h1Config);
-    }
-
     @Override
     protected ClassicHttpResponse createMessage(final CharArrayBuffer buffer) throws IOException {
         try {

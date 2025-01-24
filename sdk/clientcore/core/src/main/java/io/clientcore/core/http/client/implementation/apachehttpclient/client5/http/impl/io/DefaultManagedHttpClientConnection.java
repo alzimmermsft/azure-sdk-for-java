@@ -91,31 +91,6 @@ final class DefaultManagedHttpClientConnection
         this.closed = new AtomicBoolean();
     }
 
-    public DefaultManagedHttpClientConnection(
-            final String id,
-            final CharsetDecoder charDecoder,
-            final CharsetEncoder charEncoder,
-            final Http1Config h1Config,
-            final ContentLengthStrategy incomingContentStrategy,
-            final ContentLengthStrategy outgoingContentStrategy,
-            final HttpMessageWriterFactory<ClassicHttpRequest> requestWriterFactory,
-            final HttpMessageParserFactory<ClassicHttpResponse> responseParserFactory) {
-        this(
-                id,
-                charDecoder,
-                charEncoder,
-                h1Config,
-                incomingContentStrategy,
-                outgoingContentStrategy,
-                null,
-                requestWriterFactory,
-                responseParserFactory);
-    }
-
-    public DefaultManagedHttpClientConnection(final String id) {
-        this(id, null, null, null, null, null, null, null);
-    }
-
     @Override
     public String getId() {
         return this.id;

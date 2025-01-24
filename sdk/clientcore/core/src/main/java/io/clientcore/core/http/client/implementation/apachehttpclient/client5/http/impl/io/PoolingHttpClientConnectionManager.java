@@ -26,19 +26,8 @@
  */
 package io.clientcore.core.http.client.implementation.apachehttpclient.client5.http.impl.io;
 
-import java.io.IOException;
-import java.util.Set;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeoutException;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicReference;
-import java.util.concurrent.locks.ReentrantLock;
-
-import io.clientcore.core.http.client.implementation.apachehttpclient.client5.http.DnsResolver;
 import io.clientcore.core.http.client.implementation.apachehttpclient.client5.http.EndpointInfo;
 import io.clientcore.core.http.client.implementation.apachehttpclient.client5.http.HttpRoute;
-import io.clientcore.core.http.client.implementation.apachehttpclient.client5.http.SchemePortResolver;
 import io.clientcore.core.http.client.implementation.apachehttpclient.client5.http.config.ConnectionConfig;
 import io.clientcore.core.http.client.implementation.apachehttpclient.client5.http.config.TlsConfig;
 import io.clientcore.core.http.client.implementation.apachehttpclient.client5.http.impl.ConnPoolSupport;
@@ -60,7 +49,6 @@ import io.clientcore.core.http.client.implementation.apachehttpclient.core5.http
 import io.clientcore.core.http.client.implementation.apachehttpclient.core5.http.HttpException;
 import io.clientcore.core.http.client.implementation.apachehttpclient.core5.http.HttpHost;
 import io.clientcore.core.http.client.implementation.apachehttpclient.core5.http.URIScheme;
-import io.clientcore.core.http.client.implementation.apachehttpclient.core5.http.config.Registry;
 import io.clientcore.core.http.client.implementation.apachehttpclient.core5.http.config.RegistryBuilder;
 import io.clientcore.core.http.client.implementation.apachehttpclient.core5.http.impl.io.HttpRequestExecutor;
 import io.clientcore.core.http.client.implementation.apachehttpclient.core5.http.io.HttpConnectionFactory;
@@ -82,6 +70,15 @@ import io.clientcore.core.http.client.implementation.apachehttpclient.core5.util
 import io.clientcore.core.http.client.implementation.apachehttpclient.core5.util.Timeout;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
+import java.util.Set;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeoutException;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * {@code ClientConnectionPoolManager} maintains a pool of
@@ -130,81 +127,6 @@ public class PoolingHttpClientConnectionManager
                 null);
     }
 
-    /**
-     * @deprecated Use {@link PoolingHttpClientConnectionManagerBuilder}
-     */
-    @Deprecated
-    public PoolingHttpClientConnectionManager(
-            final Registry<io.clientcore.core.http.client.implementation.apachehttpclient.client5.http.socket.ConnectionSocketFactory> socketFactoryRegistry) {
-        this(socketFactoryRegistry, null);
-    }
-
-    /**
-     * @deprecated Use {@link PoolingHttpClientConnectionManagerBuilder}
-     */
-    @Deprecated
-    public PoolingHttpClientConnectionManager(
-            final Registry<io.clientcore.core.http.client.implementation.apachehttpclient.client5.http.socket.ConnectionSocketFactory> socketFactoryRegistry,
-            final HttpConnectionFactory<ManagedHttpClientConnection> connFactory) {
-        this(socketFactoryRegistry, PoolConcurrencyPolicy.STRICT, TimeValue.NEG_ONE_MILLISECOND, connFactory);
-    }
-
-    /**
-     * @deprecated Use {@link PoolingHttpClientConnectionManagerBuilder}
-     */
-    @Deprecated
-    public PoolingHttpClientConnectionManager(
-            final Registry<io.clientcore.core.http.client.implementation.apachehttpclient.client5.http.socket.ConnectionSocketFactory> socketFactoryRegistry,
-            final PoolConcurrencyPolicy poolConcurrencyPolicy,
-            final TimeValue timeToLive,
-            final HttpConnectionFactory<ManagedHttpClientConnection> connFactory) {
-        this(socketFactoryRegistry, poolConcurrencyPolicy, PoolReusePolicy.LIFO, timeToLive, connFactory);
-    }
-
-    /**
-     * @deprecated Use {@link PoolingHttpClientConnectionManagerBuilder}
-     */
-    @Deprecated
-    public PoolingHttpClientConnectionManager(
-            final Registry<io.clientcore.core.http.client.implementation.apachehttpclient.client5.http.socket.ConnectionSocketFactory> socketFactoryRegistry,
-            final PoolConcurrencyPolicy poolConcurrencyPolicy,
-            final PoolReusePolicy poolReusePolicy,
-            final TimeValue timeToLive) {
-        this(socketFactoryRegistry, poolConcurrencyPolicy, poolReusePolicy, timeToLive, null);
-    }
-
-    /**
-     * @deprecated Use {@link PoolingHttpClientConnectionManagerBuilder}
-     */
-    @Deprecated
-    public PoolingHttpClientConnectionManager(
-            final Registry<io.clientcore.core.http.client.implementation.apachehttpclient.client5.http.socket.ConnectionSocketFactory> socketFactoryRegistry,
-            final PoolConcurrencyPolicy poolConcurrencyPolicy,
-            final PoolReusePolicy poolReusePolicy,
-            final TimeValue timeToLive,
-            final HttpConnectionFactory<ManagedHttpClientConnection> connFactory) {
-        this(socketFactoryRegistry, poolConcurrencyPolicy, poolReusePolicy, timeToLive, null, null, connFactory);
-    }
-
-    /**
-     * @deprecated Use {@link PoolingHttpClientConnectionManagerBuilder}
-     */
-    @Deprecated
-    public PoolingHttpClientConnectionManager(
-            final Registry<io.clientcore.core.http.client.implementation.apachehttpclient.client5.http.socket.ConnectionSocketFactory> socketFactoryRegistry,
-            final PoolConcurrencyPolicy poolConcurrencyPolicy,
-            final PoolReusePolicy poolReusePolicy,
-            final TimeValue timeToLive,
-            final SchemePortResolver schemePortResolver,
-            final DnsResolver dnsResolver,
-            final HttpConnectionFactory<ManagedHttpClientConnection> connFactory) {
-        this(new DefaultHttpClientConnectionOperator(socketFactoryRegistry, schemePortResolver, dnsResolver),
-                poolConcurrencyPolicy,
-                poolReusePolicy,
-                timeToLive,
-                connFactory);
-    }
-
     @Internal
     public PoolingHttpClientConnectionManager(
             final HttpClientConnectionOperator httpClientConnectionOperator,
@@ -247,18 +169,6 @@ public class PoolingHttpClientConnectionManager
             default:
                 throw new IllegalArgumentException("Unexpected PoolConcurrencyPolicy value: " + poolConcurrencyPolicy);
         }
-        this.connFactory = connFactory != null ? connFactory : ManagedHttpClientConnectionFactory.INSTANCE;
-        this.closed = new AtomicBoolean(false);
-    }
-
-    @Internal
-    protected PoolingHttpClientConnectionManager(
-            final HttpClientConnectionOperator httpClientConnectionOperator,
-            final ManagedConnPool<HttpRoute, ManagedHttpClientConnection> pool,
-            final HttpConnectionFactory<ManagedHttpClientConnection> connFactory) {
-        super();
-        this.connectionOperator = Args.notNull(httpClientConnectionOperator, "Connection operator");
-        this.pool = Args.notNull(pool, "Connection pool");
         this.connFactory = connFactory != null ? connFactory : ManagedHttpClientConnectionFactory.INSTANCE;
         this.closed = new AtomicBoolean(false);
     }
@@ -307,10 +217,6 @@ public class PoolingHttpClientConnectionManager
     private TimeValue resolveValidateAfterInactivity(final ConnectionConfig connectionConfig) {
         final TimeValue timeValue = connectionConfig.getValidateAfterInactivity();
         return timeValue != null ? timeValue : TimeValue.ofSeconds(2);
-    }
-
-    public LeaseRequest lease(final String id, final HttpRoute route, final Object state) {
-        return lease(id, route, Timeout.DISABLED, state);
     }
 
     @Override
@@ -588,13 +494,6 @@ public class PoolingHttpClientConnectionManager
     }
 
     /**
-     * Sets the same {@link SocketConfig} for all routes
-     */
-    public void setDefaultSocketConfig(final SocketConfig config) {
-        this.socketConfigResolver = route -> config;
-    }
-
-    /**
      * Sets {@link Resolver} of {@link SocketConfig} on a per route basis.
      *
      * @since 5.2
@@ -619,15 +518,6 @@ public class PoolingHttpClientConnectionManager
      */
     public void setConnectionConfigResolver(final Resolver<HttpRoute, ConnectionConfig> connectionConfigResolver) {
         this.connectionConfigResolver = connectionConfigResolver;
-    }
-
-    /**
-     * Sets the same {@link ConnectionConfig} for all hosts
-     *
-     * @since 5.2
-     */
-    public void setDefaultTlsConfig(final TlsConfig config) {
-        this.tlsConfigResolver = host -> config;
     }
 
     /**

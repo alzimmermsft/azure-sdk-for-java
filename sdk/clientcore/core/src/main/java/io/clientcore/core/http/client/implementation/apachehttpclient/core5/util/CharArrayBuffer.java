@@ -235,19 +235,6 @@ public final class CharArrayBuffer implements CharSequence, Serializable {
     }
 
     /**
-     * Converts the content of this buffer to an array of chars.
-     *
-     * @return char array
-     */
-    public char[] toCharArray() {
-        final char[] b = new char[this.len];
-        if (this.len > 0) {
-            System.arraycopy(this.array, 0, b, 0, this.len);
-        }
-        return b;
-    }
-
-    /**
      * Returns the {@code char} value in this buffer at the specified
      * index. The index argument must be greater than or equal to
      * {@code 0}, and less than the length of this buffer.

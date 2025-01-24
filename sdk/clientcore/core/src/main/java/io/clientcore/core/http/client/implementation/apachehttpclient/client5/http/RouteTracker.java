@@ -28,6 +28,7 @@
 package io.clientcore.core.http.client.implementation.apachehttpclient.client5.http;
 
 import java.net.InetAddress;
+import java.util.Arrays;
 import java.util.Objects;
 
 import io.clientcore.core.http.client.implementation.apachehttpclient.core5.http.HttpHost;
@@ -232,18 +233,8 @@ public final class RouteTracker implements RouteInfo, Cloneable {
     }
 
     @Override
-    public TunnelType getTunnelType() {
-        return this.tunnelled;
-    }
-
-    @Override
     public boolean isTunnelled() {
         return (this.tunnelled == TunnelType.TUNNELLED);
-    }
-
-    @Override
-    public LayerType getLayerType() {
-        return this.layered;
     }
 
     @Override
@@ -296,8 +287,7 @@ public final class RouteTracker implements RouteInfo, Cloneable {
             (this.tunnelled == that.tunnelled) &&
             (this.layered   == that.layered) &&
             Objects.equals(this.targetHost, that.targetHost) &&
-            Objects.equals(this.localAddress, that.localAddress) &&
-            Objects.equals(this.proxyChain, that.proxyChain);
+            Objects.equals(this.localAddress, that.localAddress) && Arrays.equals(this.proxyChain, that.proxyChain);
     }
 
     /**

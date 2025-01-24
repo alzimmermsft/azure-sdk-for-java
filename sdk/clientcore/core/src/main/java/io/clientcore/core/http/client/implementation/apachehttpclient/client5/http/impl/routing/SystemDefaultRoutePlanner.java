@@ -64,13 +64,6 @@ public class SystemDefaultRoutePlanner extends DefaultRoutePlanner {
         this.proxySelector = proxySelector;
     }
 
-    /**
-     * @param proxySelector the proxy selector, or {@code null} for the system default
-     */
-    public SystemDefaultRoutePlanner(final ProxySelector proxySelector) {
-        this(null, proxySelector);
-    }
-
     @Override
     protected HttpHost determineProxy(final HttpHost target, final HttpContext context) throws HttpException {
         final URI targetURI;

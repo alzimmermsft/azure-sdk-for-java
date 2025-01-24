@@ -58,13 +58,6 @@ public final class CookieSpecSupport {
     }
 
     /**
-     * Creates a builder containing the default registry entries with the default public suffix matcher.
-     */
-    public static RegistryBuilder<CookieSpecFactory> createDefaultBuilder() {
-        return createDefaultBuilder(PublicSuffixMatcherLoader.getDefault());
-    }
-
-    /**
      * Creates the default registry, using the default public suffix matcher.
      */
     public static Lookup<CookieSpecFactory> createDefault() {

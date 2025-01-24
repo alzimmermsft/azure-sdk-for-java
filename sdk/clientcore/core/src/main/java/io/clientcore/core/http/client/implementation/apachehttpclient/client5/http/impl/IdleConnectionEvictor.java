@@ -75,20 +75,12 @@ public final class IdleConnectionEvictor {
         this(connectionManager, null, sleepTime, maxIdleTime);
     }
 
-    public IdleConnectionEvictor(final ConnPoolControl<?> connectionManager, final TimeValue maxIdleTime) {
-        this(connectionManager, null, maxIdleTime, maxIdleTime);
-    }
-
     public void start() {
         thread.start();
     }
 
     public void shutdown() {
         thread.interrupt();
-    }
-
-    public boolean isRunning() {
-        return thread.isAlive();
     }
 
     public void awaitTermination(final Timeout timeout) throws InterruptedException {

@@ -127,14 +127,6 @@ public class Args {
         return argument;
     }
 
-    public static <T> T notEmpty(final T argument, final String name) {
-        notNull(argument, name);
-        if (isEmpty(argument)) {
-            throw illegalArgumentExceptionNotEmpty(name);
-        }
-        return argument;
-    }
-
     public static int notNegative(final int n, final String name) {
         if (n < 0) {
             throw illegalArgumentException("%s must not be negative: %d", name, n);

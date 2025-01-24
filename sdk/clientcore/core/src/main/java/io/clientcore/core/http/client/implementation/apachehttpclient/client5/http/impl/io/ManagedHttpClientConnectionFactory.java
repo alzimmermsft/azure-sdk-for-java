@@ -201,33 +201,6 @@ public class ManagedHttpClientConnectionFactory implements HttpConnectionFactory
             return this;
         }
 
-        public Builder incomingContentLengthStrategy(final ContentLengthStrategy incomingContentLengthStrategy) {
-            this.incomingContentLengthStrategy = incomingContentLengthStrategy;
-            return this;
-        }
-
-        public Builder outgoingContentLengthStrategy(final ContentLengthStrategy outgoingContentLengthStrategy) {
-            this.outgoingContentLengthStrategy = outgoingContentLengthStrategy;
-            return this;
-        }
-
-        public Builder responseOutOfOrderStrategy(final ResponseOutOfOrderStrategy responseOutOfOrderStrategy) {
-            this.responseOutOfOrderStrategy = responseOutOfOrderStrategy;
-            return this;
-        }
-
-        public Builder requestWriterFactory(
-                final HttpMessageWriterFactory<ClassicHttpRequest> requestWriterFactory) {
-            this.requestWriterFactory = requestWriterFactory;
-            return this;
-        }
-
-        public Builder responseParserFactory(
-                final HttpMessageParserFactory<ClassicHttpResponse> responseParserFactory) {
-            this.responseParserFactory = responseParserFactory;
-            return this;
-        }
-
         public ManagedHttpClientConnectionFactory build() {
             return new ManagedHttpClientConnectionFactory(
                     http1Config,

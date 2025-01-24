@@ -50,7 +50,6 @@ import io.clientcore.core.http.client.implementation.apachehttpclient.client5.ht
 import io.clientcore.core.http.client.implementation.apachehttpclient.client5.http.io.HttpClientConnectionOperator;
 import io.clientcore.core.http.client.implementation.apachehttpclient.client5.http.io.LeaseRequest;
 import io.clientcore.core.http.client.implementation.apachehttpclient.client5.http.io.ManagedHttpClientConnection;
-import io.clientcore.core.http.client.implementation.apachehttpclient.client5.http.ssl.DefaultClientTlsStrategy;
 import io.clientcore.core.http.client.implementation.apachehttpclient.client5.http.ssl.TlsSocketStrategy;
 import io.clientcore.core.http.client.implementation.apachehttpclient.core5.annotation.Contract;
 import io.clientcore.core.http.client.implementation.apachehttpclient.core5.annotation.ThreadingBehavior;
@@ -58,9 +57,7 @@ import io.clientcore.core.http.client.implementation.apachehttpclient.core5.http
 import io.clientcore.core.http.client.implementation.apachehttpclient.core5.http.ClassicHttpResponse;
 import io.clientcore.core.http.client.implementation.apachehttpclient.core5.http.HttpException;
 import io.clientcore.core.http.client.implementation.apachehttpclient.core5.http.HttpHost;
-import io.clientcore.core.http.client.implementation.apachehttpclient.core5.http.URIScheme;
 import io.clientcore.core.http.client.implementation.apachehttpclient.core5.http.config.Lookup;
-import io.clientcore.core.http.client.implementation.apachehttpclient.core5.http.config.RegistryBuilder;
 import io.clientcore.core.http.client.implementation.apachehttpclient.core5.http.impl.io.HttpRequestExecutor;
 import io.clientcore.core.http.client.implementation.apachehttpclient.core5.http.io.HttpConnectionFactory;
 import io.clientcore.core.http.client.implementation.apachehttpclient.core5.http.io.SocketConfig;
@@ -113,9 +110,9 @@ public class BasicHttpClientConnectionManager implements HttpClientConnectionMan
     private long updated;
     private long expiry;
     private boolean leased;
-    private SocketConfig socketConfig;
+    private final SocketConfig socketConfig;
     private ConnectionConfig connectionConfig;
-    private TlsConfig tlsConfig;
+    private final TlsConfig tlsConfig;
 
     private final AtomicBoolean closed;
 
@@ -169,46 +166,6 @@ public class BasicHttpClientConnectionManager implements HttpClientConnectionMan
                 new DefaultHttpClientConnectionOperator(null, null, tlsSocketStrategyRegistry), null);
     }
 
-    /**
-     * @deprecated Use {@link #create(SchemePortResolver, DnsResolver, Lookup, HttpConnectionFactory)}
-     */
-    @Deprecated
-    public BasicHttpClientConnectionManager(
-            final Lookup<io.clientcore.core.http.client.implementation.apachehttpclient.client5.http.socket.ConnectionSocketFactory> socketFactoryRegistry,
-            final HttpConnectionFactory<ManagedHttpClientConnection> connFactory,
-            final SchemePortResolver schemePortResolver,
-            final DnsResolver dnsResolver) {
-        this(new DefaultHttpClientConnectionOperator(
-                socketFactoryRegistry, schemePortResolver, dnsResolver), connFactory);
-    }
-
-    /**
-     * @deprecated Use {@link #create(Lookup, HttpConnectionFactory)}
-     */
-    @Deprecated
-    public BasicHttpClientConnectionManager(
-            final Lookup<io.clientcore.core.http.client.implementation.apachehttpclient.client5.http.socket.ConnectionSocketFactory> socketFactoryRegistry,
-            final HttpConnectionFactory<ManagedHttpClientConnection> connFactory) {
-        this(socketFactoryRegistry, connFactory, null, null);
-    }
-
-    /**
-     * @deprecated Use {@link #create(Lookup)}
-     */
-    @Deprecated
-    public BasicHttpClientConnectionManager(
-            final Lookup<io.clientcore.core.http.client.implementation.apachehttpclient.client5.http.socket.ConnectionSocketFactory> socketFactoryRegistry) {
-        this(socketFactoryRegistry, null, null, null);
-    }
-
-    public BasicHttpClientConnectionManager() {
-        this(new DefaultHttpClientConnectionOperator(null, null,
-                RegistryBuilder.<TlsSocketStrategy>create()
-                        .register(URIScheme.HTTPS.id, DefaultClientTlsStrategy.createDefault())
-                        .build()),
-                null);
-    }
-
     @Override
     public void close() {
         close(CloseMode.GRACEFUL);
@@ -219,85 +176,6 @@ public class BasicHttpClientConnectionManager implements HttpClientConnectionMan
         if (this.closed.compareAndSet(false, true)) {
             closeConnection(closeMode);
         }
-    }
-
-    HttpRoute getRoute() {
-        return route;
-    }
-
-    Object getState() {
-        return state;
-    }
-
-    public SocketConfig getSocketConfig() {
-        lock.lock();
-        try {
-            return socketConfig;
-        } finally {
-            lock.unlock();
-        }
-    }
-
-    public void setSocketConfig(final SocketConfig socketConfig) {
-        lock.lock();
-        try {
-            this.socketConfig = socketConfig != null ? socketConfig : SocketConfig.DEFAULT;
-        } finally {
-            lock.unlock();
-        }
-    }
-
-    /**
-     * @since 5.2
-     */
-    public ConnectionConfig getConnectionConfig() {
-        lock.lock();
-        try {
-            return connectionConfig;
-        } finally {
-            lock.unlock();
-        }
-
-    }
-
-    /**
-     * @since 5.2
-     */
-    public void setConnectionConfig(final ConnectionConfig connectionConfig) {
-        lock.lock();
-        try {
-            this.connectionConfig = connectionConfig != null ? connectionConfig : ConnectionConfig.DEFAULT;
-        } finally {
-            lock.unlock();
-        }
-    }
-
-    /**
-     * @since 5.2
-     */
-    public TlsConfig getTlsConfig() {
-        lock.lock();
-        try {
-            return tlsConfig;
-        } finally {
-            lock.unlock();
-        }
-    }
-
-    /**
-     * @since 5.2
-     */
-    public void setTlsConfig(final TlsConfig tlsConfig) {
-        lock.lock();
-        try {
-            this.tlsConfig = tlsConfig != null ? tlsConfig : TlsConfig.DEFAULT;
-        } finally {
-            lock.unlock();
-        }
-    }
-
-    public LeaseRequest lease(final String id, final HttpRoute route, final Object state) {
-        return lease(id, route, Timeout.DISABLED, state);
     }
 
     @Override
@@ -525,20 +403,6 @@ public class BasicHttpClientConnectionManager implements HttpClientConnectionMan
         }
     }
 
-    public void closeExpired() {
-        lock.lock();
-        try {
-            if (isClosed()) {
-                return;
-            }
-            if (!this.leased) {
-                checkExpiry();
-            }
-        } finally {
-            lock.unlock();
-        }
-    }
-
     public void closeIdle(final TimeValue idleTime) {
         lock.lock();
         try {
@@ -559,35 +423,6 @@ public class BasicHttpClientConnectionManager implements HttpClientConnectionMan
         } finally {
             lock.unlock();
         }
-    }
-
-    /**
-     * @see #setValidateAfterInactivity(TimeValue)
-     *
-     * @since 5.1
-     *
-     * @deprecated Use {@link #getConnectionConfig()}
-     */
-    @Deprecated
-    public TimeValue getValidateAfterInactivity() {
-        return connectionConfig.getValidateAfterInactivity();
-    }
-
-    /**
-     * Defines period of inactivity after which persistent connections must
-     * be re-validated prior to being {@link #lease(String, HttpRoute, Object)} leased} to the consumer.
-     * Negative values passed to this method disable connection validation. This check helps
-     * detect connections that have become stale (half-closed) while kept inactive in the pool.
-     *
-     * @since 5.1
-     *
-     * @deprecated Use {@link #setConnectionConfig(ConnectionConfig)}
-     */
-    @Deprecated
-    public void setValidateAfterInactivity(final TimeValue validateAfterInactivity) {
-        this.connectionConfig = ConnectionConfig.custom()
-                .setValidateAfterInactivity(validateAfterInactivity)
-                .build();
     }
 
     class InternalConnectionEndpoint extends ConnectionEndpoint implements Identifiable {

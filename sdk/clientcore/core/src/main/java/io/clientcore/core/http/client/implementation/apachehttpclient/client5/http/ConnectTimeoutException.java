@@ -42,16 +42,6 @@ public class ConnectTimeoutException extends SocketTimeoutException {
 
     private final NamedEndpoint namedEndpoint;
 
-    /**
-     * Creates a ConnectTimeoutException with the specified detail message.
-     *
-     * @param message The detail message (which is saved for later retrieval by the {@link #getMessage()} method).
-     */
-    public ConnectTimeoutException(final String message) {
-        super(message);
-        this.namedEndpoint = null;
-    }
-
     public ConnectTimeoutException(final String message, final NamedEndpoint namedEndpoint) {
         super(message);
         this.namedEndpoint = namedEndpoint;

@@ -42,15 +42,6 @@ import io.clientcore.core.http.client.implementation.apachehttpclient.core5.anno
 @Contract(threading = ThreadingBehavior.SAFE)
 public class RFC6265LaxSpec extends RFC6265CookieSpecBase {
 
-    public RFC6265LaxSpec() {
-        super(BasicPathHandler.INSTANCE,
-                BasicDomainHandler.INSTANCE,
-                LaxMaxAgeHandler.INSTANCE,
-                BasicSecureHandler.INSTANCE,
-                BasicHttpOnlyHandler.INSTANCE,
-                LaxExpiresHandler.INSTANCE);
-    }
-
     RFC6265LaxSpec(final CommonCookieAttributeHandler... handlers) {
         super(handlers);
     }

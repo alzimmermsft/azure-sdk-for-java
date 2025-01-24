@@ -45,14 +45,12 @@ import io.clientcore.core.http.client.implementation.apachehttpclient.core5.util
 @Contract(threading = ThreadingBehavior.IMMUTABLE)
 public final class AuthChallenge {
 
-    private final ChallengeType challengeType;
     private final String schemeName;
     private final String value;
     private final List<NameValuePair> params;
 
     public AuthChallenge(final ChallengeType challengeType, final String schemeName, final String value, final List<? extends NameValuePair> params) {
         super();
-        this.challengeType = Args.notNull(challengeType, "Challenge type");
         this.schemeName = Args.notNull(schemeName, "schemeName");
         this.value = value;
         this.params = params != null ? Collections.unmodifiableList(new ArrayList<>(params)) : null;
@@ -60,10 +58,6 @@ public final class AuthChallenge {
 
     public AuthChallenge(final ChallengeType challengeType, final String schemeName, final NameValuePair... params) {
         this(challengeType, schemeName, null, Arrays.asList(params));
-    }
-
-    public ChallengeType getChallengeType() {
-        return challengeType;
     }
 
     public String getSchemeName() {

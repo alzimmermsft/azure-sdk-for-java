@@ -94,21 +94,6 @@ public class DefaultClientTlsStrategy extends AbstractClientTlsStrategy {
     private Factory<SSLEngine, TlsDetails> tlsDetailsFactory;
 
     /**
-     * @deprecated Use {@link DefaultClientTlsStrategy#DefaultClientTlsStrategy(SSLContext, String[], String[], SSLBufferMode, HostnameVerifier)}
-     */
-    @Deprecated
-    public DefaultClientTlsStrategy(
-            final SSLContext sslContext,
-            final String[] supportedProtocols,
-            final String[] supportedCipherSuites,
-            final SSLBufferMode sslBufferManagement,
-            final HostnameVerifier hostnameVerifier,
-            final Factory<SSLEngine, TlsDetails> tlsDetailsFactory) {
-        super(sslContext, supportedProtocols, supportedCipherSuites, sslBufferManagement, HostnameVerificationPolicy.CLIENT, hostnameVerifier);
-        this.tlsDetailsFactory = tlsDetailsFactory;
-    }
-
-    /**
      * @since 5.4
      */
     public DefaultClientTlsStrategy(
@@ -121,21 +106,6 @@ public class DefaultClientTlsStrategy extends AbstractClientTlsStrategy {
         super(sslContext, supportedProtocols, supportedCipherSuites, sslBufferManagement, hostnameVerificationPolicy, hostnameVerifier);
     }
 
-    public DefaultClientTlsStrategy(
-            final SSLContext sslContext,
-            final String[] supportedProtocols,
-            final String[] supportedCipherSuites,
-            final SSLBufferMode sslBufferManagement,
-            final HostnameVerifier hostnameVerifier) {
-        this(sslContext, supportedProtocols, supportedCipherSuites, sslBufferManagement, HostnameVerificationPolicy.CLIENT, hostnameVerifier);
-    }
-
-    public DefaultClientTlsStrategy(
-            final SSLContext sslContext,
-            final HostnameVerifier hostnameVerifier) {
-        this(sslContext, null, null, SSLBufferMode.STATIC, hostnameVerifier);
-    }
-
     /**
      * @since 5.4
      */
@@ -144,10 +114,6 @@ public class DefaultClientTlsStrategy extends AbstractClientTlsStrategy {
             final HostnameVerificationPolicy hostnameVerificationPolicy,
             final HostnameVerifier hostnameVerifier) {
         this(sslContext, null, null, SSLBufferMode.STATIC, hostnameVerificationPolicy, hostnameVerifier);
-    }
-
-    public DefaultClientTlsStrategy(final SSLContext sslContext) {
-        this(sslContext, HttpsSupport.getDefaultHostnameVerifier());
     }
 
     @Override

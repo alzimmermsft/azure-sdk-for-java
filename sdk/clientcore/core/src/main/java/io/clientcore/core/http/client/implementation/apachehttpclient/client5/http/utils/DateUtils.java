@@ -29,9 +29,7 @@ package io.clientcore.core.http.client.implementation.apachehttpclient.client5.h
 
 import java.time.DateTimeException;
 import java.time.Instant;
-import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
 import java.util.Date;
@@ -127,20 +125,6 @@ public final class DateUtils {
      */
     public static Instant toInstant(final Date date) {
         return date != null ? Instant.ofEpochMilli(date.getTime()) : null;
-    }
-
-    /**
-     * @since 5.2
-     */
-    public static LocalDateTime toUTC(final Instant instant) {
-        return instant != null ? instant.atZone(ZoneOffset.UTC).toLocalDateTime() : null;
-    }
-
-    /**
-     * @since 5.2
-     */
-    public static LocalDateTime toUTC(final Date date) {
-        return toUTC(toInstant(date));
     }
 
     /**

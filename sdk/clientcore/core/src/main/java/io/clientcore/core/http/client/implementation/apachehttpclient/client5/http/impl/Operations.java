@@ -88,17 +88,6 @@ public final class Operations {
 
     /**
      * Creates a {@link Cancellable} operation handle for an ongoing process
-     * or operation that cannot be cancelled. Attempts to cancel the operation
-     * with this handle will have no effect.
-     *
-     * @return the no-op cancellable operation handle.
-     */
-    public static Cancellable nonCancellable() {
-        return NOOP_CANCELLABLE;
-    }
-
-    /**
-     * Creates a {@link Cancellable} operation handle for an ongoing process
      * or operation represented by a {@link Future}.
      *
      * @param future the result future

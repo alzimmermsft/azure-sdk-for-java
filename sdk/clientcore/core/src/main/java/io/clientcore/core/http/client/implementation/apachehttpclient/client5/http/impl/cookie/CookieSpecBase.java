@@ -28,11 +28,9 @@
 package io.clientcore.core.http.client.implementation.apachehttpclient.client5.http.impl.cookie;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 
-import io.clientcore.core.http.client.implementation.apachehttpclient.client5.http.cookie.CommonCookieAttributeHandler;
 import io.clientcore.core.http.client.implementation.apachehttpclient.client5.http.cookie.Cookie;
 import io.clientcore.core.http.client.implementation.apachehttpclient.client5.http.cookie.CookieAttributeHandler;
 import io.clientcore.core.http.client.implementation.apachehttpclient.client5.http.cookie.CookieOrigin;
@@ -53,20 +51,6 @@ public abstract class CookieSpecBase extends AbstractCookieSpec {
 
     public CookieSpecBase() {
         super();
-    }
-
-    /**
-     * @since 4.4
-     */
-    protected CookieSpecBase(final HashMap<String, CookieAttributeHandler> map) {
-        super(map);
-    }
-
-    /**
-     * @since 4.4
-     */
-    protected CookieSpecBase(final CommonCookieAttributeHandler... handlers) {
-        super(handlers);
     }
 
     protected static String getDefaultPath(final CookieOrigin origin) {

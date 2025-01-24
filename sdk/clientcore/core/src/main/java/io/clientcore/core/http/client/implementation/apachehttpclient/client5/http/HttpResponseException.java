@@ -40,7 +40,6 @@ public class HttpResponseException extends ClientProtocolException {
 
     private final int statusCode;
     private final String reasonPhrase;
-    private final byte[] contentBytes;
     private final ContentType contentType;
 
     /**
@@ -74,7 +73,6 @@ public class HttpResponseException extends ClientProtocolException {
 
         this.statusCode = statusCode;
         this.reasonPhrase = reasonPhrase;
-        this.contentBytes = contentBytes;
         this.contentType = contentType;
     }
 
@@ -85,10 +83,6 @@ public class HttpResponseException extends ClientProtocolException {
 
     public String getReasonPhrase() {
         return this.reasonPhrase;
-    }
-
-    public byte[] getContentBytes() {
-        return contentBytes;
     }
 
     public ContentType getContentType() {

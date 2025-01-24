@@ -75,15 +75,6 @@ public class PublicSuffixDomainFilter implements CommonCookieAttributeHandler {
         this.localDomainMap = createLocalDomainMap();
     }
 
-    public PublicSuffixDomainFilter(
-            final CommonCookieAttributeHandler handler, final PublicSuffixList suffixList) {
-        Args.notNull(handler, "Cookie handler");
-        Args.notNull(suffixList, "Public suffix list");
-        this.handler = handler;
-        this.publicSuffixMatcher = new PublicSuffixMatcher(suffixList.getRules(), suffixList.getExceptions());
-        this.localDomainMap = createLocalDomainMap();
-    }
-
     /**
      * Never matches if the cookie's domain is from the blacklist.
      */

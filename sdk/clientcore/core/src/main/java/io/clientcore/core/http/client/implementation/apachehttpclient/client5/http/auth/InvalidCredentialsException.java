@@ -37,22 +37,6 @@ public class InvalidCredentialsException extends AuthenticationException {
     private static final long serialVersionUID = -4834003835215460648L;
 
     /**
-     * Creates a new InvalidCredentialsException with a {@code null} detail message.
-     */
-    public InvalidCredentialsException() {
-        super();
-    }
-
-    /**
-     * Creates a new InvalidCredentialsException with the specified message.
-     *
-     * @param message the exception detail message
-     */
-    public InvalidCredentialsException(final String message) {
-        super(message);
-    }
-
-    /**
      * Creates a new InvalidCredentialsException with the specified detail message and cause.
      *
      * @param message the exception detail message

@@ -371,13 +371,6 @@ public class HttpClientContext extends HttpCoreContext {
     /**
      * @since 5.0
      */
-    public void setAuthExchange(final HttpHost host, final AuthExchange authExchange) {
-        getAuthExchanges().put(host, authExchange);
-    }
-
-    /**
-     * @since 5.0
-     */
     public void resetAuthExchange(final HttpHost host, final AuthScheme authScheme) {
         final AuthExchange authExchange = new AuthExchange();
         authExchange.select(authScheme);

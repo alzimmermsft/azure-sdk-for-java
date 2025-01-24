@@ -51,13 +51,6 @@ public class ConnectionConfig implements Cloneable {
     private final TimeValue validateAfterInactivity;
     private final TimeValue timeToLive;
 
-    /**
-     * Intended for CDI compatibility
-     */
-    protected ConnectionConfig() {
-        this(DEFAULT_CONNECT_TIMEOUT, null, null, null);
-    }
-
     ConnectionConfig(
             final Timeout connectTimeout,
             final Timeout socketTimeout,

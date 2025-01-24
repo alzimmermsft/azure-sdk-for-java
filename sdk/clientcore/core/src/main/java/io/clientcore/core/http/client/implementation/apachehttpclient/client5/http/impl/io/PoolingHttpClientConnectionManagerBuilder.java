@@ -27,8 +27,6 @@
 
 package io.clientcore.core.http.client.implementation.apachehttpclient.client5.http.impl.io;
 
-import javax.net.ssl.SSLSocket;
-
 import io.clientcore.core.http.client.implementation.apachehttpclient.client5.http.DnsResolver;
 import io.clientcore.core.http.client.implementation.apachehttpclient.client5.http.HttpRoute;
 import io.clientcore.core.http.client.implementation.apachehttpclient.client5.http.SchemePortResolver;
@@ -102,119 +100,12 @@ public class PoolingHttpClientConnectionManagerBuilder {
     }
 
     /**
-     * Sets {@link HttpConnectionFactory} instance.
-     *
-     * @return this instance.
-     */
-    public final PoolingHttpClientConnectionManagerBuilder setConnectionFactory(
-            final HttpConnectionFactory<ManagedHttpClientConnection> connectionFactory) {
-        this.connectionFactory = connectionFactory;
-        return this;
-    }
-
-    /**
-     * Sets {@link io.clientcore.core.http.client.implementation.apachehttpclient.client5.http.socket.LayeredConnectionSocketFactory} instance.
-     *
-     * @return this instance.
-     * @deprecated Use {@link #setTlsSocketStrategy(TlsSocketStrategy)}
-     */
-    @Deprecated
-    public final PoolingHttpClientConnectionManagerBuilder setSSLSocketFactory(
-            final io.clientcore.core.http.client.implementation.apachehttpclient.client5.http.socket.LayeredConnectionSocketFactory sslSocketFactory) {
-        this.tlsSocketStrategy = (socket, target, port, attachment, context) ->
-                (SSLSocket) sslSocketFactory.createLayeredSocket(socket, target, port, context);
-        return this;
-    }
-
-    /**
-     * Sets {@link TlsSocketStrategy} instance.
-     *
-     * @return this instance.
-     */
-    public final PoolingHttpClientConnectionManagerBuilder setTlsSocketStrategy(final TlsSocketStrategy tlsSocketStrategy) {
-        this.tlsSocketStrategy = tlsSocketStrategy;
-        return this;
-    }
-
-    /**
-     * Sets {@link DnsResolver} instance.
-     *
-     * @return this instance.
-     */
-    public final PoolingHttpClientConnectionManagerBuilder setDnsResolver(final DnsResolver dnsResolver) {
-        this.dnsResolver = dnsResolver;
-        return this;
-    }
-
-    /**
      * Sets {@link SchemePortResolver} instance.
      *
      * @return this instance.
      */
     public final PoolingHttpClientConnectionManagerBuilder setSchemePortResolver(final SchemePortResolver schemePortResolver) {
         this.schemePortResolver = schemePortResolver;
-        return this;
-    }
-
-    /**
-     * Sets {@link PoolConcurrencyPolicy} value.
-     *
-     * @return this instance.
-     */
-    public final PoolingHttpClientConnectionManagerBuilder setPoolConcurrencyPolicy(final PoolConcurrencyPolicy poolConcurrencyPolicy) {
-        this.poolConcurrencyPolicy = poolConcurrencyPolicy;
-        return this;
-    }
-
-    /**
-     * Sets {@link PoolReusePolicy} value.
-     *
-     * @return this instance.
-     */
-    public final PoolingHttpClientConnectionManagerBuilder setConnPoolPolicy(final PoolReusePolicy poolReusePolicy) {
-        this.poolReusePolicy = poolReusePolicy;
-        return this;
-    }
-
-    /**
-     * Sets maximum total connection value.
-     *
-     * @return this instance.
-     */
-    public final PoolingHttpClientConnectionManagerBuilder setMaxConnTotal(final int maxConnTotal) {
-        this.maxConnTotal = maxConnTotal;
-        return this;
-    }
-
-    /**
-     * Sets maximum connection per route value.
-     *
-     * @return this instance.
-     */
-    public final PoolingHttpClientConnectionManagerBuilder setMaxConnPerRoute(final int maxConnPerRoute) {
-        this.maxConnPerRoute = maxConnPerRoute;
-        return this;
-    }
-
-    /**
-     * Sets the same {@link SocketConfig} for all routes.
-     *
-     * @return this instance.
-     */
-    public final PoolingHttpClientConnectionManagerBuilder setDefaultSocketConfig(final SocketConfig config) {
-        this.socketConfigResolver = route -> config;
-        return this;
-    }
-
-    /**
-     * Sets {@link Resolver} of {@link SocketConfig} on a per route basis.
-     *
-     * @return this instance.
-     * @since 5.2
-     */
-    public final PoolingHttpClientConnectionManagerBuilder setSocketConfigResolver(
-            final Resolver<HttpRoute, SocketConfig> socketConfigResolver) {
-        this.socketConfigResolver = socketConfigResolver;
         return this;
     }
 
@@ -226,41 +117,6 @@ public class PoolingHttpClientConnectionManagerBuilder {
      */
     public final PoolingHttpClientConnectionManagerBuilder setDefaultConnectionConfig(final ConnectionConfig config) {
         this.connectionConfigResolver = route -> config;
-        return this;
-    }
-
-    /**
-     * Sets {@link Resolver} of {@link ConnectionConfig} on a per route basis.
-     *
-     * @return this instance.
-     * @since 5.2
-     */
-    public final PoolingHttpClientConnectionManagerBuilder setConnectionConfigResolver(
-            final Resolver<HttpRoute, ConnectionConfig> connectionConfigResolver) {
-        this.connectionConfigResolver = connectionConfigResolver;
-        return this;
-    }
-
-    /**
-     * Sets the same {@link TlsConfig} for all hosts.
-     *
-     * @return this instance.
-     * @since 5.2
-     */
-    public final PoolingHttpClientConnectionManagerBuilder setDefaultTlsConfig(final TlsConfig config) {
-        this.tlsConfigResolver = host -> config;
-        return this;
-    }
-
-    /**
-     * Sets {@link Resolver} of {@link TlsConfig} on a per host basis.
-     *
-     * @return this instance.
-     * @since 5.2
-     */
-    public final PoolingHttpClientConnectionManagerBuilder setTlsConfigResolver(
-            final Resolver<HttpHost, TlsConfig> tlsConfigResolver) {
-        this.tlsConfigResolver = tlsConfigResolver;
         return this;
     }
 
