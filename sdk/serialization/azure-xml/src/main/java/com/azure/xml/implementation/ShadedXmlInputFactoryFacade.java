@@ -6,6 +6,7 @@ import com.azure.xml.implementation.aalto.stax.InputFactoryImpl;
 
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
+import javax.xml.stream.util.XMLEventAllocator;
 import java.io.InputStream;
 import java.io.Reader;
 
@@ -22,6 +23,7 @@ public final class ShadedXmlInputFactoryFacade implements XmlInputFactoryFacade 
      */
     public ShadedXmlInputFactoryFacade(InputFactoryImpl inputFactory) {
         this.inputFactory = inputFactory;
+        XMLEventAllocator allocator = null;
     }
 
     @Override
