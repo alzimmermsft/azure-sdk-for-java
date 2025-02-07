@@ -1,40 +1,19 @@
-buildscript {
-    repositories {
-        google()
-        gradlePluginPortal()
-    }
-
-    dependencies {
-        classpath "com.gradle:gradle-enterprise-gradle-plugin:3.19.1"
-        classpath "com.android.tools.build:gradle:8.8.0"
-        classpath "com.github.ben-manes:gradle-versions-plugin:0.52.0"
-    }
+plugins {
+    id("com.android.library") version "8.7.0" apply true
 }
-
-repositories {
-    google()
-    gradlePluginPortal()
-    mavenCentral()
-}
-
-apply plugin: "com.android.library"
-apply plugin: "com.github.ben-manes.versions"
 
 android {
     namespace = "com.azure.azure.json"
 
-    compileSdkVersion = 35
+    compileSdk = 35
 
     defaultConfig {
-        versionCode = 1
-        versionName = "1.0"
-        minSdkVersion = 26
-        targetSdkVersion = 35
+        minSdk = 26
     }
 
     buildTypes {
-        release {
-            minifyEnabled = false
+        getByName("release") {
+            isMinifyEnabled = false
         }
     }
 
@@ -43,19 +22,18 @@ android {
         targetCompatibility = JavaVersion.VERSION_1_8
     }
 
+    // Results for linting will be in /build/reports/lint-results.debug.txt
     lint {
         baseline = file("lint-baseline.xml")
-    }
-
-    lintOptions {
-        textOutput = file("lint-results.txt")
         checkAllWarnings = true
         warningsAsErrors = true
+        targetSdk = 35
         lintConfig = file("lint.xml")
     }
 
     sourceSets.getByName("main") {
-        java.setSrcDirs(["src/main/java"])
+        java.srcDir(file("../src/main/java"))
+        java.exclude("module-info.java")
         manifest.srcFile("AndroidManifest.xml")
     }
     sourceSets.getByName("androidTest") {
@@ -67,4 +45,5 @@ dependencies {
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.11.2")
     testImplementation("org.junit.jupiter:junit-jupiter-engine:5.11.2")
     testImplementation("org.junit.jupiter:junit-jupiter-params:5.11.2")
+    implementation("javax.xml.stream:stax-api:1.0")
 }

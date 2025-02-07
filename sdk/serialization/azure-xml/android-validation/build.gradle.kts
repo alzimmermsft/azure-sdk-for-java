@@ -22,12 +22,13 @@ android {
         targetCompatibility = JavaVersion.VERSION_1_8
     }
 
+    // Results for linting will be in /build/reports/lint-results.debug.txt
     lint {
         baseline = file("lint-baseline.xml")
         checkAllWarnings = true
         warningsAsErrors = true
-        textOutput = file("lint-results.txt")
         targetSdk = 35
+        lintConfig = file("lint.xml")
     }
 
     sourceSets.getByName("main") {
@@ -44,5 +45,8 @@ dependencies {
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.11.2")
     testImplementation("org.junit.jupiter:junit-jupiter-engine:5.11.2")
     testImplementation("org.junit.jupiter:junit-jupiter-params:5.11.2")
+
+    // This dependency is needed by Android applications for azure-xml to be built and consumed without error.
+    // The javax.xml.stream* APIs don't exist in Android and this package provides them.
     implementation("javax.xml.stream:stax-api:1.0")
 }

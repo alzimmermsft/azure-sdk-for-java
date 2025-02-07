@@ -1,2 +1,0 @@
-D:\GitHub\azure-sdk-for-java\sdk\serialization\azure-json\android-validation\lint-baseline.xml: Information: 3 errors were filtered out because they are listed in the baseline file, lint-baseline.xml [LintBaseline]
-0 errors, 0 warnings (3 errors filtered by baseline lint-baseline.xml)
