@@ -60,7 +60,7 @@ public class AzureSdkFilter implements Filter {
 
         String violation = event.getViolation().getSourceName();
 
-        if (violation.contains("Javadoc")) {
+        if (violation.contains("Javadoc") || violation.contains("JavaDoc")) {
             // Ignore missing Javadoc comments in test code
             return true;
         } else if  (isTestFile && violation.contains("AvoidStarImport")) {
@@ -94,6 +94,7 @@ public class AzureSdkFilter implements Filter {
         String violation = event.getViolation().getSourceName();
 
         return violation.startsWith(EXTERNAL_DEPENDENCY_EXPOSED)
-            || violation.contains("Javadoc");
+            || violation.contains("Javadoc")
+            || violation.contains("JavaDoc");
     }
 }
