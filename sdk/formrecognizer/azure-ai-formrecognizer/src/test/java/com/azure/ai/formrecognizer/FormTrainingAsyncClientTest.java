@@ -22,8 +22,10 @@ import com.azure.core.http.HttpClient;
 import com.azure.core.util.polling.PollerFlux;
 import com.azure.core.util.polling.SyncPoller;
 import io.netty.handler.codec.http.HttpResponseStatus;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
-import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedClass;
 import org.junit.jupiter.params.provider.MethodSource;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
@@ -42,24 +44,36 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
+@ParameterizedClass(name = DISPLAY_NAME_WITH_ARGUMENTS)
+@MethodSource("com.azure.ai.formrecognizer.TestUtils#getTestParameters")
 public class FormTrainingAsyncClientTest extends FormTrainingClientTestBase {
     private static final Duration DEFAULT_TIMEOUT = Duration.ofSeconds(30);
 
+    private final HttpClient httpClient;
+    private final FormRecognizerServiceVersion serviceVersion;
+
     private FormTrainingAsyncClient client;
 
-    private FormTrainingAsyncClient getFormTrainingAsyncClient(HttpClient httpClient,
-        FormRecognizerServiceVersion serviceVersion) {
+    public FormTrainingAsyncClientTest(HttpClient httpClient, FormRecognizerServiceVersion serviceVersion) {
+        this.httpClient = httpClient;
+        this.serviceVersion = serviceVersion;
+    }
+
+    @BeforeEach
+    public void createClient() {
+        this.client = getFormTrainingAsyncClient();
+    }
+
+    private FormTrainingAsyncClient getFormTrainingAsyncClient() {
         return getFormTrainingClientBuilder(httpClient, serviceVersion).buildAsyncClient();
     }
 
     /**
      * Verifies the form recognizer async client is valid.
      */
-    @ParameterizedTest(name = DISPLAY_NAME_WITH_ARGUMENTS)
-    @MethodSource("com.azure.ai.formrecognizer.TestUtils#getTestParameters")
-    public void getFormRecognizerClientAndValidate(HttpClient httpClient, FormRecognizerServiceVersion serviceVersion) {
-        FormRecognizerAsyncClient formRecognizerClient
-            = getFormTrainingAsyncClient(httpClient, serviceVersion).getFormRecognizerAsyncClient();
+    @Test
+    public void getFormRecognizerClientAndValidate() {
+        FormRecognizerAsyncClient formRecognizerClient = this.client.getFormRecognizerAsyncClient();
         blankPdfDataRunner((data, dataLength) -> {
             SyncPoller<FormRecognizerOperationResult, List<FormPage>> syncPoller
                 = formRecognizerClient
@@ -75,10 +89,8 @@ public class FormTrainingAsyncClientTest extends FormTrainingClientTestBase {
     /**
      * Verifies custom model info returned with response for a valid model Id.
      */
-    @ParameterizedTest(name = DISPLAY_NAME_WITH_ARGUMENTS)
-    @MethodSource("com.azure.ai.formrecognizer.TestUtils#getTestParameters")
-    public void getCustomModelWithResponse(HttpClient httpClient, FormRecognizerServiceVersion serviceVersion) {
-        client = getFormTrainingAsyncClient(httpClient, serviceVersion);
+    @Test
+    public void getCustomModelWithResponse() {
         beginTrainingUnlabeledRunner((trainingFilesUrl, useTrainingLabels) -> {
             SyncPoller<FormRecognizerOperationResult, CustomFormModel> syncPoller
                 = client
@@ -99,10 +111,8 @@ public class FormTrainingAsyncClientTest extends FormTrainingClientTestBase {
     /**
      * Verifies unlabeled custom model info returned with response for a valid model Id.
      */
-    @ParameterizedTest(name = DISPLAY_NAME_WITH_ARGUMENTS)
-    @MethodSource("com.azure.ai.formrecognizer.TestUtils#getTestParameters")
-    public void getCustomModelUnlabeled(HttpClient httpClient, FormRecognizerServiceVersion serviceVersion) {
-        client = getFormTrainingAsyncClient(httpClient, serviceVersion);
+    @Test
+    public void getCustomModelUnlabeled() {
         beginTrainingUnlabeledRunner((trainingFilesUrl, useTrainingLabels) -> {
             SyncPoller<FormRecognizerOperationResult, CustomFormModel> syncPoller
                 = client
@@ -119,10 +129,8 @@ public class FormTrainingAsyncClientTest extends FormTrainingClientTestBase {
     /**
      * Verifies labeled custom model info returned with response for a valid model Id.
      */
-    @ParameterizedTest(name = DISPLAY_NAME_WITH_ARGUMENTS)
-    @MethodSource("com.azure.ai.formrecognizer.TestUtils#getTestParameters")
-    public void getCustomModelLabeled(HttpClient httpClient, FormRecognizerServiceVersion serviceVersion) {
-        client = getFormTrainingAsyncClient(httpClient, serviceVersion);
+    @Test
+    public void getCustomModelLabeled() {
         beginTrainingLabeledRunner((trainingFilesUrl, useTrainingLabels) -> {
             SyncPoller<FormRecognizerOperationResult, CustomFormModel> syncPoller
                 = client
@@ -139,12 +147,10 @@ public class FormTrainingAsyncClientTest extends FormTrainingClientTestBase {
     /**
      * Verifies account properties returned for a subscription account.
      */
-    @ParameterizedTest(name = DISPLAY_NAME_WITH_ARGUMENTS)
-    @MethodSource("com.azure.ai.formrecognizer.TestUtils#getTestParameters")
+    @Test
     @Disabled
-    public void validGetAccountProperties(HttpClient httpClient, FormRecognizerServiceVersion serviceVersion) {
+    public void validGetAccountProperties() {
         // TODO (service bug): APIM error
-        client = getFormTrainingAsyncClient(httpClient, serviceVersion);
         StepVerifier.create(client.getAccountProperties())
             .assertNext(FormTrainingClientTestBase::validateAccountProperties)
             .expectComplete()
@@ -154,24 +160,18 @@ public class FormTrainingAsyncClientTest extends FormTrainingClientTestBase {
     /**
      * Verifies account properties returned with an Http Response for a subscription account.
      */
-    @ParameterizedTest(name = DISPLAY_NAME_WITH_ARGUMENTS)
-    @MethodSource("com.azure.ai.formrecognizer.TestUtils#getTestParameters")
+    @Test
     @Disabled
-    public void validGetAccountPropertiesWithResponse(HttpClient httpClient,
-        FormRecognizerServiceVersion serviceVersion) {
+    public void validGetAccountPropertiesWithResponse() {
         // TODO (service bug): APIM error
-        client = getFormTrainingAsyncClient(httpClient, serviceVersion);
         StepVerifier.create(client.getAccountProperties())
             .assertNext(FormTrainingClientTestBase::validateAccountProperties)
             .expectComplete()
             .verify(DEFAULT_TIMEOUT);
     }
 
-    @ParameterizedTest(name = DISPLAY_NAME_WITH_ARGUMENTS)
-    @MethodSource("com.azure.ai.formrecognizer.TestUtils#getTestParameters")
-    public void deleteModelValidModelIdWithResponse(HttpClient httpClient,
-        FormRecognizerServiceVersion serviceVersion) {
-        client = getFormTrainingAsyncClient(httpClient, serviceVersion);
+    @Test
+    public void deleteModelValidModelIdWithResponse() {
         beginTrainingLabeledRunner((trainingFilesUrl, useTrainingLabels) -> {
             SyncPoller<FormRecognizerOperationResult, CustomFormModel> syncPoller
                 = client
@@ -197,11 +197,8 @@ public class FormTrainingAsyncClientTest extends FormTrainingClientTestBase {
         });
     }
 
-    @ParameterizedTest(name = DISPLAY_NAME_WITH_ARGUMENTS)
-    @MethodSource("com.azure.ai.formrecognizer.TestUtils#getTestParameters")
-    public void deleteModelValidModelIdWithResponseWithoutTrainingLabels(HttpClient httpClient,
-        FormRecognizerServiceVersion serviceVersion) {
-        client = getFormTrainingAsyncClient(httpClient, serviceVersion);
+    @Test
+    public void deleteModelValidModelIdWithResponseWithoutTrainingLabels() {
         beginTrainingUnlabeledRunner((trainingFilesUrl, notUseTrainingLabels) -> {
             SyncPoller<FormRecognizerOperationResult, CustomFormModel> syncPoller
                 = client
@@ -230,12 +227,10 @@ public class FormTrainingAsyncClientTest extends FormTrainingClientTestBase {
     /**
      * Test for listing all models information.
      */
-    @ParameterizedTest(name = DISPLAY_NAME_WITH_ARGUMENTS)
-    @MethodSource("com.azure.ai.formrecognizer.TestUtils#getTestParameters")
+    @Test
     @Disabled
-    public void listCustomModels(HttpClient httpClient, FormRecognizerServiceVersion serviceVersion) {
+    public void listCustomModels() {
         // TODO (service bug): APIM error
-        client = getFormTrainingAsyncClient(httpClient, serviceVersion);
         StepVerifier.create(client.listCustomModels())
             .thenConsumeWhile(customFormModelInfo -> customFormModelInfo.getModelId() != null
                 && customFormModelInfo.getTrainingStartedOn() != null
@@ -248,10 +243,8 @@ public class FormTrainingAsyncClientTest extends FormTrainingClientTestBase {
     /**
      * Verifies the result of the copy operation for valid parameters.
      */
-    @ParameterizedTest(name = DISPLAY_NAME_WITH_ARGUMENTS)
-    @MethodSource("com.azure.ai.formrecognizer.TestUtils#getTestParameters")
-    public void beginCopy(HttpClient httpClient, FormRecognizerServiceVersion serviceVersion) {
-        client = getFormTrainingAsyncClient(httpClient, serviceVersion);
+    @Test
+    public void beginCopy() {
         beginTrainingUnlabeledRunner((trainingFilesUrl, useTrainingLabels) -> {
             SyncPoller<FormRecognizerOperationResult, CustomFormModel> syncPoller
                 = client
@@ -284,10 +277,8 @@ public class FormTrainingAsyncClientTest extends FormTrainingClientTestBase {
     /**
      * Verifies the Invalid region ErrorResponseException is thrown for invalid region input to copy operation.
      */
-    @ParameterizedTest(name = DISPLAY_NAME_WITH_ARGUMENTS)
-    @MethodSource("com.azure.ai.formrecognizer.TestUtils#getTestParameters")
-    public void beginCopyInvalidRegion(HttpClient httpClient, FormRecognizerServiceVersion serviceVersion) {
-        client = getFormTrainingAsyncClient(httpClient, serviceVersion);
+    @Test
+    public void beginCopyInvalidRegion() {
         beginTrainingUnlabeledRunner((trainingFilesUrl, useTrainingLabels) -> {
             SyncPoller<FormRecognizerOperationResult, CustomFormModel> syncPoller
                 = client
@@ -320,11 +311,9 @@ public class FormTrainingAsyncClientTest extends FormTrainingClientTestBase {
     /**
      * Verifies {@link FormRecognizerException} is thrown for invalid region input to copy operation.
      */
-    @ParameterizedTest(name = DISPLAY_NAME_WITH_ARGUMENTS)
-    @MethodSource("com.azure.ai.formrecognizer.TestUtils#getTestParameters")
+    @Test
     @Disabled("https://github.com/Azure/azure-sdk-for-java/issues/41049")
-    public void beginCopyIncorrectRegion(HttpClient httpClient, FormRecognizerServiceVersion serviceVersion) {
-        client = getFormTrainingAsyncClient(httpClient, serviceVersion);
+    public void beginCopyIncorrectRegion() {
         beginTrainingUnlabeledRunner((trainingFilesUrl, useTrainingLabels) -> {
             SyncPoller<FormRecognizerOperationResult, CustomFormModel> syncPoller
                 = client
@@ -354,10 +343,8 @@ public class FormTrainingAsyncClientTest extends FormTrainingClientTestBase {
     /**
      * Verifies the result of the copy authorization for valid parameters.
      */
-    @ParameterizedTest(name = DISPLAY_NAME_WITH_ARGUMENTS)
-    @MethodSource("com.azure.ai.formrecognizer.TestUtils#getTestParameters")
-    public void copyAuthorization(HttpClient httpClient, FormRecognizerServiceVersion serviceVersion) {
-        client = getFormTrainingAsyncClient(httpClient, serviceVersion);
+    @Test
+    public void copyAuthorization() {
         beginCopyRunner(
             (resourceId, resourceRegion) -> StepVerifier.create(client.getCopyAuthorization(resourceId, resourceRegion))
                 .assertNext(
@@ -369,11 +356,9 @@ public class FormTrainingAsyncClientTest extends FormTrainingClientTestBase {
     /**
      * Verifies the training operation throws FormRecognizerException when an invalid status model is returned.
      */
-    @ParameterizedTest(name = DISPLAY_NAME_WITH_ARGUMENTS)
-    @MethodSource("com.azure.ai.formrecognizer.TestUtils#getTestParameters")
+    @Test
     @Disabled
-    public void beginTrainingInvalidModelStatus(HttpClient httpClient, FormRecognizerServiceVersion serviceVersion) {
-        client = getFormTrainingAsyncClient(httpClient, serviceVersion);
+    public void beginTrainingInvalidModelStatus() {
         beginTrainingInvalidModelStatusRunner((invalidTrainingFilesUrl, useTrainingLabels) -> {
             FormRecognizerException formRecognizerException = assertThrows(FormRecognizerException.class,
                 () -> client
@@ -390,11 +375,8 @@ public class FormTrainingAsyncClientTest extends FormTrainingClientTestBase {
     /**
      * Verifies the result of the training operation for a valid labeled model Id and JPG training set Url.
      */
-    @ParameterizedTest(name = DISPLAY_NAME_WITH_ARGUMENTS)
-    @MethodSource("com.azure.ai.formrecognizer.TestUtils#getTestParameters")
-    public void beginTrainingWithTrainingLabelsForJPGTrainingSet(HttpClient httpClient,
-        FormRecognizerServiceVersion serviceVersion) {
-        client = getFormTrainingAsyncClient(httpClient, serviceVersion);
+    @Test
+    public void beginTrainingWithTrainingLabelsForJPGTrainingSet() {
         beginTrainingLabeledRunner((trainingFilesUrl, useTrainingLabels) -> {
             SyncPoller<FormRecognizerOperationResult, CustomFormModel> trainingPoller
                 = client
@@ -409,12 +391,9 @@ public class FormTrainingAsyncClientTest extends FormTrainingClientTestBase {
     /**
      * Verifies the result of the training operation for a valid unlabeled model Id and JPG training set Url.
      */
-    @ParameterizedTest(name = DISPLAY_NAME_WITH_ARGUMENTS)
-    @MethodSource("com.azure.ai.formrecognizer.TestUtils#getTestParameters")
+    @Test
     @Disabled("https://github.com/Azure/azure-sdk-for-java/issues/41049")
-    public void beginTrainingWithoutTrainingLabelsForJPGTrainingSet(HttpClient httpClient,
-        FormRecognizerServiceVersion serviceVersion) {
-        client = getFormTrainingAsyncClient(httpClient, serviceVersion);
+    public void beginTrainingWithoutTrainingLabelsForJPGTrainingSet() {
         beginTrainingUnlabeledRunner((trainingFilesUrl, useTrainingLabels) -> {
             SyncPoller<FormRecognizerOperationResult, CustomFormModel> trainingPoller
                 = client
@@ -429,11 +408,8 @@ public class FormTrainingAsyncClientTest extends FormTrainingClientTestBase {
     /**
      * Verifies the result of the training operation for a valid labeled model Id and multi-page PDF training set Url.
      */
-    @ParameterizedTest(name = DISPLAY_NAME_WITH_ARGUMENTS)
-    @MethodSource("com.azure.ai.formrecognizer.TestUtils#getTestParameters")
-    public void beginTrainingWithTrainingLabelsForMultiPagePDFTrainingSet(HttpClient httpClient,
-        FormRecognizerServiceVersion serviceVersion) {
-        client = getFormTrainingAsyncClient(httpClient, serviceVersion);
+    @Test
+    public void beginTrainingWithTrainingLabelsForMultiPagePDFTrainingSet() {
         beginTrainingMultipageRunner(trainingFilesUrl -> {
             SyncPoller<FormRecognizerOperationResult, CustomFormModel> trainingPoller
                 = client.beginTraining(trainingFilesUrl, true, new TrainingOptions().setPollInterval(durationTestMode))
@@ -446,11 +422,8 @@ public class FormTrainingAsyncClientTest extends FormTrainingClientTestBase {
     /**
      * Verifies the result of the training operation for a valid unlabeled model Id and multi-page PDF training set Url.
      */
-    @ParameterizedTest(name = DISPLAY_NAME_WITH_ARGUMENTS)
-    @MethodSource("com.azure.ai.formrecognizer.TestUtils#getTestParameters")
-    public void beginTrainingWithoutTrainingLabelsForMultiPagePDFTrainingSet(HttpClient httpClient,
-        FormRecognizerServiceVersion serviceVersion) {
-        client = getFormTrainingAsyncClient(httpClient, serviceVersion);
+    @Test
+    public void beginTrainingWithoutTrainingLabelsForMultiPagePDFTrainingSet() {
         beginTrainingMultipageRunner(trainingFilesUrl -> {
             SyncPoller<FormRecognizerOperationResult, CustomFormModel> trainingPoller
                 = client.beginTraining(trainingFilesUrl, false, new TrainingOptions().setPollInterval(durationTestMode))
@@ -464,12 +437,9 @@ public class FormTrainingAsyncClientTest extends FormTrainingClientTestBase {
      * Verifies the result of the training operation for a valid labeled model Id and include subfolder training set
      * Url.
      */
-    @ParameterizedTest(name = DISPLAY_NAME_WITH_ARGUMENTS)
-    @MethodSource("com.azure.ai.formrecognizer.TestUtils#getTestParameters")
+    @Test
     @Disabled("https://github.com/Azure/azure-sdk-for-java/issues/41049")
-    public void beginTrainingWithoutTrainingLabelsIncludeSubfolderWithPrefixName(HttpClient httpClient,
-        FormRecognizerServiceVersion serviceVersion) {
-        client = getFormTrainingAsyncClient(httpClient, serviceVersion);
+    public void beginTrainingWithoutTrainingLabelsIncludeSubfolderWithPrefixName() {
         beginTrainingUnlabeledRunner((trainingFilesUrl, useTrainingLabels) -> {
             SyncPoller<FormRecognizerOperationResult, CustomFormModel> trainingPoller = client
                 .beginTraining(trainingFilesUrl, useTrainingLabels,
@@ -486,12 +456,9 @@ public class FormTrainingAsyncClientTest extends FormTrainingClientTestBase {
      * Verifies the result of the training operation for a valid unlabeled model ID and exclude subfolder training set
      * URL with existing prefix name.
      */
-    @ParameterizedTest(name = DISPLAY_NAME_WITH_ARGUMENTS)
-    @MethodSource("com.azure.ai.formrecognizer.TestUtils#getTestParameters")
+    @Test
     @Disabled("https://github.com/Azure/azure-sdk-for-java/issues/41049")
-    public void beginTrainingWithoutTrainingLabelsExcludeSubfolderWithPrefixName(HttpClient httpClient,
-        FormRecognizerServiceVersion serviceVersion) {
-        client = getFormTrainingAsyncClient(httpClient, serviceVersion);
+    public void beginTrainingWithoutTrainingLabelsExcludeSubfolderWithPrefixName() {
         beginTrainingUnlabeledRunner((trainingFilesUrl, useTrainingLabels) -> {
             SyncPoller<FormRecognizerOperationResult, CustomFormModel> trainingPoller = client
                 .beginTraining(trainingFilesUrl, useTrainingLabels,
@@ -507,11 +474,8 @@ public class FormTrainingAsyncClientTest extends FormTrainingClientTestBase {
      * Verifies the result of the training operation for a valid unlabeled model Id and include subfolder training set
      * Url with non-existing prefix name.
      */
-    @ParameterizedTest(name = DISPLAY_NAME_WITH_ARGUMENTS)
-    @MethodSource("com.azure.ai.formrecognizer.TestUtils#getTestParameters")
-    public void beginTrainingWithoutTrainingLabelsIncludeSubfolderWithNonExistPrefixName(HttpClient httpClient,
-        FormRecognizerServiceVersion serviceVersion) {
-        client = getFormTrainingAsyncClient(httpClient, serviceVersion);
+    @Test
+    public void beginTrainingWithoutTrainingLabelsIncludeSubfolderWithNonExistPrefixName() {
         beginTrainingMultipageRunner(trainingFilesUrl -> {
             FormRecognizerException thrown
                 = assertThrows(FormRecognizerException.class,
@@ -527,12 +491,9 @@ public class FormTrainingAsyncClientTest extends FormTrainingClientTestBase {
      * Verifies the result of the training operation for a valid unlabeled model Id and exclude subfolder training set
      * Url with non-existing prefix name.
      */
-    @ParameterizedTest(name = DISPLAY_NAME_WITH_ARGUMENTS)
-    @MethodSource("com.azure.ai.formrecognizer.TestUtils#getTestParameters")
+    @Test
     @Disabled("https://github.com/Azure/azure-sdk-for-java/issues/41049")
-    public void beginTrainingWithoutTrainingLabelsExcludeSubfolderWithNonExistPrefixName(HttpClient httpClient,
-        FormRecognizerServiceVersion serviceVersion) {
-        client = getFormTrainingAsyncClient(httpClient, serviceVersion);
+    public void beginTrainingWithoutTrainingLabelsExcludeSubfolderWithNonExistPrefixName() {
         beginTrainingMultipageRunner(trainingFilesUrl -> {
             FormRecognizerException thrown = assertThrows(FormRecognizerException.class,
                 () -> client
@@ -549,11 +510,9 @@ public class FormTrainingAsyncClientTest extends FormTrainingClientTestBase {
     /**
      * Verifies the result of the create composed model for valid parameters.
      */
-    @ParameterizedTest(name = DISPLAY_NAME_WITH_ARGUMENTS)
-    @MethodSource("com.azure.ai.formrecognizer.TestUtils#getTestParameters")
+    @Test
     @Disabled("https://github.com/Azure/azure-sdk-for-java/issues/41049")
-    public void beginCreateComposedModel(HttpClient httpClient, FormRecognizerServiceVersion serviceVersion) {
-        client = getFormTrainingAsyncClient(httpClient, serviceVersion);
+    public void beginCreateComposedModel() {
         beginTrainingLabeledRunner((trainingFilesUrl, useTrainingLabels) -> {
             SyncPoller<FormRecognizerOperationResult, CustomFormModel> syncPoller1
                 = client
@@ -596,11 +555,8 @@ public class FormTrainingAsyncClientTest extends FormTrainingClientTestBase {
     /**
      * Verifies the result of the create composed model for valid parameters with options.
      */
-    @ParameterizedTest(name = DISPLAY_NAME_WITH_ARGUMENTS)
-    @MethodSource("com.azure.ai.formrecognizer.TestUtils#getTestParameters")
-    public void beginCreateComposedModelWithOptions(HttpClient httpClient,
-        FormRecognizerServiceVersion serviceVersion) {
-        client = getFormTrainingAsyncClient(httpClient, serviceVersion);
+    @Test
+    public void beginCreateComposedModelWithOptions() {
         beginTrainingLabeledRunner((trainingFilesUrl, useTrainingLabels) -> {
             SyncPoller<FormRecognizerOperationResult, CustomFormModel> syncPoller1
                 = client
@@ -645,10 +601,8 @@ public class FormTrainingAsyncClientTest extends FormTrainingClientTestBase {
     /**
      * Verifies the create composed model using unlabeled models fails.
      */
-    @ParameterizedTest(name = DISPLAY_NAME_WITH_ARGUMENTS)
-    @MethodSource("com.azure.ai.formrecognizer.TestUtils#getTestParameters")
-    public void beginCreateComposedUnlabeledModel(HttpClient httpClient, FormRecognizerServiceVersion serviceVersion) {
-        client = getFormTrainingAsyncClient(httpClient, serviceVersion);
+    @Test
+    public void beginCreateComposedUnlabeledModel() {
         beginTrainingUnlabeledRunner((trainingFilesUrl, useTrainingLabels) -> {
             SyncPoller<FormRecognizerOperationResult, CustomFormModel> syncPoller1
                 = client
@@ -682,10 +636,8 @@ public class FormTrainingAsyncClientTest extends FormTrainingClientTestBase {
     /**
      * Verifies the create composed model operation fails when supplied duplicate Ids.
      */
-    @ParameterizedTest(name = DISPLAY_NAME_WITH_ARGUMENTS)
-    @MethodSource("com.azure.ai.formrecognizer.TestUtils#getTestParameters")
-    public void beginCreateComposedDuplicateModels(HttpClient httpClient, FormRecognizerServiceVersion serviceVersion) {
-        client = getFormTrainingAsyncClient(httpClient, serviceVersion);
+    @Test
+    public void beginCreateComposedDuplicateModels() {
         beginTrainingLabeledRunner((trainingFilesUrl, useTrainingLabels) -> {
             SyncPoller<FormRecognizerOperationResult, CustomFormModel> syncPoller1
                 = client
@@ -711,11 +663,9 @@ public class FormTrainingAsyncClientTest extends FormTrainingClientTestBase {
     // /**
     //  * Verifies the composed model attributes are returned when listing models.
     //  */
-    // @ParameterizedTest(name = DISPLAY_NAME_WITH_ARGUMENTS)
-    // @MethodSource("com.azure.ai.formrecognizer.TestUtils#getTestParameters")
-    // public void listComposedModels(HttpClient httpClient, FormRecognizerServiceVersion serviceVersion) {
-    //     client = getFormTrainingAsyncClient(httpClient, serviceVersion);
-    //     beginTrainingLabeledRunner((trainingFilesUrl, useTrainingLabels) -> {
+    // @Test
+    // public void listComposedModels() {
+    //         //     beginTrainingLabeledRunner((trainingFilesUrl, useTrainingLabels) -> {
     //         SyncPoller<FormRecognizerOperationResult, CustomFormModel> syncPoller1
     //             = client.beginTraining(trainingFilesUrl,
     //             useTrainingLabels,
@@ -761,11 +711,9 @@ public class FormTrainingAsyncClientTest extends FormTrainingClientTestBase {
     /**
      * Verifies the result contains the user defined model display name for unlabeled model.
      */
-    @ParameterizedTest(name = DISPLAY_NAME_WITH_ARGUMENTS)
-    @MethodSource("com.azure.ai.formrecognizer.TestUtils#getTestParameters")
+    @Test
     @Disabled("https://github.com/Azure/azure-sdk-for-java/issues/41049")
-    public void beginTrainingUnlabeledModelName(HttpClient httpClient, FormRecognizerServiceVersion serviceVersion) {
-        client = getFormTrainingAsyncClient(httpClient, serviceVersion);
+    public void beginTrainingUnlabeledModelName() {
         beginTrainingUnlabeledRunner((trainingFilesUrl, notUseTrainingLabels) -> {
             SyncPoller<FormRecognizerOperationResult, CustomFormModel> syncPoller = client
                 .beginTraining(trainingFilesUrl, notUseTrainingLabels,
@@ -786,10 +734,8 @@ public class FormTrainingAsyncClientTest extends FormTrainingClientTestBase {
     /**
      * Verifies the result contains the user defined model display name for labeled model.
      */
-    @ParameterizedTest(name = DISPLAY_NAME_WITH_ARGUMENTS)
-    @MethodSource("com.azure.ai.formrecognizer.TestUtils#getTestParameters")
-    public void beginTrainingLabeledModelName(HttpClient httpClient, FormRecognizerServiceVersion serviceVersion) {
-        client = getFormTrainingAsyncClient(httpClient, serviceVersion);
+    @Test
+    public void beginTrainingLabeledModelName() {
         beginTrainingLabeledRunner((trainingFilesUrl, useTrainingLabels) -> {
             SyncPoller<FormRecognizerOperationResult, CustomFormModel> syncPoller
                 = client

@@ -149,71 +149,61 @@ public abstract class FormTrainingClientTestBase extends TestProxyTestBase {
     }
 
     @Test
-    abstract void getFormRecognizerClientAndValidate(HttpClient httpClient,
-        FormRecognizerServiceVersion serviceVersion);
+    abstract void getFormRecognizerClientAndValidate();
 
     @Test
-    abstract void getCustomModelLabeled(HttpClient httpClient, FormRecognizerServiceVersion serviceVersion);
+    abstract void getCustomModelLabeled();
 
     @Test
-    abstract void getCustomModelUnlabeled(HttpClient httpClient, FormRecognizerServiceVersion serviceVersion);
+    abstract void getCustomModelUnlabeled();
 
     @Test
-    abstract void getCustomModelWithResponse(HttpClient httpClient, FormRecognizerServiceVersion serviceVersion);
+    abstract void getCustomModelWithResponse();
 
     @Test
-    abstract void validGetAccountProperties(HttpClient httpClient, FormRecognizerServiceVersion serviceVersion);
+    abstract void validGetAccountProperties();
 
     @Test
-    abstract void validGetAccountPropertiesWithResponse(HttpClient httpClient,
-        FormRecognizerServiceVersion serviceVersion);
+    abstract void validGetAccountPropertiesWithResponse();
 
     @Test
-    abstract void deleteModelValidModelIdWithResponse(HttpClient httpClient,
-        FormRecognizerServiceVersion serviceVersion);
+    abstract void deleteModelValidModelIdWithResponse();
 
     @Test
-    abstract void listCustomModels(HttpClient httpClient, FormRecognizerServiceVersion serviceVersion);
+    abstract void listCustomModels();
 
     @Test
-    abstract void beginCopy(HttpClient httpClient, FormRecognizerServiceVersion serviceVersion);
+    abstract void beginCopy();
 
     @Test
-    abstract void beginCopyInvalidRegion(HttpClient httpClient, FormRecognizerServiceVersion serviceVersion);
+    abstract void beginCopyInvalidRegion();
 
     @Test
-    abstract void copyAuthorization(HttpClient httpClient, FormRecognizerServiceVersion serviceVersion);
+    abstract void copyAuthorization();
 
     @Test
-    abstract void beginTrainingInvalidModelStatus(HttpClient httpClient, FormRecognizerServiceVersion serviceVersion);
+    abstract void beginTrainingInvalidModelStatus();
 
     @Test
-    abstract void beginTrainingWithTrainingLabelsForJPGTrainingSet(HttpClient httpClient,
-        FormRecognizerServiceVersion serviceVersion);
+    abstract void beginTrainingWithTrainingLabelsForJPGTrainingSet();
 
     @Test
-    abstract void beginTrainingWithoutTrainingLabelsForJPGTrainingSet(HttpClient httpClient,
-        FormRecognizerServiceVersion serviceVersion);
+    abstract void beginTrainingWithoutTrainingLabelsForJPGTrainingSet();
 
     @Test
-    abstract void beginTrainingWithTrainingLabelsForMultiPagePDFTrainingSet(HttpClient httpClient,
-        FormRecognizerServiceVersion serviceVersion);
+    abstract void beginTrainingWithTrainingLabelsForMultiPagePDFTrainingSet();
 
     @Test
-    abstract void beginTrainingWithoutTrainingLabelsForMultiPagePDFTrainingSet(HttpClient httpClient,
-        FormRecognizerServiceVersion serviceVersion);
+    abstract void beginTrainingWithoutTrainingLabelsForMultiPagePDFTrainingSet();
 
     @Test
-    abstract void beginTrainingWithoutTrainingLabelsExcludeSubfolderWithPrefixName(HttpClient httpClient,
-        FormRecognizerServiceVersion serviceVersion);
+    abstract void beginTrainingWithoutTrainingLabelsExcludeSubfolderWithPrefixName();
 
     @Test
-    abstract void beginTrainingWithoutTrainingLabelsIncludeSubfolderWithPrefixName(HttpClient httpClient,
-        FormRecognizerServiceVersion serviceVersion);
+    abstract void beginTrainingWithoutTrainingLabelsIncludeSubfolderWithPrefixName();
 
     @Test
-    abstract void beginTrainingWithoutTrainingLabelsExcludeSubfolderWithNonExistPrefixName(HttpClient httpClient,
-        FormRecognizerServiceVersion serviceVersion);
+    abstract void beginTrainingWithoutTrainingLabelsExcludeSubfolderWithNonExistPrefixName();
 
     void beginTrainingLabeledRunner(BiConsumer<String, Boolean> testRunner) {
         testRunner.accept(getTrainingFilesContainerUrl(), true);

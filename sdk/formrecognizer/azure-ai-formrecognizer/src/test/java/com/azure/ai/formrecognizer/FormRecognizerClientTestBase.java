@@ -196,228 +196,193 @@ public abstract class FormRecognizerClientTestBase extends TestProxyTestBase {
     // Receipt recognition
 
     @Test
-    abstract void recognizeReceiptData(HttpClient httpClient, FormRecognizerServiceVersion serviceVersion);
+    abstract void recognizeReceiptData();
 
     @Test
-    abstract void recognizeReceiptDataWithContentTypeAutoDetection(HttpClient httpClient,
-        FormRecognizerServiceVersion serviceVersion);
+    abstract void recognizeReceiptDataWithContentTypeAutoDetection();
 
     @Test
-    abstract void recognizeReceiptDataIncludeFieldElements(HttpClient httpClient,
-        FormRecognizerServiceVersion serviceVersion);
+    abstract void recognizeReceiptDataIncludeFieldElements();
 
     @Test
-    abstract void recognizeReceiptDataWithPngFile(HttpClient httpClient, FormRecognizerServiceVersion serviceVersion);
+    abstract void recognizeReceiptDataWithPngFile();
 
     @Test
-    abstract void recognizeReceiptDataWithBlankPdf(HttpClient httpClient, FormRecognizerServiceVersion serviceVersion);
+    abstract void recognizeReceiptDataWithBlankPdf();
 
     @Test
-    abstract void recognizeReceiptFromDataMultiPage(HttpClient httpClient, FormRecognizerServiceVersion serviceVersion);
+    abstract void recognizeReceiptFromDataMultiPage();
 
     // Receipt - URL
 
     @Test
-    abstract void recognizeReceiptSourceUrl(HttpClient httpClient, FormRecognizerServiceVersion serviceVersion);
+    abstract void recognizeReceiptSourceUrl();
 
     @Test
-    abstract void recognizeReceiptInvalidSourceUrl(HttpClient httpClient, FormRecognizerServiceVersion serviceVersion);
+    abstract void recognizeReceiptInvalidSourceUrl();
 
     @Test
-    abstract void recognizeReceiptFromUrlIncludeFieldElements(HttpClient httpClient,
-        FormRecognizerServiceVersion serviceVersion);
+    abstract void recognizeReceiptFromUrlIncludeFieldElements();
 
     @Test
-    abstract void recognizeReceiptSourceUrlWithPngFile(HttpClient httpClient,
-        FormRecognizerServiceVersion serviceVersion);
+    abstract void recognizeReceiptSourceUrlWithPngFile();
 
     @Test
-    abstract void recognizeReceiptFromUrlMultiPage(HttpClient httpClient, FormRecognizerServiceVersion serviceVersion);
+    abstract void recognizeReceiptFromUrlMultiPage();
 
     // Content recognition
 
     // Content - non-URL
 
     @Test
-    abstract void recognizeContent(HttpClient httpClient, FormRecognizerServiceVersion serviceVersion);
+    abstract void recognizeContent();
 
     @Test
-    abstract void recognizeContentResultWithContentTypeAutoDetection(HttpClient httpClient,
-        FormRecognizerServiceVersion serviceVersion);
+    abstract void recognizeContentResultWithContentTypeAutoDetection();
 
     @Test
-    abstract void recognizeContentResultWithBlankPdf(HttpClient httpClient,
-        FormRecognizerServiceVersion serviceVersion);
+    abstract void recognizeContentResultWithBlankPdf();
 
     @Test
-    abstract void recognizeContentFromDataMultiPage(HttpClient httpClient, FormRecognizerServiceVersion serviceVersion);
+    abstract void recognizeContentFromDataMultiPage();
 
     @Test
-    abstract void recognizeContentWithSelectionMarks(HttpClient httpClient,
-        FormRecognizerServiceVersion serviceVersion);
+    abstract void recognizeContentWithSelectionMarks();
 
     @Test
-    abstract void recognizeContentAppearance(HttpClient httpClient, FormRecognizerServiceVersion serviceVersion);
+    abstract void recognizeContentAppearance();
 
     // Content - URL
 
     @Test
-    abstract void recognizeContentFromUrl(HttpClient httpClient, FormRecognizerServiceVersion serviceVersion);
+    abstract void recognizeContentFromUrl();
 
     @Test
-    abstract void recognizeContentFromUrlWithPdf(HttpClient httpClient, FormRecognizerServiceVersion serviceVersion);
+    abstract void recognizeContentFromUrlWithPdf();
 
     @Test
-    abstract void recognizeContentInvalidSourceUrl(HttpClient httpClient, FormRecognizerServiceVersion serviceVersion);
+    abstract void recognizeContentInvalidSourceUrl();
 
     @Test
-    abstract void recognizeContentFromUrlMultiPage(HttpClient httpClient, FormRecognizerServiceVersion serviceVersion);
+    abstract void recognizeContentFromUrlMultiPage();
 
     @Test
-    abstract void recognizeContentWithSelectionMarksFromUrl(HttpClient httpClient,
-        FormRecognizerServiceVersion serviceVersion);
+    abstract void recognizeContentWithSelectionMarksFromUrl();
 
     // Custom form recognition
 
     // Custom form - non-URL - labeled data
 
     @Test
-    abstract void recognizeCustomFormLabeledData(HttpClient httpClient, FormRecognizerServiceVersion serviceVersion);
+    abstract void recognizeCustomFormLabeledData();
 
     @Test
-    abstract void recognizeCustomFormLabeledDataWithJpgContentType(HttpClient httpClient,
-        FormRecognizerServiceVersion serviceVersion);
+    abstract void recognizeCustomFormLabeledDataWithJpgContentType();
 
     @Test
-    abstract void recognizeCustomFormLabeledDataWithBlankPdfContentType(HttpClient httpClient,
-        FormRecognizerServiceVersion serviceVersion);
+    abstract void recognizeCustomFormLabeledDataWithBlankPdfContentType();
 
     @Disabled
     @Test
-    abstract void recognizeCustomFormLabeledDataExcludeFieldElements(HttpClient httpClient,
-        FormRecognizerServiceVersion serviceVersion);
+    abstract void recognizeCustomFormLabeledDataExcludeFieldElements();
 
     @Test
-    abstract void recognizeCustomFormLabeledDataWithNullFormData(HttpClient httpClient,
-        FormRecognizerServiceVersion serviceVersion);
+    abstract void recognizeCustomFormLabeledDataWithNullFormData();
 
     @Test
-    abstract void recognizeCustomFormInvalidStatus(HttpClient httpClient, FormRecognizerServiceVersion serviceVersion);
+    abstract void recognizeCustomFormInvalidStatus();
 
     @Test
-    abstract void recognizeCustomFormLabeledDataWithContentTypeAutoDetection(HttpClient httpClient,
-        FormRecognizerServiceVersion serviceVersion);
+    abstract void recognizeCustomFormLabeledDataWithContentTypeAutoDetection();
 
     @Test
-    abstract void recognizeCustomFormMultiPageLabeled(HttpClient httpClient,
-        FormRecognizerServiceVersion serviceVersion);
+    abstract void recognizeCustomFormMultiPageLabeled();
 
     @Test
-    abstract void recognizeCustomFormLabeledDataWithSelectionMark(HttpClient httpClient,
-        FormRecognizerServiceVersion serviceVersion);
+    abstract void recognizeCustomFormLabeledDataWithSelectionMark();
 
     // Custom form - non-URL - unlabeled data
     @Test
-    abstract void recognizeCustomFormUnlabeledData(HttpClient httpClient, FormRecognizerServiceVersion serviceVersion);
+    abstract void recognizeCustomFormUnlabeledData();
 
     @Test
-    abstract void recognizeCustomFormUnlabeledDataIncludeFieldElements(HttpClient httpClient,
-        FormRecognizerServiceVersion serviceVersion);
+    abstract void recognizeCustomFormUnlabeledDataIncludeFieldElements();
 
     @Test
-    abstract void recognizeCustomFormMultiPageUnlabeled(HttpClient httpClient,
-        FormRecognizerServiceVersion serviceVersion);
+    abstract void recognizeCustomFormMultiPageUnlabeled();
 
     @Test
-    abstract void recognizeCustomFormUnlabeledDataWithJpgContentType(HttpClient httpClient,
-        FormRecognizerServiceVersion serviceVersion);
+    abstract void recognizeCustomFormUnlabeledDataWithJpgContentType();
 
     @Test
-    abstract void recognizeCustomFormUnlabeledDataWithBlankPdfContentType(HttpClient httpClient,
-        FormRecognizerServiceVersion serviceVersion);
+    abstract void recognizeCustomFormUnlabeledDataWithBlankPdfContentType();
 
     // Custom form - URL - unlabeled data
 
     @Test
-    abstract void recognizeCustomFormUrlUnlabeledData(HttpClient httpClient,
-        FormRecognizerServiceVersion serviceVersion);
+    abstract void recognizeCustomFormUrlUnlabeledData();
 
     @Test
     @Disabled("https://github.com/Azure/azure-sdk-for-java/issues/41049")
-    abstract void recognizeCustomFormUrlUnlabeledDataIncludeFieldElements(HttpClient httpClient,
-        FormRecognizerServiceVersion serviceVersion);
+    abstract void recognizeCustomFormUrlUnlabeledDataIncludeFieldElements();
 
     @Test
     @Disabled("https://github.com/Azure/azure-sdk-for-java/issues/41049")
-    abstract void recognizeCustomFormUrlMultiPageUnlabeled(HttpClient httpClient,
-        FormRecognizerServiceVersion serviceVersion);
+    abstract void recognizeCustomFormUrlMultiPageUnlabeled();
 
     // Custom form - URL - labeled data
 
     @Test
-    abstract void recognizeCustomFormInvalidSourceUrl(HttpClient httpClient,
-        FormRecognizerServiceVersion serviceVersion);
+    abstract void recognizeCustomFormInvalidSourceUrl();
 
     @Test
-    abstract void recognizeCustomFormUrlLabeledData(HttpClient httpClient, FormRecognizerServiceVersion serviceVersion);
+    abstract void recognizeCustomFormUrlLabeledData();
 
     @Test
-    abstract void recognizeCustomFormUrlLabeledDataIncludeFieldElements(HttpClient httpClient,
-        FormRecognizerServiceVersion serviceVersion);
+    abstract void recognizeCustomFormUrlLabeledDataIncludeFieldElements();
 
     @Test
-    abstract void recognizeCustomFormUrlMultiPageLabeled(HttpClient httpClient,
-        FormRecognizerServiceVersion serviceVersion);
+    abstract void recognizeCustomFormUrlMultiPageLabeled();
 
     @Disabled
     @Test
-    abstract void recognizeCustomFormUrlLabeledDataWithSelectionMark(HttpClient httpClient,
-        FormRecognizerServiceVersion serviceVersion);
+    abstract void recognizeCustomFormUrlLabeledDataWithSelectionMark();
 
     // Business Card - data
     @Test
-    abstract void recognizeBusinessCardData(HttpClient httpClient, FormRecognizerServiceVersion serviceVersion);
+    abstract void recognizeBusinessCardData();
 
     @Test
-    abstract void recognizeBusinessCardDataWithContentTypeAutoDetection(HttpClient httpClient,
-        FormRecognizerServiceVersion serviceVersion);
+    abstract void recognizeBusinessCardDataWithContentTypeAutoDetection();
 
     @Test
-    abstract void recognizeBusinessCardDataIncludeFieldElements(HttpClient httpClient,
-        FormRecognizerServiceVersion serviceVersion);
+    abstract void recognizeBusinessCardDataIncludeFieldElements();
 
     @Test
-    abstract void recognizeBusinessCardDataWithPngFile(HttpClient httpClient,
-        FormRecognizerServiceVersion serviceVersion);
+    abstract void recognizeBusinessCardDataWithPngFile();
 
     @Test
-    abstract void recognizeBusinessCardDataWithBlankPdf(HttpClient httpClient,
-        FormRecognizerServiceVersion serviceVersion);
+    abstract void recognizeBusinessCardDataWithBlankPdf();
 
     @Test
-    abstract void recognizeBusinessCardFromDamagedPdf(HttpClient httpClient,
-        FormRecognizerServiceVersion serviceVersion);
+    abstract void recognizeBusinessCardFromDamagedPdf();
 
     // Business card - URL
 
     @Test
-    abstract void recognizeBusinessCardSourceUrl(HttpClient httpClient, FormRecognizerServiceVersion serviceVersion);
+    abstract void recognizeBusinessCardSourceUrl();
 
     @Test
-    abstract void recognizeBusinessCardFromUrlWithEncodedBlankSpaceSourceUrl(HttpClient httpClient,
-        FormRecognizerServiceVersion serviceVersion);
+    abstract void recognizeBusinessCardFromUrlWithEncodedBlankSpaceSourceUrl();
 
     @Test
-    abstract void recognizeBusinessCardInvalidSourceUrl(HttpClient httpClient,
-        FormRecognizerServiceVersion serviceVersion);
+    abstract void recognizeBusinessCardInvalidSourceUrl();
 
     @Test
-    abstract void recognizeBusinessCardFromUrlIncludeFieldElements(HttpClient httpClient,
-        FormRecognizerServiceVersion serviceVersion);
+    abstract void recognizeBusinessCardFromUrlIncludeFieldElements();
 
     @Test
-    abstract void recognizeBusinessCardSourceUrlWithPngFile(HttpClient httpClient,
-        FormRecognizerServiceVersion serviceVersion);
+    abstract void recognizeBusinessCardSourceUrlWithPngFile();
 
     // Others
 

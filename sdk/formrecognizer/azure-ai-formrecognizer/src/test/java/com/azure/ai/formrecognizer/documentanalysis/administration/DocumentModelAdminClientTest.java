@@ -31,7 +31,9 @@ import com.azure.core.util.Context;
 import com.azure.core.util.polling.SyncPoller;
 import io.netty.handler.codec.http.HttpResponseStatus;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedClass;
 import org.junit.jupiter.params.provider.MethodSource;
 
 import java.util.Arrays;
@@ -46,8 +48,23 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+@ParameterizedClass(name = DISPLAY_NAME_WITH_ARGUMENTS)
+@MethodSource("com.azure.ai.formrecognizer.documentanalysis.TestUtils#getTestParameters")
 public class DocumentModelAdminClientTest extends DocumentModelAdministrationClientTestBase {
+    private final HttpClient httpClient;
+    private final DocumentAnalysisServiceVersion serviceVersion;
+
     private DocumentModelAdministrationClient client;
+
+    public DocumentModelAdminClientTest(HttpClient httpClient, DocumentAnalysisServiceVersion serviceVersion) {
+        this.httpClient = httpClient;
+        this.serviceVersion = serviceVersion;
+    }
+
+    @BeforeEach
+    public void createClient() {
+        this.client = getDocumentModelAdministrationClient();
+    }
 
     private HttpClient buildSyncAssertingClient(HttpClient httpClient) {
         return new AssertingHttpClientBuilder(httpClient).skipRequest((ignored1, ignored2) -> false)
@@ -55,8 +72,7 @@ public class DocumentModelAdminClientTest extends DocumentModelAdministrationCli
             .build();
     }
 
-    private DocumentModelAdministrationClient getDocumentModelAdministrationClient(HttpClient httpClient,
-        DocumentAnalysisServiceVersion serviceVersion) {
+    private DocumentModelAdministrationClient getDocumentModelAdministrationClient() {
         return getDocumentModelAdminClientBuilder(
             buildSyncAssertingClient(
                 interceptorManager.isPlaybackMode() ? interceptorManager.getPlaybackClient() : httpClient),
@@ -66,12 +82,9 @@ public class DocumentModelAdminClientTest extends DocumentModelAdministrationCli
     /**
      * Verifies the form recognizer client is valid.
      */
-    @ParameterizedTest(name = DISPLAY_NAME_WITH_ARGUMENTS)
-    @MethodSource("com.azure.ai.formrecognizer.documentanalysis.TestUtils#getTestParameters")
-    public void getDocumentAnalysisClientAndValidate(HttpClient httpClient,
-        DocumentAnalysisServiceVersion serviceVersion) {
-        DocumentAnalysisClient documentAnalysisClient
-            = getDocumentModelAdministrationClient(httpClient, serviceVersion).getDocumentAnalysisClient();
+    @Test
+    public void getDocumentAnalysisClientAndValidate() {
+        DocumentAnalysisClient documentAnalysisClient = this.client.getDocumentAnalysisClient();
         blankPdfDataRunner((data, dataLength) -> {
             SyncPoller<OperationResult, AnalyzeResult> syncPoller = documentAnalysisClient
                 .beginAnalyzeDocument("prebuilt-layout", BinaryData.fromStream(data, dataLength))
@@ -84,10 +97,8 @@ public class DocumentModelAdminClientTest extends DocumentModelAdministrationCli
     /**
      * Verifies that an exception is thrown for invalid model ID.
      */
-    @ParameterizedTest(name = DISPLAY_NAME_WITH_ARGUMENTS)
-    @MethodSource("com.azure.ai.formrecognizer.documentanalysis.TestUtils#getTestParameters")
-    public void getModelNonExistingModelID(HttpClient httpClient, DocumentAnalysisServiceVersion serviceVersion) {
-        client = getDocumentModelAdministrationClient(httpClient, serviceVersion);
+    @Test
+    public void getModelNonExistingModelID() {
         HttpResponseException exception
             = assertThrows(HttpResponseException.class, () -> client.getDocumentModel(NON_EXIST_MODEL_ID));
         final ResponseError responseError = (ResponseError) exception.getValue();
@@ -97,10 +108,8 @@ public class DocumentModelAdminClientTest extends DocumentModelAdministrationCli
     /**
      * Verifies custom model info returned with response for a valid model ID.
      */
-    @ParameterizedTest(name = DISPLAY_NAME_WITH_ARGUMENTS)
-    @MethodSource("com.azure.ai.formrecognizer.documentanalysis.TestUtils#getTestParameters")
-    public void getModelWithResponse(HttpClient httpClient, DocumentAnalysisServiceVersion serviceVersion) {
-        client = getDocumentModelAdministrationClient(httpClient, serviceVersion);
+    @Test
+    public void getModelWithResponse() {
         buildModelRunner((trainingDataSasUrl) -> {
             DocumentModelDetails documentModelDetails
                 = client.beginBuildDocumentModel(trainingDataSasUrl, DocumentModelBuildMode.TEMPLATE)
@@ -118,21 +127,16 @@ public class DocumentModelAdminClientTest extends DocumentModelAdministrationCli
     /**
      * Verifies account properties returned for a subscription account.
      */
-    @ParameterizedTest(name = DISPLAY_NAME_WITH_ARGUMENTS)
-    @MethodSource("com.azure.ai.formrecognizer.documentanalysis.TestUtils#getTestParameters")
-    public void validGetResourceDetails(HttpClient httpClient, DocumentAnalysisServiceVersion serviceVersion) {
-        client = getDocumentModelAdministrationClient(httpClient, serviceVersion);
+    @Test
+    public void validGetResourceDetails() {
         validateResourceInfo(client.getResourceDetails());
     }
 
     /**
      * Verifies account properties returned with a Http Response for a subscription account.
      */
-    @ParameterizedTest(name = DISPLAY_NAME_WITH_ARGUMENTS)
-    @MethodSource("com.azure.ai.formrecognizer.documentanalysis.TestUtils#getTestParameters")
-    public void validGetResourceDetailsWithResponse(HttpClient httpClient,
-        DocumentAnalysisServiceVersion serviceVersion) {
-        client = getDocumentModelAdministrationClient(httpClient, serviceVersion);
+    @Test
+    public void validGetResourceDetailsWithResponse() {
         Response<ResourceDetails> resourceDetailsResponse = client.getResourceDetailsWithResponse(Context.NONE);
         assertEquals(resourceDetailsResponse.getStatusCode(), HttpResponseStatus.OK.code());
         validateResourceInfo(resourceDetailsResponse.getValue());
@@ -141,21 +145,16 @@ public class DocumentModelAdminClientTest extends DocumentModelAdministrationCli
     /**
      * Verifies that an exception is thrown for invalid status model ID.
      */
-    @ParameterizedTest(name = DISPLAY_NAME_WITH_ARGUMENTS)
-    @MethodSource("com.azure.ai.formrecognizer.documentanalysis.TestUtils#getTestParameters")
-    public void deleteModelNonExistingModelID(HttpClient httpClient, DocumentAnalysisServiceVersion serviceVersion) {
-        client = getDocumentModelAdministrationClient(httpClient, serviceVersion);
+    @Test
+    public void deleteModelNonExistingModelID() {
         HttpResponseException exception
             = assertThrows(HttpResponseException.class, () -> client.deleteDocumentModel(NON_EXIST_MODEL_ID));
         final ResponseError responseError = (ResponseError) exception.getValue();
         assertEquals("NotFound", responseError.getCode());
     }
 
-    @ParameterizedTest(name = DISPLAY_NAME_WITH_ARGUMENTS)
-    @MethodSource("com.azure.ai.formrecognizer.documentanalysis.TestUtils#getTestParameters")
-    public void deleteModelValidModelIDWithResponse(HttpClient httpClient,
-        DocumentAnalysisServiceVersion serviceVersion) {
-        client = getDocumentModelAdministrationClient(httpClient, serviceVersion);
+    @Test
+    public void deleteModelValidModelIDWithResponse() {
         buildModelRunner((trainingDataSasUrl) -> {
             SyncPoller<OperationResult, DocumentModelDetails> syncPoller
                 = client.beginBuildDocumentModel(trainingDataSasUrl, DocumentModelBuildMode.TEMPLATE)
@@ -177,10 +176,8 @@ public class DocumentModelAdminClientTest extends DocumentModelAdministrationCli
     /**
      * Test for listing all models information.
      */
-    @ParameterizedTest(name = DISPLAY_NAME_WITH_ARGUMENTS)
-    @MethodSource("com.azure.ai.formrecognizer.documentanalysis.TestUtils#getTestParameters")
-    public void listModels(HttpClient httpClient, DocumentAnalysisServiceVersion serviceVersion) {
-        client = getDocumentModelAdministrationClient(httpClient, serviceVersion);
+    @Test
+    public void listModels() {
         int pageCount = 0;
         for (PagedResponse<DocumentModelSummary> documentModelSummaryPagedResponse : client.listDocumentModels()
             .iterableByPage()) {
@@ -200,10 +197,8 @@ public class DocumentModelAdminClientTest extends DocumentModelAdministrationCli
     /**
      * Test for listing all models information with {@link Context}.
      */
-    @ParameterizedTest(name = DISPLAY_NAME_WITH_ARGUMENTS)
-    @MethodSource("com.azure.ai.formrecognizer.documentanalysis.TestUtils#getTestParameters")
-    public void listModelsWithContext(HttpClient httpClient, DocumentAnalysisServiceVersion serviceVersion) {
-        client = getDocumentModelAdministrationClient(httpClient, serviceVersion);
+    @Test
+    public void listModelsWithContext() {
         int pageCount = 0;
         for (PagedResponse<DocumentModelSummary> documentModelSummaryPagedResponse : client
             .listDocumentModels(Context.NONE)
@@ -224,10 +219,8 @@ public class DocumentModelAdminClientTest extends DocumentModelAdministrationCli
     /**
      * Verifies the result of the copy operation for valid parameters.
      */
-    @ParameterizedTest(name = DISPLAY_NAME_WITH_ARGUMENTS)
-    @MethodSource("com.azure.ai.formrecognizer.documentanalysis.TestUtils#getTestParameters")
-    public void beginCopy(HttpClient httpClient, DocumentAnalysisServiceVersion serviceVersion) {
-        client = getDocumentModelAdministrationClient(httpClient, serviceVersion);
+    @Test
+    public void beginCopy() {
         buildModelRunner((trainingFilesUrl) -> {
             SyncPoller<OperationResult, DocumentModelDetails> syncPoller
                 = client.beginBuildDocumentModel(trainingFilesUrl, DocumentModelBuildMode.TEMPLATE)
@@ -249,21 +242,16 @@ public class DocumentModelAdminClientTest extends DocumentModelAdministrationCli
     /**
      * Verifies the result of the copy authorization for valid parameters.
      */
-    @ParameterizedTest(name = DISPLAY_NAME_WITH_ARGUMENTS)
-    @MethodSource("com.azure.ai.formrecognizer.documentanalysis.TestUtils#getTestParameters")
-    public void copyAuthorization(HttpClient httpClient, DocumentAnalysisServiceVersion serviceVersion) {
-        client = getDocumentModelAdministrationClient(httpClient, serviceVersion);
+    @Test
+    public void copyAuthorization() {
         validateCopyAuthorizationResult(client.getCopyAuthorization());
     }
 
     /**
      * Verifies the result of the training operation for a valid labeled model ID and JPG training set Url.
      */
-    @ParameterizedTest(name = DISPLAY_NAME_WITH_ARGUMENTS)
-    @MethodSource("com.azure.ai.formrecognizer.documentanalysis.TestUtils#getTestParameters")
-    public void beginBuildModelWithJPGTrainingSet(HttpClient httpClient,
-        DocumentAnalysisServiceVersion serviceVersion) {
-        client = getDocumentModelAdministrationClient(httpClient, serviceVersion);
+    @Test
+    public void beginBuildModelWithJPGTrainingSet() {
         buildModelRunner((trainingFilesUrl) -> {
             SyncPoller<OperationResult, DocumentModelDetails> buildModelPoller
                 = client.beginBuildDocumentModel(trainingFilesUrl, DocumentModelBuildMode.TEMPLATE)
@@ -277,11 +265,8 @@ public class DocumentModelAdminClientTest extends DocumentModelAdministrationCli
     /**
      * Verifies the result of the training operation for a valid labeled model ID and multi-page PDF training set Url.
      */
-    @ParameterizedTest(name = DISPLAY_NAME_WITH_ARGUMENTS)
-    @MethodSource("com.azure.ai.formrecognizer.documentanalysis.TestUtils#getTestParameters")
-    public void beginBuildModelWithMultiPagePDFTrainingSet(HttpClient httpClient,
-        DocumentAnalysisServiceVersion serviceVersion) {
-        client = getDocumentModelAdministrationClient(httpClient, serviceVersion);
+    @Test
+    public void beginBuildModelWithMultiPagePDFTrainingSet() {
         multipageTrainingRunner(trainingFilesUrl -> {
             SyncPoller<OperationResult, DocumentModelDetails> buildModelPoller
                 = client.beginBuildDocumentModel(trainingFilesUrl, DocumentModelBuildMode.TEMPLATE)
@@ -296,12 +281,8 @@ public class DocumentModelAdminClientTest extends DocumentModelAdministrationCli
      * Verifies the result of the training operation for a valid unlabeled model ID and include subfolder training set
      * Url with existing prefix name.
      */
-    @ParameterizedTest(name = DISPLAY_NAME_WITH_ARGUMENTS)
-    @MethodSource("com.azure.ai.formrecognizer.documentanalysis.TestUtils#getTestParameters")
-    public void beginBuildModelFailsWithInvalidPrefix(HttpClient httpClient,
-        DocumentAnalysisServiceVersion serviceVersion) {
-
-        client = getDocumentModelAdministrationClient(httpClient, serviceVersion);
+    @Test
+    public void beginBuildModelFailsWithInvalidPrefix() {
         buildModelRunner((trainingFilesUrl) -> {
             HttpResponseException exception = assertThrows(HttpResponseException.class,
                 () -> client
@@ -318,11 +299,8 @@ public class DocumentModelAdminClientTest extends DocumentModelAdministrationCli
      * Verifies the result of the training operation for a valid unlabeled model ID and include subfolder training set
      * Url with non-existing prefix name.
      */
-    @ParameterizedTest(name = DISPLAY_NAME_WITH_ARGUMENTS)
-    @MethodSource("com.azure.ai.formrecognizer.documentanalysis.TestUtils#getTestParameters")
-    public void beginBuildModelIncludeSubfolderWithNonExistPrefixName(HttpClient httpClient,
-        DocumentAnalysisServiceVersion serviceVersion) {
-        client = getDocumentModelAdministrationClient(httpClient, serviceVersion);
+    @Test
+    public void beginBuildModelIncludeSubfolderWithNonExistPrefixName() {
         multipageTrainingRunner(trainingFilesUrl -> {
             HttpResponseException exception = assertThrows(HttpResponseException.class,
                 () -> client
@@ -338,11 +316,8 @@ public class DocumentModelAdminClientTest extends DocumentModelAdministrationCli
     /**
      * Verifies the result of the training operation for a valid labeled model ID and multi-page PDF training set Url.
      */
-    @ParameterizedTest(name = DISPLAY_NAME_WITH_ARGUMENTS)
-    @MethodSource("com.azure.ai.formrecognizer.documentanalysis.TestUtils#getTestParameters")
-    public void beginBuildModelWithJsonLTrainingSet(HttpClient httpClient,
-        DocumentAnalysisServiceVersion serviceVersion) {
-        client = getDocumentModelAdministrationClient(httpClient, serviceVersion);
+    @Test
+    public void beginBuildModelWithJsonLTrainingSet() {
         selectionMarkTrainingRunner(trainingFilesUrl -> {
             SyncPoller<OperationResult, DocumentModelDetails> buildModelPoller
                 = client
@@ -358,10 +333,8 @@ public class DocumentModelAdminClientTest extends DocumentModelAdministrationCli
     /**
      * Verifies the result of the create composed model for valid parameters.
      */
-    @ParameterizedTest(name = DISPLAY_NAME_WITH_ARGUMENTS)
-    @MethodSource("com.azure.ai.formrecognizer.documentanalysis.TestUtils#getTestParameters")
-    public void beginCreateComposedModel(HttpClient httpClient, DocumentAnalysisServiceVersion serviceVersion) {
-        client = getDocumentModelAdministrationClient(httpClient, serviceVersion);
+    @Test
+    public void beginCreateComposedModel() {
         buildModelRunner((trainingFilesUrl) -> {
             SyncPoller<OperationResult, DocumentModelDetails> syncPoller1
                 = client
@@ -413,13 +386,10 @@ public class DocumentModelAdminClientTest extends DocumentModelAdministrationCli
     /**
      * Verifies the result of the training operation for a classifier with a valid training data set.
      */
-    @ParameterizedTest(name = DISPLAY_NAME_WITH_ARGUMENTS)
-    @MethodSource("com.azure.ai.formrecognizer.documentanalysis.TestUtils#getTestParameters")
-    public void beginBuildClassifier(HttpClient httpClient, DocumentAnalysisServiceVersion serviceVersion) {
-        client = getDocumentModelAdministrationClient(httpClient, serviceVersion);
+    @Test
+    public void beginBuildClassifier() {
         beginClassifierRunner((trainingFilesUrl) -> {
-            Map<String, ClassifierDocumentTypeDetails> documentTypeDetailsMap
-                = new HashMap<String, ClassifierDocumentTypeDetails>();
+            Map<String, ClassifierDocumentTypeDetails> documentTypeDetailsMap = new HashMap<>();
             documentTypeDetailsMap.put("IRS-1040-A", new ClassifierDocumentTypeDetails(
                 new BlobContentSource(trainingFilesUrl).setPrefix("IRS-1040-A/train")));
             documentTypeDetailsMap.put("IRS-1040-B", new ClassifierDocumentTypeDetails(
@@ -445,10 +415,8 @@ public class DocumentModelAdminClientTest extends DocumentModelAdministrationCli
      * Verifies the result of the training operation for a classifier with a valid training data set with jsonL files.
      */
     @RecordWithoutRequestBody
-    @ParameterizedTest(name = DISPLAY_NAME_WITH_ARGUMENTS)
-    @MethodSource("com.azure.ai.formrecognizer.documentanalysis.TestUtils#getTestParameters")
-    public void beginBuildClassifierWithJsonL(HttpClient httpClient, DocumentAnalysisServiceVersion serviceVersion) {
-        client = getDocumentModelAdministrationClient(httpClient, serviceVersion);
+    @Test
+    public void beginBuildClassifierWithJsonL() {
         beginClassifierRunner((trainingFilesUrl) -> {
             Map<String, ClassifierDocumentTypeDetails> documentTypeDetailsMap
                 = new HashMap<String, ClassifierDocumentTypeDetails>();

@@ -35,8 +35,10 @@ import com.azure.core.util.polling.SyncPoller;
 import com.azure.identity.AzureAuthorityHosts;
 import io.netty.handler.codec.http.HttpResponseStatus;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
-import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedClass;
 import org.junit.jupiter.params.provider.MethodSource;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
@@ -54,10 +56,26 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
+@ParameterizedClass(name = DISPLAY_NAME_WITH_ARGUMENTS)
+@MethodSource("com.azure.ai.formrecognizer.documentanalysis.TestUtils#getTestParameters")
 public class DocumentModelAdministrationAsyncClientTest extends DocumentModelAdministrationClientTestBase {
     private static final Duration DEFAULT_TIMEOUT = Duration.ofSeconds(30);
 
+    private final HttpClient httpClient;
+    private final DocumentAnalysisServiceVersion serviceVersion;
+
     private DocumentModelAdministrationAsyncClient client;
+
+    public DocumentModelAdministrationAsyncClientTest(HttpClient httpClient,
+        DocumentAnalysisServiceVersion serviceVersion) {
+        this.httpClient = httpClient;
+        this.serviceVersion = serviceVersion;
+    }
+
+    @BeforeEach
+    public void createClient() {
+        this.client = getDocumentModelAdminAsyncClient();
+    }
 
     private HttpClient buildAsyncAssertingClient(HttpClient httpClient) {
         return new AssertingHttpClientBuilder(httpClient).skipRequest((ignored1, ignored2) -> false)
@@ -65,8 +83,7 @@ public class DocumentModelAdministrationAsyncClientTest extends DocumentModelAdm
             .build();
     }
 
-    private DocumentModelAdministrationAsyncClient getDocumentModelAdminAsyncClient(HttpClient httpClient,
-        DocumentAnalysisServiceVersion serviceVersion) {
+    private DocumentModelAdministrationAsyncClient getDocumentModelAdminAsyncClient() {
         return getDocumentModelAdminClientBuilder(
             buildAsyncAssertingClient(
                 interceptorManager.isPlaybackMode() ? interceptorManager.getPlaybackClient() : httpClient),
@@ -76,12 +93,9 @@ public class DocumentModelAdministrationAsyncClientTest extends DocumentModelAdm
     /**
      * Verifies the document analysis async client is valid.
      */
-    @ParameterizedTest(name = DISPLAY_NAME_WITH_ARGUMENTS)
-    @MethodSource("com.azure.ai.formrecognizer.documentanalysis.TestUtils#getTestParameters")
-    public void getDocumentAnalysisClientAndValidate(HttpClient httpClient,
-        DocumentAnalysisServiceVersion serviceVersion) {
-        DocumentAnalysisAsyncClient documentAnalysisAsyncClient
-            = getDocumentModelAdminAsyncClient(httpClient, serviceVersion).getDocumentAnalysisAsyncClient();
+    @Test
+    public void getDocumentAnalysisClientAndValidate() {
+        DocumentAnalysisAsyncClient documentAnalysisAsyncClient = this.client.getDocumentAnalysisAsyncClient();
         blankPdfDataRunner((data, dataLength) -> {
             SyncPoller<OperationResult, AnalyzeResult> syncPoller = documentAnalysisAsyncClient
                 .beginAnalyzeDocument("prebuilt-receipt", BinaryData.fromStream(data, dataLength))
@@ -95,10 +109,8 @@ public class DocumentModelAdministrationAsyncClientTest extends DocumentModelAdm
     /**
      * Verifies account properties returned for a subscription account.
      */
-    @ParameterizedTest(name = DISPLAY_NAME_WITH_ARGUMENTS)
-    @MethodSource("com.azure.ai.formrecognizer.documentanalysis.TestUtils#getTestParameters")
-    public void validGetResourceDetails(HttpClient httpClient, DocumentAnalysisServiceVersion serviceVersion) {
-        client = getDocumentModelAdminAsyncClient(httpClient, serviceVersion);
+    @Test
+    public void validGetResourceDetails() {
         StepVerifier.create(client.getResourceDetails())
             .assertNext(DocumentModelAdministrationClientTestBase::validateResourceInfo)
             .expectComplete()
@@ -108,23 +120,17 @@ public class DocumentModelAdministrationAsyncClientTest extends DocumentModelAdm
     /**
      * Verifies account properties returned with a Http Response for a subscription account.
      */
-    @ParameterizedTest(name = DISPLAY_NAME_WITH_ARGUMENTS)
-    @MethodSource("com.azure.ai.formrecognizer.documentanalysis.TestUtils#getTestParameters")
-    public void validGetResourceDetailsWithResponse(HttpClient httpClient,
-        DocumentAnalysisServiceVersion serviceVersion) {
-        client = getDocumentModelAdminAsyncClient(httpClient, serviceVersion);
+    @Test
+    public void validGetResourceDetailsWithResponse() {
         StepVerifier.create(client.getResourceDetails())
             .assertNext(DocumentModelAdministrationClientTestBase::validateResourceInfo)
             .expectComplete()
             .verify(DEFAULT_TIMEOUT);
     }
 
-    @ParameterizedTest(name = DISPLAY_NAME_WITH_ARGUMENTS)
-    @MethodSource("com.azure.ai.formrecognizer.documentanalysis.TestUtils#getTestParameters")
-    public void deleteModelValidModelIdWithResponse(HttpClient httpClient,
-        DocumentAnalysisServiceVersion serviceVersion) {
+    @Test
+    public void deleteModelValidModelIdWithResponse() {
 
-        client = getDocumentModelAdminAsyncClient(httpClient, serviceVersion);
         buildModelRunner((trainingFilesUrl) -> {
             SyncPoller<OperationResult, DocumentModelDetails> syncPoller1
                 = client.beginBuildDocumentModel(trainingFilesUrl, DocumentModelBuildMode.TEMPLATE, null, null)
@@ -151,10 +157,8 @@ public class DocumentModelAdministrationAsyncClientTest extends DocumentModelAdm
     /**
      * Verifies the result of the copy authorization for valid parameters.
      */
-    @ParameterizedTest(name = DISPLAY_NAME_WITH_ARGUMENTS)
-    @MethodSource("com.azure.ai.formrecognizer.documentanalysis.TestUtils#getTestParameters")
-    public void copyAuthorization(HttpClient httpClient, DocumentAnalysisServiceVersion serviceVersion) {
-        client = getDocumentModelAdminAsyncClient(httpClient, serviceVersion);
+    @Test
+    public void copyAuthorization() {
         String modelId = "java_copy_model_test";
         StepVerifier.create(client.getCopyAuthorizationWithResponse(new CopyAuthorizationOptions().setModelId(modelId)))
             .assertNext(response -> validateCopyAuthorizationResult(response.getValue()))
@@ -167,11 +171,9 @@ public class DocumentModelAdministrationAsyncClientTest extends DocumentModelAdm
     /**
      * Verifies the result of the create composed model for valid parameters.
      */
-    @ParameterizedTest(name = DISPLAY_NAME_WITH_ARGUMENTS)
-    @MethodSource("com.azure.ai.formrecognizer.documentanalysis.TestUtils#getTestParameters")
-    public void beginCreateComposedModel(HttpClient httpClient, DocumentAnalysisServiceVersion serviceVersion) {
+    @Test
+    public void beginCreateComposedModel() {
 
-        client = getDocumentModelAdminAsyncClient(httpClient, serviceVersion);
         buildModelRunner((trainingFilesUrl) -> {
             SyncPoller<OperationResult, DocumentModelDetails> syncPoller1 = client
                 .beginBuildDocumentModel(trainingFilesUrl, DocumentModelBuildMode.TEMPLATE, null,
@@ -219,11 +221,8 @@ public class DocumentModelAdministrationAsyncClientTest extends DocumentModelAdm
     /**
      * Verifies the result of building a document analysis  with Options.
      */
-    @ParameterizedTest(name = DISPLAY_NAME_WITH_ARGUMENTS)
-    @MethodSource("com.azure.ai.formrecognizer.documentanalysis.TestUtils#getTestParameters")
-    public void createComposedModelWithOptions(HttpClient httpClient, DocumentAnalysisServiceVersion serviceVersion) {
-        client = getDocumentModelAdminAsyncClient(httpClient, serviceVersion);
-
+    @Test
+    public void createComposedModelWithOptions() {
         buildModelRunner((trainingFilesUrl) -> {
             SyncPoller<OperationResult, DocumentModelDetails> syncPoller1
                 = client.beginBuildDocumentModel(trainingFilesUrl, DocumentModelBuildMode.TEMPLATE, null, null)
@@ -265,10 +264,8 @@ public class DocumentModelAdministrationAsyncClientTest extends DocumentModelAdm
     /**
      * Verifies the result of building a document analysis model.
      */
-    @ParameterizedTest(name = DISPLAY_NAME_WITH_ARGUMENTS)
-    @MethodSource("com.azure.ai.formrecognizer.documentanalysis.TestUtils#getTestParameters")
-    public void beginBuildModel(HttpClient httpClient, DocumentAnalysisServiceVersion serviceVersion) {
-        client = getDocumentModelAdminAsyncClient(httpClient, serviceVersion);
+    @Test
+    public void beginBuildModel() {
         buildModelRunner((trainingFilesUrl) -> {
             SyncPoller<OperationResult, DocumentModelDetails> syncPoller1
                 = client.beginBuildDocumentModel(trainingFilesUrl, DocumentModelBuildMode.TEMPLATE, null, null)
@@ -286,11 +283,8 @@ public class DocumentModelAdministrationAsyncClientTest extends DocumentModelAdm
      * Verifies that building a model throws a DocumentModelOperationException when the training container is missing
      * OCR files.
      */
-    @ParameterizedTest(name = DISPLAY_NAME_WITH_ARGUMENTS)
-    @MethodSource("com.azure.ai.formrecognizer.documentanalysis.TestUtils#getTestParameters")
-    public void beginBuildModelThrowsHttpResponseException(HttpClient httpClient,
-        DocumentAnalysisServiceVersion serviceVersion) {
-        client = getDocumentModelAdminAsyncClient(httpClient, serviceVersion);
+    @Test
+    public void beginBuildModelThrowsHttpResponseException() {
         buildModelErrorRunner((errorTrainingFilesUrl) -> {
             if (!AzureAuthorityHosts.AZURE_GOVERNMENT.equals(TestUtils.getAuthority(client.getEndpoint()))) {
                 HttpResponseException httpResponseException = Assertions.assertThrows(HttpResponseException.class,
@@ -321,10 +315,8 @@ public class DocumentModelAdministrationAsyncClientTest extends DocumentModelAdm
     /**
      * Verifies the result of building a document analysis  with Options.
      */
-    @ParameterizedTest(name = DISPLAY_NAME_WITH_ARGUMENTS)
-    @MethodSource("com.azure.ai.formrecognizer.documentanalysis.TestUtils#getTestParameters")
-    public void beginBuildModelWithOptions(HttpClient httpClient, DocumentAnalysisServiceVersion serviceVersion) {
-        client = getDocumentModelAdminAsyncClient(httpClient, serviceVersion);
+    @Test
+    public void beginBuildModelWithOptions() {
         String modelId = "test-model";
 
         buildModelRunner((trainingFilesUrl) -> {
@@ -351,12 +343,8 @@ public class DocumentModelAdministrationAsyncClientTest extends DocumentModelAdm
     /**
      * Verifies that building a document model fails with an Invalid prefix.
      */
-    @ParameterizedTest(name = DISPLAY_NAME_WITH_ARGUMENTS)
-    @MethodSource("com.azure.ai.formrecognizer.documentanalysis.TestUtils#getTestParameters")
-    public void beginBuildModelFailsWithInvalidPrefix(HttpClient httpClient,
-        DocumentAnalysisServiceVersion serviceVersion) {
-        client = getDocumentModelAdminAsyncClient(httpClient, serviceVersion);
-
+    @Test
+    public void beginBuildModelFailsWithInvalidPrefix() {
         buildModelRunner((trainingFilesUrl) -> StepVerifier.create(
             client.beginBuildDocumentModel(trainingFilesUrl, DocumentModelBuildMode.TEMPLATE, "invalidPrefix", null)
                 .setPollInterval(durationTestMode))
@@ -371,10 +359,8 @@ public class DocumentModelAdministrationAsyncClientTest extends DocumentModelAdm
     /**
      * Verifies the result of the copy operation for valid parameters.
      */
-    @ParameterizedTest(name = DISPLAY_NAME_WITH_ARGUMENTS)
-    @MethodSource("com.azure.ai.formrecognizer.documentanalysis.TestUtils#getTestParameters")
-    public void beginCopy(HttpClient httpClient, DocumentAnalysisServiceVersion serviceVersion) {
-        client = getDocumentModelAdminAsyncClient(httpClient, serviceVersion);
+    @Test
+    public void beginCopy() {
         buildModelRunner((trainingFilesUrl) -> {
             SyncPoller<OperationResult, DocumentModelDetails> syncPoller1
                 = client.beginBuildDocumentModel(trainingFilesUrl, DocumentModelBuildMode.TEMPLATE, null, null)
@@ -403,10 +389,8 @@ public class DocumentModelAdministrationAsyncClientTest extends DocumentModelAdm
     /**
      * Verifies the result of the copy operation for valid parameters.
      */
-    @ParameterizedTest(name = DISPLAY_NAME_WITH_ARGUMENTS)
-    @MethodSource("com.azure.ai.formrecognizer.documentanalysis.TestUtils#getTestParameters")
-    public void beginCopyWithOptions(HttpClient httpClient, DocumentAnalysisServiceVersion serviceVersion) {
-        client = getDocumentModelAdminAsyncClient(httpClient, serviceVersion);
+    @Test
+    public void beginCopyWithOptions() {
         String modelId = "my-copied-model-id";
 
         buildModelRunner((trainingFilesUrl) -> {
@@ -446,11 +430,9 @@ public class DocumentModelAdministrationAsyncClientTest extends DocumentModelAdm
     /**
      * Test for listing all models information.
      */
-    @ParameterizedTest(name = DISPLAY_NAME_WITH_ARGUMENTS)
-    @MethodSource("com.azure.ai.formrecognizer.documentanalysis.TestUtils#getTestParameters")
+    @Test
     @Disabled
-    public void listModels(HttpClient httpClient, DocumentAnalysisServiceVersion serviceVersion) {
-        client = getDocumentModelAdminAsyncClient(httpClient, serviceVersion);
+    public void listModels() {
         StepVerifier.create(client.listDocumentModels().byPage().take(4))
             .thenConsumeWhile(documentModelInfoPagedResponse -> {
                 documentModelInfoPagedResponse.getValue().forEach(documentModelInfo -> {
@@ -468,10 +450,8 @@ public class DocumentModelAdministrationAsyncClientTest extends DocumentModelAdm
     /**
      * Verifies document model info returned with response for a valid model ID.
      */
-    @ParameterizedTest(name = DISPLAY_NAME_WITH_ARGUMENTS)
-    @MethodSource("com.azure.ai.formrecognizer.documentanalysis.TestUtils#getTestParameters")
-    public void getModelWithResponse(HttpClient httpClient, DocumentAnalysisServiceVersion serviceVersion) {
-        client = getDocumentModelAdminAsyncClient(httpClient, serviceVersion);
+    @Test
+    public void getModelWithResponse() {
         buildModelRunner((trainingFilesUrl) -> {
             SyncPoller<OperationResult, DocumentModelDetails> syncPoller1
                 = client.beginBuildDocumentModel(trainingFilesUrl, DocumentModelBuildMode.TEMPLATE, null, null)
@@ -495,12 +475,10 @@ public class DocumentModelAdministrationAsyncClientTest extends DocumentModelAdm
     /**
      * Test for listing all operations' information.
      */
-    @ParameterizedTest(name = DISPLAY_NAME_WITH_ARGUMENTS)
-    @MethodSource("com.azure.ai.formrecognizer.documentanalysis.TestUtils#getTestParameters")
+    @Test
     @Disabled
-    public void listOperations(HttpClient httpClient, DocumentAnalysisServiceVersion serviceVersion) {
+    public void listOperations() {
 
-        client = getDocumentModelAdminAsyncClient(httpClient, serviceVersion);
         List<String> operationIdList = new ArrayList<>();
         StepVerifier.create(client.listOperations().byPage().take(4))
             .thenConsumeWhile(modelOperationInfoPagedResponse -> {
@@ -535,11 +513,9 @@ public class DocumentModelAdministrationAsyncClientTest extends DocumentModelAdm
     }
 
     @RecordWithoutRequestBody
-    @ParameterizedTest(name = DISPLAY_NAME_WITH_ARGUMENTS)
-    @MethodSource("com.azure.ai.formrecognizer.documentanalysis.TestUtils#getTestParameters")
+    @Test
     @Disabled("https://github.com/Azure/azure-sdk-for-java/issues/41027")
-    public void beginBuildClassifier(HttpClient httpClient, DocumentAnalysisServiceVersion serviceVersion) {
-        client = getDocumentModelAdminAsyncClient(httpClient, serviceVersion);
+    public void beginBuildClassifier() {
         beginClassifierRunner((trainingFilesUrl) -> {
             Map<String, ClassifierDocumentTypeDetails> documentTypeDetailsMap = new HashMap<>();
             documentTypeDetailsMap.put("IRS-1040-A", new ClassifierDocumentTypeDetails(
@@ -570,11 +546,9 @@ public class DocumentModelAdministrationAsyncClientTest extends DocumentModelAdm
      * Verifies the result of the training operation for a classifier with a valid training data set with jsonL files.
      */
     @RecordWithoutRequestBody
-    @ParameterizedTest(name = DISPLAY_NAME_WITH_ARGUMENTS)
-    @MethodSource("com.azure.ai.formrecognizer.documentanalysis.TestUtils#getTestParameters")
+    @Test
     @Disabled("https://github.com/Azure/azure-sdk-for-java/issues/41027")
-    public void beginBuildClassifierWithJsonL(HttpClient httpClient, DocumentAnalysisServiceVersion serviceVersion) {
-        client = getDocumentModelAdminAsyncClient(httpClient, serviceVersion);
+    public void beginBuildClassifierWithJsonL() {
         beginClassifierRunner((trainingFilesUrl) -> {
             Map<String, ClassifierDocumentTypeDetails> documentTypeDetailsMap = new HashMap<>();
             documentTypeDetailsMap.put("IRS-1040-A",

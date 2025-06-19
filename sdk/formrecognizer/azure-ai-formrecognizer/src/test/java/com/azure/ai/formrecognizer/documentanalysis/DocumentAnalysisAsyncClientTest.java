@@ -28,8 +28,10 @@ import com.azure.core.test.http.AssertingHttpClientBuilder;
 import com.azure.core.util.BinaryData;
 import com.azure.core.util.polling.SyncPoller;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
-import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedClass;
 import org.junit.jupiter.params.provider.MethodSource;
 
 import java.util.Arrays;
@@ -73,9 +75,25 @@ import static com.azure.ai.formrecognizer.documentanalysis.TestUtils.urlRunner;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+@ParameterizedClass(name = DISPLAY_NAME_WITH_ARGUMENTS)
+@MethodSource("com.azure.ai.formrecognizer.documentanalysis.TestUtils#getTestParameters")
 public class DocumentAnalysisAsyncClientTest extends DocumentAnalysisClientTestBase {
+    private final HttpClient httpClient;
+    private final DocumentAnalysisServiceVersion serviceVersion;
 
-    private DocumentAnalysisAsyncClient client;
+    private DocumentAnalysisAsyncClient analysisClient;
+    private DocumentModelAdministrationAsyncClient adminClient;
+
+    public DocumentAnalysisAsyncClientTest(HttpClient httpClient, DocumentAnalysisServiceVersion serviceVersion) {
+        this.httpClient = httpClient;
+        this.serviceVersion = serviceVersion;
+    }
+
+    @BeforeEach
+    public void createClient() {
+        this.analysisClient = getDocumentAnalysisAsyncClient();
+        this.adminClient = DocumentModelAdministrationAsyncClient();
+    }
 
     private HttpClient buildAsyncAssertingClient(HttpClient httpClient) {
         return new AssertingHttpClientBuilder(httpClient).skipRequest((ignored1, ignored2) -> false)
@@ -83,16 +101,14 @@ public class DocumentAnalysisAsyncClientTest extends DocumentAnalysisClientTestB
             .build();
     }
 
-    private DocumentAnalysisAsyncClient getDocumentAnalysisAsyncClient(HttpClient httpClient,
-        DocumentAnalysisServiceVersion serviceVersion) {
+    private DocumentAnalysisAsyncClient getDocumentAnalysisAsyncClient() {
         return getDocumentAnalysisBuilder(
             buildAsyncAssertingClient(
                 interceptorManager.isPlaybackMode() ? interceptorManager.getPlaybackClient() : httpClient),
             serviceVersion).buildAsyncClient();
     }
 
-    private DocumentModelAdministrationAsyncClient getDocumentAdminAsyncClient(HttpClient httpClient,
-        DocumentAnalysisServiceVersion serviceVersion) {
+    private DocumentModelAdministrationAsyncClient DocumentModelAdministrationAsyncClient() {
         return getDocumentModelAdminClientBuilder(
             buildAsyncAssertingClient(
                 interceptorManager.isPlaybackMode() ? interceptorManager.getPlaybackClient() : httpClient),
@@ -106,13 +122,11 @@ public class DocumentAnalysisAsyncClientTest extends DocumentAnalysisClientTestB
     /**
      * Verifies receipt data from a document using file data as source.
      */
-    @ParameterizedTest(name = DISPLAY_NAME_WITH_ARGUMENTS)
-    @MethodSource("com.azure.ai.formrecognizer.documentanalysis.TestUtils#getTestParameters")
-    public void analyzeReceiptData(HttpClient httpClient, DocumentAnalysisServiceVersion serviceVersion) {
-        client = getDocumentAnalysisAsyncClient(httpClient, serviceVersion);
+    @Test
+    public void analyzeReceiptData() {
         dataRunner((data, dataLength) -> {
             SyncPoller<OperationResult, AnalyzeResult> syncPoller
-                = client.beginAnalyzeDocument("prebuilt-receipt", BinaryData.fromStream(data, dataLength))
+                = analysisClient.beginAnalyzeDocument("prebuilt-receipt", BinaryData.fromStream(data, dataLength))
                     .setPollInterval(durationTestMode)
                     .getSyncPoller();
             syncPoller.waitForCompletion();
@@ -123,13 +137,10 @@ public class DocumentAnalysisAsyncClientTest extends DocumentAnalysisClientTestB
     /**
      * Verifies content type will be auto-detected when using custom form API with input stream data overload.
      */
-    @ParameterizedTest(name = DISPLAY_NAME_WITH_ARGUMENTS)
-    @MethodSource("com.azure.ai.formrecognizer.documentanalysis.TestUtils#getTestParameters")
-    public void analyzeReceiptDataWithContentTypeAutoDetection(HttpClient httpClient,
-        DocumentAnalysisServiceVersion serviceVersion) {
-        client = getDocumentAnalysisAsyncClient(httpClient, serviceVersion);
+    @Test
+    public void analyzeReceiptDataWithContentTypeAutoDetection() {
         localFilePathRunner((filePath, dataLength) -> {
-            SyncPoller<OperationResult, AnalyzeResult> syncPoller = client
+            SyncPoller<OperationResult, AnalyzeResult> syncPoller = analysisClient
                 .beginAnalyzeDocument("prebuilt-receipt",
                     BinaryData.fromStream(getContentDetectionFileData(filePath), dataLength))
                 .setPollInterval(durationTestMode)
@@ -142,13 +153,11 @@ public class DocumentAnalysisAsyncClientTest extends DocumentAnalysisClientTestB
     /**
      * Verifies receipt data from a document using PNG file data as source and including element reference details.
      */
-    @ParameterizedTest(name = DISPLAY_NAME_WITH_ARGUMENTS)
-    @MethodSource("com.azure.ai.formrecognizer.documentanalysis.TestUtils#getTestParameters")
-    public void analyzeReceiptDataWithPngFile(HttpClient httpClient, DocumentAnalysisServiceVersion serviceVersion) {
-        client = getDocumentAnalysisAsyncClient(httpClient, serviceVersion);
+    @Test
+    public void analyzeReceiptDataWithPngFile() {
         dataRunner((data, dataLength) -> {
             SyncPoller<OperationResult, AnalyzeResult> syncPoller
-                = client.beginAnalyzeDocument("prebuilt-receipt", BinaryData.fromStream(data, dataLength))
+                = analysisClient.beginAnalyzeDocument("prebuilt-receipt", BinaryData.fromStream(data, dataLength))
                     .setPollInterval(durationTestMode)
                     .getSyncPoller();
             syncPoller.waitForCompletion();
@@ -159,13 +168,11 @@ public class DocumentAnalysisAsyncClientTest extends DocumentAnalysisClientTestB
     /**
      * Verifies receipt data from a document using blank PDF.
      */
-    @ParameterizedTest(name = DISPLAY_NAME_WITH_ARGUMENTS)
-    @MethodSource("com.azure.ai.formrecognizer.documentanalysis.TestUtils#getTestParameters")
-    public void analyzeReceiptDataWithBlankPdf(HttpClient httpClient, DocumentAnalysisServiceVersion serviceVersion) {
-        client = getDocumentAnalysisAsyncClient(httpClient, serviceVersion);
+    @Test
+    public void analyzeReceiptDataWithBlankPdf() {
         dataRunner((data, dataLength) -> {
             SyncPoller<OperationResult, AnalyzeResult> syncPoller
-                = client.beginAnalyzeDocument("prebuilt-receipt", BinaryData.fromStream(data, dataLength))
+                = analysisClient.beginAnalyzeDocument("prebuilt-receipt", BinaryData.fromStream(data, dataLength))
                     .setPollInterval(durationTestMode)
                     .getSyncPoller();
             syncPoller.waitForCompletion();
@@ -173,13 +180,11 @@ public class DocumentAnalysisAsyncClientTest extends DocumentAnalysisClientTestB
         }, BLANK_PDF);
     }
 
-    @ParameterizedTest(name = DISPLAY_NAME_WITH_ARGUMENTS)
-    @MethodSource("com.azure.ai.formrecognizer.documentanalysis.TestUtils#getTestParameters")
-    public void analyzeReceiptFromDataMultiPage(HttpClient httpClient, DocumentAnalysisServiceVersion serviceVersion) {
-        client = getDocumentAnalysisAsyncClient(httpClient, serviceVersion);
+    @Test
+    public void analyzeReceiptFromDataMultiPage() {
         dataRunner((data, dataLength) -> {
             SyncPoller<OperationResult, AnalyzeResult> syncPoller
-                = client.beginAnalyzeDocument("prebuilt-receipt", BinaryData.fromStream(data, dataLength))
+                = analysisClient.beginAnalyzeDocument("prebuilt-receipt", BinaryData.fromStream(data, dataLength))
                     .setPollInterval(durationTestMode)
                     .getSyncPoller();
             syncPoller.waitForCompletion();
@@ -190,13 +195,11 @@ public class DocumentAnalysisAsyncClientTest extends DocumentAnalysisClientTestB
     /**
      * Verify that receipt recognition with damaged PDF file.
      */
-    @ParameterizedTest(name = DISPLAY_NAME_WITH_ARGUMENTS)
-    @MethodSource("com.azure.ai.formrecognizer.documentanalysis.TestUtils#getTestParameters")
-    public void analyzeReceiptFromDamagedPdf(HttpClient httpClient, DocumentAnalysisServiceVersion serviceVersion) {
-        client = getDocumentAnalysisAsyncClient(httpClient, serviceVersion);
+    @Test
+    public void analyzeReceiptFromDamagedPdf() {
         damagedPdfDataRunner((data, dataLength) -> {
             HttpResponseException httpResponseException = assertThrows(HttpResponseException.class,
-                () -> client.beginAnalyzeDocument("prebuilt-receipt", BinaryData.fromStream(data, dataLength))
+                () -> analysisClient.beginAnalyzeDocument("prebuilt-receipt", BinaryData.fromStream(data, dataLength))
                     .setPollInterval(durationTestMode)
                     .getSyncPoller()
                     .getFinalResult());
@@ -210,13 +213,11 @@ public class DocumentAnalysisAsyncClientTest extends DocumentAnalysisClientTestB
     /**
      * Verifies receipt data for a document using source as file url.
      */
-    @ParameterizedTest(name = DISPLAY_NAME_WITH_ARGUMENTS)
-    @MethodSource("com.azure.ai.formrecognizer.documentanalysis.TestUtils#getTestParameters")
-    public void analyzeReceiptSourceUrl(HttpClient httpClient, DocumentAnalysisServiceVersion serviceVersion) {
-        client = getDocumentAnalysisAsyncClient(httpClient, serviceVersion);
+    @Test
+    public void analyzeReceiptSourceUrl() {
         urlRunner(sourceUrl -> {
             SyncPoller<OperationResult, AnalyzeResult> syncPoller
-                = client.beginAnalyzeDocumentFromUrl("prebuilt-receipt", sourceUrl)
+                = analysisClient.beginAnalyzeDocumentFromUrl("prebuilt-receipt", sourceUrl)
                     .setPollInterval(durationTestMode)
                     .getSyncPoller();
             syncPoller.waitForCompletion();
@@ -228,14 +229,11 @@ public class DocumentAnalysisAsyncClientTest extends DocumentAnalysisClientTestB
      * Verifies encoded blank url must stay same when sent to service for a document using invalid source url with
      * encoded blank space as input data to recognize receipt from url API.
      */
-    @ParameterizedTest(name = DISPLAY_NAME_WITH_ARGUMENTS)
-    @MethodSource("com.azure.ai.formrecognizer.documentanalysis.TestUtils#getTestParameters")
-    public void analyzeReceiptFromUrlWithEncodedBlankSpaceSourceUrl(HttpClient httpClient,
-        DocumentAnalysisServiceVersion serviceVersion) {
-        client = getDocumentAnalysisAsyncClient(httpClient, serviceVersion);
+    @Test
+    public void analyzeReceiptFromUrlWithEncodedBlankSpaceSourceUrl() {
         encodedBlankSpaceSourceUrlRunner(sourceUrl -> {
             HttpResponseException errorResponseException = assertThrows(HttpResponseException.class,
-                () -> client.beginAnalyzeDocumentFromUrl("prebuilt-receipt", sourceUrl)
+                () -> analysisClient.beginAnalyzeDocumentFromUrl("prebuilt-receipt", sourceUrl)
                     .setPollInterval(durationTestMode)
                     .getSyncPoller()
                     .getFinalResult());
@@ -247,13 +245,11 @@ public class DocumentAnalysisAsyncClientTest extends DocumentAnalysisClientTestB
     /**
      * Verifies that an exception is thrown for invalid source url.
      */
-    @ParameterizedTest(name = DISPLAY_NAME_WITH_ARGUMENTS)
-    @MethodSource("com.azure.ai.formrecognizer.documentanalysis.TestUtils#getTestParameters")
-    public void analyzeReceiptInvalidSourceUrl(HttpClient httpClient, DocumentAnalysisServiceVersion serviceVersion) {
-        client = getDocumentAnalysisAsyncClient(httpClient, serviceVersion);
+    @Test
+    public void analyzeReceiptInvalidSourceUrl() {
         invalidSourceUrlRunner((invalidSourceUrl) -> {
             HttpResponseException httpResponseException = assertThrows(HttpResponseException.class,
-                () -> client.beginAnalyzeDocumentFromUrl("prebuilt-receipt", invalidSourceUrl)
+                () -> analysisClient.beginAnalyzeDocumentFromUrl("prebuilt-receipt", invalidSourceUrl)
                     .setPollInterval(durationTestMode)
                     .getSyncPoller()
                     .getFinalResult());
@@ -266,14 +262,11 @@ public class DocumentAnalysisAsyncClientTest extends DocumentAnalysisClientTestB
     /**
      * Verifies receipt data for a document using source as PNG file url.
      */
-    @ParameterizedTest(name = DISPLAY_NAME_WITH_ARGUMENTS)
-    @MethodSource("com.azure.ai.formrecognizer.documentanalysis.TestUtils#getTestParameters")
-    public void analyzeReceiptSourceUrlWithPngFile(HttpClient httpClient,
-        DocumentAnalysisServiceVersion serviceVersion) {
-        client = getDocumentAnalysisAsyncClient(httpClient, serviceVersion);
+    @Test
+    public void analyzeReceiptSourceUrlWithPngFile() {
         urlRunner(sourceUrl -> {
             SyncPoller<OperationResult, AnalyzeResult> syncPoller
-                = client.beginAnalyzeDocumentFromUrl("prebuilt-receipt", sourceUrl)
+                = analysisClient.beginAnalyzeDocumentFromUrl("prebuilt-receipt", sourceUrl)
                     .setPollInterval(durationTestMode)
                     .getSyncPoller();
             syncPoller.waitForCompletion();
@@ -281,13 +274,11 @@ public class DocumentAnalysisAsyncClientTest extends DocumentAnalysisClientTestB
         }, RECEIPT_CONTOSO_PNG);
     }
 
-    @ParameterizedTest(name = DISPLAY_NAME_WITH_ARGUMENTS)
-    @MethodSource("com.azure.ai.formrecognizer.documentanalysis.TestUtils#getTestParameters")
-    public void analyzeReceiptFromUrlMultiPage(HttpClient httpClient, DocumentAnalysisServiceVersion serviceVersion) {
-        client = getDocumentAnalysisAsyncClient(httpClient, serviceVersion);
+    @Test
+    public void analyzeReceiptFromUrlMultiPage() {
         urlRunner(documentUrl -> {
             SyncPoller<OperationResult, AnalyzeResult> syncPoller
-                = client.beginAnalyzeDocumentFromUrl("prebuilt-receipt", documentUrl)
+                = analysisClient.beginAnalyzeDocumentFromUrl("prebuilt-receipt", documentUrl)
                     .setPollInterval(durationTestMode)
                     .getSyncPoller();
             syncPoller.waitForCompletion();
@@ -302,13 +293,11 @@ public class DocumentAnalysisAsyncClientTest extends DocumentAnalysisClientTestB
     /**
      * Verifies layout data for a document using source as input stream data.
      */
-    @ParameterizedTest(name = DISPLAY_NAME_WITH_ARGUMENTS)
-    @MethodSource("com.azure.ai.formrecognizer.documentanalysis.TestUtils#getTestParameters")
-    public void analyzeContent(HttpClient httpClient, DocumentAnalysisServiceVersion serviceVersion) {
-        client = getDocumentAnalysisAsyncClient(httpClient, serviceVersion);
+    @Test
+    public void analyzeContent() {
         dataRunner((data, dataLength) -> {
             SyncPoller<OperationResult, AnalyzeResult> syncPoller
-                = client.beginAnalyzeDocument("prebuilt-layout", BinaryData.fromStream(data, dataLength))
+                = analysisClient.beginAnalyzeDocument("prebuilt-layout", BinaryData.fromStream(data, dataLength))
                     .setPollInterval(durationTestMode)
                     .getSyncPoller();
             syncPoller.waitForCompletion();
@@ -319,13 +308,10 @@ public class DocumentAnalysisAsyncClientTest extends DocumentAnalysisClientTestB
     /**
      * Verifies content type will be auto-detected when using content/layout API with input stream data overload.
      */
-    @ParameterizedTest(name = DISPLAY_NAME_WITH_ARGUMENTS)
-    @MethodSource("com.azure.ai.formrecognizer.documentanalysis.TestUtils#getTestParameters")
-    public void analyzeContentResultWithContentTypeAutoDetection(HttpClient httpClient,
-        DocumentAnalysisServiceVersion serviceVersion) {
-        client = getDocumentAnalysisAsyncClient(httpClient, serviceVersion);
+    @Test
+    public void analyzeContentResultWithContentTypeAutoDetection() {
         localFilePathRunner((filePath, dataLength) -> {
-            SyncPoller<OperationResult, AnalyzeResult> syncPoller = client
+            SyncPoller<OperationResult, AnalyzeResult> syncPoller = analysisClient
                 .beginAnalyzeDocument("prebuilt-layout",
                     BinaryData.fromStream(getContentDetectionFileData(filePath), dataLength))
                 .setPollInterval(durationTestMode)
@@ -338,13 +324,11 @@ public class DocumentAnalysisAsyncClientTest extends DocumentAnalysisClientTestB
     /**
      * Verifies blank form file is still a valid file to process
      */
-    @ParameterizedTest(name = DISPLAY_NAME_WITH_ARGUMENTS)
-    @MethodSource("com.azure.ai.formrecognizer.documentanalysis.TestUtils#getTestParameters")
-    public void analyzeContentResultWithBlankPdf(HttpClient httpClient, DocumentAnalysisServiceVersion serviceVersion) {
-        client = getDocumentAnalysisAsyncClient(httpClient, serviceVersion);
+    @Test
+    public void analyzeContentResultWithBlankPdf() {
         dataRunner((data, dataLength) -> {
             SyncPoller<OperationResult, AnalyzeResult> syncPoller
-                = client.beginAnalyzeDocument("prebuilt-layout", BinaryData.fromStream(data, dataLength))
+                = analysisClient.beginAnalyzeDocument("prebuilt-layout", BinaryData.fromStream(data, dataLength))
                     .setPollInterval(durationTestMode)
                     .getSyncPoller();
             syncPoller.waitForCompletion();
@@ -352,13 +336,11 @@ public class DocumentAnalysisAsyncClientTest extends DocumentAnalysisClientTestB
         }, BLANK_PDF);
     }
 
-    @ParameterizedTest(name = DISPLAY_NAME_WITH_ARGUMENTS)
-    @MethodSource("com.azure.ai.formrecognizer.documentanalysis.TestUtils#getTestParameters")
-    public void analyzeContentFromDataMultiPage(HttpClient httpClient, DocumentAnalysisServiceVersion serviceVersion) {
-        client = getDocumentAnalysisAsyncClient(httpClient, serviceVersion);
+    @Test
+    public void analyzeContentFromDataMultiPage() {
         dataRunner((data, dataLength) -> {
             SyncPoller<OperationResult, AnalyzeResult> syncPoller
-                = client.beginAnalyzeDocument("prebuilt-layout", BinaryData.fromStream(data, dataLength))
+                = analysisClient.beginAnalyzeDocument("prebuilt-layout", BinaryData.fromStream(data, dataLength))
                     .setPollInterval(durationTestMode)
                     .getSyncPoller();
             syncPoller.waitForCompletion();
@@ -371,13 +353,11 @@ public class DocumentAnalysisAsyncClientTest extends DocumentAnalysisClientTestB
     /**
      * Verify that content recognition with damaged PDF file.
      */
-    @ParameterizedTest(name = DISPLAY_NAME_WITH_ARGUMENTS)
-    @MethodSource("com.azure.ai.formrecognizer.documentanalysis.TestUtils#getTestParameters")
-    public void analyzeContentFromDamagedPdf(HttpClient httpClient, DocumentAnalysisServiceVersion serviceVersion) {
-        client = getDocumentAnalysisAsyncClient(httpClient, serviceVersion);
+    @Test
+    public void analyzeContentFromDamagedPdf() {
         damagedPdfDataRunner((data, dataLength) -> {
             HttpResponseException httpResponseException = assertThrows(HttpResponseException.class,
-                () -> client.beginAnalyzeDocument("prebuilt-layout", BinaryData.fromStream(data, dataLength))
+                () -> analysisClient.beginAnalyzeDocument("prebuilt-layout", BinaryData.fromStream(data, dataLength))
                     .setPollInterval(durationTestMode)
                     .getSyncPoller()
                     .getFinalResult());
@@ -386,13 +366,11 @@ public class DocumentAnalysisAsyncClientTest extends DocumentAnalysisClientTestB
         });
     }
 
-    @ParameterizedTest(name = DISPLAY_NAME_WITH_ARGUMENTS)
-    @MethodSource("com.azure.ai.formrecognizer.documentanalysis.TestUtils#getTestParameters")
-    public void analyzeContentWithSelectionMarks(HttpClient httpClient, DocumentAnalysisServiceVersion serviceVersion) {
-        client = getDocumentAnalysisAsyncClient(httpClient, serviceVersion);
+    @Test
+    public void analyzeContentWithSelectionMarks() {
         dataRunner((data, dataLength) -> {
             SyncPoller<OperationResult, AnalyzeResult> syncPoller
-                = client.beginAnalyzeDocument("prebuilt-layout", BinaryData.fromStream(data, dataLength))
+                = analysisClient.beginAnalyzeDocument("prebuilt-layout", BinaryData.fromStream(data, dataLength))
                     .setPollInterval(durationTestMode)
                     .getSyncPoller();
             syncPoller.waitForCompletion();
@@ -401,12 +379,10 @@ public class DocumentAnalysisAsyncClientTest extends DocumentAnalysisClientTestB
         }, SELECTION_MARK_PDF);
     }
 
-    @ParameterizedTest(name = DISPLAY_NAME_WITH_ARGUMENTS)
-    @MethodSource("com.azure.ai.formrecognizer.documentanalysis.TestUtils#getTestParameters")
-    public void analyzeContentWithPage(HttpClient httpClient, DocumentAnalysisServiceVersion serviceVersion) {
-        client = getDocumentAnalysisAsyncClient(httpClient, serviceVersion);
+    @Test
+    public void analyzeContentWithPage() {
         dataRunner((data, dataLength) -> {
-            SyncPoller<OperationResult, AnalyzeResult> syncPoller = client
+            SyncPoller<OperationResult, AnalyzeResult> syncPoller = analysisClient
                 .beginAnalyzeDocument("prebuilt-layout", BinaryData.fromStream(data, dataLength),
                     new AnalyzeDocumentOptions().setPages(Collections.singletonList("1")))
                 .setPollInterval(durationTestMode)
@@ -417,12 +393,10 @@ public class DocumentAnalysisAsyncClientTest extends DocumentAnalysisClientTestB
         }, MULTIPAGE_INVOICE_PDF);
     }
 
-    @ParameterizedTest(name = DISPLAY_NAME_WITH_ARGUMENTS)
-    @MethodSource("com.azure.ai.formrecognizer.documentanalysis.TestUtils#getTestParameters")
-    public void analyzeContentWithPages(HttpClient httpClient, DocumentAnalysisServiceVersion serviceVersion) {
-        client = getDocumentAnalysisAsyncClient(httpClient, serviceVersion);
+    @Test
+    public void analyzeContentWithPages() {
         dataRunner((data, dataLength) -> {
-            SyncPoller<OperationResult, AnalyzeResult> syncPoller = client
+            SyncPoller<OperationResult, AnalyzeResult> syncPoller = analysisClient
                 .beginAnalyzeDocument("prebuilt-layout", BinaryData.fromStream(data, dataLength),
                     new AnalyzeDocumentOptions().setPages(Arrays.asList("1", "2")))
                 .setPollInterval(durationTestMode)
@@ -433,12 +407,10 @@ public class DocumentAnalysisAsyncClientTest extends DocumentAnalysisClientTestB
         }, MULTIPAGE_INVOICE_PDF);
     }
 
-    @ParameterizedTest(name = DISPLAY_NAME_WITH_ARGUMENTS)
-    @MethodSource("com.azure.ai.formrecognizer.documentanalysis.TestUtils#getTestParameters")
-    public void analyzeContentWithPageRange(HttpClient httpClient, DocumentAnalysisServiceVersion serviceVersion) {
-        client = getDocumentAnalysisAsyncClient(httpClient, serviceVersion);
+    @Test
+    public void analyzeContentWithPageRange() {
         dataRunner((data, dataLength) -> {
-            SyncPoller<OperationResult, AnalyzeResult> syncPoller = client
+            SyncPoller<OperationResult, AnalyzeResult> syncPoller = analysisClient
                 .beginAnalyzeDocument("prebuilt-layout", BinaryData.fromStream(data, dataLength),
                     new AnalyzeDocumentOptions().setPages(Arrays.asList("1-2", "3")))
                 .setPollInterval(durationTestMode)
@@ -454,13 +426,11 @@ public class DocumentAnalysisAsyncClientTest extends DocumentAnalysisClientTestB
     /**
      * Verifies layout data for a document using source as input stream data.
      */
-    @ParameterizedTest(name = DISPLAY_NAME_WITH_ARGUMENTS)
-    @MethodSource("com.azure.ai.formrecognizer.documentanalysis.TestUtils#getTestParameters")
-    public void analyzeContentFromUrl(HttpClient httpClient, DocumentAnalysisServiceVersion serviceVersion) {
-        client = getDocumentAnalysisAsyncClient(httpClient, serviceVersion);
+    @Test
+    public void analyzeContentFromUrl() {
         urlRunner(sourceUrl -> {
             SyncPoller<OperationResult, AnalyzeResult> syncPoller
-                = client.beginAnalyzeDocumentFromUrl("prebuilt-layout", sourceUrl)
+                = analysisClient.beginAnalyzeDocumentFromUrl("prebuilt-layout", sourceUrl)
                     .setPollInterval(durationTestMode)
                     .getSyncPoller();
             syncPoller.waitForCompletion();
@@ -472,14 +442,11 @@ public class DocumentAnalysisAsyncClientTest extends DocumentAnalysisClientTestB
      * Verifies encoded blank url must stay same when sent to service for a document using invalid source url with
      * encoded blank space as input data to recognize a content from url API.
      */
-    @ParameterizedTest(name = DISPLAY_NAME_WITH_ARGUMENTS)
-    @MethodSource("com.azure.ai.formrecognizer.documentanalysis.TestUtils#getTestParameters")
-    public void analyzeContentFromUrlWithEncodedBlankSpaceSourceUrl(HttpClient httpClient,
-        DocumentAnalysisServiceVersion serviceVersion) {
-        client = getDocumentAnalysisAsyncClient(httpClient, serviceVersion);
+    @Test
+    public void analyzeContentFromUrlWithEncodedBlankSpaceSourceUrl() {
         encodedBlankSpaceSourceUrlRunner(sourceUrl -> {
             HttpResponseException errorResponseException = assertThrows(HttpResponseException.class,
-                () -> client.beginAnalyzeDocumentFromUrl("prebuilt-layout", sourceUrl)
+                () -> analysisClient.beginAnalyzeDocumentFromUrl("prebuilt-layout", sourceUrl)
                     .setPollInterval(durationTestMode)
                     .getSyncPoller()
                     .getFinalResult());
@@ -490,13 +457,11 @@ public class DocumentAnalysisAsyncClientTest extends DocumentAnalysisClientTestB
     /**
      * Verifies layout data for a pdf url
      */
-    @ParameterizedTest(name = DISPLAY_NAME_WITH_ARGUMENTS)
-    @MethodSource("com.azure.ai.formrecognizer.documentanalysis.TestUtils#getTestParameters")
-    public void analyzeContentFromUrlWithPdf(HttpClient httpClient, DocumentAnalysisServiceVersion serviceVersion) {
-        client = getDocumentAnalysisAsyncClient(httpClient, serviceVersion);
+    @Test
+    public void analyzeContentFromUrlWithPdf() {
         urlRunner(sourceUrl -> {
             SyncPoller<OperationResult, AnalyzeResult> syncPoller
-                = client.beginAnalyzeDocumentFromUrl("prebuilt-layout", sourceUrl)
+                = analysisClient.beginAnalyzeDocumentFromUrl("prebuilt-layout", sourceUrl)
                     .setPollInterval(durationTestMode)
                     .getSyncPoller();
             syncPoller.waitForCompletion();
@@ -507,13 +472,11 @@ public class DocumentAnalysisAsyncClientTest extends DocumentAnalysisClientTestB
     /**
      * Verifies that an exception is thrown for invalid status model Id.
      */
-    @ParameterizedTest(name = DISPLAY_NAME_WITH_ARGUMENTS)
-    @MethodSource("com.azure.ai.formrecognizer.documentanalysis.TestUtils#getTestParameters")
-    public void analyzeContentInvalidSourceUrl(HttpClient httpClient, DocumentAnalysisServiceVersion serviceVersion) {
-        client = getDocumentAnalysisAsyncClient(httpClient, serviceVersion);
+    @Test
+    public void analyzeContentInvalidSourceUrl() {
         invalidSourceUrlRunner((invalidSourceUrl) -> {
             HttpResponseException httpResponseException = assertThrows(HttpResponseException.class,
-                () -> client.beginAnalyzeDocumentFromUrl("prebuilt-layout", invalidSourceUrl)
+                () -> analysisClient.beginAnalyzeDocumentFromUrl("prebuilt-layout", invalidSourceUrl)
                     .setPollInterval(durationTestMode)
                     .getSyncPoller()
                     .getFinalResult());
@@ -522,13 +485,11 @@ public class DocumentAnalysisAsyncClientTest extends DocumentAnalysisClientTestB
         });
     }
 
-    @ParameterizedTest(name = DISPLAY_NAME_WITH_ARGUMENTS)
-    @MethodSource("com.azure.ai.formrecognizer.documentanalysis.TestUtils#getTestParameters")
-    public void analyzeContentFromUrlMultiPage(HttpClient httpClient, DocumentAnalysisServiceVersion serviceVersion) {
-        client = getDocumentAnalysisAsyncClient(httpClient, serviceVersion);
+    @Test
+    public void analyzeContentFromUrlMultiPage() {
         urlRunner((documentUrl) -> {
             SyncPoller<OperationResult, AnalyzeResult> syncPoller
-                = client.beginAnalyzeDocumentFromUrl("prebuilt-layout", documentUrl)
+                = analysisClient.beginAnalyzeDocumentFromUrl("prebuilt-layout", documentUrl)
                     .setPollInterval(durationTestMode)
                     .getSyncPoller();
             syncPoller.waitForCompletion();
@@ -538,14 +499,11 @@ public class DocumentAnalysisAsyncClientTest extends DocumentAnalysisClientTestB
         }, MULTIPAGE_INVOICE_PDF);
     }
 
-    @ParameterizedTest(name = DISPLAY_NAME_WITH_ARGUMENTS)
-    @MethodSource("com.azure.ai.formrecognizer.documentanalysis.TestUtils#getTestParameters")
-    public void analyzeContentWithSelectionMarksFromUrl(HttpClient httpClient,
-        DocumentAnalysisServiceVersion serviceVersion) {
-        client = getDocumentAnalysisAsyncClient(httpClient, serviceVersion);
+    @Test
+    public void analyzeContentWithSelectionMarksFromUrl() {
         urlRunner(sourceUrl -> {
             SyncPoller<OperationResult, AnalyzeResult> syncPoller
-                = client.beginAnalyzeDocumentFromUrl("prebuilt-layout", sourceUrl)
+                = analysisClient.beginAnalyzeDocumentFromUrl("prebuilt-layout", sourceUrl)
                     .setPollInterval(durationTestMode)
                     .getSyncPoller();
             syncPoller.waitForCompletion();
@@ -553,12 +511,10 @@ public class DocumentAnalysisAsyncClientTest extends DocumentAnalysisClientTestB
         }, SELECTION_MARK_PDF);
     }
 
-    @ParameterizedTest(name = DISPLAY_NAME_WITH_ARGUMENTS)
-    @MethodSource("com.azure.ai.formrecognizer.documentanalysis.TestUtils#getTestParameters")
-    public void analyzeGermanContentFromUrl(HttpClient httpClient, DocumentAnalysisServiceVersion serviceVersion) {
-        client = getDocumentAnalysisAsyncClient(httpClient, serviceVersion);
+    @Test
+    public void analyzeGermanContentFromUrl() {
         testingContainerUrlRunner(sourceUrl -> {
-            SyncPoller<OperationResult, AnalyzeResult> syncPoller = client
+            SyncPoller<OperationResult, AnalyzeResult> syncPoller = analysisClient
                 .beginAnalyzeDocumentFromUrl("prebuilt-layout", sourceUrl, new AnalyzeDocumentOptions().setLocale("de"))
                 .setPollInterval(durationTestMode)
                 .getSyncPoller();
@@ -572,13 +528,11 @@ public class DocumentAnalysisAsyncClientTest extends DocumentAnalysisClientTestB
     /**
      * Verifies business card data from a document using file data as source.
      */
-    @ParameterizedTest(name = DISPLAY_NAME_WITH_ARGUMENTS)
-    @MethodSource("com.azure.ai.formrecognizer.documentanalysis.TestUtils#getTestParameters")
-    public void analyzeBusinessCardData(HttpClient httpClient, DocumentAnalysisServiceVersion serviceVersion) {
-        client = getDocumentAnalysisAsyncClient(httpClient, serviceVersion);
+    @Test
+    public void analyzeBusinessCardData() {
         dataRunner((data, dataLength) -> {
             SyncPoller<OperationResult, AnalyzeResult> syncPoller
-                = client.beginAnalyzeDocument("prebuilt-businessCard", BinaryData.fromStream(data, dataLength))
+                = analysisClient.beginAnalyzeDocument("prebuilt-businessCard", BinaryData.fromStream(data, dataLength))
                     .setPollInterval(durationTestMode)
                     .getSyncPoller();
             syncPoller.waitForCompletion();
@@ -589,13 +543,10 @@ public class DocumentAnalysisAsyncClientTest extends DocumentAnalysisClientTestB
     /**
      * Verifies content type will be auto-detected when using custom form API with input stream data overload.
      */
-    @ParameterizedTest(name = DISPLAY_NAME_WITH_ARGUMENTS)
-    @MethodSource("com.azure.ai.formrecognizer.documentanalysis.TestUtils#getTestParameters")
-    public void analyzeBusinessCardDataWithContentTypeAutoDetection(HttpClient httpClient,
-        DocumentAnalysisServiceVersion serviceVersion) {
-        client = getDocumentAnalysisAsyncClient(httpClient, serviceVersion);
+    @Test
+    public void analyzeBusinessCardDataWithContentTypeAutoDetection() {
         localFilePathRunner((filePath, dataLength) -> {
-            SyncPoller<OperationResult, AnalyzeResult> syncPoller = client
+            SyncPoller<OperationResult, AnalyzeResult> syncPoller = analysisClient
                 .beginAnalyzeDocument("prebuilt-businessCard",
                     BinaryData.fromStream(getContentDetectionFileData(filePath), dataLength))
                 .setPollInterval(durationTestMode)
@@ -608,14 +559,11 @@ public class DocumentAnalysisAsyncClientTest extends DocumentAnalysisClientTestB
     /**
      * Verifies business card data from a document using PNG file data as source and including element reference details.
      */
-    @ParameterizedTest(name = DISPLAY_NAME_WITH_ARGUMENTS)
-    @MethodSource("com.azure.ai.formrecognizer.documentanalysis.TestUtils#getTestParameters")
-    public void analyzeBusinessCardDataWithPngFile(HttpClient httpClient,
-        DocumentAnalysisServiceVersion serviceVersion) {
-        client = getDocumentAnalysisAsyncClient(httpClient, serviceVersion);
+    @Test
+    public void analyzeBusinessCardDataWithPngFile() {
         dataRunner((data, dataLength) -> {
             SyncPoller<OperationResult, AnalyzeResult> syncPoller
-                = client.beginAnalyzeDocument("prebuilt-businessCard", BinaryData.fromStream(data, dataLength))
+                = analysisClient.beginAnalyzeDocument("prebuilt-businessCard", BinaryData.fromStream(data, dataLength))
                     .setPollInterval(durationTestMode)
                     .getSyncPoller();
             syncPoller.waitForCompletion();
@@ -626,14 +574,11 @@ public class DocumentAnalysisAsyncClientTest extends DocumentAnalysisClientTestB
     /**
      * Verifies business card data from a document using blank PDF.
      */
-    @ParameterizedTest(name = DISPLAY_NAME_WITH_ARGUMENTS)
-    @MethodSource("com.azure.ai.formrecognizer.documentanalysis.TestUtils#getTestParameters")
-    public void analyzeBusinessCardDataWithBlankPdf(HttpClient httpClient,
-        DocumentAnalysisServiceVersion serviceVersion) {
-        client = getDocumentAnalysisAsyncClient(httpClient, serviceVersion);
+    @Test
+    public void analyzeBusinessCardDataWithBlankPdf() {
         dataRunner((data, dataLength) -> {
             SyncPoller<OperationResult, AnalyzeResult> syncPoller
-                = client.beginAnalyzeDocument("prebuilt-businessCard", BinaryData.fromStream(data, dataLength))
+                = analysisClient.beginAnalyzeDocument("prebuilt-businessCard", BinaryData.fromStream(data, dataLength))
                     .setPollInterval(durationTestMode)
                     .getSyncPoller();
             syncPoller.waitForCompletion();
@@ -644,14 +589,12 @@ public class DocumentAnalysisAsyncClientTest extends DocumentAnalysisClientTestB
     /**
      * Verify that business card recognition with damaged PDF file.
      */
-    @ParameterizedTest(name = DISPLAY_NAME_WITH_ARGUMENTS)
-    @MethodSource("com.azure.ai.formrecognizer.documentanalysis.TestUtils#getTestParameters")
-    public void analyzeBusinessCardFromDamagedPdf(HttpClient httpClient,
-        DocumentAnalysisServiceVersion serviceVersion) {
-        client = getDocumentAnalysisAsyncClient(httpClient, serviceVersion);
+    @Test
+    public void analyzeBusinessCardFromDamagedPdf() {
         damagedPdfDataRunner((data, dataLength) -> {
             HttpResponseException httpResponseException = assertThrows(HttpResponseException.class,
-                () -> client.beginAnalyzeDocument("prebuilt-businessCard", BinaryData.fromStream(data, dataLength))
+                () -> analysisClient
+                    .beginAnalyzeDocument("prebuilt-businessCard", BinaryData.fromStream(data, dataLength))
                     .setPollInterval(durationTestMode)
                     .getSyncPoller()
                     .getFinalResult());
@@ -664,13 +607,11 @@ public class DocumentAnalysisAsyncClientTest extends DocumentAnalysisClientTestB
     /**
      * Verify business card recognition with multipage pdf.
      */
-    @ParameterizedTest(name = DISPLAY_NAME_WITH_ARGUMENTS)
-    @MethodSource("com.azure.ai.formrecognizer.documentanalysis.TestUtils#getTestParameters")
-    public void analyzeMultipageBusinessCard(HttpClient httpClient, DocumentAnalysisServiceVersion serviceVersion) {
-        client = getDocumentAnalysisAsyncClient(httpClient, serviceVersion);
+    @Test
+    public void analyzeMultipageBusinessCard() {
         dataRunner((data, dataLength) -> {
             SyncPoller<OperationResult, AnalyzeResult> syncPoller
-                = client.beginAnalyzeDocument("prebuilt-businessCard", BinaryData.fromStream(data, dataLength))
+                = analysisClient.beginAnalyzeDocument("prebuilt-businessCard", BinaryData.fromStream(data, dataLength))
                     .setPollInterval(durationTestMode)
                     .getSyncPoller();
 
@@ -684,13 +625,11 @@ public class DocumentAnalysisAsyncClientTest extends DocumentAnalysisClientTestB
     /**
      * Verifies business card data for a document using source as file url.
      */
-    @ParameterizedTest(name = DISPLAY_NAME_WITH_ARGUMENTS)
-    @MethodSource("com.azure.ai.formrecognizer.documentanalysis.TestUtils#getTestParameters")
-    public void analyzeBusinessCardSourceUrl(HttpClient httpClient, DocumentAnalysisServiceVersion serviceVersion) {
-        client = getDocumentAnalysisAsyncClient(httpClient, serviceVersion);
+    @Test
+    public void analyzeBusinessCardSourceUrl() {
         urlRunner(sourceUrl -> {
             SyncPoller<OperationResult, AnalyzeResult> syncPoller
-                = client.beginAnalyzeDocumentFromUrl("prebuilt-businessCard", sourceUrl)
+                = analysisClient.beginAnalyzeDocumentFromUrl("prebuilt-businessCard", sourceUrl)
                     .setPollInterval(durationTestMode)
                     .getSyncPoller();
 
@@ -703,14 +642,11 @@ public class DocumentAnalysisAsyncClientTest extends DocumentAnalysisClientTestB
      * Verifies encoded blank url must stay same when sent to service for a document using invalid source url with
      * encoded blank space as input data to recognize business card from url API.
      */
-    @ParameterizedTest(name = DISPLAY_NAME_WITH_ARGUMENTS)
-    @MethodSource("com.azure.ai.formrecognizer.documentanalysis.TestUtils#getTestParameters")
-    public void analyzeBusinessCardFromUrlWithEncodedBlankSpaceSourceUrl(HttpClient httpClient,
-        DocumentAnalysisServiceVersion serviceVersion) {
-        client = getDocumentAnalysisAsyncClient(httpClient, serviceVersion);
+    @Test
+    public void analyzeBusinessCardFromUrlWithEncodedBlankSpaceSourceUrl() {
         encodedBlankSpaceSourceUrlRunner(sourceUrl -> {
             HttpResponseException errorResponseException = assertThrows(HttpResponseException.class,
-                () -> client.beginAnalyzeDocumentFromUrl("prebuilt-businessCard", sourceUrl)
+                () -> analysisClient.beginAnalyzeDocumentFromUrl("prebuilt-businessCard", sourceUrl)
                     .setPollInterval(durationTestMode)
                     .getSyncPoller()
                     .getFinalResult());
@@ -721,14 +657,11 @@ public class DocumentAnalysisAsyncClientTest extends DocumentAnalysisClientTestB
     /**
      * Verifies that an exception is thrown for invalid source url.
      */
-    @ParameterizedTest(name = DISPLAY_NAME_WITH_ARGUMENTS)
-    @MethodSource("com.azure.ai.formrecognizer.documentanalysis.TestUtils#getTestParameters")
-    public void analyzeBusinessCardInvalidSourceUrl(HttpClient httpClient,
-        DocumentAnalysisServiceVersion serviceVersion) {
-        client = getDocumentAnalysisAsyncClient(httpClient, serviceVersion);
+    @Test
+    public void analyzeBusinessCardInvalidSourceUrl() {
         invalidSourceUrlRunner((invalidSourceUrl) -> {
             HttpResponseException httpResponseException = assertThrows(HttpResponseException.class,
-                () -> client.beginAnalyzeDocumentFromUrl("prebuilt-businessCard", invalidSourceUrl)
+                () -> analysisClient.beginAnalyzeDocumentFromUrl("prebuilt-businessCard", invalidSourceUrl)
                     .setPollInterval(durationTestMode)
                     .getSyncPoller()
                     .getFinalResult());
@@ -741,14 +674,11 @@ public class DocumentAnalysisAsyncClientTest extends DocumentAnalysisClientTestB
     /**
      * Verifies business card data for a document using source as PNG file url.
      */
-    @ParameterizedTest(name = DISPLAY_NAME_WITH_ARGUMENTS)
-    @MethodSource("com.azure.ai.formrecognizer.documentanalysis.TestUtils#getTestParameters")
-    public void analyzeBusinessCardSourceUrlWithPngFile(HttpClient httpClient,
-        DocumentAnalysisServiceVersion serviceVersion) {
-        client = getDocumentAnalysisAsyncClient(httpClient, serviceVersion);
+    @Test
+    public void analyzeBusinessCardSourceUrlWithPngFile() {
         urlRunner(sourceUrl -> {
             SyncPoller<OperationResult, AnalyzeResult> syncPoller
-                = client.beginAnalyzeDocumentFromUrl("prebuilt-businessCard", sourceUrl)
+                = analysisClient.beginAnalyzeDocumentFromUrl("prebuilt-businessCard", sourceUrl)
                     .setPollInterval(durationTestMode)
                     .getSyncPoller();
             syncPoller.waitForCompletion();
@@ -760,13 +690,11 @@ public class DocumentAnalysisAsyncClientTest extends DocumentAnalysisClientTestB
     /**
      * Verify business card recognition with multipage pdf url.
      */
-    @ParameterizedTest(name = DISPLAY_NAME_WITH_ARGUMENTS)
-    @MethodSource("com.azure.ai.formrecognizer.documentanalysis.TestUtils#getTestParameters")
-    public void analyzeMultipageBusinessCardUrl(HttpClient httpClient, DocumentAnalysisServiceVersion serviceVersion) {
-        client = getDocumentAnalysisAsyncClient(httpClient, serviceVersion);
+    @Test
+    public void analyzeMultipageBusinessCardUrl() {
         urlRunner(sourceUrl -> {
             SyncPoller<OperationResult, AnalyzeResult> syncPoller
-                = client.beginAnalyzeDocumentFromUrl("prebuilt-businessCard", sourceUrl)
+                = analysisClient.beginAnalyzeDocumentFromUrl("prebuilt-businessCard", sourceUrl)
                     .setPollInterval(durationTestMode)
                     .getSyncPoller();
             syncPoller.waitForCompletion();
@@ -778,12 +706,10 @@ public class DocumentAnalysisAsyncClientTest extends DocumentAnalysisClientTestB
     /**
      * Verify pages parameter passed when specified by user.
      */
-    @ParameterizedTest(name = DISPLAY_NAME_WITH_ARGUMENTS)
-    @MethodSource("com.azure.ai.formrecognizer.documentanalysis.TestUtils#getTestParameters")
-    public void receiptWithPage(HttpClient httpClient, DocumentAnalysisServiceVersion serviceVersion) {
-        client = getDocumentAnalysisAsyncClient(httpClient, serviceVersion);
+    @Test
+    public void receiptWithPage() {
         urlRunner(sourceUrl -> {
-            SyncPoller<OperationResult, AnalyzeResult> syncPoller = client
+            SyncPoller<OperationResult, AnalyzeResult> syncPoller = analysisClient
                 .beginAnalyzeDocumentFromUrl("prebuilt-receipt", sourceUrl,
                     new AnalyzeDocumentOptions().setPages(Collections.singletonList("1")))
                 .setPollInterval(durationTestMode)
@@ -797,12 +723,10 @@ public class DocumentAnalysisAsyncClientTest extends DocumentAnalysisClientTestB
     /**
      * Verify pages parameter passed when specified by user for business cards API.
      */
-    @ParameterizedTest(name = DISPLAY_NAME_WITH_ARGUMENTS)
-    @MethodSource("com.azure.ai.formrecognizer.documentanalysis.TestUtils#getTestParameters")
-    public void businessCardWithPage(HttpClient httpClient, DocumentAnalysisServiceVersion serviceVersion) {
-        client = getDocumentAnalysisAsyncClient(httpClient, serviceVersion);
+    @Test
+    public void businessCardWithPage() {
         urlRunner(sourceUrl -> {
-            SyncPoller<OperationResult, AnalyzeResult> syncPoller = client
+            SyncPoller<OperationResult, AnalyzeResult> syncPoller = analysisClient
                 .beginAnalyzeDocumentFromUrl("prebuilt-businessCard", sourceUrl,
                     new AnalyzeDocumentOptions().setPages(Collections.singletonList("1")))
                 .setPollInterval(durationTestMode)
@@ -820,14 +744,12 @@ public class DocumentAnalysisAsyncClientTest extends DocumentAnalysisClientTestB
     /**
      * Verifies invoice data recognition  for a document using source as input stream data.
      */
-    @ParameterizedTest(name = DISPLAY_NAME_WITH_ARGUMENTS)
-    @MethodSource("com.azure.ai.formrecognizer.documentanalysis.TestUtils#getTestParameters")
+    @Test
     @Disabled("until service regression is fixed #33187")
-    public void analyzeInvoiceData(HttpClient httpClient, DocumentAnalysisServiceVersion serviceVersion) {
-        client = getDocumentAnalysisAsyncClient(httpClient, serviceVersion);
+    public void analyzeInvoiceData() {
         dataRunner((data, dataLength) -> {
             SyncPoller<OperationResult, AnalyzeResult> syncPoller
-                = client.beginAnalyzeDocument("prebuilt-invoice", BinaryData.fromStream(data, dataLength))
+                = analysisClient.beginAnalyzeDocument("prebuilt-invoice", BinaryData.fromStream(data, dataLength))
                     .setPollInterval(durationTestMode)
                     .getSyncPoller();
             syncPoller.waitForCompletion();
@@ -839,14 +761,11 @@ public class DocumentAnalysisAsyncClientTest extends DocumentAnalysisClientTestB
     /**
      * Verifies content type will be auto-detected when using invoice API with input stream data overload.
      */
-    @ParameterizedTest(name = DISPLAY_NAME_WITH_ARGUMENTS)
-    @MethodSource("com.azure.ai.formrecognizer.documentanalysis.TestUtils#getTestParameters")
+    @Test
     @Disabled("until service regression is fixed #33187")
-    public void analyzeInvoiceDataWithContentTypeAutoDetection(HttpClient httpClient,
-        DocumentAnalysisServiceVersion serviceVersion) {
-        client = getDocumentAnalysisAsyncClient(httpClient, serviceVersion);
+    public void analyzeInvoiceDataWithContentTypeAutoDetection() {
         localFilePathRunner((filePath, dataLength) -> {
-            SyncPoller<OperationResult, AnalyzeResult> syncPoller = client
+            SyncPoller<OperationResult, AnalyzeResult> syncPoller = analysisClient
                 .beginAnalyzeDocument("prebuilt-invoice",
                     BinaryData.fromStream(getContentDetectionFileData(filePath), dataLength))
                 .setPollInterval(durationTestMode)
@@ -860,13 +779,11 @@ public class DocumentAnalysisAsyncClientTest extends DocumentAnalysisClientTestB
     /**
      * Verifies invoice data from a document using blank PDF.
      */
-    @ParameterizedTest(name = DISPLAY_NAME_WITH_ARGUMENTS)
-    @MethodSource("com.azure.ai.formrecognizer.documentanalysis.TestUtils#getTestParameters")
-    public void analyzeInvoiceDataWithBlankPdf(HttpClient httpClient, DocumentAnalysisServiceVersion serviceVersion) {
-        client = getDocumentAnalysisAsyncClient(httpClient, serviceVersion);
+    @Test
+    public void analyzeInvoiceDataWithBlankPdf() {
         dataRunner((data, dataLength) -> {
             SyncPoller<OperationResult, AnalyzeResult> syncPoller
-                = client.beginAnalyzeDocument("prebuilt-invoice", BinaryData.fromStream(data, dataLength))
+                = analysisClient.beginAnalyzeDocument("prebuilt-invoice", BinaryData.fromStream(data, dataLength))
                     .setPollInterval(durationTestMode)
                     .getSyncPoller();
             syncPoller.waitForCompletion();
@@ -877,13 +794,11 @@ public class DocumentAnalysisAsyncClientTest extends DocumentAnalysisClientTestB
     /**
      * Verify that invoice recognition with damaged PDF file.
      */
-    @ParameterizedTest(name = DISPLAY_NAME_WITH_ARGUMENTS)
-    @MethodSource("com.azure.ai.formrecognizer.documentanalysis.TestUtils#getTestParameters")
-    public void analyzeInvoiceFromDamagedPdf(HttpClient httpClient, DocumentAnalysisServiceVersion serviceVersion) {
-        client = getDocumentAnalysisAsyncClient(httpClient, serviceVersion);
+    @Test
+    public void analyzeInvoiceFromDamagedPdf() {
         damagedPdfDataRunner((data, dataLength) -> {
             HttpResponseException httpResponseException = assertThrows(HttpResponseException.class,
-                () -> client.beginAnalyzeDocument("prebuilt-invoice", BinaryData.fromStream(data, dataLength))
+                () -> analysisClient.beginAnalyzeDocument("prebuilt-invoice", BinaryData.fromStream(data, dataLength))
                     .setPollInterval(durationTestMode)
                     .getSyncPoller()
                     .getFinalResult());
@@ -895,14 +810,12 @@ public class DocumentAnalysisAsyncClientTest extends DocumentAnalysisClientTestB
     /**
      * Verify invoice data recognition with multipage pdf.
      */
-    @ParameterizedTest(name = DISPLAY_NAME_WITH_ARGUMENTS)
-    @MethodSource("com.azure.ai.formrecognizer.documentanalysis.TestUtils#getTestParameters")
+    @Test
     @Disabled("until service regression is fixed #33187")
-    public void analyzeMultipageInvoice(HttpClient httpClient, DocumentAnalysisServiceVersion serviceVersion) {
-        client = getDocumentAnalysisAsyncClient(httpClient, serviceVersion);
+    public void analyzeMultipageInvoice() {
         dataRunner((data, dataLength) -> {
             SyncPoller<OperationResult, AnalyzeResult> syncPoller
-                = client.beginAnalyzeDocument("prebuilt-invoice", BinaryData.fromStream(data, dataLength))
+                = analysisClient.beginAnalyzeDocument("prebuilt-invoice", BinaryData.fromStream(data, dataLength))
                     .setPollInterval(durationTestMode)
                     .getSyncPoller();
             syncPoller.waitForCompletion();
@@ -915,14 +828,12 @@ public class DocumentAnalysisAsyncClientTest extends DocumentAnalysisClientTestB
     /**
      * Verifies invoice card data for a document using source as file url.
      */
-    @ParameterizedTest(name = DISPLAY_NAME_WITH_ARGUMENTS)
-    @MethodSource("com.azure.ai.formrecognizer.documentanalysis.TestUtils#getTestParameters")
+    @Test
     @Disabled("until service regression is fixed #33187")
-    public void analyzeInvoiceSourceUrl(HttpClient httpClient, DocumentAnalysisServiceVersion serviceVersion) {
-        client = getDocumentAnalysisAsyncClient(httpClient, serviceVersion);
+    public void analyzeInvoiceSourceUrl() {
         urlRunner((sourceUrl) -> {
             SyncPoller<OperationResult, AnalyzeResult> syncPoller
-                = client.beginAnalyzeDocumentFromUrl("prebuilt-invoice", sourceUrl)
+                = analysisClient.beginAnalyzeDocumentFromUrl("prebuilt-invoice", sourceUrl)
                     .setPollInterval(durationTestMode)
                     .getSyncPoller();
             syncPoller.waitForCompletion();
@@ -934,14 +845,11 @@ public class DocumentAnalysisAsyncClientTest extends DocumentAnalysisClientTestB
      * Verifies encoded blank url must stay same when sent to service for a document using invalid source url with
      * encoded blank space as input data to recognize invoice card from url API.
      */
-    @ParameterizedTest(name = DISPLAY_NAME_WITH_ARGUMENTS)
-    @MethodSource("com.azure.ai.formrecognizer.documentanalysis.TestUtils#getTestParameters")
-    public void analyzeInvoiceFromUrlWithEncodedBlankSpaceSourceUrl(HttpClient httpClient,
-        DocumentAnalysisServiceVersion serviceVersion) {
-        client = getDocumentAnalysisAsyncClient(httpClient, serviceVersion);
+    @Test
+    public void analyzeInvoiceFromUrlWithEncodedBlankSpaceSourceUrl() {
         encodedBlankSpaceSourceUrlRunner(sourceUrl -> {
             HttpResponseException errorResponseException = assertThrows(HttpResponseException.class,
-                () -> client.beginAnalyzeDocumentFromUrl("prebuilt-invoice", sourceUrl)
+                () -> analysisClient.beginAnalyzeDocumentFromUrl("prebuilt-invoice", sourceUrl)
                     .setPollInterval(durationTestMode)
                     .getSyncPoller());
             validateEncodedUrlExceptionSource(errorResponseException);
@@ -951,12 +859,10 @@ public class DocumentAnalysisAsyncClientTest extends DocumentAnalysisClientTestB
     /**
      * Verifies that an exception is thrown for invalid source url.
      */
-    @ParameterizedTest(name = DISPLAY_NAME_WITH_ARGUMENTS)
-    @MethodSource("com.azure.ai.formrecognizer.documentanalysis.TestUtils#getTestParameters")
-    public void analyzeInvoiceInvalidSourceUrl(HttpClient httpClient, DocumentAnalysisServiceVersion serviceVersion) {
-        client = getDocumentAnalysisAsyncClient(httpClient, serviceVersion);
+    @Test
+    public void analyzeInvoiceInvalidSourceUrl() {
         invalidSourceUrlRunner((sourceUrl) -> assertThrows(HttpResponseException.class,
-            () -> client.beginAnalyzeDocumentFromUrl("prebuilt-invoice", sourceUrl)
+            () -> analysisClient.beginAnalyzeDocumentFromUrl("prebuilt-invoice", sourceUrl)
                 .setPollInterval(durationTestMode)
                 .getSyncPoller()));
     }
@@ -964,14 +870,12 @@ public class DocumentAnalysisAsyncClientTest extends DocumentAnalysisClientTestB
     /**
      * Verify locale parameter passed when specified by user.
      */
-    @ParameterizedTest(name = DISPLAY_NAME_WITH_ARGUMENTS)
-    @MethodSource("com.azure.ai.formrecognizer.documentanalysis.TestUtils#getTestParameters")
+    @Test
     @Disabled("until service regression is fixed #33187")
-    public void invoiceValidLocale(HttpClient httpClient, DocumentAnalysisServiceVersion serviceVersion) {
-        client = getDocumentAnalysisAsyncClient(httpClient, serviceVersion);
+    public void invoiceValidLocale() {
         urlRunner(sourceUrl -> {
             final SyncPoller<OperationResult, AnalyzeResult> syncPoller
-                = client
+                = analysisClient
                     .beginAnalyzeDocumentFromUrl("prebuilt-invoice", sourceUrl,
                         new AnalyzeDocumentOptions().setLocale("en-US"))
                     .setPollInterval(durationTestMode)
@@ -981,13 +885,11 @@ public class DocumentAnalysisAsyncClientTest extends DocumentAnalysisClientTestB
         }, INVOICE_PDF);
     }
 
-    @ParameterizedTest(name = DISPLAY_NAME_WITH_ARGUMENTS)
-    @MethodSource("com.azure.ai.formrecognizer.documentanalysis.TestUtils#getTestParameters")
+    @Test
     @Disabled("Deserialization error as amount missing in CurrencyValue")
-    public void analyzeInvoiceWithPage(HttpClient httpClient, DocumentAnalysisServiceVersion serviceVersion) {
-        client = getDocumentAnalysisAsyncClient(httpClient, serviceVersion);
+    public void analyzeInvoiceWithPage() {
         urlRunner(sourceUrl -> {
-            final SyncPoller<OperationResult, AnalyzeResult> syncPoller = client
+            final SyncPoller<OperationResult, AnalyzeResult> syncPoller = analysisClient
                 .beginAnalyzeDocumentFromUrl("prebuilt-invoice", sourceUrl,
                     new AnalyzeDocumentOptions().setLocale("en-US").setPages(Collections.singletonList("1")))
                 .setPollInterval(durationTestMode)
@@ -1008,13 +910,11 @@ public class DocumentAnalysisAsyncClientTest extends DocumentAnalysisClientTestB
     /**
      * Verifies license card data from a document using file data as source.
      */
-    @ParameterizedTest(name = DISPLAY_NAME_WITH_ARGUMENTS)
-    @MethodSource("com.azure.ai.formrecognizer.documentanalysis.TestUtils#getTestParameters")
-    public void analyzeLicenseCardData(HttpClient httpClient, DocumentAnalysisServiceVersion serviceVersion) {
-        client = getDocumentAnalysisAsyncClient(httpClient, serviceVersion);
+    @Test
+    public void analyzeLicenseCardData() {
         dataRunner((data, dataLength) -> {
             SyncPoller<OperationResult, AnalyzeResult> syncPoller
-                = client.beginAnalyzeDocument("prebuilt-idDocument", BinaryData.fromStream(data, dataLength))
+                = analysisClient.beginAnalyzeDocument("prebuilt-idDocument", BinaryData.fromStream(data, dataLength))
                     .setPollInterval(durationTestMode)
                     .getSyncPoller();
             syncPoller.waitForCompletion();
@@ -1026,13 +926,10 @@ public class DocumentAnalysisAsyncClientTest extends DocumentAnalysisClientTestB
     /**
      * Verifies content type will be auto-detected when using custom form API with input stream data overload.
      */
-    @ParameterizedTest(name = DISPLAY_NAME_WITH_ARGUMENTS)
-    @MethodSource("com.azure.ai.formrecognizer.documentanalysis.TestUtils#getTestParameters")
-    public void analyzeLicenseDataWithContentTypeAutoDetection(HttpClient httpClient,
-        DocumentAnalysisServiceVersion serviceVersion) {
-        client = getDocumentAnalysisAsyncClient(httpClient, serviceVersion);
+    @Test
+    public void analyzeLicenseDataWithContentTypeAutoDetection() {
         localFilePathRunner((filePath, dataLength) -> {
-            SyncPoller<OperationResult, AnalyzeResult> syncPoller = client
+            SyncPoller<OperationResult, AnalyzeResult> syncPoller = analysisClient
                 .beginAnalyzeDocument("prebuilt-idDocument",
                     BinaryData.fromStream(getContentDetectionFileData(filePath), dataLength))
                 .setPollInterval(durationTestMode)
@@ -1046,13 +943,11 @@ public class DocumentAnalysisAsyncClientTest extends DocumentAnalysisClientTestB
     /**
      * Verifies identity document data from a document using blank PDF.
      */
-    @ParameterizedTest(name = DISPLAY_NAME_WITH_ARGUMENTS)
-    @MethodSource("com.azure.ai.formrecognizer.documentanalysis.TestUtils#getTestParameters")
-    public void analyzeIDDocumentWithBlankPdf(HttpClient httpClient, DocumentAnalysisServiceVersion serviceVersion) {
-        client = getDocumentAnalysisAsyncClient(httpClient, serviceVersion);
+    @Test
+    public void analyzeIDDocumentWithBlankPdf() {
         dataRunner((data, dataLength) -> {
             SyncPoller<OperationResult, AnalyzeResult> syncPoller
-                = client.beginAnalyzeDocument("prebuilt-idDocument", BinaryData.fromStream(data, dataLength))
+                = analysisClient.beginAnalyzeDocument("prebuilt-idDocument", BinaryData.fromStream(data, dataLength))
                     .setPollInterval(durationTestMode)
                     .getSyncPoller();
             syncPoller.waitForCompletion();
@@ -1064,13 +959,12 @@ public class DocumentAnalysisAsyncClientTest extends DocumentAnalysisClientTestB
     /**
      * Verify that identity document recognition with damaged PDF file.
      */
-    @ParameterizedTest(name = DISPLAY_NAME_WITH_ARGUMENTS)
-    @MethodSource("com.azure.ai.formrecognizer.documentanalysis.TestUtils#getTestParameters")
-    public void analyzeIDDocumentFromDamagedPdf(HttpClient httpClient, DocumentAnalysisServiceVersion serviceVersion) {
-        client = getDocumentAnalysisAsyncClient(httpClient, serviceVersion);
+    @Test
+    public void analyzeIDDocumentFromDamagedPdf() {
         damagedPdfDataRunner((data, dataLength) -> {
             HttpResponseException httpResponseException = assertThrows(HttpResponseException.class,
-                () -> client.beginAnalyzeDocument("prebuilt-idDocument", BinaryData.fromStream(data, dataLength))
+                () -> analysisClient
+                    .beginAnalyzeDocument("prebuilt-idDocument", BinaryData.fromStream(data, dataLength))
                     .setPollInterval(durationTestMode)
                     .getSyncPoller()
                     .getFinalResult());
@@ -1085,13 +979,11 @@ public class DocumentAnalysisAsyncClientTest extends DocumentAnalysisClientTestB
     /**
      * Verifies business card data for a document using source as file url.
      */
-    @ParameterizedTest(name = DISPLAY_NAME_WITH_ARGUMENTS)
-    @MethodSource("com.azure.ai.formrecognizer.documentanalysis.TestUtils#getTestParameters")
-    public void analyzeLicenseSourceUrl(HttpClient httpClient, DocumentAnalysisServiceVersion serviceVersion) {
-        client = getDocumentAnalysisAsyncClient(httpClient, serviceVersion);
+    @Test
+    public void analyzeLicenseSourceUrl() {
         urlRunner(sourceUrl -> {
             SyncPoller<OperationResult, AnalyzeResult> syncPoller
-                = client.beginAnalyzeDocumentFromUrl("prebuilt-idDocument", sourceUrl)
+                = analysisClient.beginAnalyzeDocumentFromUrl("prebuilt-idDocument", sourceUrl)
                     .setPollInterval(durationTestMode)
                     .getSyncPoller();
             syncPoller.waitForCompletion();
@@ -1102,14 +994,11 @@ public class DocumentAnalysisAsyncClientTest extends DocumentAnalysisClientTestB
     /**
      * Verifies that an exception is thrown for invalid source url.
      */
-    @ParameterizedTest(name = DISPLAY_NAME_WITH_ARGUMENTS)
-    @MethodSource("com.azure.ai.formrecognizer.documentanalysis.TestUtils#getTestParameters")
-    public void analyzeIDDocumentInvalidSourceUrl(HttpClient httpClient,
-        DocumentAnalysisServiceVersion serviceVersion) {
-        client = getDocumentAnalysisAsyncClient(httpClient, serviceVersion);
+    @Test
+    public void analyzeIDDocumentInvalidSourceUrl() {
         invalidSourceUrlRunner((invalidSourceUrl) -> {
             HttpResponseException httpResponseException = assertThrows(HttpResponseException.class,
-                () -> client.beginAnalyzeDocumentFromUrl("prebuilt-idDocument", invalidSourceUrl)
+                () -> analysisClient.beginAnalyzeDocumentFromUrl("prebuilt-idDocument", invalidSourceUrl)
                     .setPollInterval(durationTestMode)
                     .getSyncPoller()
                     .getFinalResult());
@@ -1121,12 +1010,10 @@ public class DocumentAnalysisAsyncClientTest extends DocumentAnalysisClientTestB
     /**
      * Verifies that languages are returned on analyze result when using "prebuilt-read".
      */
-    @ParameterizedTest(name = DISPLAY_NAME_WITH_ARGUMENTS)
-    @MethodSource("com.azure.ai.formrecognizer.documentanalysis.TestUtils#getTestParameters")
-    public void testDocumentLanguagePrebuiltRead(HttpClient httpClient, DocumentAnalysisServiceVersion serviceVersion) {
-        client = getDocumentAnalysisAsyncClient(httpClient, serviceVersion);
+    @Test
+    public void testDocumentLanguagePrebuiltRead() {
         urlRunner(sourceUrl -> {
-            SyncPoller<OperationResult, AnalyzeResult> syncPoller = client
+            SyncPoller<OperationResult, AnalyzeResult> syncPoller = analysisClient
                 .beginAnalyzeDocumentFromUrl("prebuilt-read", sourceUrl,
                     new AnalyzeDocumentOptions()
                         .setDocumentAnalysisFeatures(Collections.singletonList(DocumentAnalysisFeature.LANGUAGES)))
@@ -1139,13 +1026,10 @@ public class DocumentAnalysisAsyncClientTest extends DocumentAnalysisClientTestB
         }, INVOICE_PDF);
     }
 
-    @ParameterizedTest(name = DISPLAY_NAME_WITH_ARGUMENTS)
-    @MethodSource("com.azure.ai.formrecognizer.documentanalysis.TestUtils#getTestParameters")
-    public void testGermanDocumentLanguagePrebuiltRead(HttpClient httpClient,
-        DocumentAnalysisServiceVersion serviceVersion) {
-        client = getDocumentAnalysisAsyncClient(httpClient, serviceVersion);
+    @Test
+    public void testGermanDocumentLanguagePrebuiltRead() {
         dataRunner((data, dataLength) -> {
-            SyncPoller<OperationResult, AnalyzeResult> syncPoller = client
+            SyncPoller<OperationResult, AnalyzeResult> syncPoller = analysisClient
                 .beginAnalyzeDocument("prebuilt-read", BinaryData.fromStream(data, dataLength),
                     new AnalyzeDocumentOptions()
                         .setDocumentAnalysisFeatures(Collections.singletonList(DocumentAnalysisFeature.LANGUAGES)))
@@ -1159,13 +1043,11 @@ public class DocumentAnalysisAsyncClientTest extends DocumentAnalysisClientTestB
         }, GERMAN_PNG);
     }
 
-    @ParameterizedTest(name = DISPLAY_NAME_WITH_ARGUMENTS)
-    @MethodSource("com.azure.ai.formrecognizer.documentanalysis.TestUtils#getTestParameters")
-    public void analyzeW2Data(HttpClient httpClient, DocumentAnalysisServiceVersion serviceVersion) {
-        client = getDocumentAnalysisAsyncClient(httpClient, serviceVersion);
+    @Test
+    public void analyzeW2Data() {
         dataRunner((data, dataLength) -> {
             SyncPoller<OperationResult, AnalyzeResult> syncPoller
-                = client.beginAnalyzeDocument("prebuilt-tax.us.w2", BinaryData.fromStream(data, dataLength))
+                = analysisClient.beginAnalyzeDocument("prebuilt-tax.us.w2", BinaryData.fromStream(data, dataLength))
                     .setPollInterval(durationTestMode)
                     .getSyncPoller();
             syncPoller.waitForCompletion();
@@ -1173,14 +1055,12 @@ public class DocumentAnalysisAsyncClientTest extends DocumentAnalysisClientTestB
         }, W2_JPG);
     }
 
-    @ParameterizedTest(name = DISPLAY_NAME_WITH_ARGUMENTS)
-    @MethodSource("com.azure.ai.formrecognizer.documentanalysis.TestUtils#getTestParameters")
+    @Test
     @DoNotRecord(skipInPlayback = true)
-    public void analyzeDocumentInvalidLength(HttpClient httpClient, DocumentAnalysisServiceVersion serviceVersion) {
-        client = getDocumentAnalysisAsyncClient(httpClient, serviceVersion);
+    public void analyzeDocumentInvalidLength() {
         dataRunner((data, dataLength) -> {
             IllegalArgumentException illegalArgumentException = assertThrows(IllegalArgumentException.class,
-                () -> client.beginAnalyzeDocument("prebuilt-tax.us.w2", BinaryData.fromStream(data))
+                () -> analysisClient.beginAnalyzeDocument("prebuilt-tax.us.w2", BinaryData.fromStream(data))
                     .setPollInterval(durationTestMode)
                     .getSyncPoller());
             Assertions.assertEquals("'document length' is required and cannot be null",
@@ -1191,13 +1071,11 @@ public class DocumentAnalysisAsyncClientTest extends DocumentAnalysisClientTestB
     /**
      * Verifies support for pptx when using "prebuilt-read".
      */
-    @ParameterizedTest(name = DISPLAY_NAME_WITH_ARGUMENTS)
-    @MethodSource("com.azure.ai.formrecognizer.documentanalysis.TestUtils#getTestParameters")
-    public void testPptDocumentPrebuiltRead(HttpClient httpClient, DocumentAnalysisServiceVersion serviceVersion) {
-        client = getDocumentAnalysisAsyncClient(httpClient, serviceVersion);
+    @Test
+    public void testPptDocumentPrebuiltRead() {
         dataRunner((data, dataLength) -> {
             SyncPoller<OperationResult, AnalyzeResult> syncPoller
-                = client.beginAnalyzeDocument("prebuilt-read", BinaryData.fromStream(data, dataLength))
+                = analysisClient.beginAnalyzeDocument("prebuilt-read", BinaryData.fromStream(data, dataLength))
                     .setPollInterval(durationTestMode)
                     .getSyncPoller();
             AnalyzeResult analyzeResult = syncPoller.getFinalResult();
@@ -1206,13 +1084,11 @@ public class DocumentAnalysisAsyncClientTest extends DocumentAnalysisClientTestB
         }, EXAMPLE_PPTX);
     }
 
-    @ParameterizedTest(name = DISPLAY_NAME_WITH_ARGUMENTS)
-    @MethodSource("com.azure.ai.formrecognizer.documentanalysis.TestUtils#getTestParameters")
-    public void testHtmlDocumentPrebuiltRead(HttpClient httpClient, DocumentAnalysisServiceVersion serviceVersion) {
-        client = getDocumentAnalysisAsyncClient(httpClient, serviceVersion);
+    @Test
+    public void testHtmlDocumentPrebuiltRead() {
         dataRunner((data, dataLength) -> {
             SyncPoller<OperationResult, AnalyzeResult> syncPoller
-                = client.beginAnalyzeDocument("prebuilt-read", BinaryData.fromStream(data, dataLength))
+                = analysisClient.beginAnalyzeDocument("prebuilt-read", BinaryData.fromStream(data, dataLength))
                     .setPollInterval(durationTestMode)
                     .getSyncPoller();
             AnalyzeResult analyzeResult = syncPoller.getFinalResult();
@@ -1221,13 +1097,11 @@ public class DocumentAnalysisAsyncClientTest extends DocumentAnalysisClientTestB
         }, EXAMPLE_HTML);
     }
 
-    @ParameterizedTest(name = DISPLAY_NAME_WITH_ARGUMENTS)
-    @MethodSource("com.azure.ai.formrecognizer.documentanalysis.TestUtils#getTestParameters")
-    public void testDocxDocumentPrebuiltRead(HttpClient httpClient, DocumentAnalysisServiceVersion serviceVersion) {
-        client = getDocumentAnalysisAsyncClient(httpClient, serviceVersion);
+    @Test
+    public void testDocxDocumentPrebuiltRead() {
         dataRunner((data, dataLength) -> {
             SyncPoller<OperationResult, AnalyzeResult> syncPoller
-                = client.beginAnalyzeDocument("prebuilt-read", BinaryData.fromStream(data, dataLength))
+                = analysisClient.beginAnalyzeDocument("prebuilt-read", BinaryData.fromStream(data, dataLength))
                     .setPollInterval(durationTestMode)
                     .getSyncPoller();
             AnalyzeResult analyzeResult = syncPoller.getFinalResult();
@@ -1236,13 +1110,11 @@ public class DocumentAnalysisAsyncClientTest extends DocumentAnalysisClientTestB
         }, EXAMPLE_DOCX);
     }
 
-    @ParameterizedTest(name = DISPLAY_NAME_WITH_ARGUMENTS)
-    @MethodSource("com.azure.ai.formrecognizer.documentanalysis.TestUtils#getTestParameters")
-    public void testXlsxDocumentPrebuiltRead(HttpClient httpClient, DocumentAnalysisServiceVersion serviceVersion) {
-        client = getDocumentAnalysisAsyncClient(httpClient, serviceVersion);
+    @Test
+    public void testXlsxDocumentPrebuiltRead() {
         dataRunner((data, dataLength) -> {
             SyncPoller<OperationResult, AnalyzeResult> syncPoller
-                = client.beginAnalyzeDocument("prebuilt-read", BinaryData.fromStream(data, dataLength))
+                = analysisClient.beginAnalyzeDocument("prebuilt-read", BinaryData.fromStream(data, dataLength))
                     .setPollInterval(durationTestMode)
                     .getSyncPoller();
             AnalyzeResult analyzeResult = syncPoller.getFinalResult();
@@ -1252,15 +1124,11 @@ public class DocumentAnalysisAsyncClientTest extends DocumentAnalysisClientTestB
     }
 
     @RecordWithoutRequestBody
-    @ParameterizedTest(name = DISPLAY_NAME_WITH_ARGUMENTS)
-    @MethodSource("com.azure.ai.formrecognizer.documentanalysis.TestUtils#getTestParameters")
-    public void testClassifyAnalyzeFromUrl(HttpClient httpClient, DocumentAnalysisServiceVersion serviceVersion) {
-        client = getDocumentAnalysisAsyncClient(httpClient, serviceVersion);
-        DocumentModelAdministrationAsyncClient adminClient = getDocumentAdminAsyncClient(httpClient, serviceVersion);
+    @Test
+    public void testClassifyAnalyzeFromUrl() {
         AtomicReference<DocumentClassifierDetails> documentClassifierDetails = new AtomicReference<>();
         beginClassifierRunner((trainingFilesUrl) -> {
-            Map<String, ClassifierDocumentTypeDetails> documentTypeDetailsMap
-                = new HashMap<String, ClassifierDocumentTypeDetails>();
+            Map<String, ClassifierDocumentTypeDetails> documentTypeDetailsMap = new HashMap<>();
             documentTypeDetailsMap.put("IRS-1040-A", new ClassifierDocumentTypeDetails(
                 new BlobContentSource(trainingFilesUrl).setPrefix("IRS-1040-A/train")));
             documentTypeDetailsMap.put("IRS-1040-B", new ClassifierDocumentTypeDetails(
@@ -1272,7 +1140,7 @@ public class DocumentAnalysisAsyncClientTest extends DocumentAnalysisClientTestB
             documentTypeDetailsMap.put("IRS-1040-E", new ClassifierDocumentTypeDetails(
                 new BlobContentSource(trainingFilesUrl).setPrefix("IRS-1040-E/train")));
             SyncPoller<OperationResult, DocumentClassifierDetails> buildModelPoller
-                = adminClient.beginBuildDocumentClassifier(documentTypeDetailsMap)
+                = this.adminClient.beginBuildDocumentClassifier(documentTypeDetailsMap)
                     .setPollInterval(durationTestMode)
                     .getSyncPoller();
             buildModelPoller.waitForCompletion();
@@ -1284,7 +1152,7 @@ public class DocumentAnalysisAsyncClientTest extends DocumentAnalysisClientTestB
             String classifierId = documentClassifierDetails.get().getClassifierId();
             dataRunner((data, dataLength) -> {
                 SyncPoller<OperationResult, AnalyzeResult> syncPoller
-                    = client.beginClassifyDocument(classifierId, BinaryData.fromStream(data, dataLength))
+                    = analysisClient.beginClassifyDocument(classifierId, BinaryData.fromStream(data, dataLength))
                         .setPollInterval(durationTestMode)
                         .getSyncPoller();
                 AnalyzeResult analyzeResult = syncPoller.getFinalResult();
@@ -1296,15 +1164,11 @@ public class DocumentAnalysisAsyncClientTest extends DocumentAnalysisClientTestB
     }
 
     @RecordWithoutRequestBody
-    @ParameterizedTest(name = DISPLAY_NAME_WITH_ARGUMENTS)
-    @MethodSource("com.azure.ai.formrecognizer.documentanalysis.TestUtils#getTestParameters")
-    public void testClassifyAnalyze(HttpClient httpClient, DocumentAnalysisServiceVersion serviceVersion) {
-        client = getDocumentAnalysisAsyncClient(httpClient, serviceVersion);
-        DocumentModelAdministrationAsyncClient adminClient = getDocumentAdminAsyncClient(httpClient, serviceVersion);
+    @Test
+    public void testClassifyAnalyze() {
         AtomicReference<DocumentClassifierDetails> documentClassifierDetails = new AtomicReference<>();
         beginClassifierRunner((trainingFilesUrl) -> {
-            Map<String, ClassifierDocumentTypeDetails> documentTypeDetailsMap
-                = new HashMap<String, ClassifierDocumentTypeDetails>();
+            Map<String, ClassifierDocumentTypeDetails> documentTypeDetailsMap = new HashMap<>();
             documentTypeDetailsMap.put("IRS-1040-A", new ClassifierDocumentTypeDetails(
                 new BlobContentSource(trainingFilesUrl).setPrefix("IRS-1040-A/train")));
             documentTypeDetailsMap.put("IRS-1040-B", new ClassifierDocumentTypeDetails(
@@ -1316,7 +1180,7 @@ public class DocumentAnalysisAsyncClientTest extends DocumentAnalysisClientTestB
             documentTypeDetailsMap.put("IRS-1040-E", new ClassifierDocumentTypeDetails(
                 new BlobContentSource(trainingFilesUrl).setPrefix("IRS-1040-E/train")));
             SyncPoller<OperationResult, DocumentClassifierDetails> buildModelPoller
-                = adminClient.beginBuildDocumentClassifier(documentTypeDetailsMap)
+                = this.adminClient.beginBuildDocumentClassifier(documentTypeDetailsMap)
                     .setPollInterval(durationTestMode)
                     .getSyncPoller();
             buildModelPoller.waitForCompletion();
@@ -1328,7 +1192,7 @@ public class DocumentAnalysisAsyncClientTest extends DocumentAnalysisClientTestB
             String classifierId = documentClassifierDetails.get().getClassifierId();
             dataRunner((data, dataLength) -> {
                 SyncPoller<OperationResult, AnalyzeResult> syncPoller
-                    = client
+                    = analysisClient
                         .beginClassifyDocument(documentClassifierDetails.get().getClassifierId(),
                             BinaryData.fromStream(data, dataLength))
                         .setPollInterval(durationTestMode)
@@ -1341,12 +1205,10 @@ public class DocumentAnalysisAsyncClientTest extends DocumentAnalysisClientTestB
         }
     }
 
-    @ParameterizedTest(name = DISPLAY_NAME_WITH_ARGUMENTS)
-    @MethodSource("com.azure.ai.formrecognizer.documentanalysis.TestUtils#getTestParameters")
-    public void testFormulaPrebuiltRead(HttpClient httpClient, DocumentAnalysisServiceVersion serviceVersion) {
-        client = getDocumentAnalysisAsyncClient(httpClient, serviceVersion);
+    @Test
+    public void testFormulaPrebuiltRead() {
         testingContainerUrlRunner((sourceUrl) -> {
-            SyncPoller<OperationResult, AnalyzeResult> syncPoller = client
+            SyncPoller<OperationResult, AnalyzeResult> syncPoller = analysisClient
                 .beginAnalyzeDocumentFromUrl("prebuilt-read", sourceUrl,
                     new AnalyzeDocumentOptions()
                         .setDocumentAnalysisFeatures(Collections.singletonList(DocumentAnalysisFeature.FORMULAS)))
@@ -1361,12 +1223,10 @@ public class DocumentAnalysisAsyncClientTest extends DocumentAnalysisClientTestB
         }, FORMULA_JPG);
     }
 
-    @ParameterizedTest(name = DISPLAY_NAME_WITH_ARGUMENTS)
-    @MethodSource("com.azure.ai.formrecognizer.documentanalysis.TestUtils#getTestParameters")
-    public void testBarcodePrebuiltRead(HttpClient httpClient, DocumentAnalysisServiceVersion serviceVersion) {
-        client = getDocumentAnalysisAsyncClient(httpClient, serviceVersion);
+    @Test
+    public void testBarcodePrebuiltRead() {
         testingContainerUrlRunner((sourceUrl) -> {
-            SyncPoller<OperationResult, AnalyzeResult> syncPoller = client
+            SyncPoller<OperationResult, AnalyzeResult> syncPoller = analysisClient
                 .beginAnalyzeDocumentFromUrl("prebuilt-layout", sourceUrl,
                     new AnalyzeDocumentOptions()
                         .setDocumentAnalysisFeatures(Collections.singletonList(DocumentAnalysisFeature.BARCODES)))
@@ -1381,13 +1241,10 @@ public class DocumentAnalysisAsyncClientTest extends DocumentAnalysisClientTestB
         }, BARCODE_TIF);
     }
 
-    @ParameterizedTest(name = DISPLAY_NAME_WITH_ARGUMENTS)
-    @MethodSource("com.azure.ai.formrecognizer.documentanalysis.TestUtils#getTestParameters")
-    public void testStyleFeatureFlagPrebuiltLayout(HttpClient httpClient,
-        DocumentAnalysisServiceVersion serviceVersion) {
-        client = getDocumentAnalysisAsyncClient(httpClient, serviceVersion);
+    @Test
+    public void testStyleFeatureFlagPrebuiltLayout() {
         testingContainerUrlRunner((sourceUrl) -> {
-            SyncPoller<OperationResult, AnalyzeResult> syncPoller = client
+            SyncPoller<OperationResult, AnalyzeResult> syncPoller = analysisClient
                 .beginAnalyzeDocumentFromUrl("prebuilt-layout", sourceUrl,
                     new AnalyzeDocumentOptions()
                         .setDocumentAnalysisFeatures(Collections.singletonList(DocumentAnalysisFeature.STYLE_FONT)))
