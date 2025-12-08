@@ -34,14 +34,10 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.EnumMap;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.SortedMap;
 import java.util.Spliterator;
-import java.util.Spliterators;
 import java.util.function.BiFunction;
-import java.util.function.BinaryOperator;
 import java.util.function.Function;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
@@ -81,30 +77,7 @@ public abstract class ImmutableMap<K, V> implements Map<K, V>, Serializable {
     return CollectCollectors.toImmutableMap(keyFunction, valueFunction);
   }
 
-  /**
-   * Returns a {@link Collector} that accumulates elements into an {@code ImmutableMap} whose keys
-   * and values are the result of applying the provided mapping functions to the input elements.
-   *
-   * <p>If the mapped keys contain duplicates (according to {@link Object#equals(Object)}), the
-   * values are merged using the specified merging function. Entries will appear in the encounter
-   * order of the first occurrence of the key.
-   *
-   * @since 21.0
-   */
-
-  public static <T, K, V> Collector<T, ?, ImmutableMap<K, V>> toImmutableMap(
-      Function<? super T, ? extends K> keyFunction,
-      Function<? super T, ? extends V> valueFunction,
-      BinaryOperator<V> mergeFunction) {
-    checkNotNull(keyFunction);
-    checkNotNull(valueFunction);
-    checkNotNull(mergeFunction);
-    return Collectors.collectingAndThen(
-        Collectors.toMap(keyFunction, valueFunction, mergeFunction, LinkedHashMap::new),
-        ImmutableMap::copyOf);
-  }
-
-  /**
+    /**
    * Returns the empty map. This map behaves and performs comparably to {@link
    * Collections#emptyMap}, and is preferable mainly for consistency and maintainability of your
    * code.
@@ -391,20 +364,6 @@ public abstract class ImmutableMap<K, V> implements Map<K, V>, Serializable {
       }
     }
 
-     // only for testing JDK backed implementation
-    ImmutableMap<K, V> buildJdkBacked() {
-      checkState(
-          valueComparator == null, "buildJdkBacked is only for testing; can't use valueComparator");
-      switch (size) {
-        case 0:
-          return of();
-        case 1:
-          return of(entries[0].getKey(), entries[0].getValue());
-        default:
-          entriesUsed = true;
-          return JdkBackedImmutableMap.create(size, entries);
-      }
-    }
   }
 
   /**
@@ -476,14 +435,7 @@ public abstract class ImmutableMap<K, V> implements Map<K, V>, Serializable {
   abstract static class IteratorBasedImmutableMap<K, V> extends ImmutableMap<K, V> {
     abstract UnmodifiableIterator<Entry<K, V>> entryIterator();
 
-    Spliterator<Entry<K, V>> entrySpliterator() {
-      return Spliterators.spliterator(
-          entryIterator(),
-          size(),
-          Spliterator.DISTINCT | Spliterator.NONNULL | Spliterator.IMMUTABLE | Spliterator.ORDERED);
-    }
-
-    @Override
+      @Override
     ImmutableSet<K> createKeySet() {
       return new ImmutableMapKeySet<>(this);
     }
@@ -771,94 +723,7 @@ public abstract class ImmutableMap<K, V> implements Map<K, V>, Serializable {
    */
   abstract ImmutableCollection<V> createValues();
 
-  // cached so that this.multimapView().inverse() only computes inverse once
-  private transient ImmutableSetMultimap<K, V> multimapView;
-
-  /**
-   * Returns a multimap view of the map.
-   *
-   * @since 14.0
-   */
-  public ImmutableSetMultimap<K, V> asMultimap() {
-    if (isEmpty()) {
-      return ImmutableSetMultimap.of();
-    }
-    ImmutableSetMultimap<K, V> result = multimapView;
-    return (result == null)
-        ? (multimapView =
-            new ImmutableSetMultimap<>(new MapViewOfValuesAsSingletonSets(), size(), null))
-        : result;
-  }
-
-  private final class MapViewOfValuesAsSingletonSets
-      extends IteratorBasedImmutableMap<K, ImmutableSet<V>> {
-
     @Override
-    public int size() {
-      return ImmutableMap.this.size();
-    }
-
-    @Override
-    ImmutableSet<K> createKeySet() {
-      return ImmutableMap.this.keySet();
-    }
-
-    @Override
-    public boolean containsKey(Object key) {
-      return ImmutableMap.this.containsKey(key);
-    }
-
-    @Override
-    public ImmutableSet<V> get(Object key) {
-      V outerValue = ImmutableMap.this.get(key);
-      return (outerValue == null) ? null : ImmutableSet.of(outerValue);
-    }
-
-    @Override
-    boolean isPartialView() {
-      return ImmutableMap.this.isPartialView();
-    }
-
-    @Override
-    public int hashCode() {
-      // ImmutableSet.of(value).hashCode() == value.hashCode(), so the hashes are the same
-      return ImmutableMap.this.hashCode();
-    }
-
-    @Override
-    boolean isHashCodeFast() {
-      return ImmutableMap.this.isHashCodeFast();
-    }
-
-    @Override
-    UnmodifiableIterator<Entry<K, ImmutableSet<V>>> entryIterator() {
-      final Iterator<Entry<K, V>> backingIterator = ImmutableMap.this.entrySet().iterator();
-      return new UnmodifiableIterator<Entry<K, ImmutableSet<V>>>() {
-        @Override
-        public boolean hasNext() {
-          return backingIterator.hasNext();
-        }
-
-        @Override
-        public Entry<K, ImmutableSet<V>> next() {
-          final Entry<K, V> backingEntry = backingIterator.next();
-          return new AbstractMapEntry<K, ImmutableSet<V>>() {
-            @Override
-            public K getKey() {
-              return backingEntry.getKey();
-            }
-
-            @Override
-            public ImmutableSet<V> getValue() {
-              return ImmutableSet.of(backingEntry.getValue());
-            }
-          };
-        }
-      };
-    }
-  }
-
-  @Override
   public boolean equals(Object object) {
     return Maps.equalsImpl(this, object);
   }

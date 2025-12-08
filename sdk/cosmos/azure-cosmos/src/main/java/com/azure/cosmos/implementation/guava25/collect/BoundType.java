@@ -41,7 +41,4 @@ public enum BoundType {
     return inclusive ? CLOSED : OPEN;
   }
 
-  BoundType flip() {
-    return forBoolean(!inclusive);
-  }
 }

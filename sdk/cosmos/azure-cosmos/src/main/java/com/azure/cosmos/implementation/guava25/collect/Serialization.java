@@ -64,17 +64,7 @@ final class Serialization {
     }
   }
 
-  /**
-   * Populates a map by reading an input stream, as part of deserialization. See {@link #writeMap}
-   * for the data format.
-   */
-  static <K, V> void populateMap(Map<K, V> map, ObjectInputStream stream)
-      throws IOException, ClassNotFoundException {
-    int size = stream.readInt();
-    populateMap(map, stream, size);
-  }
-
-  /**
+    /**
    * Populates a map by reading an input stream, as part of deserialization. See {@link #writeMap}
    * for the data format. The size is determined by a prior call to {@link #readCount}.
    */
@@ -106,17 +96,7 @@ final class Serialization {
     }
   }
 
-  /**
-   * Populates a multiset by reading an input stream, as part of deserialization. See {@link
-   * #writeMultiset} for the data format.
-   */
-  static <E> void populateMultiset(Multiset<E> multiset, ObjectInputStream stream)
-      throws IOException, ClassNotFoundException {
-    int distinctElements = stream.readInt();
-    populateMultiset(multiset, stream, distinctElements);
-  }
-
-  /**
+    /**
    * Populates a multiset by reading an input stream, as part of deserialization. See {@link
    * #writeMultiset} for the data format. The number of distinct elements is determined by a prior
    * call to {@link #readCount}.
@@ -152,17 +132,7 @@ final class Serialization {
     }
   }
 
-  /**
-   * Populates a multimap by reading an input stream, as part of deserialization. See {@link
-   * #writeMultimap} for the data format.
-   */
-  static <K, V> void populateMultimap(Multimap<K, V> multimap, ObjectInputStream stream)
-      throws IOException, ClassNotFoundException {
-    int distinctKeys = stream.readInt();
-    populateMultimap(multimap, stream, distinctKeys);
-  }
-
-  /**
+    /**
    * Populates a multimap by reading an input stream, as part of deserialization. See {@link
    * #writeMultimap} for the data format. The number of distinct keys is determined by a prior call
    * to {@link #readCount}.

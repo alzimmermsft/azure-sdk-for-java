@@ -39,8 +39,6 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.Spliterator;
 import java.util.function.Consumer;
-import java.util.stream.Collector;
-
 
 /**
  * A {@link Set} whose contents will never change, with many other important properties detailed at
@@ -52,19 +50,6 @@ import java.util.stream.Collector;
 public abstract class ImmutableSet<E> extends ImmutableCollection<E> implements Set<E> {
   static final int SPLITERATOR_CHARACTERISTICS =
       ImmutableCollection.SPLITERATOR_CHARACTERISTICS | Spliterator.DISTINCT;
-
-  /**
-   * Returns a {@code Collector} that accumulates the input elements into a new {@code
-   * ImmutableSet}. Elements appear in the resulting set in the encounter order of the stream; if
-   * the stream contains duplicates (according to {@link Object#equals(Object)}), only the first
-   * duplicate in encounter order will appear in the result.
-   *
-   * @since 21.0
-   */
-
-  public static <E> Collector<E, ?, ImmutableSet<E>> toImmutableSet() {
-    return CollectCollectors.toImmutableSet();
-  }
 
   /**
    * Returns the empty immutable set. Preferred over {@link Collections#emptySet} for code
@@ -393,25 +378,7 @@ public abstract class ImmutableSet<E> extends ImmutableCollection<E> implements 
     return new Builder<E>();
   }
 
-  /**
-   * Returns a new builder, expecting the specified number of distinct elements to be added.
-   *
-   * <p>If {@code expectedSize} is exactly the number of distinct elements added to the builder
-   * before {@link Builder#build} is called, the builder is likely to perform better than an unsized
-   * {@link #builder()} would have.
-   *
-   * <p>It is not specified if any performance benefits apply if {@code expectedSize} is close to,
-   * but not exactly, the number of distinct elements added to the builder.
-   *
-   * @since 23.1
-   */
-
-  public static <E> Builder<E> builderWithExpectedSize(int expectedSize) {
-    checkNonnegative(expectedSize, "expectedSize");
-    return new Builder<E>(expectedSize);
-  }
-
-  /** Builds a new open-addressed hash table from the first n objects in elements. */
+    /** Builds a new open-addressed hash table from the first n objects in elements. */
   static Object[] rebuildHashTable(int newTableSize, Object[] elements, int n) {
     Object[] hashTable = new Object[newTableSize];
     int mask = hashTable.length - 1;
@@ -464,12 +431,7 @@ public abstract class ImmutableSet<E> extends ImmutableCollection<E> implements 
       this.impl = null; // unused
     }
 
-
-    void forceJdk() {
-      this.impl = new JdkBackedSetBuilderImpl<E>(impl);
-    }
-
-    final void copyIfNecessary() {
+      final void copyIfNecessary() {
       if (forceCopy) {
         copy();
         forceCopy = false;
@@ -515,13 +477,7 @@ public abstract class ImmutableSet<E> extends ImmutableCollection<E> implements 
       return this;
     }
 
-    Builder<E> combine(Builder<E> other) {
-      copyIfNecessary();
-      this.impl = this.impl.combine(other.impl);
-      return this;
-    }
-
-    @Override
+      @Override
     public ImmutableSet<E> build() {
       forceCopy = true;
       impl = impl.review();
@@ -570,16 +526,7 @@ public abstract class ImmutableSet<E> extends ImmutableCollection<E> implements 
      */
     abstract SetBuilderImpl<E> add(E e);
 
-    /** Adds all the elements from the specified SetBuilderImpl to this SetBuilderImpl. */
-    final SetBuilderImpl<E> combine(SetBuilderImpl<E> other) {
-      SetBuilderImpl<E> result = this;
-      for (int i = 0; i < other.distinct; i++) {
-        result = result.add(other.dedupedElements[i]);
-      }
-      return result;
-    }
-
-    /**
+      /**
      * Creates a new copy of this SetBuilderImpl. Modifications to that SetBuilderImpl will not
      * affect this SetBuilderImpl or sets constructed from this SetBuilderImpl via build().
      */
@@ -628,17 +575,7 @@ public abstract class ImmutableSet<E> extends ImmutableCollection<E> implements 
     return MAX_TABLE_SIZE;
   }
 
-  /**
-   * We attempt to detect deliberate hash flooding attempts, and if one is detected, fall back to a
-   * wrapper around j.u.HashSet, which has built in flooding protection. HASH_FLOODING_FPP is the
-   * maximum allowed probability of falsely detecting a hash flooding attack if the input is
-   * randomly generated.
-   *
-   * <p>MAX_RUN_MULTIPLIER was determined experimentally to match this FPP.
-   */
-  static final double HASH_FLOODING_FPP = 0.001;
-
-  // NB: yes, this is surprisingly high, but that's what the experiments said was necessary
+    // NB: yes, this is surprisingly high, but that's what the experiments said was necessary
   static final int MAX_RUN_MULTIPLIER = 12;
 
   /**

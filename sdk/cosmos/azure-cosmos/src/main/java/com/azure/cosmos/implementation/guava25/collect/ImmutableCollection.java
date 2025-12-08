@@ -20,10 +20,6 @@
 
 package com.azure.cosmos.implementation.guava25.collect;
 
-import static com.azure.cosmos.implementation.guava25.base.Preconditions.checkNotNull;
-import static com.azure.cosmos.implementation.guava25.collect.CollectPreconditions.checkNonnegative;
-import static com.azure.cosmos.implementation.guava25.collect.ObjectArrays.checkElementsNotNull;
-
 import java.io.Serializable;
 import java.util.AbstractCollection;
 import java.util.Collection;
@@ -33,6 +29,8 @@ import java.util.List;
 import java.util.Spliterator;
 import java.util.Spliterators;
 import java.util.function.Predicate;
+
+import static com.azure.cosmos.implementation.guava25.base.Preconditions.checkNotNull;
 
 
 /**

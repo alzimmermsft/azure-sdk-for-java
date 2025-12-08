@@ -23,8 +23,6 @@ package com.azure.cosmos.implementation.guava25.base;
 /**
  * Legacy version of {@link java.util.function.Function java.util.function.Function}.
  *
- * <p>The {@link Functions} class provides common functions and related utilities.
- *
  * <p>As this interface extends {@code java.util.function.Function}, an instance of this type can be
  * used as a {@code java.util.function.Function} directly. To use a {@code
  * java.util.function.Function} in a context where a {@code com.google.common.base.Function} is

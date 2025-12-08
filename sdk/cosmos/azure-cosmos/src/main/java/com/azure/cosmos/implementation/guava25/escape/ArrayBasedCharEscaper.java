@@ -20,9 +20,6 @@ package com.azure.cosmos.implementation.guava25.escape;
 
 import static com.azure.cosmos.implementation.guava25.base.Preconditions.checkNotNull;
 
-
-import java.util.Map;
-
 /**
  * A {@link CharEscaper} that uses an array to quickly look up replacement characters for a given
  * {@code char} value. An additional safe range is provided that determines whether {@code char}
@@ -54,24 +51,7 @@ public abstract class ArrayBasedCharEscaper extends CharEscaper {
   // The last character in the safe range.
   private final char safeMax;
 
-  /**
-   * Creates a new ArrayBasedCharEscaper instance with the given replacement map and specified safe
-   * range. If {@code safeMax < safeMin} then no characters are considered safe.
-   *
-   * <p>If a character has no mapped replacement then it is checked against the safe range. If it
-   * lies outside that, then {@link #escapeUnsafe} is called, otherwise no escaping is performed.
-   *
-   * @param replacementMap a map of characters to their escaped representations
-   * @param safeMin the lowest character value in the safe range
-   * @param safeMax the highest character value in the safe range
-   */
-  protected ArrayBasedCharEscaper(
-      Map<Character, String> replacementMap, char safeMin, char safeMax) {
-
-    this(ArrayBasedEscaperMap.create(replacementMap), safeMin, safeMax);
-  }
-
-  /**
+    /**
    * Creates a new ArrayBasedCharEscaper instance with the given replacement map and specified safe
    * range. If {@code safeMax < safeMin} then no characters are considered safe. This initializer is
    * useful when explicit instances of ArrayBasedEscaperMap are used to allow the sharing of large

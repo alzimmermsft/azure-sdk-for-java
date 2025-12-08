@@ -577,7 +577,7 @@ public abstract class ImmutableMultimap<K, V> extends AbstractMultimap<K, V>
           return CollectSpliterators.map(
               valueCollection.spliterator(), (V value) -> Maps.immutableEntry(key, value));
         },
-        Spliterator.SIZED | (this instanceof SetMultimap ? Spliterator.DISTINCT : 0),
+        Spliterator.SIZED | 0,
         size());
   }
 

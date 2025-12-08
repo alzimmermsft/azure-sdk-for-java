@@ -21,7 +21,6 @@ package com.azure.cosmos.implementation.guava25.hash;
 import com.azure.cosmos.implementation.guava25.annotations.Beta;
 import com.azure.cosmos.implementation.guava25.errorprone.annotations.CanIgnoreReturnValue;
 
-import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 
 /**
@@ -70,28 +69,10 @@ public interface Hasher extends PrimitiveSink {
     Hasher putBytes(byte[] bytes, int off, int len);
 
     @Override
-    Hasher putBytes(ByteBuffer bytes);
-
-    @Override
-    Hasher putShort(short s);
-
-    @Override
     Hasher putInt(int i);
 
     @Override
     Hasher putLong(long l);
-
-    /** Equivalent to {@code putInt(Float.floatToRawIntBits(f))}. */
-    @Override
-    Hasher putFloat(float f);
-
-    /** Equivalent to {@code putLong(Double.doubleToRawLongBits(d))}. */
-    @Override
-    Hasher putDouble(double d);
-
-    /** Equivalent to {@code putByte(b ? (byte) 1 : (byte) 0)}. */
-    @Override
-    Hasher putBoolean(boolean b);
 
     @Override
     Hasher putChar(char c);

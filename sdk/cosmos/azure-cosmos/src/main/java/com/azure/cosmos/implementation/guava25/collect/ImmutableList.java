@@ -20,16 +20,6 @@
 
 package com.azure.cosmos.implementation.guava25.collect;
 
-import static com.azure.cosmos.implementation.guava25.base.Preconditions.checkArgument;
-import static com.azure.cosmos.implementation.guava25.base.Preconditions.checkElementIndex;
-import static com.azure.cosmos.implementation.guava25.base.Preconditions.checkNotNull;
-import static com.azure.cosmos.implementation.guava25.base.Preconditions.checkPositionIndexes;
-import static com.azure.cosmos.implementation.guava25.collect.CollectPreconditions.checkNonnegative;
-import static com.azure.cosmos.implementation.guava25.collect.ObjectArrays.checkElementsNotNull;
-import static com.azure.cosmos.implementation.guava25.collect.RegularImmutableList.EMPTY;
-
-
-
 import java.io.InvalidObjectException;
 import java.io.ObjectInputStream;
 import java.io.Serializable;
@@ -43,7 +33,13 @@ import java.util.RandomAccess;
 import java.util.Spliterator;
 import java.util.function.Consumer;
 import java.util.function.UnaryOperator;
-import java.util.stream.Collector;
+
+import static com.azure.cosmos.implementation.guava25.base.Preconditions.checkArgument;
+import static com.azure.cosmos.implementation.guava25.base.Preconditions.checkElementIndex;
+import static com.azure.cosmos.implementation.guava25.base.Preconditions.checkNotNull;
+import static com.azure.cosmos.implementation.guava25.base.Preconditions.checkPositionIndexes;
+import static com.azure.cosmos.implementation.guava25.collect.ObjectArrays.checkElementsNotNull;
+import static com.azure.cosmos.implementation.guava25.collect.RegularImmutableList.EMPTY;
 
 
 /**
@@ -61,17 +57,6 @@ import java.util.stream.Collector;
 @SuppressWarnings("serial") // we're overriding default serialization
 public abstract class ImmutableList<E> extends ImmutableCollection<E>
     implements List<E>, RandomAccess {
-
-  /**
-   * Returns a {@code Collector} that accumulates the input elements into a new {@code
-   * ImmutableList}, in encounter order.
-   *
-   * @since 21.0
-   */
-
-  public static <E> Collector<E, ?, ImmutableList<E>> toImmutableList() {
-    return CollectCollectors.toImmutableList();
-  }
 
   /**
    * Returns the empty immutable list. This list behaves and performs comparably to {@link
@@ -298,30 +283,7 @@ public abstract class ImmutableList<E> extends ImmutableCollection<E>
     }
   }
 
-  /**
-   * Returns an immutable list containing the given elements, sorted according to their natural
-   * order. The sorting algorithm used is stable, so elements that compare as equal will stay in the
-   * order in which they appear in the input.
-   *
-   * <p>If your data has no duplicates, or you wish to deduplicate elements, use {@code
-   * ImmutableSortedSet.copyOf(elements)}; if you want a {@code List} you can use its {@code
-   * asList()} view.
-   *
-   * <p><b>Java 8 users:</b> If you want to convert a {@link java.util.stream.Stream} to a sorted
-   * {@code ImmutableList}, use {@code stream.sorted().collect(toImmutableList())}.
-   *
-   * @throws NullPointerException if any element in the input is null
-   * @since 21.0
-   */
-  public static <E extends Comparable<? super E>> ImmutableList<E> sortedCopyOf(
-      Iterable<? extends E> elements) {
-    Comparable<?>[] array = Iterables.toArray(elements, new Comparable<?>[0]);
-    checkElementsNotNull((Object[]) array);
-    Arrays.sort(array);
-    return asImmutableList(array);
-  }
-
-  /**
+    /**
    * Returns an immutable list containing the given elements, in sorted order relative to the
    * specified comparator. The sorting algorithm used is stable, so elements that compare as equal
    * will stay in the order in which they appear in the input.
@@ -710,25 +672,7 @@ public abstract class ImmutableList<E> extends ImmutableCollection<E>
     return new Builder<E>();
   }
 
-  /**
-   * Returns a new builder, expecting the specified number of elements to be added.
-   *
-   * <p>If {@code expectedSize} is exactly the number of elements added to the builder before {@link
-   * Builder#build} is called, the builder is likely to perform better than an unsized {@link
-   * #builder()} would have.
-   *
-   * <p>It is not specified if any performance benefits apply if {@code expectedSize} is close to,
-   * but not exactly, the number of elements added to the builder.
-   *
-   * @since 23.1
-   */
-
-  public static <E> Builder<E> builderWithExpectedSize(int expectedSize) {
-    checkNonnegative(expectedSize, "expectedSize");
-    return new ImmutableList.Builder<E>(expectedSize);
-  }
-
-  /**
+    /**
    * A builder for creating immutable list instances, especially {@code public static final} lists
    * ("constant lists"). Example:
    *
@@ -848,13 +792,7 @@ public abstract class ImmutableList<E> extends ImmutableCollection<E>
       return this;
     }
 
-    Builder<E> combine(Builder<E> builder) {
-      checkNotNull(builder);
-      add(builder.contents, builder.size);
-      return this;
-    }
-
-    /**
+        /**
      * Returns a newly-created {@code ImmutableList} based on the contents of the {@code Builder}.
      */
     @Override

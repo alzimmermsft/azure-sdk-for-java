@@ -359,7 +359,7 @@ public class GlobalPartitionEndpointManagerForPPCBUnitTests {
                 LocationEastUs2EndpointToLocationPair.getKey());
 
             Mockito.when(this.globalEndpointManagerMock.getApplicableWriteRegionalRoutingContexts(Mockito.anyList())).thenReturn(Collections.unmodifiableList(applicableReadWriteEndpoints));
-            Mockito.when(this.globalEndpointManagerMock.getApplicableReadRegionalRoutingContexts(Mockito.anyList())).thenReturn((Collections.unmodifiableList(applicableReadWriteEndpoints));
+            Mockito.when(this.globalEndpointManagerMock.getApplicableReadRegionalRoutingContexts(Mockito.anyList())).thenReturn(Collections.unmodifiableList(applicableReadWriteEndpoints));
 
             int exceptionCountToHandle
                 = globalPartitionEndpointManagerForCircuitBreaker.getConsecutiveExceptionBasedCircuitBreaker().getAllowedExceptionCountToMaintainStatus(LocationHealthStatus.HealthyWithFailures, readOperationTrue);

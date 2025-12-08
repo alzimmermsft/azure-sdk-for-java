@@ -18,13 +18,7 @@
 
 package com.azure.cosmos.implementation.guava25.base;
 
-import static com.azure.cosmos.implementation.guava25.base.Preconditions.checkNotNull;
-
-
 import java.io.Serializable;
-import java.util.Iterator;
-import java.util.Set;
-
 
 /**
  * An immutable object that may contain a non-null reference to another object. Each instance of
@@ -94,18 +88,6 @@ public abstract class Optional<T> implements Serializable {
   }
 
   /**
-   * Returns an {@code Optional} instance containing the given non-null reference. To have {@code
-   * null} treated as {@link #absent}, use {@link #fromNullable} instead.
-   *
-   * <p><b>Comparison to {@code java.util.Optional}:</b> no differences.
-   *
-   * @throws NullPointerException if {@code reference} is null
-   */
-  public static <T> Optional<T> of(T reference) {
-    return new Present<T>(checkNotNull(reference));
-  }
-
-  /**
    * If {@code nullableReference} is non-null, returns an {@code Optional} instance containing that
    * reference; otherwise returns {@link Optional#absent}.
    *
@@ -116,49 +98,7 @@ public abstract class Optional<T> implements Serializable {
     return (nullableReference == null) ? Optional.<T>absent() : new Present<T>(nullableReference);
   }
 
-  /**
-   * Returns the equivalent {@code com.google.common.base.Optional} value to the given {@code
-   * java.util.Optional}, or {@code null} if the argument is null.
-   *
-   * @since 21.0
-   */
-
-  public static <T> Optional<T> fromJavaUtil(java.util.Optional<T> javaUtilOptional) {
-    return (javaUtilOptional == null) ? null : fromNullable(javaUtilOptional.orElse(null));
-  }
-
-  /**
-   * Returns the equivalent {@code java.util.Optional} value to the given {@code
-   * com.google.common.base.Optional}, or {@code null} if the argument is null.
-   *
-   * <p>If {@code googleOptional} is known to be non-null, use {@code googleOptional.toJavaUtil()}
-   * instead.
-   *
-   * <p>Unfortunately, the method reference {@code Optional::toJavaUtil} will not work, because it
-   * could refer to either the static or instance version of this method. Write out the lambda
-   * expression {@code o -> Optional.toJavaUtil(o)} instead.
-   *
-   * @since 21.0
-   */
-
-  public static <T> java.util.Optional<T> toJavaUtil(Optional<T> googleOptional) {
-    return googleOptional == null ? null : googleOptional.toJavaUtil();
-  }
-
-  /**
-   * Returns the equivalent {@code java.util.Optional} value to this optional.
-   *
-   * <p>Unfortunately, the method reference {@code Optional::toJavaUtil} will not work, because it
-   * could refer to either the static or instance version of this method. Write out the lambda
-   * expression {@code o -> o.toJavaUtil()} instead.
-   *
-   * @since 21.0
-   */
-  public java.util.Optional<T> toJavaUtil() {
-    return java.util.Optional.ofNullable(orNull());
-  }
-
-  Optional() {}
+    Optional() {}
 
   /**
    * Returns {@code true} if this holder contains a (non-null) instance.
@@ -169,7 +109,7 @@ public abstract class Optional<T> implements Serializable {
 
   /**
    * Returns the contained instance, which must be present. If the instance might be absent, use
-   * {@link #or(Object)} or {@link #orNull} instead.
+   * {@link #or(Object)} instead.
    *
    * <p><b>Comparison to {@code java.util.Optional}:</b> when the value is absent, this method
    * throws {@link IllegalStateException}, whereas the Java 8 counterpart throws {@link
@@ -184,7 +124,7 @@ public abstract class Optional<T> implements Serializable {
   /**
    * Returns the contained instance if it is present; {@code defaultValue} otherwise. If no default
    * value should be required because the instance is known to be present, use {@link #get()}
-   * instead. For a default value of {@code null}, use {@link #orNull}.
+   * instead.
    *
    * <p>Note about generics: The signature {@code public T or(T defaultValue)} is overly
    * restrictive. However, the ideal signature, {@code public <S super T> S or(S)}, is not legal
@@ -213,9 +153,9 @@ public abstract class Optional<T> implements Serializable {
    * }</pre>
    *
    * <p><b>Comparison to {@code java.util.Optional}:</b> this method is similar to Java 8's {@code
-   * Optional.orElse}, but will not accept {@code null} as a {@code defaultValue} ({@link #orNull}
-   * must be used instead). As a result, the value returned by this method is guaranteed non-null,
-   * which is not the case for the {@code java.util} equivalent.
+   * Optional.orElse}, but will not accept {@code null} as a {@code defaultValue}. As a result,
+   * the value returned by this method is guaranteed non-null, which is not the case for the
+   * {@code java.util} equivalent.
    */
   public abstract T or(T defaultValue);
 
@@ -241,40 +181,7 @@ public abstract class Optional<T> implements Serializable {
 
   public abstract T or(Supplier<? extends T> supplier);
 
-  /**
-   * Returns the contained instance if it is present; {@code null} otherwise. If the instance is
-   * known to be present, use {@link #get()} instead.
-   *
-   * <p><b>Comparison to {@code java.util.Optional}:</b> this method is equivalent to Java 8's
-   * {@code Optional.orElse(null)}.
-   */
-
-  public abstract T orNull();
-
-  /**
-   * Returns an immutable singleton {@link Set} whose only element is the contained instance if it
-   * is present; an empty immutable {@link Set} otherwise.
-   *
-   * <p><b>Comparison to {@code java.util.Optional}:</b> this method has no equivalent in Java 8's
-   * {@code Optional} class. However, this common usage:
-   *
-   * <pre>{@code
-   * for (Foo foo : possibleFoo.asSet()) {
-   *   doSomethingWith(foo);
-   * }
-   * }</pre>
-   *
-   * ... can be replaced with:
-   *
-   * <pre>{@code
-   * possibleFoo.ifPresent(foo -> doSomethingWith(foo));
-   * }</pre>
-   *
-   * @since 11.0
-   */
-  public abstract Set<T> asSet();
-
-  /**
+    /**
    * If the instance is present, it is transformed with the given {@link Function}; otherwise,
    * {@link Optional#absent} is returned.
    *
@@ -315,42 +222,5 @@ public abstract class Optional<T> implements Serializable {
   @Override
   public abstract String toString();
 
-  /**
-   * Returns the value of each present instance from the supplied {@code optionals}, in order,
-   * skipping over occurrences of {@link Optional#absent}. Iterators are unmodifiable and are
-   * evaluated lazily.
-   *
-   * <p><b>Comparison to {@code java.util.Optional}:</b> this method has no equivalent in Java 8's
-   * {@code Optional} class; use {@code
-   * optionals.stream().filter(Optional::isPresent).map(Optional::get)} instead.
-   *
-   * @since 11.0 (generics widened in 13.0)
-   */
-
-  public static <T> Iterable<T> presentInstances(
-      final Iterable<? extends Optional<? extends T>> optionals) {
-    checkNotNull(optionals);
-    return new Iterable<T>() {
-      @Override
-      public Iterator<T> iterator() {
-        return new AbstractIterator<T>() {
-          private final Iterator<? extends Optional<? extends T>> iterator =
-              checkNotNull(optionals.iterator());
-
-          @Override
-          protected T computeNext() {
-            while (iterator.hasNext()) {
-              Optional<? extends T> optional = iterator.next();
-              if (optional.isPresent()) {
-                return optional.get();
-              }
-            }
-            return endOfData();
-          }
-        };
-      }
-    };
-  }
-
-  private static final long serialVersionUID = 0;
+    private static final long serialVersionUID = 0;
 }

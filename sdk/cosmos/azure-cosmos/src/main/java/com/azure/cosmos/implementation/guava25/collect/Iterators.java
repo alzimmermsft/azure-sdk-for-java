@@ -20,33 +20,25 @@
 
 package com.azure.cosmos.implementation.guava25.collect;
 
-import static com.azure.cosmos.implementation.guava25.base.Preconditions.checkArgument;
-import static com.azure.cosmos.implementation.guava25.base.Preconditions.checkNotNull;
-import static com.azure.cosmos.implementation.guava25.base.Preconditions.checkState;
-import static com.azure.cosmos.implementation.guava25.base.Predicates.instanceOf;
-import static com.azure.cosmos.implementation.guava25.collect.CollectPreconditions.checkRemove;
-
-
 import com.azure.cosmos.implementation.guava25.base.Function;
 import com.azure.cosmos.implementation.guava25.base.Objects;
-import com.azure.cosmos.implementation.guava25.base.Optional;
 import com.azure.cosmos.implementation.guava25.base.Preconditions;
 import com.azure.cosmos.implementation.guava25.base.Predicate;
 import com.azure.cosmos.implementation.guava25.primitives.Ints;
+
 import java.util.ArrayDeque;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.Deque;
-import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.NoSuchElementException;
-import java.util.PriorityQueue;
-import java.util.Queue;
 
+import static com.azure.cosmos.implementation.guava25.base.Preconditions.checkArgument;
+import static com.azure.cosmos.implementation.guava25.base.Preconditions.checkNotNull;
+import static com.azure.cosmos.implementation.guava25.collect.CollectPreconditions.checkRemove;
 
 /**
  * This class contains static utility methods that operate on or return objects of type {@link
@@ -144,17 +136,6 @@ public final class Iterators {
   }
 
   /**
-   * Simply returns its argument.
-   *
-   * @deprecated no need to use this
-   * @since 10.0
-   */
-  @Deprecated
-  public static <T> UnmodifiableIterator<T> unmodifiableIterator(UnmodifiableIterator<T> iterator) {
-    return checkNotNull(iterator);
-  }
-
-  /**
    * Returns the number of elements remaining in {@code iterator}. The iterator will be left
    * exhausted: its {@code hasNext()} method will return {@code false}.
    */
@@ -205,28 +186,7 @@ public final class Iterators {
     return result;
   }
 
-  /**
-   * Removes every element that satisfies the provided predicate from the iterator. The iterator
-   * will be left exhausted: its {@code hasNext()} method will return {@code false}.
-   *
-   * @param removeFrom the iterator to (potentially) remove elements from
-   * @param predicate a predicate that determines whether an element should be removed
-   * @return {@code true} if any elements were removed from the iterator
-   * @since 2.0
-   */
-  public static <T> boolean removeIf(Iterator<T> removeFrom, Predicate<? super T> predicate) {
-    checkNotNull(predicate);
-    boolean modified = false;
-    while (removeFrom.hasNext()) {
-      if (predicate.apply(removeFrom.next())) {
-        removeFrom.remove();
-        modified = true;
-      }
-    }
-    return modified;
-  }
-
-  /**
+    /**
    * Traverses an iterator and removes every element that does not belong to the provided
    * collection. The iterator will be left exhausted: its {@code hasNext()} method will return
    * {@code false}.
@@ -312,19 +272,7 @@ public final class Iterators {
     throw new IllegalArgumentException(sb.toString());
   }
 
-  /**
-   * Returns the single element contained in {@code iterator}, or {@code defaultValue} if the
-   * iterator is empty.
-   *
-   * @throws IllegalArgumentException if the iterator contains multiple elements. The state of the
-   *     iterator is unspecified.
-   */
-
-  public static <T> T getOnlyElement(Iterator<? extends T> iterator, T defaultValue) {
-    return iterator.hasNext() ? getOnlyElement(iterator) : defaultValue;
-  }
-
-  /**
+    /**
    * Copies an iterator's elements into an array. The iterator will be left exhausted: its {@code
    * hasNext()} method will return {@code false}.
    *
@@ -574,25 +522,7 @@ public final class Iterators {
     return partitionImpl(iterator, size, false);
   }
 
-  /**
-   * Divides an iterator into unmodifiable sublists of the given size, padding the final iterator
-   * with null values if necessary. For example, partitioning an iterator containing {@code [a, b,
-   * c, d, e]} with a partition size of 3 yields {@code [[a, b, c], [d, e, null]]} -- an outer
-   * iterator containing two inner lists of three elements each, all in the original order.
-   *
-   * <p>The returned lists implement {@link java.util.RandomAccess}.
-   *
-   * @param iterator the iterator to return a partitioned view of
-   * @param size the desired size of each partition
-   * @return an iterator of immutable lists containing the elements of {@code iterator} divided into
-   *     partitions (the final iterable may have trailing null elements)
-   * @throws IllegalArgumentException if {@code size} is nonpositive
-   */
-  public static <T> UnmodifiableIterator<List<T>> paddedPartition(Iterator<T> iterator, int size) {
-    return partitionImpl(iterator, size, true);
-  }
-
-  private static <T> UnmodifiableIterator<List<T>> partitionImpl(
+    private static <T> UnmodifiableIterator<List<T>> partitionImpl(
       final Iterator<T> iterator, final int size, final boolean pad) {
     checkNotNull(iterator);
     checkArgument(size > 0);
@@ -643,15 +573,6 @@ public final class Iterators {
         return endOfData();
       }
     };
-  }
-
-  /**
-   * Returns a view of {@code unfiltered} containing all elements that are of the type {@code
-   * desiredType}.
-   */
-  @SuppressWarnings({"unchecked", "rawtypes"}) // can cast to <T> because non-Ts are removed
-  public static <T> UnmodifiableIterator<T> filter(Iterator<?> unfiltered, Class<T> desiredType) {
-    return (UnmodifiableIterator<T>) filter(unfiltered, instanceOf(desiredType));
   }
 
   /**
@@ -722,30 +643,7 @@ public final class Iterators {
     return defaultValue;
   }
 
-  /**
-   * Returns an {@link Optional} containing the first element in {@code iterator} that satisfies the
-   * given predicate, if such an element exists. If no such element is found, an empty {@link
-   * Optional} will be returned from this method and the iterator will be left exhausted: its {@code
-   * hasNext()} method will return {@code false}.
-   *
-   * <p><b>Warning:</b> avoid using a {@code predicate} that matches {@code null}. If {@code null}
-   * is matched in {@code iterator}, a NullPointerException will be thrown.
-   *
-   * @since 11.0
-   */
-  public static <T> Optional<T> tryFind(Iterator<T> iterator, Predicate<? super T> predicate) {
-    checkNotNull(iterator);
-    checkNotNull(predicate);
-    while (iterator.hasNext()) {
-      T t = iterator.next();
-      if (predicate.apply(t)) {
-        return Optional.of(t);
-      }
-    }
-    return Optional.absent();
-  }
-
-  /**
+    /**
    * Returns the index in {@code iterator} of the first element that satisfies the provided {@code
    * predicate}, or {@code -1} if the Iterator has no such elements.
    *
@@ -866,20 +764,7 @@ public final class Iterators {
     }
   }
 
-  /**
-   * Advances {@code iterator} to the end, returning the last element or {@code defaultValue} if the
-   * iterator is empty.
-   *
-   * @param defaultValue the default value to return if the iterator is empty
-   * @return the last element of {@code iterator}
-   * @since 3.0
-   */
-
-  public static <T> T getLast(Iterator<? extends T> iterator, T defaultValue) {
-    return iterator.hasNext() ? getLast(iterator) : defaultValue;
-  }
-
-  /**
+    /**
    * Calls {@code next()} on {@code iterator}, either {@code numberToAdvance} times or until {@code
    * hasNext()} returns {@code false}, whichever comes first.
    *
@@ -934,40 +819,7 @@ public final class Iterators {
     };
   }
 
-  /**
-   * Returns a view of the supplied {@code iterator} that removes each element from the supplied
-   * {@code iterator} as it is returned.
-   *
-   * <p>The provided iterator must support {@link Iterator#remove()} or else the returned iterator
-   * will fail on the first call to {@code next}.
-   *
-   * @param iterator the iterator to remove and return elements from
-   * @return an iterator that removes and returns elements from the supplied iterator
-   * @since 2.0
-   */
-  public static <T> Iterator<T> consumingIterator(final Iterator<T> iterator) {
-    checkNotNull(iterator);
-    return new UnmodifiableIterator<T>() {
-      @Override
-      public boolean hasNext() {
-        return iterator.hasNext();
-      }
-
-      @Override
-      public T next() {
-        T next = iterator.next();
-        iterator.remove();
-        return next;
-      }
-
-      @Override
-      public String toString() {
-        return "Iterators.consumingIterator(...)";
-      }
-    };
-  }
-
-  /**
+    /**
    * Deletes and returns the next value from the iterator, or returns {@code null} if there is no
    * such value.
    */
@@ -1073,222 +925,7 @@ public final class Iterators {
     };
   }
 
-  /**
-   * Adapts an {@code Enumeration} to the {@code Iterator} interface.
-   *
-   * <p>This method has no equivalent in {@link Iterables} because viewing an {@code Enumeration} as
-   * an {@code Iterable} is impossible. However, the contents can be <i>copied</i> into a collection
-   * using {@link Collections#list}.
-   */
-  public static <T> UnmodifiableIterator<T> forEnumeration(final Enumeration<T> enumeration) {
-    checkNotNull(enumeration);
-    return new UnmodifiableIterator<T>() {
-      @Override
-      public boolean hasNext() {
-        return enumeration.hasMoreElements();
-      }
-
-      @Override
-      public T next() {
-        return enumeration.nextElement();
-      }
-    };
-  }
-
-  /**
-   * Adapts an {@code Iterator} to the {@code Enumeration} interface.
-   *
-   * <p>The {@code Iterable} equivalent of this method is either {@link Collections#enumeration} (if
-   * you have a {@link Collection}), or {@code Iterators.asEnumeration(collection.iterator())}.
-   */
-  public static <T> Enumeration<T> asEnumeration(final Iterator<T> iterator) {
-    checkNotNull(iterator);
-    return new Enumeration<T>() {
-      @Override
-      public boolean hasMoreElements() {
-        return iterator.hasNext();
-      }
-
-      @Override
-      public T nextElement() {
-        return iterator.next();
-      }
-    };
-  }
-
-  /** Implementation of PeekingIterator that avoids peeking unless necessary. */
-  private static class PeekingImpl<E> implements PeekingIterator<E> {
-
-    private final Iterator<? extends E> iterator;
-    private boolean hasPeeked;
-    private E peekedElement;
-
-    public PeekingImpl(Iterator<? extends E> iterator) {
-      this.iterator = checkNotNull(iterator);
-    }
-
-    @Override
-    public boolean hasNext() {
-      return hasPeeked || iterator.hasNext();
-    }
-
-    @Override
-    public E next() {
-      if (!hasPeeked) {
-        return iterator.next();
-      }
-      E result = peekedElement;
-      hasPeeked = false;
-      peekedElement = null;
-      return result;
-    }
-
-    @Override
-    public void remove() {
-      checkState(!hasPeeked, "Can't remove after you've peeked at next");
-      iterator.remove();
-    }
-
-    @Override
-    public E peek() {
-      if (!hasPeeked) {
-        peekedElement = iterator.next();
-        hasPeeked = true;
-      }
-      return peekedElement;
-    }
-  }
-
-  /**
-   * Returns a {@code PeekingIterator} backed by the given iterator.
-   *
-   * <p>Calls to the {@code peek} method with no intervening calls to {@code next} do not affect the
-   * iteration, and hence return the same object each time. A subsequent call to {@code next} is
-   * guaranteed to return the same object again. For example:
-   *
-   * <pre>{@code
-   * PeekingIterator<String> peekingIterator =
-   *     Iterators.peekingIterator(Iterators.forArray("a", "b"));
-   * String a1 = peekingIterator.peek(); // returns "a"
-   * String a2 = peekingIterator.peek(); // also returns "a"
-   * String a3 = peekingIterator.next(); // also returns "a"
-   * }</pre>
-   *
-   * <p>Any structural changes to the underlying iteration (aside from those performed by the
-   * iterator's own {@link PeekingIterator#remove()} method) will leave the iterator in an undefined
-   * state.
-   *
-   * <p>The returned iterator does not support removal after peeking, as explained by {@link
-   * PeekingIterator#remove()}.
-   *
-   * <p>Note: If the given iterator is already a {@code PeekingIterator}, it <i>might</i> be
-   * returned to the caller, although this is neither guaranteed to occur nor required to be
-   * consistent. For example, this method <i>might</i> choose to pass through recognized
-   * implementations of {@code PeekingIterator} when the behavior of the implementation is known to
-   * meet the contract guaranteed by this method.
-   *
-   * <p>There is no {@link Iterable} equivalent to this method, so use this method to wrap each
-   * individual iterator as it is generated.
-   *
-   * @param iterator the backing iterator. The {@link PeekingIterator} assumes ownership of this
-   *     iterator, so users should cease making direct calls to it after calling this method.
-   * @return a peeking iterator backed by that iterator. Apart from the additional {@link
-   *     PeekingIterator#peek()} method, this iterator behaves exactly the same as {@code iterator}.
-   */
-  public static <T> PeekingIterator<T> peekingIterator(Iterator<? extends T> iterator) {
-    if (iterator instanceof PeekingImpl) {
-      // Safe to cast <? extends T> to <T> because PeekingImpl only uses T
-      // covariantly (and cannot be subclassed to add non-covariant uses).
-      @SuppressWarnings({"unchecked", "rawtypes"})
-      PeekingImpl<T> peeking = (PeekingImpl<T>) iterator;
-      return peeking;
-    }
-    return new PeekingImpl<T>(iterator);
-  }
-
-  /**
-   * Simply returns its argument.
-   *
-   * @deprecated no need to use this
-   * @since 10.0
-   */
-  @Deprecated
-  public static <T> PeekingIterator<T> peekingIterator(PeekingIterator<T> iterator) {
-    return checkNotNull(iterator);
-  }
-
-  /**
-   * Returns an iterator over the merged contents of all given {@code iterators}, traversing every
-   * element of the input iterators. Equivalent entries will not be de-duplicated.
-   *
-   * <p>Callers must ensure that the source {@code iterators} are in non-descending order as this
-   * method does not sort its input.
-   *
-   * <p>For any equivalent elements across all {@code iterators}, it is undefined which element is
-   * returned first.
-   *
-   * @since 11.0
-   */
-
-  public static <T> UnmodifiableIterator<T> mergeSorted(
-      Iterable<? extends Iterator<? extends T>> iterators, Comparator<? super T> comparator) {
-    checkNotNull(iterators, "iterators");
-    checkNotNull(comparator, "comparator");
-
-    return new MergingIterator<T>(iterators, comparator);
-  }
-
-  /**
-   * An iterator that performs a lazy N-way merge, calculating the next value each time the iterator
-   * is polled. This amortizes the sorting cost over the iteration and requires less memory than
-   * sorting all elements at once.
-   *
-   * <p>Retrieving a single element takes approximately O(log(M)) time, where M is the number of
-   * iterators. (Retrieving all elements takes approximately O(N*log(M)) time, where N is the total
-   * number of elements.)
-   */
-  private static class MergingIterator<T> extends UnmodifiableIterator<T> {
-    final Queue<PeekingIterator<T>> queue;
-
-    public MergingIterator(
-        Iterable<? extends Iterator<? extends T>> iterators,
-        final Comparator<? super T> itemComparator) {
-      // A comparator that's used by the heap, allowing the heap
-      // to be sorted based on the top of each iterator.
-      Comparator<PeekingIterator<T>> heapComparator =
-          new Comparator<PeekingIterator<T>>() {
-            @Override
-            public int compare(PeekingIterator<T> o1, PeekingIterator<T> o2) {
-              return itemComparator.compare(o1.peek(), o2.peek());
-            }
-          };
-
-      queue = new PriorityQueue<>(2, heapComparator);
-
-      for (Iterator<? extends T> iterator : iterators) {
-        if (iterator.hasNext()) {
-          queue.add(Iterators.peekingIterator(iterator));
-        }
-      }
-    }
-
-    @Override
-    public boolean hasNext() {
-      return !queue.isEmpty();
-    }
-
-    @Override
-    public T next() {
-      PeekingIterator<T> nextIter = queue.remove();
-      T next = nextIter.next();
-      if (nextIter.hasNext()) {
-        queue.add(nextIter);
-      }
-      return next;
-    }
-  }
-
-  private static class ConcatenatedIterator<T> implements Iterator<T> {
+    private static class ConcatenatedIterator<T> implements Iterator<T> {
     /* The last iterator to return an element.  Calls to remove() go to this iterator. */
    private Iterator<? extends T> toRemove;
 

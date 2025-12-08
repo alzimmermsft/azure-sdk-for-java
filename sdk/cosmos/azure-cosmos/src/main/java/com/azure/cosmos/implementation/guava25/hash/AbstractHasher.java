@@ -21,7 +21,6 @@ package com.azure.cosmos.implementation.guava25.hash;
 import com.azure.cosmos.implementation.guava25.base.Preconditions;
 import com.azure.cosmos.implementation.guava25.errorprone.annotations.CanIgnoreReturnValue;
 
-import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 
 /**
@@ -32,20 +31,6 @@ import java.nio.charset.Charset;
  */
 @CanIgnoreReturnValue
 abstract class AbstractHasher implements Hasher {
-    @Override
-    public final Hasher putBoolean(boolean b) {
-        return putByte(b ? (byte) 1 : (byte) 0);
-    }
-
-    @Override
-    public final Hasher putDouble(double d) {
-        return putLong(Double.doubleToRawLongBits(d));
-    }
-
-    @Override
-    public final Hasher putFloat(float f) {
-        return putInt(Float.floatToRawIntBits(f));
-    }
 
     @Override
     public Hasher putUnencodedChars(CharSequence charSequence) {
@@ -71,26 +56,6 @@ abstract class AbstractHasher implements Hasher {
         for (int i = 0; i < len; i++) {
             putByte(bytes[off + i]);
         }
-        return this;
-    }
-
-    @Override
-    public Hasher putBytes(ByteBuffer b) {
-        if (b.hasArray()) {
-            putBytes(b.array(), b.arrayOffset() + b.position(), b.remaining());
-            b.position(b.limit());
-        } else {
-            for (int remaining = b.remaining(); remaining > 0; remaining--) {
-                putByte(b.get());
-            }
-        }
-        return this;
-    }
-
-    @Override
-    public Hasher putShort(short s) {
-        putByte((byte) s);
-        putByte((byte) (s >>> 8));
         return this;
     }
 

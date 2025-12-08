@@ -18,7 +18,9 @@
 
 package com.azure.cosmos.implementation.guava25.base;
 
-import static com.azure.cosmos.implementation.guava25.base.Preconditions.checkNotNull;
+import java.time.Duration;
+import java.util.concurrent.TimeUnit;
+
 import static com.azure.cosmos.implementation.guava25.base.Preconditions.checkState;
 import static java.util.concurrent.TimeUnit.DAYS;
 import static java.util.concurrent.TimeUnit.HOURS;
@@ -27,9 +29,6 @@ import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static java.util.concurrent.TimeUnit.MINUTES;
 import static java.util.concurrent.TimeUnit.NANOSECONDS;
 import static java.util.concurrent.TimeUnit.SECONDS;
-
-import java.time.Duration;
-import java.util.concurrent.TimeUnit;
 
 /**
  * An object that measures elapsed time in nanoseconds. It is useful to measure elapsed time using
@@ -58,10 +57,6 @@ import java.util.concurrent.TimeUnit;
  * <p>Stopwatch methods are not idempotent; it is an error to start or stop a stopwatch that is
  * already in the desired state.
  *
- * <p>When testing code that uses this class, use {@link #createUnstarted(Ticker)} or {@link
- * #createStarted(Ticker)} to supply a fake or mock ticker. This allows you to simulate any valid
- * behavior of the stopwatch.
- *
  * <p><b>Note:</b> This class is not thread-safe.
  *
  * <p><b>Warning for Android users:</b> a stopwatch with default behavior may not continue to keep
@@ -85,25 +80,7 @@ public final class Stopwatch {
   private long elapsedNanos;
   private long startTick;
 
-  /**
-   * Creates (but does not start) a new stopwatch using {@link System#nanoTime} as its time source.
-   *
-   * @since 15.0
-   */
-  public static Stopwatch createUnstarted() {
-    return new Stopwatch();
-  }
-
-  /**
-   * Creates (but does not start) a new stopwatch, using the specified time source.
-   *
-   * @since 15.0
-   */
-  public static Stopwatch createUnstarted(Ticker ticker) {
-    return new Stopwatch(ticker);
-  }
-
-  /**
+    /**
    * Creates (and starts) a new stopwatch using {@link System#nanoTime} as its time source.
    *
    * @since 15.0
@@ -112,24 +89,11 @@ public final class Stopwatch {
     return new Stopwatch().start();
   }
 
-  /**
-   * Creates (and starts) a new stopwatch, using the specified time source.
-   *
-   * @since 15.0
-   */
-  public static Stopwatch createStarted(Ticker ticker) {
-    return new Stopwatch(ticker).start();
-  }
-
-  Stopwatch() {
+    Stopwatch() {
     this.ticker = Ticker.systemTicker();
   }
 
-  Stopwatch(Ticker ticker) {
-    this.ticker = checkNotNull(ticker, "ticker");
-  }
-
-  /**
+    /**
    * Returns {@code true} if {@link #start()} has been called on this stopwatch, and {@link #stop()}
    * has not been called since the last call to {@code start()}.
    */

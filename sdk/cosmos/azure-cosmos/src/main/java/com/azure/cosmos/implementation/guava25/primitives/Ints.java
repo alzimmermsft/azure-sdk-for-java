@@ -30,7 +30,6 @@ import java.util.AbstractList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 import java.util.RandomAccess;
 import java.util.Spliterator;
@@ -252,26 +251,7 @@ public final class Ints {
     return max;
   }
 
-  /**
-   * Returns the value nearest to {@code value} which is within the closed range {@code [min..max]}.
-   *
-   * <p>If {@code value} is within the range {@code [min..max]}, {@code value} is returned
-   * unchanged. If {@code value} is less than {@code min}, {@code min} is returned, and if {@code
-   * value} is greater than {@code max}, {@code max} is returned.
-   *
-   * @param value the {@code int} value to constrain
-   * @param min the lower bound (inclusive) of the range to constrain {@code value} to
-   * @param max the upper bound (inclusive) of the range to constrain {@code value} to
-   * @throws IllegalArgumentException if {@code min > max}
-   * @since 21.0
-   */
-
-  public static int constrainToRange(int value, int min, int max) {
-    checkArgument(min <= max, "min (%s) must be less than or equal to max (%s)", min, max);
-    return Math.min(Math.max(value, min), max);
-  }
-
-  /**
+    /**
    * Returns the values from each provided array combined into a single array. For example, {@code
    * concat(new int[] {a, b}, new int[] {}, new int[] {c}} returns the array {@code {a, b, c}}.
    *
@@ -307,33 +287,7 @@ public final class Ints {
     };
   }
 
-  /**
-   * Returns the {@code int} value whose big-endian representation is stored in the first 4 bytes of
-   * {@code bytes}; equivalent to {@code ByteBuffer.wrap(bytes).getInt()}. For example, the input
-   * byte array {@code {0x12, 0x13, 0x14, 0x15, 0x33}} would yield the {@code int} value {@code
-   * 0x12131415}.
-   *
-   * <p>Arguably, it's preferable to use {@link java.nio.ByteBuffer}; that library exposes much more
-   * flexibility at little cost in readability.
-   *
-   * @throws IllegalArgumentException if {@code bytes} has fewer than 4 elements
-   */
-  public static int fromByteArray(byte[] bytes) {
-    checkArgument(bytes.length >= BYTES, "array too small: %s < %s", bytes.length, BYTES);
-    return fromBytes(bytes[0], bytes[1], bytes[2], bytes[3]);
-  }
-
-  /**
-   * Returns the {@code int} value whose byte representation is the given 4 bytes, in big-endian
-   * order; equivalent to {@code Ints.fromByteArray(new byte[] {b1, b2, b3, b4})}.
-   *
-   * @since 7.0
-   */
-  public static int fromBytes(byte b1, byte b2, byte b3, byte b4) {
-    return b1 << 24 | (b2 & 0xFF) << 16 | (b3 & 0xFF) << 8 | (b4 & 0xFF);
-  }
-
-  private static final class IntConverter extends Converter<String, Integer>
+    private static final class IntConverter extends Converter<String, Integer>
       implements Serializable {
     static final IntConverter INSTANCE = new IntConverter();
 
@@ -375,26 +329,7 @@ public final class Ints {
     return IntConverter.INSTANCE;
   }
 
-  /**
-   * Returns an array containing the same values as {@code array}, but guaranteed to be of a
-   * specified minimum length. If {@code array} already has a length of at least {@code minLength},
-   * it is returned directly. Otherwise, a new array of size {@code minLength + padding} is
-   * returned, containing the values of {@code array}, and zeroes in the remaining places.
-   *
-   * @param array the source array
-   * @param minLength the minimum length the returned array must guarantee
-   * @param padding an extra amount to "grow" the array by if growth is necessary
-   * @throws IllegalArgumentException if {@code minLength} or {@code padding} is negative
-   * @return an array containing the values of {@code array}, with guaranteed minimum length {@code
-   *     minLength}
-   */
-  public static int[] ensureCapacity(int[] array, int minLength, int padding) {
-    checkArgument(minLength >= 0, "Invalid minLength: %s", minLength);
-    checkArgument(padding >= 0, "Invalid padding: %s", padding);
-    return (array.length < minLength) ? Arrays.copyOf(array, minLength + padding) : array;
-  }
-
-  /**
+    /**
    * Returns a string containing the supplied {@code int} values separated by {@code separator}. For
    * example, {@code join("-", 1, 2, 3)} returns the string {@code "1-2-3"}.
    *
@@ -417,67 +352,7 @@ public final class Ints {
     return builder.toString();
   }
 
-  /**
-   * Returns a comparator that compares two {@code int} arrays <a
-   * href="http://en.wikipedia.org/wiki/Lexicographical_order">lexicographically</a>. That is, it
-   * compares, using {@link #compare(int, int)}), the first pair of values that follow any common
-   * prefix, or when one array is a prefix of the other, treats the shorter array as the lesser. For
-   * example, {@code [] < [1] < [1, 2] < [2]}.
-   *
-   * <p>The returned comparator is inconsistent with {@link Object#equals(Object)} (since arrays
-   * support only identity equality), but it is consistent with {@link Arrays#equals(int[], int[])}.
-   *
-   * @since 2.0
-   */
-  public static Comparator<int[]> lexicographicalComparator() {
-    return LexicographicalComparator.INSTANCE;
-  }
-
-  private enum LexicographicalComparator implements Comparator<int[]> {
-    INSTANCE;
-
-    @Override
-    public int compare(int[] left, int[] right) {
-      int minLength = Math.min(left.length, right.length);
-      for (int i = 0; i < minLength; i++) {
-        int result = Ints.compare(left[i], right[i]);
-        if (result != 0) {
-          return result;
-        }
-      }
-      return left.length - right.length;
-    }
-
-    @Override
-    public String toString() {
-      return "Ints.lexicographicalComparator()";
-    }
-  }
-
-  /**
-   * Sorts the elements of {@code array} in descending order.
-   *
-   * @since 23.1
-   */
-  public static void sortDescending(int[] array) {
-    checkNotNull(array);
-    sortDescending(array, 0, array.length);
-  }
-
-  /**
-   * Sorts the elements of {@code array} between {@code fromIndex} inclusive and {@code toIndex}
-   * exclusive in descending order.
-   *
-   * @since 23.1
-   */
-  public static void sortDescending(int[] array, int fromIndex, int toIndex) {
-    checkNotNull(array);
-    checkPositionIndexes(fromIndex, toIndex, array.length);
-    Arrays.sort(array, fromIndex, toIndex);
-    reverse(array, fromIndex, toIndex);
-  }
-
-  /**
+    /**
    * Reverses the elements of {@code array}. This is equivalent to {@code
    * Collections.reverse(Ints.asList(array))}, but is likely to be more efficient.
    *

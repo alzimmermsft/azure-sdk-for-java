@@ -20,10 +20,6 @@ package com.azure.cosmos.implementation.guava25.base;
 
 import static com.azure.cosmos.implementation.guava25.base.Preconditions.checkNotNull;
 
-import java.util.Collections;
-import java.util.Set;
-
-
 /** Implementation of an {@link Optional} containing a reference. */
 final class Present<T> extends Optional<T> {
   private final T reference;
@@ -60,17 +56,7 @@ final class Present<T> extends Optional<T> {
     return reference;
   }
 
-  @Override
-  public T orNull() {
-    return reference;
-  }
-
-  @Override
-  public Set<T> asSet() {
-    return Collections.singleton(reference);
-  }
-
-  @Override
+    @Override
   public <V> Optional<V> transform(Function<? super T, V> function) {
     return new Present<V>(
         checkNotNull(

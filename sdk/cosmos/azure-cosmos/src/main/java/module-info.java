@@ -83,6 +83,5 @@ module com.azure.cosmos {
 
     exports com.azure.cosmos.implementation.interceptor to com.azure.cosmos.test;
 
-    uses com.azure.cosmos.implementation.guava25.base.PatternCompiler;
     uses com.azure.core.util.tracing.Tracer;
 }

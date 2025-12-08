@@ -20,7 +20,6 @@
 
 package com.azure.cosmos.implementation.guava25.collect;
 
-import java.util.NoSuchElementException;
 import java.util.Queue;
 
 /**
@@ -78,45 +77,4 @@ public abstract class ForwardingQueue<E> extends ForwardingCollection<E> impleme
     return delegate().element();
   }
 
-  /**
-   * A sensible definition of {@link #offer} in terms of {@link #add}. If you override {@link #add},
-   * you may wish to override {@link #offer} to forward to this implementation.
-   *
-   * @since 7.0
-   */
-  protected boolean standardOffer(E e) {
-    try {
-      return add(e);
-    } catch (IllegalStateException caught) {
-      return false;
-    }
-  }
-
-  /**
-   * A sensible definition of {@link #peek} in terms of {@link #element}. If you override {@link
-   * #element}, you may wish to override {@link #peek} to forward to this implementation.
-   *
-   * @since 7.0
-   */
-  protected E standardPeek() {
-    try {
-      return element();
-    } catch (NoSuchElementException caught) {
-      return null;
-    }
-  }
-
-  /**
-   * A sensible definition of {@link #poll} in terms of {@link #remove}. If you override {@link
-   * #remove}, you may wish to override {@link #poll} to forward to this implementation.
-   *
-   * @since 7.0
-   */
-  protected E standardPoll() {
-    try {
-      return remove();
-    } catch (NoSuchElementException caught) {
-      return null;
-    }
-  }
 }

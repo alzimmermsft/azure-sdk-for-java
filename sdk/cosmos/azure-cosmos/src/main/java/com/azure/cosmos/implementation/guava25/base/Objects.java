@@ -31,7 +31,7 @@ import java.util.Arrays;
  * @author Laurence Gonsalves
  * @since 2.0
  */
-public final class Objects extends ExtraObjectsMethodsForWeb {
+public final class Objects {
   private Objects() {}
 
   /**

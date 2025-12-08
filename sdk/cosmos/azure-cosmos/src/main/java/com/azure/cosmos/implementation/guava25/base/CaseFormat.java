@@ -20,9 +20,6 @@ package com.azure.cosmos.implementation.guava25.base;
 
 import static com.azure.cosmos.implementation.guava25.base.Preconditions.checkNotNull;
 
-import java.io.Serializable;
-
-
 /**
  * Utility class for converting between various ASCII case formats. Behavior is undefined for
  * non-ASCII input.
@@ -145,59 +142,7 @@ public enum CaseFormat {
         : out.append(format.normalizeWord(s.substring(i))).toString();
   }
 
-  /**
-   * Returns a {@code Converter} that converts strings from this format to {@code targetFormat}.
-   *
-   * @since 16.0
-   */
-  public Converter<String, String> converterTo(CaseFormat targetFormat) {
-    return new StringConverter(this, targetFormat);
-  }
-
-  private static final class StringConverter extends Converter<String, String>
-      implements Serializable {
-
-    private final CaseFormat sourceFormat;
-    private final CaseFormat targetFormat;
-
-    StringConverter(CaseFormat sourceFormat, CaseFormat targetFormat) {
-      this.sourceFormat = checkNotNull(sourceFormat);
-      this.targetFormat = checkNotNull(targetFormat);
-    }
-
-    @Override
-    protected String doForward(String s) {
-      return sourceFormat.to(targetFormat, s);
-    }
-
-    @Override
-    protected String doBackward(String s) {
-      return targetFormat.to(sourceFormat, s);
-    }
-
-    @Override
-    public boolean equals(Object object) {
-      if (object instanceof StringConverter) {
-        StringConverter that = (StringConverter) object;
-        return sourceFormat.equals(that.sourceFormat) && targetFormat.equals(that.targetFormat);
-      }
-      return false;
-    }
-
-    @Override
-    public int hashCode() {
-      return sourceFormat.hashCode() ^ targetFormat.hashCode();
-    }
-
-    @Override
-    public String toString() {
-      return sourceFormat + ".converterTo(" + targetFormat + ")";
-    }
-
-    private static final long serialVersionUID = 0L;
-  }
-
-  abstract String normalizeWord(String word);
+    abstract String normalizeWord(String word);
 
   private String normalizeFirstWord(String word) {
     return (this == LOWER_CAMEL) ? Ascii.toLowerCase(word) : normalizeWord(word);

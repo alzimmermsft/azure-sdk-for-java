@@ -47,11 +47,7 @@ class RegularImmutableAsList<E> extends ImmutableAsList<E> {
     return delegate;
   }
 
-  ImmutableList<? extends E> delegateList() {
-    return delegateList;
-  }
-
-  @SuppressWarnings({"unchecked", "rawtypes"}) // safe covariant cast!
+    @SuppressWarnings({"unchecked", "rawtypes"}) // safe covariant cast!
   @Override
   public UnmodifiableListIterator<E> listIterator(int index) {
     return (UnmodifiableListIterator<E>) delegateList.listIterator(index);

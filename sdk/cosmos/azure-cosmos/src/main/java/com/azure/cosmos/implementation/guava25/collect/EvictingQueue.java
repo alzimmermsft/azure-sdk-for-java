@@ -68,17 +68,7 @@ public final class EvictingQueue<E> extends ForwardingQueue<E> implements Serial
     return new EvictingQueue<E>(maxSize);
   }
 
-  /**
-   * Returns the number of additional elements that this queue can accept without evicting; zero if
-   * the queue is currently full.
-   *
-   * @since 16.0
-   */
-  public int remainingCapacity() {
-    return maxSize - size();
-  }
-
-  @Override
+    @Override
   protected Queue<E> delegate() {
     return delegate;
   }

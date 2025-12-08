@@ -23,14 +23,11 @@ import static com.azure.cosmos.implementation.guava25.base.Preconditions.checkEl
 import static com.azure.cosmos.implementation.guava25.base.Preconditions.checkNotNull;
 import static com.azure.cosmos.implementation.guava25.base.Preconditions.checkPositionIndexes;
 
-
-import com.azure.cosmos.implementation.guava25.base.Converter;
 import java.io.Serializable;
 import java.util.AbstractList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 import java.util.RandomAccess;
 import java.util.Spliterator;
@@ -57,14 +54,7 @@ public final class Longs {
    */
   public static final int BYTES = Long.SIZE / Byte.SIZE;
 
-  /**
-   * The largest power of two that can be represented as a {@code long}.
-   *
-   * @since 10.0
-   */
-  public static final long MAX_POWER_OF_TWO = 1L << (Long.SIZE - 2);
-
-  /**
+    /**
    * Returns a hash code for {@code value}; equal to the result of invoking {@code ((Long)
    * value).hashCode()}.
    *
@@ -224,26 +214,7 @@ public final class Longs {
     return max;
   }
 
-  /**
-   * Returns the value nearest to {@code value} which is within the closed range {@code [min..max]}.
-   *
-   * <p>If {@code value} is within the range {@code [min..max]}, {@code value} is returned
-   * unchanged. If {@code value} is less than {@code min}, {@code min} is returned, and if {@code
-   * value} is greater than {@code max}, {@code max} is returned.
-   *
-   * @param value the {@code long} value to constrain
-   * @param min the lower bound (inclusive) of the range to constrain {@code value} to
-   * @param max the upper bound (inclusive) of the range to constrain {@code value} to
-   * @throws IllegalArgumentException if {@code min > max}
-   * @since 21.0
-   */
-
-  public static long constrainToRange(long value, long min, long max) {
-    checkArgument(min <= max, "min (%s) must be less than or equal to max (%s)", min, max);
-    return Math.min(Math.max(value, min), max);
-  }
-
-  /**
+    /**
    * Returns the values from each provided array combined into a single array. For example, {@code
    * concat(new long[] {a, b}, new long[] {}, new long[] {c}} returns the array {@code {a, b, c}}.
    *
@@ -285,24 +256,7 @@ public final class Longs {
     return result;
   }
 
-  /**
-   * Returns the {@code long} value whose big-endian representation is stored in the first 8 bytes
-   * of {@code bytes}; equivalent to {@code ByteBuffer.wrap(bytes).getLong()}. For example, the
-   * input byte array {@code {0x12, 0x13, 0x14, 0x15, 0x16, 0x17, 0x18, 0x19}} would yield the
-   * {@code long} value {@code 0x1213141516171819L}.
-   *
-   * <p>Arguably, it's preferable to use {@link java.nio.ByteBuffer}; that library exposes much more
-   * flexibility at little cost in readability.
-   *
-   * @throws IllegalArgumentException if {@code bytes} has fewer than 8 elements
-   */
-  public static long fromByteArray(byte[] bytes) {
-    checkArgument(bytes.length >= BYTES, "array too small: %s < %s", bytes.length, BYTES);
-    return fromBytes(
-        bytes[0], bytes[1], bytes[2], bytes[3], bytes[4], bytes[5], bytes[6], bytes[7]);
-  }
-
-  /**
+    /**
    * Returns the {@code long} value whose byte representation is the given 8 bytes, in big-endian
    * order; equivalent to {@code Longs.fromByteArray(new byte[] {b1, b2, b3, b4, b5, b6, b7, b8})}.
    *
@@ -432,67 +386,7 @@ public final class Longs {
     }
   }
 
-  private static final class LongConverter extends Converter<String, Long> implements Serializable {
-    static final LongConverter INSTANCE = new LongConverter();
-
-    @Override
-    protected Long doForward(String value) {
-      return Long.decode(value);
-    }
-
-    @Override
-    protected String doBackward(Long value) {
-      return value.toString();
-    }
-
-    @Override
-    public String toString() {
-      return "Longs.stringConverter()";
-    }
-
-    private Object readResolve() {
-      return INSTANCE;
-    }
-
-    private static final long serialVersionUID = 1;
-  }
-
-  /**
-   * Returns a serializable converter object that converts between strings and longs using {@link
-   * Long#decode} and {@link Long#toString()}. The returned converter throws {@link
-   * NumberFormatException} if the input string is invalid.
-   *
-   * <p><b>Warning:</b> please see {@link Long#decode} to understand exactly how strings are parsed.
-   * For example, the string {@code "0123"} is treated as <i>octal</i> and converted to the value
-   * {@code 83L}.
-   *
-   * @since 16.0
-   */
-
-  public static Converter<String, Long> stringConverter() {
-    return LongConverter.INSTANCE;
-  }
-
-  /**
-   * Returns an array containing the same values as {@code array}, but guaranteed to be of a
-   * specified minimum length. If {@code array} already has a length of at least {@code minLength},
-   * it is returned directly. Otherwise, a new array of size {@code minLength + padding} is
-   * returned, containing the values of {@code array}, and zeroes in the remaining places.
-   *
-   * @param array the source array
-   * @param minLength the minimum length the returned array must guarantee
-   * @param padding an extra amount to "grow" the array by if growth is necessary
-   * @throws IllegalArgumentException if {@code minLength} or {@code padding} is negative
-   * @return an array containing the values of {@code array}, with guaranteed minimum length {@code
-   *     minLength}
-   */
-  public static long[] ensureCapacity(long[] array, int minLength, int padding) {
-    checkArgument(minLength >= 0, "Invalid minLength: %s", minLength);
-    checkArgument(padding >= 0, "Invalid padding: %s", padding);
-    return (array.length < minLength) ? Arrays.copyOf(array, minLength + padding) : array;
-  }
-
-  /**
+    /**
    * Returns a string containing the supplied {@code long} values separated by {@code separator}.
    * For example, {@code join("-", 1L, 2L, 3L)} returns the string {@code "1-2-3"}.
    *
@@ -515,68 +409,7 @@ public final class Longs {
     return builder.toString();
   }
 
-  /**
-   * Returns a comparator that compares two {@code long} arrays <a
-   * href="http://en.wikipedia.org/wiki/Lexicographical_order">lexicographically</a>. That is, it
-   * compares, using {@link #compare(long, long)}), the first pair of values that follow any common
-   * prefix, or when one array is a prefix of the other, treats the shorter array as the lesser. For
-   * example, {@code [] < [1L] < [1L, 2L] < [2L]}.
-   *
-   * <p>The returned comparator is inconsistent with {@link Object#equals(Object)} (since arrays
-   * support only identity equality), but it is consistent with {@link Arrays#equals(long[],
-   * long[])}.
-   *
-   * @since 2.0
-   */
-  public static Comparator<long[]> lexicographicalComparator() {
-    return LexicographicalComparator.INSTANCE;
-  }
-
-  private enum LexicographicalComparator implements Comparator<long[]> {
-    INSTANCE;
-
-    @Override
-    public int compare(long[] left, long[] right) {
-      int minLength = Math.min(left.length, right.length);
-      for (int i = 0; i < minLength; i++) {
-        int result = Longs.compare(left[i], right[i]);
-        if (result != 0) {
-          return result;
-        }
-      }
-      return left.length - right.length;
-    }
-
-    @Override
-    public String toString() {
-      return "Longs.lexicographicalComparator()";
-    }
-  }
-
-  /**
-   * Sorts the elements of {@code array} in descending order.
-   *
-   * @since 23.1
-   */
-  public static void sortDescending(long[] array) {
-    checkNotNull(array);
-    sortDescending(array, 0, array.length);
-  }
-
-  /**
-   * Sorts the elements of {@code array} between {@code fromIndex} inclusive and {@code toIndex}
-   * exclusive in descending order.
-   *
-   * @since 23.1
-   */
-  public static void sortDescending(long[] array, int fromIndex, int toIndex) {
-    checkNotNull(array);
-    checkPositionIndexes(fromIndex, toIndex, array.length);
-    Arrays.sort(array, fromIndex, toIndex);
-    reverse(array, fromIndex, toIndex);
-  }
-
-  /**
+    /**
    * Reverses the elements of {@code array}. This is equivalent to {@code
    * Collections.reverse(Longs.asList(array))}, but is likely to be more efficient.
    *

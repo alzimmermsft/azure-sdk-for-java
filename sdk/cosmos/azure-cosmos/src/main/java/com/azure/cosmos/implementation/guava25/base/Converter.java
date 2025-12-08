@@ -21,9 +21,6 @@ package com.azure.cosmos.implementation.guava25.base;
 import static com.azure.cosmos.implementation.guava25.base.Preconditions.checkNotNull;
 
 import java.io.Serializable;
-import java.util.Iterator;
-
-
 
 /**
  * A function from {@code A} to {@code B} with an associated <i>reverse</i> function from {@code B}
@@ -61,16 +58,11 @@ import java.util.Iterator;
  * <p>Getting a converter:
  *
  * <ul>
- *   <li>Use a provided converter implementation, such as {@link Enums#stringConverter}, {@link
- *       com.azure.cosmos.implementation.guava25.primitives.Ints#stringConverter Ints.stringConverter} or the {@linkplain
- *       #reverse reverse} views of these.
  *   <li>Convert between specific preset values using {@link
  *       com.azure.cosmos.implementation.guava25.collect.Maps#asConverter Maps.asConverter}. For example, use this to
  *       create a "fake" converter for a unit test. It is unnecessary (and confusing) to <i>mock</i>
  *       the {@code Converter} type using a mocking framework.
  *   <li>Extend this class and implement its {@link #doForward} and {@link #doBackward} methods.
- *   <li><b>Java 8 users:</b> you may prefer to pass two lambda expressions or method references to
- *       the {@link #from from} factory method.
  * </ul>
  *
  * <p>Using a converter:
@@ -186,42 +178,7 @@ public abstract class Converter<A, B> implements Function<A, B> {
     }
   }
 
-  /**
-   * Returns an iterable that applies {@code convert} to each element of {@code fromIterable}. The
-   * conversion is done lazily.
-   *
-   * <p>The returned iterable's iterator supports {@code remove()} if the input iterator does. After
-   * a successful {@code remove()} call, {@code fromIterable} no longer contains the corresponding
-   * element.
-   */
-  public Iterable<B> convertAll(final Iterable<? extends A> fromIterable) {
-    checkNotNull(fromIterable, "fromIterable");
-    return new Iterable<B>() {
-      @Override
-      public Iterator<B> iterator() {
-        return new Iterator<B>() {
-          private final Iterator<? extends A> fromIterator = fromIterable.iterator();
-
-          @Override
-          public boolean hasNext() {
-            return fromIterator.hasNext();
-          }
-
-          @Override
-          public B next() {
-            return convert(fromIterator.next());
-          }
-
-          @Override
-          public void remove() {
-            fromIterator.remove();
-          }
-        };
-      }
-    };
-  }
-
-  /**
+    /**
    * Returns the reversed view of this converter, which converts {@code this.convert(a)} back to a
    * value roughly equivalent to {@code a}.
    *
@@ -298,84 +255,7 @@ public abstract class Converter<A, B> implements Function<A, B> {
     private static final long serialVersionUID = 0L;
   }
 
-  /**
-   * Returns a converter whose {@code convert} method applies {@code secondConverter} to the result
-   * of this converter. Its {@code reverse} method applies the converters in reverse order.
-   *
-   * <p>The returned converter is serializable if {@code this} converter and {@code secondConverter}
-   * are.
-   */
-  public final <C> Converter<A, C> andThen(Converter<B, C> secondConverter) {
-    return doAndThen(secondConverter);
-  }
-
-  /** Package-private non-final implementation of andThen() so only we can override it. */
-  <C> Converter<A, C> doAndThen(Converter<B, C> secondConverter) {
-    return new ConverterComposition<>(this, checkNotNull(secondConverter));
-  }
-
-  private static final class ConverterComposition<A, B, C> extends Converter<A, C>
-      implements Serializable {
-    final Converter<A, B> first;
-    final Converter<B, C> second;
-
-    ConverterComposition(Converter<A, B> first, Converter<B, C> second) {
-      this.first = first;
-      this.second = second;
-    }
-
-    /*
-     * These gymnastics are a little confusing. Basically this class has neither legacy nor
-     * non-legacy behavior; it just needs to let the behaviors of the backing converters shine
-     * through (which might even differ from each other!). So, we override the correctedDo* methods,
-     * after which the do* methods should never be reached.
-     */
-
-    @Override
-    protected C doForward(A a) {
-      throw new AssertionError();
-    }
-
-    @Override
-    protected A doBackward(C c) {
-      throw new AssertionError();
-    }
-
-    @Override
-
-    C correctedDoForward(A a) {
-      return second.correctedDoForward(first.correctedDoForward(a));
-    }
-
-    @Override
-
-    A correctedDoBackward(C c) {
-      return first.correctedDoBackward(second.correctedDoBackward(c));
-    }
-
-    @Override
-    public boolean equals(Object object) {
-      if (object instanceof ConverterComposition) {
-        ConverterComposition<?, ?, ?> that = (ConverterComposition<?, ?, ?>) object;
-        return this.first.equals(that.first) && this.second.equals(that.second);
-      }
-      return false;
-    }
-
-    @Override
-    public int hashCode() {
-      return 31 * first.hashCode() + second.hashCode();
-    }
-
-    @Override
-    public String toString() {
-      return first + ".andThen(" + second + ")";
-    }
-
-    private static final long serialVersionUID = 0L;
-  }
-
-  /**
+    /**
    * @deprecated Provided to satisfy the {@code Function} interface; use {@link #convert} instead.
    */
   @Deprecated
@@ -399,121 +279,5 @@ public abstract class Converter<A, B> implements Function<A, B> {
   @Override
   public boolean equals(Object object) {
     return super.equals(object);
-  }
-
-  // Static converters
-
-  /**
-   * Returns a converter based on separate forward and backward functions. This is useful if the
-   * function instances already exist, or so that you can supply lambda expressions. If those
-   * circumstances don't apply, you probably don't need to use this; subclass {@code Converter} and
-   * implement its {@link #doForward} and {@link #doBackward} methods directly.
-   *
-   * <p>These functions will never be passed {@code null} and must not under any circumstances
-   * return {@code null}. If a value cannot be converted, the function should throw an unchecked
-   * exception (typically, but not necessarily, {@link IllegalArgumentException}).
-   *
-   * <p>The returned converter is serializable if both provided functions are.
-   *
-   * @since 17.0
-   */
-  public static <A, B> Converter<A, B> from(
-      Function<? super A, ? extends B> forwardFunction,
-      Function<? super B, ? extends A> backwardFunction) {
-    return new FunctionBasedConverter<>(forwardFunction, backwardFunction);
-  }
-
-  private static final class FunctionBasedConverter<A, B> extends Converter<A, B>
-      implements Serializable {
-    private final Function<? super A, ? extends B> forwardFunction;
-    private final Function<? super B, ? extends A> backwardFunction;
-
-    private FunctionBasedConverter(
-        Function<? super A, ? extends B> forwardFunction,
-        Function<? super B, ? extends A> backwardFunction) {
-      this.forwardFunction = checkNotNull(forwardFunction);
-      this.backwardFunction = checkNotNull(backwardFunction);
-    }
-
-    @Override
-    protected B doForward(A a) {
-      return forwardFunction.apply(a);
-    }
-
-    @Override
-    protected A doBackward(B b) {
-      return backwardFunction.apply(b);
-    }
-
-    @Override
-    public boolean equals(Object object) {
-      if (object instanceof FunctionBasedConverter) {
-        FunctionBasedConverter<?, ?> that = (FunctionBasedConverter<?, ?>) object;
-        return this.forwardFunction.equals(that.forwardFunction)
-            && this.backwardFunction.equals(that.backwardFunction);
-      }
-      return false;
-    }
-
-    @Override
-    public int hashCode() {
-      return forwardFunction.hashCode() * 31 + backwardFunction.hashCode();
-    }
-
-    @Override
-    public String toString() {
-      return "Converter.from(" + forwardFunction + ", " + backwardFunction + ")";
-    }
-  }
-
-  /** Returns a serializable converter that always converts or reverses an object to itself. */
-  @SuppressWarnings("unchecked") // implementation is "fully variant"
-  public static <T> Converter<T, T> identity() {
-    return (IdentityConverter<T>) IdentityConverter.INSTANCE;
-  }
-
-  /**
-   * A converter that always converts or reverses an object to itself. Note that T is now a
-   * "pass-through type".
-   */
-  private static final class IdentityConverter<T> extends Converter<T, T> implements Serializable {
-    @SuppressWarnings("rawtypes")
-    static final IdentityConverter INSTANCE = new IdentityConverter();
-
-    @Override
-    protected T doForward(T t) {
-      return t;
-    }
-
-    @Override
-    protected T doBackward(T t) {
-      return t;
-    }
-
-    @Override
-    public IdentityConverter<T> reverse() {
-      return this;
-    }
-
-    @Override
-    <S> Converter<T, S> doAndThen(Converter<T, S> otherConverter) {
-      return checkNotNull(otherConverter, "otherConverter");
-    }
-
-    /*
-     * We *could* override convertAll() to return its input, but it's a rather pointless
-     * optimization and opened up a weird type-safety problem.
-     */
-
-    @Override
-    public String toString() {
-      return "Converter.identity()";
-    }
-
-    private Object readResolve() {
-      return INSTANCE;
-    }
-
-    private static final long serialVersionUID = 0L;
   }
 }

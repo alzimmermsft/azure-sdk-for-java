@@ -20,10 +20,6 @@
 
 package com.azure.cosmos.implementation.guava25.collect;
 
-import static com.azure.cosmos.implementation.guava25.base.Preconditions.checkNotNull;
-
-
-import com.azure.cosmos.implementation.guava25.base.Preconditions;
 import java.io.IOException;
 import java.io.InvalidObjectException;
 import java.io.ObjectInputStream;
@@ -32,11 +28,6 @@ import java.util.Collection;
 import java.util.Comparator;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.function.Function;
-import java.util.stream.Collector;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
 
 /**
  * A {@link ListMultimap} whose contents will never change, with many other important properties
@@ -50,93 +41,8 @@ import java.util.stream.Stream;
  */
 public class ImmutableListMultimap<K, V> extends ImmutableMultimap<K, V>
     implements ListMultimap<K, V> {
-  /**
-   * Returns a {@link Collector} that accumulates elements into an {@code ImmutableListMultimap}
-   * whose keys and values are the result of applying the provided mapping functions to the input
-   * elements.
-   *
-   * <p>For streams with {@linkplain java.util.stream#Ordering defined encounter order}, that order
-   * is preserved, but entries are <a href="ImmutableMultimap.html#iteration">grouped by key</a>.
-   *
-   * <p>Example:
-   *
-   * <pre>{@code
-   * static final Multimap<Character, String> FIRST_LETTER_MULTIMAP =
-   *     Stream.of("banana", "apple", "carrot", "asparagus", "cherry")
-   *         .collect(toImmutableListMultimap(str -> str.charAt(0), str -> str.substring(1)));
-   *
-   * // is equivalent to
-   *
-   * static final Multimap<Character, String> FIRST_LETTER_MULTIMAP =
-   *     new ImmutableListMultimap.Builder<Character, String>()
-   *         .put('b', "anana")
-   *         .putAll('a', "pple", "sparagus")
-   *         .putAll('c', "arrot", "herry")
-   *         .build();
-   * }</pre>
-   *
-   * @since 21.0
-   */
 
-  public static <T, K, V> Collector<T, ?, ImmutableListMultimap<K, V>> toImmutableListMultimap(
-      Function<? super T, ? extends K> keyFunction,
-      Function<? super T, ? extends V> valueFunction) {
-    checkNotNull(keyFunction, "keyFunction");
-    checkNotNull(valueFunction, "valueFunction");
-    return Collector.of(
-        ImmutableListMultimap::<K, V>builder,
-        (builder, t) -> builder.put(keyFunction.apply(t), valueFunction.apply(t)),
-        ImmutableListMultimap.Builder::combine,
-        ImmutableListMultimap.Builder::build);
-  }
-
-  /**
-   * Returns a {@code Collector} accumulating entries into an {@code ImmutableListMultimap}. Each
-   * input element is mapped to a key and a stream of values, each of which are put into the
-   * resulting {@code Multimap}, in the encounter order of the stream and the encounter order of the
-   * streams of values.
-   *
-   * <p>Example:
-   *
-   * <pre>{@code
-   * static final ImmutableListMultimap<Character, Character> FIRST_LETTER_MULTIMAP =
-   *     Stream.of("banana", "apple", "carrot", "asparagus", "cherry")
-   *         .collect(
-   *             flatteningToImmutableListMultimap(
-   *                  str -> str.charAt(0),
-   *                  str -> str.substring(1).chars().mapToObj(c -> (char) c));
-   *
-   * // is equivalent to
-   *
-   * static final ImmutableListMultimap<Character, Character> FIRST_LETTER_MULTIMAP =
-   *     ImmutableListMultimap.<Character, Character>builder()
-   *         .putAll('b', Arrays.asList('a', 'n', 'a', 'n', 'a'))
-   *         .putAll('a', Arrays.asList('p', 'p', 'l', 'e'))
-   *         .putAll('c', Arrays.asList('a', 'r', 'r', 'o', 't'))
-   *         .putAll('a', Arrays.asList('s', 'p', 'a', 'r', 'a', 'g', 'u', 's'))
-   *         .putAll('c', Arrays.asList('h', 'e', 'r', 'r', 'y'))
-   *         .build();
-   * }
-   * }</pre>
-   *
-   * @since 21.0
-   */
-
-  public static <T, K, V>
-      Collector<T, ?, ImmutableListMultimap<K, V>> flatteningToImmutableListMultimap(
-          Function<? super T, ? extends K> keyFunction,
-          Function<? super T, ? extends Stream<? extends V>> valuesFunction) {
-    checkNotNull(keyFunction);
-    checkNotNull(valuesFunction);
-    return Collectors.collectingAndThen(
-        Multimaps.flatteningToMultimap(
-            input -> checkNotNull(keyFunction.apply(input)),
-            input -> valuesFunction.apply(input).peek(Preconditions::checkNotNull),
-            MultimapBuilder.linkedHashKeys().arrayListValues()::<K, V>build),
-        ImmutableListMultimap::copyOf);
-  }
-
-  /** Returns the empty multimap. */
+    /** Returns the empty multimap. */
   // Casting is safe because the multimap will never hold any elements.
   @SuppressWarnings({"unchecked", "rawtypes"})
   public static <K, V> ImmutableListMultimap<K, V> of() {

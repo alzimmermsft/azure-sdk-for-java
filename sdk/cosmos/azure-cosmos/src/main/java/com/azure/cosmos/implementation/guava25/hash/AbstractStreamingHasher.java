@@ -100,17 +100,6 @@ abstract class AbstractStreamingHasher extends AbstractHasher {
         return putBytesInternal(ByteBuffer.wrap(bytes, off, len).order(ByteOrder.LITTLE_ENDIAN));
     }
 
-    @Override
-    public final Hasher putBytes(ByteBuffer readBuffer) {
-        ByteOrder order = readBuffer.order();
-        try {
-            readBuffer.order(ByteOrder.LITTLE_ENDIAN);
-            return putBytesInternal(readBuffer);
-        } finally {
-            readBuffer.order(order);
-        }
-    }
-
     private Hasher putBytesInternal(ByteBuffer readBuffer) {
         // If we have room for all of it, this is easy
         if (readBuffer.remaining() <= buffer.remaining()) {
@@ -149,13 +138,6 @@ abstract class AbstractStreamingHasher extends AbstractHasher {
     @Override
     public final Hasher putByte(byte b) {
         buffer.put(b);
-        munchIfFull();
-        return this;
-    }
-
-    @Override
-    public final Hasher putShort(short s) {
-        buffer.putShort(s);
         munchIfFull();
         return this;
     }

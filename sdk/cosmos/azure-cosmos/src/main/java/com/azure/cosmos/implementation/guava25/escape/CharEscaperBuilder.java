@@ -18,9 +18,6 @@
 
 package com.azure.cosmos.implementation.guava25.escape;
 
-import static com.azure.cosmos.implementation.guava25.base.Preconditions.checkNotNull;
-
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -36,42 +33,8 @@ import java.util.Map.Entry;
  */
 
 public final class CharEscaperBuilder {
-  /**
-   * Simple decorator that turns an array of replacement char[]s into a CharEscaper, this results in
-   * a very fast escape method.
-   */
-  private static class CharArrayDecorator extends CharEscaper {
-    private final char[][] replacements;
-    private final int replaceLength;
 
-    CharArrayDecorator(char[][] replacements) {
-      this.replacements = replacements;
-      this.replaceLength = replacements.length;
-    }
-
-    /*
-     * Overriding escape method to be slightly faster for this decorator. We test the replacements
-     * array directly, saving a method call.
-     */
-    @Override
-    public String escape(String s) {
-      int slen = s.length();
-      for (int index = 0; index < slen; index++) {
-        char c = s.charAt(index);
-        if (c < replacements.length && replacements[c] != null) {
-          return escapeSlow(s, index);
-        }
-      }
-      return s;
-    }
-
-    @Override
-    protected char[] escape(char c) {
-      return c < replaceLength ? replacements[c] : null;
-    }
-  }
-
-  // Replacement mappings.
+    // Replacement mappings.
   private final Map<Character, String> map;
 
   // The highest index we've seen so far.
@@ -82,25 +45,7 @@ public final class CharEscaperBuilder {
     this.map = new HashMap<>();
   }
 
-  /** Add a new mapping from an index to an object to the escaping. */
-  public CharEscaperBuilder addEscape(char c, String r) {
-    map.put(c, checkNotNull(r));
-    if (c > max) {
-      max = c;
-    }
-    return this;
-  }
-
-  /** Add multiple mappings at once for a particular index. */
-  public CharEscaperBuilder addEscapes(char[] cs, String r) {
-    checkNotNull(r);
-    for (char c : cs) {
-      addEscape(c, r);
-    }
-    return this;
-  }
-
-  /**
+    /**
    * Convert this builder into an array of char[]s where the maximum index is the value of the
    * highest character that has been seen. The array will be sparse in the sense that any unseen
    * index will default to null.
@@ -115,13 +60,4 @@ public final class CharEscaperBuilder {
     return result;
   }
 
-  /**
-   * Convert this builder into a char escaper which is just a decorator around the underlying array
-   * of replacement char[]s.
-   *
-   * @return an escaper that escapes based on the underlying array.
-   */
-  public Escaper toEscaper() {
-    return new CharArrayDecorator(toArray());
-  }
 }

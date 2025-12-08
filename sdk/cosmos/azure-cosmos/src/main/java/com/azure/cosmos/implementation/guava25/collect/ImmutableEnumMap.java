@@ -96,12 +96,7 @@ final class ImmutableEnumMap<K extends Enum<K>, V> extends IteratorBasedImmutabl
     return Maps.unmodifiableEntryIterator(delegate.entrySet().iterator());
   }
 
-  @Override
-  Spliterator<Entry<K, V>> entrySpliterator() {
-    return CollectSpliterators.map(delegate.entrySet().spliterator(), Maps::unmodifiableEntry);
-  }
-
-  @Override
+    @Override
   public void forEach(BiConsumer<? super K, ? super V> action) {
     delegate.forEach(action);
   }

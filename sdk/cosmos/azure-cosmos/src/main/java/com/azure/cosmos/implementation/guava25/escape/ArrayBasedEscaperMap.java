@@ -18,13 +18,6 @@
 
 package com.azure.cosmos.implementation.guava25.escape;
 
-import static com.azure.cosmos.implementation.guava25.base.Preconditions.checkNotNull;
-
-
-
-import java.util.Collections;
-import java.util.Map;
-
 /**
  * An implementation-specific parameter class suitable for initializing {@link
  * ArrayBasedCharEscaper} or {@link ArrayBasedUnicodeEscaper} instances. This class should be used
@@ -41,15 +34,6 @@ import java.util.Map;
  */
 
 public final class ArrayBasedEscaperMap {
-  /**
-   * Returns a new ArrayBasedEscaperMap for creating ArrayBasedCharEscaper or
-   * ArrayBasedUnicodeEscaper instances.
-   *
-   * @param replacements a map of characters to their escaped representations
-   */
-  public static ArrayBasedEscaperMap create(Map<Character, String> replacements) {
-    return new ArrayBasedEscaperMap(createReplacementArray(replacements));
-  }
 
   // The underlying replacement array we can share between multiple escaper
   // instances.
@@ -68,19 +52,4 @@ public final class ArrayBasedEscaperMap {
   // linear lookup table of replacement character sequences indexed by the
   // original character value.
 
-  static char[][] createReplacementArray(Map<Character, String> map) {
-    checkNotNull(map); // GWT specific check (do not optimize)
-    if (map.isEmpty()) {
-      return EMPTY_REPLACEMENT_ARRAY;
-    }
-    char max = Collections.max(map.keySet());
-    char[][] replacements = new char[max + 1][];
-    for (char c : map.keySet()) {
-      replacements[c] = map.get(c).toCharArray();
-    }
-    return replacements;
-  }
-
-  // Immutable empty array for when there are no replacements.
-  private static final char[][] EMPTY_REPLACEMENT_ARRAY = new char[0][0];
 }

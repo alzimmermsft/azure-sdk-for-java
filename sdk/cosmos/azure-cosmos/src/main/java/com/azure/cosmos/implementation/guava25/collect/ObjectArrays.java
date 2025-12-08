@@ -20,12 +20,8 @@
 
 package com.azure.cosmos.implementation.guava25.collect;
 
-import static com.azure.cosmos.implementation.guava25.base.Preconditions.checkPositionIndexes;
-
 import java.lang.reflect.Array;
 import java.util.Arrays;
-import java.util.Collection;
-
 
 /**
  * Static utility methods pertaining to object arrays.
@@ -101,107 +97,7 @@ public final class ObjectArrays {
     return result;
   }
 
-  /**
-   * Returns an array containing all of the elements in the specified collection; the runtime type
-   * of the returned array is that of the specified array. If the collection fits in the specified
-   * array, it is returned therein. Otherwise, a new array is allocated with the runtime type of the
-   * specified array and the size of the specified collection.
-   *
-   * <p>If the collection fits in the specified array with room to spare (i.e., the array has more
-   * elements than the collection), the element in the array immediately following the end of the
-   * collection is set to {@code null}. This is useful in determining the length of the collection
-   * <i>only</i> if the caller knows that the collection does not contain any null elements.
-   *
-   * <p>This method returns the elements in the order they are returned by the collection's
-   * iterator.
-   *
-   * <p>TODO(kevinb): support concurrently modified collections?
-   *
-   * @param c the collection for which to return an array of elements
-   * @param array the array in which to place the collection elements
-   * @throws ArrayStoreException if the runtime type of the specified array is not a supertype of
-   *     the runtime type of every element in the specified collection
-   */
-  static <T> T[] toArrayImpl(Collection<?> c, T[] array) {
-    int size = c.size();
-    if (array.length < size) {
-      array = newArray(array, size);
-    }
-    fillArray(c, array);
-    if (array.length > size) {
-      array[size] = null;
-    }
-    return array;
-  }
-
-  /**
-   * Implementation of {@link Collection#toArray(Object[])} for collections backed by an object
-   * array. the runtime type of the returned array is that of the specified array. If the collection
-   * fits in the specified array, it is returned therein. Otherwise, a new array is allocated with
-   * the runtime type of the specified array and the size of the specified collection.
-   *
-   * <p>If the collection fits in the specified array with room to spare (i.e., the array has more
-   * elements than the collection), the element in the array immediately following the end of the
-   * collection is set to {@code null}. This is useful in determining the length of the collection
-   * <i>only</i> if the caller knows that the collection does not contain any null elements.
-   */
-  static <T> T[] toArrayImpl(Object[] src, int offset, int len, T[] dst) {
-    checkPositionIndexes(offset, offset + len, src.length);
-    if (dst.length < len) {
-      dst = newArray(dst, len);
-    } else if (dst.length > len) {
-      dst[len] = null;
-    }
-    System.arraycopy(src, offset, dst, 0, len);
-    return dst;
-  }
-
-  /**
-   * Returns an array containing all of the elements in the specified collection. This method
-   * returns the elements in the order they are returned by the collection's iterator. The returned
-   * array is "safe" in that no references to it are maintained by the collection. The caller is
-   * thus free to modify the returned array.
-   *
-   * <p>This method assumes that the collection size doesn't change while the method is running.
-   *
-   * <p>TODO(kevinb): support concurrently modified collections?
-   *
-   * @param c the collection for which to return an array of elements
-   */
-  static Object[] toArrayImpl(Collection<?> c) {
-    return fillArray(c, new Object[c.size()]);
-  }
-
-  /**
-   * Returns a copy of the specified subrange of the specified array that is literally an Object[],
-   * and not e.g. a {@code String[]}.
-   */
-  static Object[] copyAsObjectArray(Object[] elements, int offset, int length) {
-    checkPositionIndexes(offset, offset + length, elements.length);
-    if (length == 0) {
-      return new Object[0];
-    }
-    Object[] result = new Object[length];
-    System.arraycopy(elements, offset, result, 0, length);
-    return result;
-  }
-
-  private static Object[] fillArray(Iterable<?> elements, Object[] array) {
-    int i = 0;
-    for (Object element : elements) {
-      array[i++] = element;
-    }
-    return array;
-  }
-
-  /** Swaps {@code array[i]} with {@code array[j]}. */
-  static void swap(Object[] array, int i, int j) {
-    Object temp = array[i];
-    array[i] = array[j];
-    array[j] = temp;
-  }
-
-  static Object[] checkElementsNotNull(Object... array) {
+    static Object[] checkElementsNotNull(Object... array) {
     return checkElementsNotNull(array, array.length);
   }
 

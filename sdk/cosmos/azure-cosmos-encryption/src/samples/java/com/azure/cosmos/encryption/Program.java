@@ -12,7 +12,6 @@ import com.azure.cosmos.encryption.models.CosmosEncryptionAlgorithm;
 import com.azure.cosmos.encryption.models.CosmosEncryptionType;
 import com.azure.cosmos.encryption.models.SqlQuerySpecWithEncryption;
 import com.azure.cosmos.implementation.apachecommons.lang.StringUtils;
-import com.azure.cosmos.implementation.guava25.base.Preconditions;
 import com.azure.cosmos.models.ClientEncryptionIncludedPath;
 import com.azure.cosmos.models.ClientEncryptionPolicy;
 import com.azure.cosmos.models.CosmosClientEncryptionKeyProperties;
@@ -38,6 +37,7 @@ import java.time.Duration;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Properties;
 import java.util.UUID;
 
@@ -80,10 +80,10 @@ public class Program {
 
     private static CosmosEncryptionAsyncClient createClientInstance(Properties configuration) throws MicrosoftDataEncryptionException {
         String endpoint = configuration.getProperty("CosmosEndpointUrl");
-        Preconditions.checkNotNull(endpoint, "Please specify a valid endpoint.");
+        Objects.requireNonNull(endpoint, "Please specify a valid endpoint.");
 
         String authKey = configuration.getProperty("CosmosMasterKey");
-        Preconditions.checkNotNull(endpoint, "Please specify a valid AuthorizationKey.");
+        Objects.requireNonNull(endpoint, "Please specify a valid AuthorizationKey.");
 
         // TODO: moderakh, without contentResponseOnWriteEnabled = true this won't work we get NPE.
         CosmosAsyncClient asyncClient =

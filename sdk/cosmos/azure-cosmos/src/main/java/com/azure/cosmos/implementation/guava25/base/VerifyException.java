@@ -36,23 +36,4 @@ public class VerifyException extends RuntimeException {
     super(message);
   }
 
-  /**
-   * Constructs a {@code VerifyException} with the cause {@code cause} and a message that is {@code
-   * null} if {@code cause} is null, and {@code cause.toString()} otherwise.
-   *
-   * @since 19.0
-   */
-  public VerifyException(Throwable cause) {
-    super(cause);
-  }
-
-  /**
-   * Constructs a {@code VerifyException} with the message {@code message} and the cause {@code
-   * cause}.
-   *
-   * @since 19.0
-   */
-  public VerifyException(String message, Throwable cause) {
-    super(message, cause);
-  }
 }

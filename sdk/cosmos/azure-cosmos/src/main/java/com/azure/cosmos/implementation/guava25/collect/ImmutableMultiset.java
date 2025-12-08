@@ -30,11 +30,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
-import java.util.function.Function;
-import java.util.function.ToIntFunction;
-import java.util.stream.Collector;
-
-
 
 /**
  * A {@link Multiset} whose contents will never change, with many other important properties
@@ -52,48 +47,10 @@ import java.util.stream.Collector;
  * @since 2.0
  */
 @SuppressWarnings("serial") // we're overriding default serialization
-public abstract class ImmutableMultiset<E> extends ImmutableMultisetGwtSerializationDependencies<E>
+public abstract class ImmutableMultiset<E> extends ImmutableCollection<E>
     implements Multiset<E> {
 
-  /**
-   * Returns a {@code Collector} that accumulates the input elements into a new {@code
-   * ImmutableMultiset}. Elements iterate in order by the <i>first</i> appearance of that element in
-   * encounter order.
-   *
-   * @since 21.0
-   */
-
-  public static <E> Collector<E, ?, ImmutableMultiset<E>> toImmutableMultiset() {
-    return toImmutableMultiset(Function.identity(), e -> 1);
-  }
-
-  /**
-   * Returns a {@code Collector} that accumulates elements into an {@code ImmutableMultiset} whose
-   * elements are the result of applying {@code elementFunction} to the inputs, with counts equal to
-   * the result of applying {@code countFunction} to the inputs.
-   *
-   * <p>If the mapped elements contain duplicates (according to {@link Object#equals}), the first
-   * occurrence in encounter order appears in the resulting multiset, with count equal to the sum of
-   * the outputs of {@code countFunction.applyAsInt(t)} for each {@code t} mapped to that element.
-   *
-   * @since 22.0
-   */
-  public static <T, E> Collector<T, ?, ImmutableMultiset<E>> toImmutableMultiset(
-      Function<? super T, ? extends E> elementFunction, ToIntFunction<? super T> countFunction) {
-    checkNotNull(elementFunction);
-    checkNotNull(countFunction);
-    return Collector.of(
-        LinkedHashMultiset::create,
-        (multiset, t) ->
-            multiset.add(checkNotNull(elementFunction.apply(t)), countFunction.applyAsInt(t)),
-        (multiset1, multiset2) -> {
-          multiset1.addAll(multiset2);
-          return multiset1;
-        },
-        (Multiset<E> multiset) -> copyFromEntries(multiset.entrySet()));
-  }
-
-  /** Returns the empty immutable multiset. */
+    /** Returns the empty immutable multiset. */
   @SuppressWarnings({"unchecked", "rawtypes"}) // all supported methods are covariant
   public static <E> ImmutableMultiset<E> of() {
     return (ImmutableMultiset<E>) RegularImmutableMultiset.EMPTY;
@@ -491,38 +448,7 @@ public abstract class ImmutableMultiset<E> extends ImmutableMultisetGwtSerializa
       return this;
     }
 
-    /**
-     * Adds a number of occurrences of an element to this {@code ImmutableMultiset}.
-     *
-     * @param element the element to add
-     * @param occurrences the number of occurrences of the element to add. May be zero, in which
-     *     case no change will be made.
-     * @return this {@code Builder} object
-     * @throws NullPointerException if {@code element} is null
-     * @throws IllegalArgumentException if {@code occurrences} is negative, or if this operation
-     *     would result in more than {@link Integer#MAX_VALUE} occurrences of the element
-     */
-    public Builder<E> addCopies(E element, int occurrences) {
-      contents.add(checkNotNull(element), occurrences);
-      return this;
-    }
-
-    /**
-     * Adds or removes the necessary occurrences of an element such that the element attains the
-     * desired count.
-     *
-     * @param element the element to add or remove occurrences of
-     * @param count the desired count of the element in this multiset
-     * @return this {@code Builder} object
-     * @throws NullPointerException if {@code element} is null
-     * @throws IllegalArgumentException if {@code count} is negative
-     */
-    public Builder<E> setCount(E element, int count) {
-      contents.setCount(checkNotNull(element), count);
-      return this;
-    }
-
-    /**
+      /**
      * Adds each element of {@code elements} to the {@code ImmutableMultiset}.
      *
      * @param elements the {@code Iterable} to add to the {@code ImmutableMultiset}
@@ -562,13 +488,6 @@ public abstract class ImmutableMultiset<E> extends ImmutableMultisetGwtSerializa
       return copyOf(contents);
     }
 
-
-    ImmutableMultiset<E> buildJdkBacked() {
-      if (contents.isEmpty()) {
-        return of();
-      }
-      return JdkBackedImmutableMultiset.create(contents.entrySet());
-    }
   }
 
   static final class ElementSet<E> extends ImmutableSet.Indexed<E> {

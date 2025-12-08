@@ -20,10 +20,6 @@ package com.azure.cosmos.implementation.guava25.base;
 
 import static com.azure.cosmos.implementation.guava25.base.Preconditions.checkNotNull;
 
-import java.util.Collections;
-import java.util.Set;
-
-
 /** Implementation of an {@link Optional} not containing a reference. */
 final class Absent<T> extends Optional<T> {
   static final Absent<Object> INSTANCE = new Absent<>();
@@ -62,18 +58,7 @@ final class Absent<T> extends Optional<T> {
         supplier.get(), "use Optional.orNull() instead of a Supplier that returns null");
   }
 
-  @Override
-
-  public T orNull() {
-    return null;
-  }
-
-  @Override
-  public Set<T> asSet() {
-    return Collections.emptySet();
-  }
-
-  @Override
+    @Override
   public <V> Optional<V> transform(Function<? super T, V> function) {
     checkNotNull(function);
     return Optional.absent();

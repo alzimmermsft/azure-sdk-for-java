@@ -56,18 +56,7 @@ import java.util.stream.Stream;
  */
 final class TopKSelector<T> {
 
-  /**
-   * Returns a {@code TopKSelector} that collects the lowest {@code k} elements added to it,
-   * relative to the natural ordering of the elements, and returns them via {@link #topK} in
-   * ascending order.
-   *
-   * @throws IllegalArgumentException if {@code k < 0}
-   */
-  public static <T extends Comparable<? super T>> TopKSelector<T> least(int k) {
-    return least(k, Ordering.natural());
-  }
-
-  /**
+    /**
    * Returns a {@code TopKSelector} that collects the lowest {@code k} elements added to it,
    * relative to the specified comparator, and returns them via {@link #topK} in ascending order.
    *
@@ -77,28 +66,7 @@ final class TopKSelector<T> {
     return new TopKSelector<T>(comparator, k);
   }
 
-  /**
-   * Returns a {@code TopKSelector} that collects the greatest {@code k} elements added to it,
-   * relative to the natural ordering of the elements, and returns them via {@link #topK} in
-   * descending order.
-   *
-   * @throws IllegalArgumentException if {@code k < 0}
-   */
-  public static <T extends Comparable<? super T>> TopKSelector<T> greatest(int k) {
-    return greatest(k, Ordering.natural());
-  }
-
-  /**
-   * Returns a {@code TopKSelector} that collects the greatest {@code k} elements added to it,
-   * relative to the specified comparator, and returns them via {@link #topK} in descending order.
-   *
-   * @throws IllegalArgumentException if {@code k < 0}
-   */
-  public static <T> TopKSelector<T> greatest(int k, Comparator<? super T> comparator) {
-    return new TopKSelector<T>(Ordering.from(comparator).reverse(), k);
-  }
-
-  private final int k;
+    private final int k;
   private final Comparator<? super T> comparator;
 
   /*
@@ -222,25 +190,7 @@ final class TopKSelector<T> {
     buffer[j] = tmp;
   }
 
-  TopKSelector<T> combine(TopKSelector<T> other) {
-    for (int i = 0; i < other.bufferSize; i++) {
-      this.offer(other.buffer[i]);
-    }
-    return this;
-  }
-
-  /**
-   * Adds each member of {@code elements} as a candidate for the top {@code k} elements. This
-   * operation takes amortized linear time in the length of {@code elements}.
-   *
-   * <p>If all input data to this {@code TopKSelector} is in a single {@code Iterable}, prefer
-   * {@link Ordering#leastOf(Iterable, int)}, which provides a simpler API for that use case.
-   */
-  public void offerAll(Iterable<? extends T> elements) {
-    offerAll(elements.iterator());
-  }
-
-  /**
+    /**
    * Adds each member of {@code elements} as a candidate for the top {@code k} elements. This
    * operation takes amortized linear time in the length of {@code elements}. The iterator is
    * consumed after this operation completes.

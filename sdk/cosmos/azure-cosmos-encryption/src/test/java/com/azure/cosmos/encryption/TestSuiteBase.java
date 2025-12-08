@@ -59,11 +59,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.mockito.stubbing.Answer;
-import org.testng.ITestContext;
 import org.testng.annotations.AfterSuite;
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.DataProvider;
-import org.testng.annotations.Listeners;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
@@ -97,9 +95,9 @@ public abstract class TestSuiteBase extends CosmosEncryptionAsyncClientTest {
     protected static final int WAIT_REPLICA_CATCH_UP_IN_MILLIS = 4000;
 
     protected final static ConsistencyLevel accountConsistency;
-    protected static final ImmutableList<String> preferredLocations;
-    private static final ImmutableList<ConsistencyLevel> desiredConsistencies;
-    protected static final ImmutableList<Protocol> protocols;
+    protected static final List<String> preferredLocations;
+    private static final List<ConsistencyLevel> desiredConsistencies;
+    protected static final List<Protocol> protocols;
 
     protected static final AzureKeyCredential credential;
 
@@ -176,7 +174,7 @@ public abstract class TestSuiteBase extends CosmosEncryptionAsyncClientTest {
                 allEqualOrLowerConsistencies(accountConsistency)));
         preferredLocations = immutableListOrNull(parsePreferredLocation(TestConfigurations.PREFERRED_LOCATIONS));
         protocols = ObjectUtils.defaultIfNull(immutableListOrNull(parseProtocols(TestConfigurations.PROTOCOLS)),
-            ImmutableList.of(Protocol.TCP));
+            Collections.singletonList(Protocol.TCP));
 
         //  Object mapper configurations
         objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
@@ -995,7 +993,7 @@ public abstract class TestSuiteBase extends CosmosEncryptionAsyncClientTest {
 
     private static Object[][] simpleClientBuildersWithDirect(boolean contentResponseOnWriteEnabled, Protocol... protocols) {
         logger.info("Max test consistency to use is [{}]", accountConsistency);
-        List<ConsistencyLevel> testConsistencies = ImmutableList.of(ConsistencyLevel.EVENTUAL);
+        List<ConsistencyLevel> testConsistencies = Collections.singletonList(ConsistencyLevel.EVENTUAL);
 
         boolean isMultiMasterEnabled = preferredLocations != null && accountConsistency == ConsistencyLevel.SESSION;
 

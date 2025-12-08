@@ -45,13 +45,7 @@ final class SingletonImmutableSet<E> extends ImmutableSet<E> {
     this.element = Preconditions.checkNotNull(element);
   }
 
-  SingletonImmutableSet(E element, int hashCode) {
-    // Guaranteed to be non-null by the presence of the pre-computed hash code.
-    this.element = element;
-    cachedHashCode = hashCode;
-  }
-
-  @Override
+    @Override
   public int size() {
     return 1;
   }

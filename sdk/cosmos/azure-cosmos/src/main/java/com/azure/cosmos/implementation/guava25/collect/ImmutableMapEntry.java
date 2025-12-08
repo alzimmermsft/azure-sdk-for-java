@@ -50,13 +50,7 @@ class ImmutableMapEntry<K, V> extends ImmutableEntry<K, V> {
     checkEntryNotNull(key, value);
   }
 
-  ImmutableMapEntry(ImmutableMapEntry<K, V> contents) {
-    super(contents.getKey(), contents.getValue());
-    // null check would be redundant
-  }
-
-
-  ImmutableMapEntry<K, V> getNextInKeyBucket() {
+    ImmutableMapEntry<K, V> getNextInKeyBucket() {
     return null;
   }
 
