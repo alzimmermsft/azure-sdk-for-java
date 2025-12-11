@@ -3,7 +3,6 @@
 
 package com.azure.cosmos.implementation;
 
-import com.azure.cosmos.implementation.apachecommons.lang.StringUtils;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 /**
@@ -121,7 +120,7 @@ public abstract class Index extends JsonSerializable {
     IndexKind getKind() {
         IndexKind result = null;
         try {
-            result = IndexKind.valueOf(StringUtils.upperCase(super.getString(Constants.Properties.INDEX_KIND)));
+            result = IndexKind.valueOf(Strings.upperCase(super.getString(Constants.Properties.INDEX_KIND)));
         } catch (IllegalArgumentException e) {
             super.getLogger().warn("INVALID index kind value {}", super.getString(Constants.Properties.INDEX_KIND));
         }

@@ -7,7 +7,6 @@ import com.azure.cosmos.models.ModelBridgeInternal;
 import com.azure.cosmos.models.PartitionKey;
 import com.azure.cosmos.models.PermissionMode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.azure.cosmos.implementation.apachecommons.lang.StringUtils;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import java.util.Locale;
@@ -71,7 +70,7 @@ public final class Permission extends Resource {
      */
     public PermissionMode getPermissionMode() {
         String value = super.getString(Constants.Properties.PERMISSION_MODE);
-        return PermissionMode.valueOf(StringUtils.upperCase(value));
+        return PermissionMode.valueOf(Strings.upperCase(value));
     }
 
     /**

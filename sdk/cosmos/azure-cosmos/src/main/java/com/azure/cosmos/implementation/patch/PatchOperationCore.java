@@ -3,7 +3,7 @@
 
 package com.azure.cosmos.implementation.patch;
 
-import com.azure.cosmos.implementation.apachecommons.lang.StringUtils;
+import com.azure.cosmos.implementation.Strings;
 
 import static com.azure.cosmos.implementation.guava25.base.Preconditions.checkArgument;
 
@@ -27,13 +27,13 @@ public final class PatchOperationCore<T> extends PatchOperation {
     public PatchOperationCore(PatchOperationType operationType, String path, T value) {
         super(operationType);
 
-        checkArgument(StringUtils.isNotEmpty(path), "path empty %s", path);
+        checkArgument(Strings.isNotEmpty(path), "path empty %s", path);
 
         if(operationType == PatchOperationType.MOVE) {
             if (!(value instanceof String)) {
                 throw new IllegalArgumentException("Parameter 'value' is not of type 'String'");
             }
-            checkArgument(StringUtils.isNotEmpty((String) value), "Parameter 'value' cannot be empty %s", (String) value);
+            checkArgument(Strings.isNotEmpty((String) value), "Parameter 'value' cannot be empty %s", (String) value);
             this.path = path;
             this.from = (String) value;
             this.resource = null;

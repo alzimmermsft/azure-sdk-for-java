@@ -12,8 +12,12 @@ import com.azure.core.util.tracing.Tracer;
 import com.azure.core.util.tracing.TracerProvider;
 import com.azure.cosmos.CosmosDiagnosticsHandler;
 import com.azure.cosmos.CosmosDiagnosticsThresholds;
-import com.azure.cosmos.implementation.*;
-import com.azure.cosmos.implementation.apachecommons.lang.StringUtils;
+import com.azure.cosmos.implementation.Configs;
+import com.azure.cosmos.implementation.DiagnosticsProvider;
+import com.azure.cosmos.implementation.HttpConstants;
+import com.azure.cosmos.implementation.ImplementationBridgeHelpers;
+import com.azure.cosmos.implementation.Strings;
+import com.azure.cosmos.implementation.Utils;
 import com.azure.cosmos.implementation.clienttelemetry.AttributeNamingScheme;
 import com.azure.cosmos.implementation.clienttelemetry.ClientTelemetry;
 import com.azure.cosmos.implementation.clienttelemetry.CosmosMeterOptions;
@@ -318,7 +322,7 @@ public final class CosmosClientTelemetryConfig {
     private ProxyOptions getProxyOptions() {
         String config = Configs.getClientTelemetryProxyOptionsConfig();
 
-        if (StringUtils.isNotEmpty(config)) {
+        if (Strings.isNotEmpty(config)) {
             try {
                 JsonProxyOptionsConfig proxyOptionsConfig = Utils.getSimpleObjectMapper().readValue(config, JsonProxyOptionsConfig.class);
                 ProxyOptions.Type type = ProxyOptions.Type.valueOf(proxyOptionsConfig.type);

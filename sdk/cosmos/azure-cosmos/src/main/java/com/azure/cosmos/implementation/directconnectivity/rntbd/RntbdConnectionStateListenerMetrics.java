@@ -3,7 +3,7 @@
 
 package com.azure.cosmos.implementation.directconnectivity.rntbd;
 
-import com.azure.cosmos.implementation.apachecommons.lang.tuple.Pair;
+import com.azure.cosmos.implementation.Pair;
 
 import java.time.Instant;
 import java.util.concurrent.atomic.AtomicReference;

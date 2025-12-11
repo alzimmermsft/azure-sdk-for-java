@@ -3,7 +3,7 @@
 
 package com.azure.cosmos.implementation.query.orderbyquery;
 
-import com.azure.cosmos.implementation.apachecommons.lang.StringUtils;
+import com.azure.cosmos.implementation.Strings;
 
 import static com.azure.cosmos.implementation.guava25.base.Preconditions.checkArgument;
 
@@ -17,7 +17,7 @@ public class ComparisonWithUndefinedFilters implements ComparisonFilters {
     private final String expression;
 
     public ComparisonWithUndefinedFilters(String expression) {
-        checkArgument(StringUtils.isNotEmpty(expression), "Expression can not be null or empty");
+        checkArgument(Strings.isNotEmpty(expression), "Expression can not be null or empty");
 
         this.expression = expression;
     }

@@ -3,7 +3,7 @@
 
 package com.azure.cosmos;
 
-import com.azure.cosmos.implementation.apachecommons.lang.StringUtils;
+import com.azure.cosmos.implementation.Strings;
 
 import java.time.Duration;
 
@@ -21,8 +21,8 @@ public class GlobalThroughputControlConfigBuilder {
 
     GlobalThroughputControlConfigBuilder(CosmosAsyncClient client, String databaseId, String containerId) {
         checkNotNull(client, "Client can not be null");
-        checkArgument(StringUtils.isNotEmpty(databaseId), "DatabaseId cannot be null nor empty");
-        checkArgument(StringUtils.isNotEmpty(containerId), "ContainerId cannot be null nor empty");
+        checkArgument(Strings.isNotEmpty(databaseId), "DatabaseId cannot be null nor empty");
+        checkArgument(Strings.isNotEmpty(containerId), "ContainerId cannot be null nor empty");
 
         controlContainer = client.getDatabase(databaseId).getContainer(containerId);
     }

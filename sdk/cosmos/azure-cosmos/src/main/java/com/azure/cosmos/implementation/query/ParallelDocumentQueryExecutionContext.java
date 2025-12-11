@@ -14,6 +14,7 @@ import com.azure.cosmos.implementation.DocumentCollection;
 import com.azure.cosmos.implementation.FeedResponseDiagnostics;
 import com.azure.cosmos.implementation.HttpConstants;
 import com.azure.cosmos.implementation.ImplementationBridgeHelpers;
+import com.azure.cosmos.implementation.Pair;
 import com.azure.cosmos.implementation.PartitionKeyRange;
 import com.azure.cosmos.implementation.QueryMetrics;
 import com.azure.cosmos.implementation.RequestChargeTracker;
@@ -21,7 +22,6 @@ import com.azure.cosmos.implementation.ResourceType;
 import com.azure.cosmos.implementation.RxDocumentServiceRequest;
 import com.azure.cosmos.implementation.Utils;
 import com.azure.cosmos.implementation.Utils.ValueHolder;
-import com.azure.cosmos.implementation.apachecommons.lang.tuple.ImmutablePair;
 import com.azure.cosmos.implementation.feedranges.FeedRangeEpkImpl;
 import com.azure.cosmos.models.CosmosQueryRequestOptions;
 import com.azure.cosmos.models.FeedResponse;
@@ -360,16 +360,15 @@ public class ParallelDocumentQueryExecutionContext<T>
                 DocumentProducer<T>.DocumentProducerFeedResponse documentProducerFeedResponse = heldValue.v;
                 // CREATE pairs from the stream to allow the observables downstream to "peek"
                 // 1, 2, 3, null -> (null, 1), (1, 2), (2, 3), (3, null)
-                    ImmutablePair<DocumentProducer<T>.DocumentProducerFeedResponse, DocumentProducer<T>.DocumentProducerFeedResponse> previousCurrent = new ImmutablePair<>(
-                        this.previousPage,
-                        documentProducerFeedResponse);
+                    Pair<DocumentProducer<T>.DocumentProducerFeedResponse, DocumentProducer<T>.DocumentProducerFeedResponse>
+                        previousCurrent = Pair.of(this.previousPage, documentProducerFeedResponse);
                     this.previousPage = documentProducerFeedResponse;
                     return previousCurrent;
             }).skip(1).map(currentNext -> {
                 // remove the (null, 1)
                 // Add the continuation token based on the current and next page.
-                DocumentProducer<T>.DocumentProducerFeedResponse current = currentNext.left;
-                DocumentProducer<T>.DocumentProducerFeedResponse next = currentNext.right;
+                DocumentProducer<T>.DocumentProducerFeedResponse current = currentNext.getLeft();
+                DocumentProducer<T>.DocumentProducerFeedResponse next = currentNext.getRight();
 
                 String compositeContinuationToken;
                 String backendContinuationToken = current.pageResult.getContinuationToken();

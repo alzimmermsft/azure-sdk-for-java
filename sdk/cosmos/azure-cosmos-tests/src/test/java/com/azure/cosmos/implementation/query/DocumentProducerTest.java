@@ -10,15 +10,12 @@ import com.azure.cosmos.implementation.DiagnosticsClientContext;
 import com.azure.cosmos.implementation.Document;
 import com.azure.cosmos.implementation.DocumentClientRetryPolicy;
 import com.azure.cosmos.implementation.GlobalEndpointManager;
-import com.azure.cosmos.implementation.perPartitionCircuitBreaker.GlobalPartitionEndpointManagerForPerPartitionCircuitBreaker;
 import com.azure.cosmos.implementation.HttpConstants;
 import com.azure.cosmos.implementation.IRetryPolicyFactory;
 import com.azure.cosmos.implementation.PartitionKeyRange;
 import com.azure.cosmos.implementation.RetryPolicy;
 import com.azure.cosmos.implementation.RxDocumentServiceRequest;
 import com.azure.cosmos.implementation.Utils;
-import com.azure.cosmos.implementation.apachecommons.lang.RandomUtils;
-import com.azure.cosmos.implementation.apachecommons.lang.StringUtils;
 import com.azure.cosmos.implementation.caches.RxPartitionKeyRangeCache;
 import com.azure.cosmos.implementation.feedranges.FeedRangeEpkImpl;
 import com.azure.cosmos.implementation.guava25.base.Strings;
@@ -26,6 +23,7 @@ import com.azure.cosmos.implementation.guava25.collect.ImmutableList;
 import com.azure.cosmos.implementation.guava25.collect.Iterables;
 import com.azure.cosmos.implementation.guava25.collect.LinkedListMultimap;
 import com.azure.cosmos.implementation.perPartitionAutomaticFailover.GlobalPartitionEndpointManagerForPerPartitionAutomaticFailover;
+import com.azure.cosmos.implementation.perPartitionCircuitBreaker.GlobalPartitionEndpointManagerForPerPartitionCircuitBreaker;
 import com.azure.cosmos.implementation.query.orderbyquery.OrderByRowResult;
 import com.azure.cosmos.implementation.query.orderbyquery.OrderbyRowComparer;
 import com.azure.cosmos.implementation.routing.PartitionKeyRangeIdentity;
@@ -53,6 +51,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.BiFunction;
 import java.util.function.Function;
@@ -137,8 +136,8 @@ public class DocumentProducerTest {
             int initialPageSize = 7;
             int top = -1;
 
-            Range<String> parentRange = new Range<>(com.azure.cosmos.implementation.Strings.Emtpy, "FF", true, false);
-            Range<String> leftChildRange = new Range<>(com.azure.cosmos.implementation.Strings.Emtpy, "EE", true, false);
+            Range<String> parentRange = new Range<>(com.azure.cosmos.implementation.Strings.EMPTY, "FF", true, false);
+            Range<String> leftChildRange = new Range<>(com.azure.cosmos.implementation.Strings.EMPTY, "EE", true, false);
             Range<String> rightChildRange = new Range<>("EE", "FF", true, false);
 
             String parentPartitionId = parentRange.toString();
@@ -247,8 +246,8 @@ public class DocumentProducerTest {
             int initialPageSize = 7;
             int top = -1;
 
-            Range<String> parentRange = new Range<>(com.azure.cosmos.implementation.Strings.Emtpy, "FF", true, false);
-            Range<String> leftChildRange = new Range<>(com.azure.cosmos.implementation.Strings.Emtpy, "EE", true, false);
+            Range<String> parentRange = new Range<>(com.azure.cosmos.implementation.Strings.EMPTY, "FF", true, false);
+            Range<String> leftChildRange = new Range<>(com.azure.cosmos.implementation.Strings.EMPTY, "EE", true, false);
             Range<String> rightChildRange = new Range<>("EE", "FF", true, false);
 
             String parentPartitionId = parentRange.toString();
@@ -361,7 +360,7 @@ public class DocumentProducerTest {
         int top = -1;
 
         Range<String> currentRange = new Range<>("EE", "FF", true, false);
-        Range<String> parentRange = new Range<>(StringUtils.EMPTY, "FF", true, false);
+        Range<String> parentRange = new Range<>(com.azure.cosmos.implementation.Strings.EMPTY, "FF", true, false);
 
         String parentPartitionId = parentRange.toString();
         String currentPartitionId = currentRange.toString();
@@ -448,7 +447,7 @@ public class DocumentProducerTest {
         int top = -1;
 
         Range<String> currentRange = new Range<>("EE", "FF", true, false);
-        Range<String> parentRange = new Range<>(StringUtils.EMPTY, "FF", true, false);
+        Range<String> parentRange = new Range<>(com.azure.cosmos.implementation.Strings.EMPTY, "FF", true, false);
 
         String parentPartitionId = parentRange.toString();
         String currentPartitionId = currentRange.toString();
@@ -535,7 +534,7 @@ public class DocumentProducerTest {
             int top = -1;
 
             String partitionId = "1";
-            FeedRangeEpkImpl range1 = new FeedRangeEpkImpl(new Range<>(com.azure.cosmos.implementation.Strings.Emtpy,
+            FeedRangeEpkImpl range1 = new FeedRangeEpkImpl(new Range<>(com.azure.cosmos.implementation.Strings.EMPTY,
                                                                        "FF",
                                                                        true,
                                                                        false));
@@ -629,7 +628,7 @@ public class DocumentProducerTest {
             int initialPageSize = 7;
             int top = -1;
 
-            FeedRangeEpkImpl feedRangeEpk = new FeedRangeEpkImpl(new Range<>(com.azure.cosmos.implementation.Strings.Emtpy,
+            FeedRangeEpkImpl feedRangeEpk = new FeedRangeEpkImpl(new Range<>(com.azure.cosmos.implementation.Strings.EMPTY,
                                                                        "FF",
                                                                        true,
                                                                        false));
@@ -739,7 +738,7 @@ public class DocumentProducerTest {
             int initialPageSize = 7;
             int top = -1;
 
-            FeedRangeEpkImpl feedRangeEpk = new FeedRangeEpkImpl(new Range<>(com.azure.cosmos.implementation.Strings.Emtpy,
+            FeedRangeEpkImpl feedRangeEpk = new FeedRangeEpkImpl(new Range<>(com.azure.cosmos.implementation.Strings.EMPTY,
                                                                        "FF",
                                                                        true,
                                                                        false));
@@ -844,7 +843,7 @@ public class DocumentProducerTest {
 
                 Document d = getDocumentDefinition();
                 if (isOrderby) {
-                    d.set(OrderByIntFieldName, orderByFieldInitialVal + RandomUtils.nextInt(0, 3));
+                    d.set(OrderByIntFieldName, orderByFieldInitialVal + ThreadLocalRandom.current().nextInt(0, 3));
                     d.set(DocumentPartitionKeyRangeIdFieldName, feedRangeEpk.getRange().toString());
                     PartitionKeyRange pkr = mockPartitionKeyRange(feedRangeEpk.getRange().toString(), feedRangeEpk.getRange());
 
@@ -982,7 +981,7 @@ public class DocumentProducerTest {
             expectedResultPagesFromCurrentPartitionAfterMerge
                 .stream()
                 .map(response -> response.getContinuationToken())
-                .filter(continuationToken -> !StringUtils.isEmpty(continuationToken))
+                .filter(continuationToken -> com.azure.cosmos.implementation.Strings.isNotEmpty(continuationToken))
                 .collect(Collectors.toList())
         );
 

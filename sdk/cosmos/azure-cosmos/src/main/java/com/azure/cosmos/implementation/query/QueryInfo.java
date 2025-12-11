@@ -3,15 +3,14 @@
 
 package com.azure.cosmos.implementation.query;
 
-import com.azure.cosmos.implementation.RequestTimeline;
 import com.azure.cosmos.implementation.DiagnosticsInstantSerializer;
-import com.azure.cosmos.implementation.query.aggregation.AggregateOperator;
 import com.azure.cosmos.implementation.JsonSerializable;
+import com.azure.cosmos.implementation.RequestTimeline;
+import com.azure.cosmos.implementation.Strings;
+import com.azure.cosmos.implementation.query.aggregation.AggregateOperator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.azure.cosmos.implementation.apachecommons.lang.StringUtils;
-import com.azure.cosmos.implementation.Strings;
 
 import java.time.Duration;
 import java.time.Instant;
@@ -78,7 +77,7 @@ public final class QueryInfo extends JsonSerializable {
     }
 
     public boolean hasRewrittenQuery() {
-        return !StringUtils.isEmpty(this.getRewrittenQuery());
+        return Strings.isNotEmpty(this.getRewrittenQuery());
     }
 
     public boolean hasAggregates() {

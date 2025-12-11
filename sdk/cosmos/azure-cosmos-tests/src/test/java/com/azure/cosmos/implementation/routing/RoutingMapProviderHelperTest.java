@@ -5,10 +5,10 @@ package com.azure.cosmos.implementation.routing;
 
 import com.azure.cosmos.implementation.IRoutingMapProvider;
 import com.azure.cosmos.implementation.MetadataDiagnosticsContext;
+import com.azure.cosmos.implementation.Pair;
 import com.azure.cosmos.implementation.PartitionKeyRange;
 import com.azure.cosmos.implementation.Resource;
 import com.azure.cosmos.implementation.Utils;
-import com.azure.cosmos.implementation.apachecommons.lang.tuple.ImmutablePair;
 import org.apache.commons.lang3.StringUtils;
 import org.testng.annotations.Test;
 import reactor.core.publisher.Mono;
@@ -35,10 +35,10 @@ public class RoutingMapProviderHelperTest {
         private final CollectionRoutingMap routingMap;
 
         public MockRoutingMapProvider(Collection<PartitionKeyRange> ranges) {
-            List<ImmutablePair<PartitionKeyRange, IServerIdentity>> pairs = new ArrayList<>(
+            List<Pair<PartitionKeyRange, IServerIdentity>> pairs = new ArrayList<>(
                     ranges.size());
             for (PartitionKeyRange range : ranges) {
-                pairs.add(new ImmutablePair<>(range, null));
+                pairs.add(Pair.of(range, null));
             }
 
             this.routingMap = InMemoryCollectionRoutingMap.tryCreateCompleteRoutingMap(pairs, StringUtils.EMPTY, null);
@@ -65,10 +65,10 @@ public class RoutingMapProviderHelperTest {
         private final CollectionRoutingMap routingMap;
 
         public MockIRoutingMapProvider(List<PartitionKeyRange> ranges) {
-            List<ImmutablePair<PartitionKeyRange, IServerIdentity>> pairs = new ArrayList<>(
+            List<Pair<PartitionKeyRange, IServerIdentity>> pairs = new ArrayList<>(
                 ranges.size());
             for (PartitionKeyRange range : ranges) {
-                pairs.add(new ImmutablePair<>(range, null));
+                pairs.add(Pair.of(range, null));
             }
 
             this.routingMap = InMemoryCollectionRoutingMap.tryCreateCompleteRoutingMap(pairs, StringUtils.EMPTY, null);

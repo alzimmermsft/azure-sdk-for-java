@@ -7,7 +7,7 @@ import com.azure.cosmos.ThroughputControlGroupConfig;
 import com.azure.cosmos.implementation.CosmosSchedulers;
 import com.azure.cosmos.implementation.HttpConstants;
 import com.azure.cosmos.implementation.ImplementationBridgeHelpers;
-import com.azure.cosmos.implementation.apachecommons.lang.StringUtils;
+import com.azure.cosmos.implementation.Strings;
 import com.azure.cosmos.implementation.changefeed.CancellationToken;
 import com.azure.cosmos.implementation.changefeed.ChangeFeedContextClient;
 import com.azure.cosmos.implementation.changefeed.ChangeFeedObserver;
@@ -36,6 +36,7 @@ import reactor.core.publisher.Mono;
 
 import java.time.Duration;
 import java.time.Instant;
+import java.util.Objects;
 
 import static com.azure.cosmos.implementation.guava25.base.Preconditions.checkArgument;
 import static com.azure.cosmos.implementation.guava25.base.Preconditions.checkNotNull;
@@ -146,8 +147,8 @@ class PartitionProcessorImpl implements PartitionProcessor {
                     .getToken();
 
                 this.hasServerContinuationTokenChange =
-                    !StringUtils.equals(this.lastServerContinuationToken, currentServerContinuationToken)
-                        && StringUtils.isNotEmpty(currentServerContinuationToken);
+                    !Objects.equals(this.lastServerContinuationToken, currentServerContinuationToken)
+                        && Strings.isNotEmpty(currentServerContinuationToken);
 
                 this.lastServerContinuationToken = currentServerContinuationToken;
 

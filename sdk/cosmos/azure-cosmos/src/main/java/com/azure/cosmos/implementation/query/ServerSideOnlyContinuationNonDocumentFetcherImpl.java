@@ -10,7 +10,7 @@ import com.azure.cosmos.implementation.GlobalEndpointManager;
 import com.azure.cosmos.implementation.ObservableHelper;
 import com.azure.cosmos.implementation.RxDocumentClientImpl;
 import com.azure.cosmos.implementation.RxDocumentServiceRequest;
-import com.azure.cosmos.implementation.apachecommons.lang.StringUtils;
+import com.azure.cosmos.implementation.Strings;
 import com.azure.cosmos.implementation.perPartitionCircuitBreaker.GlobalPartitionEndpointManagerForPerPartitionCircuitBreaker;
 import com.azure.cosmos.implementation.spark.OperationContextAndListenerTuple;
 import com.azure.cosmos.models.FeedResponse;
@@ -53,7 +53,7 @@ class ServerSideOnlyContinuationNonDocumentFetcherImpl<T> extends Fetcher<T> {
 
         checkNotNull(client, "Argument 'client' must not be null.");
         checkNotNull(createRequestFunc, "Argument 'createRequestFunc' must not be null.");
-        
+
         this.createRequestFunc = createRequestFunc;
         this.continuationToken = continuationToken;
         this.retryPolicySupplier = () -> client.getResetSessionTokenRetryPolicy().getRequestPolicy(null);
@@ -97,8 +97,7 @@ class ServerSideOnlyContinuationNonDocumentFetcherImpl<T> extends Fetcher<T> {
     @Override
     protected boolean isFullyDrained(boolean isChangeFeed, FeedResponse<T> response) {
         // if token is null or if change feed query and no changes then done
-        return StringUtils.isEmpty(continuationToken) ||
-            (isChangeFeed && BridgeInternal.noChanges(response));
+        return Strings.isEmpty(continuationToken) || (isChangeFeed && BridgeInternal.noChanges(response));
     }
 
     @Override

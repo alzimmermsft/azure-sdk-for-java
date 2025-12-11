@@ -9,13 +9,13 @@ import com.azure.cosmos.implementation.DatabaseAccountLocation;
 import com.azure.cosmos.implementation.DocumentCollection;
 import com.azure.cosmos.implementation.GlobalEndpointManager;
 import com.azure.cosmos.implementation.OperationType;
+import com.azure.cosmos.implementation.Pair;
 import com.azure.cosmos.implementation.PartitionKeyRange;
 import com.azure.cosmos.implementation.ResourceType;
 import com.azure.cosmos.implementation.RxDocumentClientImpl;
 import com.azure.cosmos.implementation.RxDocumentServiceRequest;
 import com.azure.cosmos.implementation.TestConfigurations;
 import com.azure.cosmos.implementation.Utils;
-import com.azure.cosmos.implementation.apachecommons.lang.tuple.ImmutablePair;
 import com.azure.cosmos.implementation.caches.AsyncCache;
 import com.azure.cosmos.implementation.caches.AsyncCacheNonBlocking;
 import com.azure.cosmos.implementation.caches.RxClientCollectionCache;
@@ -201,9 +201,9 @@ public class ProactiveConnectionManagementTest extends TestSuiteBase {
                             assertThat(containerToPartitionKeyRanges).isNotNull();
                             assertThat(containerToPartitionKeyRanges.getT2()).isNotNull();
                             assertThat(containerToPartitionKeyRanges.getT2().v).isNotNull();
-                            List<ImmutablePair<PartitionKeyRange, CosmosAsyncContainer>> pkrToContainer = new ArrayList<>();
+                            List<Pair<PartitionKeyRange, CosmosAsyncContainer>> pkrToContainer = new ArrayList<>();
                             for (PartitionKeyRange pkr : containerToPartitionKeyRanges.getT2().v) {
-                                pkrToContainer.add(new ImmutablePair<>(pkr, containerToPartitionKeyRanges.getT1()));
+                                pkrToContainer.add(Pair.of(pkr, containerToPartitionKeyRanges.getT1()));
                             }
                             return pkrToContainer;
                         })
@@ -363,9 +363,9 @@ public class ProactiveConnectionManagementTest extends TestSuiteBase {
             for (URI proactiveConnectionEndpoint : proactiveConnectionEndpoints) {
                 Flux.zip(asyncContainerFlux, partitionKeyRangeFlux)
                         .flatMapIterable(containerToPartitionKeyRanges -> {
-                            List<ImmutablePair<PartitionKeyRange, CosmosAsyncContainer>> pkrToContainer = new ArrayList<>();
+                            List<Pair<PartitionKeyRange, CosmosAsyncContainer>> pkrToContainer = new ArrayList<>();
                             for (PartitionKeyRange pkr : containerToPartitionKeyRanges.getT2().v) {
-                                pkrToContainer.add(new ImmutablePair<>(pkr, containerToPartitionKeyRanges.getT1()));
+                                pkrToContainer.add(Pair.of(pkr, containerToPartitionKeyRanges.getT1()));
                             }
                             return pkrToContainer;
                         })
@@ -512,9 +512,9 @@ public class ProactiveConnectionManagementTest extends TestSuiteBase {
             for (URI proactiveConnectionEndpoint : proactiveConnectionEndpoints) {
                 Flux.zip(asyncContainerFlux, partitionKeyRangeFlux)
                         .flatMapIterable(containerToPartitionKeyRanges -> {
-                            List<ImmutablePair<PartitionKeyRange, CosmosAsyncContainer>> pkrToContainer = new ArrayList<>();
+                            List<Pair<PartitionKeyRange, CosmosAsyncContainer>> pkrToContainer = new ArrayList<>();
                             for (PartitionKeyRange pkr : containerToPartitionKeyRanges.getT2().v) {
-                                pkrToContainer.add(new ImmutablePair<>(pkr, containerToPartitionKeyRanges.getT1()));
+                                pkrToContainer.add(Pair.of(pkr, containerToPartitionKeyRanges.getT1()));
                             }
                             return pkrToContainer;
                         })
@@ -683,9 +683,9 @@ public class ProactiveConnectionManagementTest extends TestSuiteBase {
             for (URI proactiveConnectionEndpoint : proactiveConnectionEndpoints) {
                 Flux.zip(asyncContainerFlux, partitionKeyRangeFlux)
                         .flatMapIterable(containerToPartitionKeyRanges -> {
-                            List<ImmutablePair<PartitionKeyRange, CosmosAsyncContainer>> pkrToContainer = new ArrayList<>();
+                            List<Pair<PartitionKeyRange, CosmosAsyncContainer>> pkrToContainer = new ArrayList<>();
                             for (PartitionKeyRange pkr : containerToPartitionKeyRanges.getT2().v) {
-                                pkrToContainer.add(new ImmutablePair<>(pkr, containerToPartitionKeyRanges.getT1()));
+                                pkrToContainer.add(Pair.of(pkr, containerToPartitionKeyRanges.getT1()));
                             }
                             return pkrToContainer;
                         })

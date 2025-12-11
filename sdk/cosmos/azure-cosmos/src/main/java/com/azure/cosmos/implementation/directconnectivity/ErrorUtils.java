@@ -3,10 +3,9 @@
 
 package com.azure.cosmos.implementation.directconnectivity;
 
-import com.azure.cosmos.implementation.apachecommons.lang.StringUtils;
+import com.azure.cosmos.implementation.Strings;
 import com.azure.cosmos.implementation.http.HttpRequest;
 import com.azure.cosmos.implementation.http.HttpResponse;
-import io.netty.handler.codec.http.HttpMethod;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import reactor.core.publisher.Mono;
@@ -17,7 +16,7 @@ public class ErrorUtils {
     private static final Logger logger = LoggerFactory.getLogger(ErrorUtils.class);
 
     static Mono<String> getErrorResponseAsync(HttpResponse responseMessage, HttpRequest request) {
-        return responseMessage.bodyAsString().switchIfEmpty(Mono.just(StringUtils.EMPTY));
+        return responseMessage.bodyAsString().switchIfEmpty(Mono.just(Strings.EMPTY));
     }
 
     static void logGoneException(URI physicalAddress, String activityId) {

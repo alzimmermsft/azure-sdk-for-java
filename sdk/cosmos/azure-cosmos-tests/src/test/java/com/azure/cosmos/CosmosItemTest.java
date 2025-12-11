@@ -12,10 +12,9 @@ import com.azure.cosmos.implementation.ISessionToken;
 import com.azure.cosmos.implementation.ImplementationBridgeHelpers;
 import com.azure.cosmos.implementation.InternalObjectNode;
 import com.azure.cosmos.implementation.OperationType;
+import com.azure.cosmos.implementation.Pair;
 import com.azure.cosmos.implementation.SessionTokenHelper;
 import com.azure.cosmos.implementation.Utils;
-import com.azure.cosmos.implementation.apachecommons.lang.StringUtils;
-import com.azure.cosmos.implementation.apachecommons.lang.tuple.ImmutablePair;
 import com.azure.cosmos.models.CosmosClientTelemetryConfig;
 import com.azure.cosmos.models.CosmosContainerProperties;
 import com.azure.cosmos.models.CosmosItemIdentity;
@@ -45,6 +44,7 @@ import com.azure.cosmos.util.CosmosPagedIterable;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import org.apache.commons.lang3.StringUtils;
 import org.testng.SkipException;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
@@ -668,7 +668,7 @@ public class CosmosItemTest extends TestSuiteBase {
                 SqlQuerySpec sqlQuerySpec = new SqlQuerySpec();
                 sqlQuerySpec.setQueryText("SELECT * FROM c OFFSET 0 LIMIT 1");
 
-                List<ImmutablePair<String, String>> idToPkPairs = new ArrayList<>();
+                List<Pair<String, String>> idToPkPairs = new ArrayList<>();
 
                 for (int k = 0; k < feedRangeCount; k++) {
                     CosmosQueryRequestOptions cosmosQueryRequestOptions = new CosmosQueryRequestOptions();
@@ -683,9 +683,9 @@ public class CosmosItemTest extends TestSuiteBase {
                             InternalObjectNode queriedItem = response.getResults().get(0);
 
                             if (faultyIds.contains(finalK)) {
-                                idToPkPairs.add(new ImmutablePair<>(queriedItem.getId(), UUID.randomUUID().toString()));
+                                idToPkPairs.add(Pair.of(queriedItem.getId(), UUID.randomUUID().toString()));
                             } else {
-                                idToPkPairs.add(new ImmutablePair<>(queriedItem.getId(), queriedItem.getString("mypk")));
+                                idToPkPairs.add(Pair.of(queriedItem.getId(), queriedItem.getString("mypk")));
                             }
                         });
                 }

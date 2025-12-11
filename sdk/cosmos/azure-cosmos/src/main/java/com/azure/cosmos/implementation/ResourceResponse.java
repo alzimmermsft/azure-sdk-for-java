@@ -4,7 +4,6 @@
 package com.azure.cosmos.implementation;
 
 import com.azure.cosmos.CosmosDiagnostics;
-import com.azure.cosmos.implementation.apachecommons.lang.StringUtils;
 import com.fasterxml.jackson.databind.JsonNode;
 
 import java.io.IOException;
@@ -302,7 +301,7 @@ public final class ResourceResponse<T extends Resource> {
      */
     public double getRequestCharge() {
         String value = this.getResponseHeaders().get(HttpConstants.HttpHeaders.REQUEST_CHARGE);
-        if (StringUtils.isEmpty(value)) {
+        if (Strings.isEmpty(value)) {
             return 0;
         }
         return Double.parseDouble(value);
@@ -311,7 +310,7 @@ public final class ResourceResponse<T extends Resource> {
     public void addRequestCharge(double requestCharge) {
         double currentRequestCharge = 0;
         String value = this.getResponseHeaders().get(HttpConstants.HttpHeaders.REQUEST_CHARGE);
-        if (!StringUtils.isEmpty(value)) {
+        if (Strings.isNotEmpty(value)) {
             currentRequestCharge = Double.parseDouble(value);
         }
         currentRequestCharge += requestCharge;
@@ -338,7 +337,7 @@ public final class ResourceResponse<T extends Resource> {
      */
     public long getIndexTransformationProgress() {
         String value = this.getResponseHeaders().get(HttpConstants.HttpHeaders.INDEX_TRANSFORMATION_PROGRESS);
-        if (StringUtils.isEmpty(value)) {
+        if (Strings.isEmpty(value)) {
             return -1;
         }
         return Long.parseLong(value);
@@ -351,7 +350,7 @@ public final class ResourceResponse<T extends Resource> {
      */
     public long getLazyIndexingProgress() {
         String value = this.getResponseHeaders().get(HttpConstants.HttpHeaders.LAZY_INDEXING_PROGRESS);
-        if (StringUtils.isEmpty(value)) {
+        if (Strings.isEmpty(value)) {
             return -1;
         }
         return Long.parseLong(value);
@@ -391,7 +390,7 @@ public final class ResourceResponse<T extends Resource> {
     public String getCosmosDiagnosticString() {
         CosmosDiagnostics cosmosDiagnosticStatistics = this.response.getCosmosDiagnostics();
         if (cosmosDiagnosticStatistics == null) {
-            return StringUtils.EMPTY;
+            return Strings.EMPTY;
         }
         return cosmosDiagnosticStatistics.toString();
     }
@@ -408,8 +407,8 @@ public final class ResourceResponse<T extends Resource> {
 
     long getCurrentQuotaHeader(String headerName) {
         if (this.usageHeaders.size() == 0 &&
-                !StringUtils.isEmpty(this.getMaxResourceQuota()) &&
-                !StringUtils.isEmpty(this.getCurrentResourceQuotaUsage())) {
+                Strings.isNotEmpty(this.getMaxResourceQuota()) &&
+                Strings.isNotEmpty(this.getCurrentResourceQuotaUsage())) {
             this.populateQuotaHeader(this.getMaxResourceQuota(), this.getCurrentResourceQuotaUsage());
         }
 
@@ -422,7 +421,7 @@ public final class ResourceResponse<T extends Resource> {
 
     long getMaxQuotaHeader(String headerName) {
         if (this.quotaHeaders.size() == 0 &&
-                !StringUtils.isEmpty(this.getMaxResourceQuota()) &&
+                Strings.isNotEmpty(this.getMaxResourceQuota()) &&
                 !this.getCurrentResourceQuotaUsage().isEmpty()) {
             this.populateQuotaHeader(this.getMaxResourceQuota(), this.getCurrentResourceQuotaUsage());
         }

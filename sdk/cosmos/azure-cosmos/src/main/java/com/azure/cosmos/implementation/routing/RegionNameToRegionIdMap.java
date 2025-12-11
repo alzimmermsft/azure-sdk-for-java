@@ -3,7 +3,7 @@
 
 package com.azure.cosmos.implementation.routing;
 
-import com.azure.cosmos.implementation.apachecommons.lang.StringUtils;
+import com.azure.cosmos.implementation.Strings;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -253,7 +253,7 @@ public class RegionNameToRegionIdMap {
     };
 
     public static String getRegionName(int regionId) {
-        return REGION_ID_TO_NORMALIZED_REGION_NAME_MAPPINGS.getOrDefault(regionId, StringUtils.EMPTY);
+        return REGION_ID_TO_NORMALIZED_REGION_NAME_MAPPINGS.getOrDefault(regionId, Strings.EMPTY);
     }
 
     public static int getRegionId(String regionName) {

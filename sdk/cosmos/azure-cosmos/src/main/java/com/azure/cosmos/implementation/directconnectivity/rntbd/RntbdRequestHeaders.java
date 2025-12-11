@@ -16,6 +16,7 @@ import com.azure.cosmos.implementation.ReadFeedKeyType;
 import com.azure.cosmos.implementation.RemoteStorageType;
 import com.azure.cosmos.implementation.ResourceId;
 import com.azure.cosmos.implementation.RxDocumentServiceRequest;
+import com.azure.cosmos.implementation.Strings;
 import com.azure.cosmos.implementation.apachecommons.lang.EnumUtils;
 import com.azure.cosmos.implementation.apachecommons.lang.StringUtils;
 import com.azure.cosmos.models.IndexingDirective;
@@ -639,49 +640,49 @@ final class RntbdRequestHeaders extends RntbdTokenStream<RntbdRequestHeader> {
 
         final String value = headers.get(HttpHeaders.A_IM);
 
-        if (StringUtils.isNotEmpty(value)) {
+        if (Strings.isNotEmpty(value)) {
             this.getAIM().setValue(value);
         }
     }
 
     private void addAllowScanOnQuery(final Map<String, String> headers) {
         final String value = headers.get(HttpHeaders.ENABLE_SCAN_IN_QUERY);
-        if (StringUtils.isNotEmpty(value)) {
+        if (Strings.isNotEmpty(value)) {
             this.getEnableScanInQuery().setValue(Boolean.parseBoolean(value));
         }
     }
 
     private void addBinaryIdIfPresent(final Map<String, String> headers) {
         final String value = headers.get(BackendHeaders.BINARY_ID);
-        if (StringUtils.isNotEmpty(value)) {
+        if (Strings.isNotEmpty(value)) {
             this.getBinaryId().setValue(Base64.getDecoder().decode(value));
         }
     }
 
     private void addCanCharge(final Map<String, String> headers) {
         final String value = headers.get(HttpHeaders.CAN_CHARGE);
-        if (StringUtils.isNotEmpty(value)) {
+        if (Strings.isNotEmpty(value)) {
             this.getCanCharge().setValue(Boolean.parseBoolean(value));
         }
     }
 
     private void addCanOfferReplaceComplete(final Map<String, String> headers) {
         final String value = headers.get(HttpHeaders.CAN_OFFER_REPLACE_COMPLETE);
-        if (StringUtils.isNotEmpty(value)) {
+        if (Strings.isNotEmpty(value)) {
             this.getCanOfferReplaceComplete().setValue(Boolean.parseBoolean(value));
         }
     }
 
     private void addCanThrottle(final Map<String, String> headers) {
         final String value = headers.get(HttpHeaders.CAN_THROTTLE);
-        if (StringUtils.isNotEmpty(value)) {
+        if (Strings.isNotEmpty(value)) {
             this.getCanThrottle().setValue(Boolean.parseBoolean(value));
         }
     }
 
     private void addCollectionRemoteStorageSecurityIdentifier(final Map<String, String> headers) {
         final String value = headers.get(HttpHeaders.COLLECTION_REMOTE_STORAGE_SECURITY_IDENTIFIER);
-        if (StringUtils.isNotEmpty(value)) {
+        if (Strings.isNotEmpty(value)) {
             this.getCollectionRemoteStorageSecurityIdentifier().setValue(value);
         }
     }
@@ -690,7 +691,7 @@ final class RntbdRequestHeaders extends RntbdTokenStream<RntbdRequestHeader> {
 
         final String value = headers.get(HttpHeaders.CONSISTENCY_LEVEL);
 
-        if (StringUtils.isNotEmpty(value)) {
+        if (Strings.isNotEmpty(value)) {
 
             final ConsistencyLevel level = BridgeInternal.fromServiceSerializedFormat(value);
 
@@ -728,7 +729,7 @@ final class RntbdRequestHeaders extends RntbdTokenStream<RntbdRequestHeader> {
 
         final String value = headers.get(HttpHeaders.CONTENT_SERIALIZATION_FORMAT);
 
-        if (StringUtils.isNotEmpty(value)) {
+        if (Strings.isNotEmpty(value)) {
 
             final ContentSerializationFormat format = EnumUtils.getEnumIgnoreCase(
                 ContentSerializationFormat.class,
@@ -756,18 +757,18 @@ final class RntbdRequestHeaders extends RntbdTokenStream<RntbdRequestHeader> {
 
     private void addContinuationToken(final RxDocumentServiceRequest request, final Map<String, String> headers) {
         String value = request.getContinuation();
-        if (StringUtils.isEmpty(value)) {
+        if (Strings.isEmpty(value)) {
             value = headers.get(HttpHeaders.CONTINUATION);
         }
 
-        if (StringUtils.isNotEmpty(value)) {
+        if (Strings.isNotEmpty(value)) {
             this.getContinuationToken().setValue(value);
         }
     }
 
     private void addCorrelatedActivityId(final Map<String, String> headers) {
         final String value = headers.get(HttpHeaders.CORRELATED_ACTIVITY_ID);
-        if (StringUtils.isNotEmpty(value)) {
+        if (Strings.isNotEmpty(value)) {
             this.getCorrelatedActivityId().setValue(UUID.fromString(value));
         }
     }
@@ -776,7 +777,7 @@ final class RntbdRequestHeaders extends RntbdTokenStream<RntbdRequestHeader> {
     {
         final String value = headers.get(HttpHeaders.PRIORITY_LEVEL);
 
-        if (StringUtils.isNotEmpty(value)) {
+        if (Strings.isNotEmpty(value)) {
             final PriorityLevel priorityLevel = PriorityLevel.fromString(value);
 
             if (priorityLevel == null) {
@@ -799,8 +800,8 @@ final class RntbdRequestHeaders extends RntbdTokenStream<RntbdRequestHeader> {
     {
         final String value = headers.get(HttpHeaders.THROUGHPUT_BUCKET);
 
-        if (StringUtils.isNotEmpty(value)) {
-            final int throughputBucket = Integer.valueOf(value);
+        if (Strings.isNotEmpty(value)) {
+            final int throughputBucket = Integer.parseInt(value);
             this.getThroughputBucket().setValue((byte)throughputBucket);
         }
     }
@@ -809,7 +810,7 @@ final class RntbdRequestHeaders extends RntbdTokenStream<RntbdRequestHeader> {
     {
         final String value = headers.get(HttpHeaders.GLOBAL_DATABASE_ACCOUNT_NAME);
 
-        if (StringUtils.isNotEmpty(value)) {
+        if (Strings.isNotEmpty(value)) {
             this.getGlobalDatabaseAccountName().setValue(value);
         }
     }
@@ -821,46 +822,46 @@ final class RntbdRequestHeaders extends RntbdTokenStream<RntbdRequestHeader> {
 
         String value = headers.get(HttpHeaders.X_DATE);
 
-        if (StringUtils.isEmpty(value)) {
+        if (Strings.isEmpty(value)) {
             value = headers.get(HttpHeaders.HTTP_DATE);
         }
 
-        if (StringUtils.isNotEmpty(value)) {
+        if (Strings.isNotEmpty(value)) {
             this.getDate().setValue(value);
         }
     }
 
     private void addDisableRUPerMinuteUsage(final Map<String, String> headers) {
         final String value = headers.get(HttpHeaders.DISABLE_RU_PER_MINUTE_USAGE);
-        if (StringUtils.isNotEmpty(value)) {
+        if (Strings.isNotEmpty(value)) {
             this.getDisableRUPerMinuteUsage().setValue(Boolean.parseBoolean(value));
         }
     }
 
     private void addEmitVerboseTracesInQuery(final Map<String, String> headers) {
         final String value = headers.get(HttpHeaders.EMIT_VERBOSE_TRACES_IN_QUERY);
-        if (StringUtils.isNotEmpty(value)) {
+        if (Strings.isNotEmpty(value)) {
             this.getEmitVerboseTracesInQuery().setValue(Boolean.parseBoolean(value));
         }
     }
 
     private void addEnableLogging(final Map<String, String> headers) {
         final String value = headers.get(HttpHeaders.ENABLE_LOGGING);
-        if (StringUtils.isNotEmpty(value)) {
+        if (Strings.isNotEmpty(value)) {
             this.getEnableLogging().setValue(Boolean.parseBoolean(value));
         }
     }
 
     private void addEnableLowPrecisionOrderBy(final Map<String, String> headers) {
         final String value = headers.get(HttpHeaders.ENABLE_LOW_PRECISION_ORDER_BY);
-        if (StringUtils.isNotEmpty(value)) {
+        if (Strings.isNotEmpty(value)) {
             this.getEnableLowPrecisionOrderBy().setValue(Boolean.parseBoolean(value));
         }
     }
 
     private void addEntityId(final Map<String, String> headers) {
         final String value = headers.get(BackendHeaders.ENTITY_ID);
-        if (StringUtils.isNotEmpty(value)) {
+        if (Strings.isNotEmpty(value)) {
             this.getEntityId().setValue(value);
         }
     }
@@ -869,7 +870,7 @@ final class RntbdRequestHeaders extends RntbdTokenStream<RntbdRequestHeader> {
 
         final String value = headers.get(HttpHeaders.ENUMERATION_DIRECTION);
 
-        if (StringUtils.isNotEmpty(value)) {
+        if (Strings.isNotEmpty(value)) {
 
             final EnumerationDirection direction = EnumUtils.getEnumIgnoreCase(EnumerationDirection.class, value);
 
@@ -895,7 +896,7 @@ final class RntbdRequestHeaders extends RntbdTokenStream<RntbdRequestHeader> {
 
     private void addExcludeSystemProperties(final Map<String, String> headers) {
         final String value = headers.get(BackendHeaders.EXCLUDE_SYSTEM_PROPERTIES);
-        if (StringUtils.isNotEmpty(value)) {
+        if (Strings.isNotEmpty(value)) {
             this.getExcludeSystemProperties().setValue(Boolean.parseBoolean(value));
         }
     }
@@ -904,7 +905,7 @@ final class RntbdRequestHeaders extends RntbdTokenStream<RntbdRequestHeader> {
 
         final String value = headers.get(BackendHeaders.FANOUT_OPERATION_STATE);
 
-        if (StringUtils.isNotEmpty(value)) {
+        if (Strings.isNotEmpty(value)) {
 
             final FanoutOperationState format = EnumUtils.getEnumIgnoreCase(FanoutOperationState.class, value);
 
@@ -930,7 +931,7 @@ final class RntbdRequestHeaders extends RntbdTokenStream<RntbdRequestHeader> {
 
     private void addIfModifiedSinceHeader(final Map<String, String> headers) {
         final String value = headers.get(HttpHeaders.IF_MODIFIED_SINCE);
-        if (StringUtils.isNotEmpty(value)) {
+        if (Strings.isNotEmpty(value)) {
             this.getIfModifiedSince().setValue(value);
         }
     }
@@ -939,7 +940,7 @@ final class RntbdRequestHeaders extends RntbdTokenStream<RntbdRequestHeader> {
 
         final String value = headers.get(HttpHeaders.INDEXING_DIRECTIVE);
 
-        if (StringUtils.isNotEmpty(value)) {
+        if (Strings.isNotEmpty(value)) {
 
             final IndexingDirective directive = EnumUtils.getEnumIgnoreCase(IndexingDirective.class, value);
 
@@ -968,28 +969,28 @@ final class RntbdRequestHeaders extends RntbdTokenStream<RntbdRequestHeader> {
 
     private void addIsAutoScaleRequest(final Map<String, String> headers) {
         final String value = headers.get(HttpHeaders.IS_AUTO_SCALE_REQUEST);
-        if (StringUtils.isNotEmpty(value)) {
+        if (Strings.isNotEmpty(value)) {
             this.getIsAutoScaleRequest().setValue(Boolean.parseBoolean(value));
         }
     }
 
     private void addIsFanout(final Map<String, String> headers) {
         final String value = headers.get(BackendHeaders.IS_FANOUT_REQUEST);
-        if (StringUtils.isNotEmpty(value)) {
+        if (Strings.isNotEmpty(value)) {
             this.getIsFanout().setValue(Boolean.parseBoolean(value));
         }
     }
 
     private void addIsReadOnlyScript(final Map<String, String> headers) {
         final String value = headers.get(HttpHeaders.IS_READ_ONLY_SCRIPT);
-        if (StringUtils.isNotEmpty(value)) {
+        if (Strings.isNotEmpty(value)) {
             this.getIsReadOnlyScript().setValue(Boolean.parseBoolean(value));
         }
     }
 
     private void addIsUserRequest(final Map<String, String> headers) {
         final String value = headers.get(BackendHeaders.IS_USER_REQUEST);
-        if (StringUtils.isNotEmpty(value)) {
+        if (Strings.isNotEmpty(value)) {
             this.getIsUserRequest().setValue(Boolean.parseBoolean(value));
         }
     }
@@ -1008,7 +1009,7 @@ final class RntbdRequestHeaders extends RntbdTokenStream<RntbdRequestHeader> {
                 break;
         }
 
-        if (StringUtils.isNotEmpty(match)) {
+        if (Strings.isNotEmpty(match)) {
             this.getMatch().setValue(match);
         }
     }
@@ -1017,7 +1018,7 @@ final class RntbdRequestHeaders extends RntbdTokenStream<RntbdRequestHeader> {
 
         final String value = headers.get(HttpHeaders.MIGRATE_COLLECTION_DIRECTIVE);
 
-        if (StringUtils.isNotEmpty(value)) {
+        if (Strings.isNotEmpty(value)) {
 
             final MigrateCollectionDirective directive = EnumUtils.getEnumIgnoreCase(MigrateCollectionDirective.class, value);
 
@@ -1046,7 +1047,7 @@ final class RntbdRequestHeaders extends RntbdTokenStream<RntbdRequestHeader> {
 
         final String value = headers.get(HttpHeaders.PAGE_SIZE);
 
-        if (StringUtils.isNotEmpty(value)) {
+        if (Strings.isNotEmpty(value)) {
             final long aLong = parseLong(HttpHeaders.PAGE_SIZE, value, -1, 0xFFFFFFFFL);
             this.getPageSize().setValue((int)(aLong < 0 ? 0xFFFFFFFFL : aLong));
         }
@@ -1054,63 +1055,63 @@ final class RntbdRequestHeaders extends RntbdTokenStream<RntbdRequestHeader> {
 
     private void addPopulateCollectionThroughputInfo(final Map<String, String> headers) {
         final String value = headers.get(HttpHeaders.POPULATE_COLLECTION_THROUGHPUT_INFO);
-        if (StringUtils.isNotEmpty(value)) {
+        if (Strings.isNotEmpty(value)) {
             this.getPopulateCollectionThroughputInfo().setValue(Boolean.parseBoolean(value));
         }
     }
 
     private void addPopulatePartitionStatistics(final Map<String, String> headers) {
         final String value = headers.get(HttpHeaders.POPULATE_PARTITION_STATISTICS);
-        if (StringUtils.isNotEmpty(value)) {
+        if (Strings.isNotEmpty(value)) {
             this.getPopulatePartitionStatistics().setValue(Boolean.parseBoolean(value));
         }
     }
 
     private void addPopulateQueryMetrics(final Map<String, String> headers) {
         final String value = headers.get(HttpHeaders.POPULATE_QUERY_METRICS);
-        if (StringUtils.isNotEmpty(value)) {
+        if (Strings.isNotEmpty(value)) {
             this.getPopulateQueryMetrics().setValue(Boolean.parseBoolean(value));
         }
     }
 
     private void addPopulateIndexMetrics(final Map<String, String> headers) {
         final String value = headers.get(HttpHeaders.POPULATE_INDEX_METRICS);
-        if (StringUtils.isNotEmpty(value)) {
+        if (Strings.isNotEmpty(value)) {
             this.getPopulateIndexMetrics().setValue(Boolean.parseBoolean(value));
         }
     }
 
     private void addIsClientEncrypted(final Map<String, String> headers) {
         final String value = headers.get(HttpHeaders.IS_CLIENT_ENCRYPTED_HEADER);
-        if (StringUtils.isNotEmpty(value)) {
+        if (Strings.isNotEmpty(value)) {
             this.getIsClientEncrypted().setValue(Boolean.parseBoolean(value));
         }
     }
 
     private void addIntendedCollectionRid(final Map<String, String> headers) {
         final String value = headers.get(HttpHeaders.INTENDED_COLLECTION_RID_HEADER);
-        if (StringUtils.isNotEmpty(value)) {
+        if (Strings.isNotEmpty(value)) {
             this.getIntendedCollectionRid().setValue(value);
         }
     }
 
     private void addPopulateQuotaInfo(final Map<String, String> headers) {
         final String value = headers.get(HttpHeaders.POPULATE_QUOTA_INFO);
-        if (StringUtils.isNotEmpty(value)) {
+        if (Strings.isNotEmpty(value)) {
             this.getPopulateQuotaInfo().setValue(Boolean.parseBoolean(value));
         }
     }
 
     private void addProfileRequest(final Map<String, String> headers) {
         final String value = headers.get(HttpHeaders.PROFILE_REQUEST);
-        if (StringUtils.isNotEmpty(value)) {
+        if (Strings.isNotEmpty(value)) {
             this.getProfileRequest().setValue(Boolean.parseBoolean(value));
         }
     }
 
     private void addQueryForceScan(final Map<String, String> headers) {
         final String value = headers.get(HttpHeaders.FORCE_QUERY_SCAN);
-        if (StringUtils.isNotEmpty(value)) {
+        if (Strings.isNotEmpty(value)) {
             this.getForceQueryScan().setValue(Boolean.parseBoolean(value));
         }
     }
@@ -1119,7 +1120,7 @@ final class RntbdRequestHeaders extends RntbdTokenStream<RntbdRequestHeader> {
 
         final String value = headers.get(BackendHeaders.REMOTE_STORAGE_TYPE);
 
-        if (StringUtils.isNotEmpty(value)) {
+        if (Strings.isNotEmpty(value)) {
 
             final RemoteStorageType type = EnumUtils.getEnumIgnoreCase(RemoteStorageType.class, value);
 
@@ -1147,7 +1148,7 @@ final class RntbdRequestHeaders extends RntbdTokenStream<RntbdRequestHeader> {
 
         final String value = request.getResourceId();
 
-        if (StringUtils.isNotEmpty(value)) {
+        if (Strings.isNotEmpty(value)) {
             // Name-based can also have ResourceId because gateway might have generated it
             RntbdToken requestIdToken = this.getResourceId();
             if (requestIdToken != null) {
@@ -1245,7 +1246,7 @@ final class RntbdRequestHeaders extends RntbdTokenStream<RntbdRequestHeader> {
 
         final String value = headers.get(HttpHeaders.RESPONSE_CONTINUATION_TOKEN_LIMIT_IN_KB);
 
-        if (StringUtils.isNotEmpty(value)) {
+        if (Strings.isNotEmpty(value)) {
             final long aLong = parseLong(HttpHeaders.RESPONSE_CONTINUATION_TOKEN_LIMIT_IN_KB, value, 0, 0xFFFFFFFFL);
             this.getResponseContinuationTokenLimitInKb().setValue((int)(aLong < 0 ? 0xFFFFFFFFL : aLong));
         }
@@ -1253,7 +1254,7 @@ final class RntbdRequestHeaders extends RntbdTokenStream<RntbdRequestHeader> {
 
     private void addShareThroughput(final Map<String, String> headers) {
         final String value = headers.get(BackendHeaders.SHARE_THROUGHPUT);
-        if (StringUtils.isNotEmpty(value)) {
+        if (Strings.isNotEmpty(value)) {
             this.getShareThroughput().setValue(Boolean.parseBoolean(value));
         }
     }
@@ -1262,7 +1263,7 @@ final class RntbdRequestHeaders extends RntbdTokenStream<RntbdRequestHeader> {
 
         String value = headers.get(HttpHeaders.READ_FEED_KEY_TYPE);
 
-        if (StringUtils.isNotEmpty(value)) {
+        if (Strings.isNotEmpty(value)) {
 
             final ReadFeedKeyType type = EnumUtils.getEnumIgnoreCase(ReadFeedKeyType.class, value);
 
@@ -1292,60 +1293,60 @@ final class RntbdRequestHeaders extends RntbdTokenStream<RntbdRequestHeader> {
 
         value = headers.get(HttpHeaders.START_ID);
 
-        if (StringUtils.isNotEmpty(value)) {
+        if (Strings.isNotEmpty(value)) {
             this.getStartId().setValue(decoder.decode(value));
         }
 
         value = headers.get(HttpHeaders.END_ID);
 
-        if (StringUtils.isNotEmpty(value)) {
+        if (Strings.isNotEmpty(value)) {
             this.getEndId().setValue(decoder.decode(value));
         }
 
         value = headers.get(HttpHeaders.START_EPK);
 
-        if (StringUtils.isNotEmpty(value)) {
+        if (Strings.isNotEmpty(value)) {
             this.getStartEpk().setValue(value.getBytes(StandardCharsets.UTF_8));
         }
 
         value = headers.get(HttpHeaders.END_EPK);
 
-        if (StringUtils.isNotEmpty(value)) {
+        if (Strings.isNotEmpty(value)) {
             this.getEndEpk().setValue(value.getBytes(StandardCharsets.UTF_8));
         }
     }
 
     private void addSupportSpatialLegacyCoordinates(final Map<String, String> headers) {
         final String value = headers.get(HttpHeaders.SUPPORT_SPATIAL_LEGACY_COORDINATES);
-        if (StringUtils.isNotEmpty(value)) {
+        if (Strings.isNotEmpty(value)) {
             this.getSupportSpatialLegacyCoordinates().setValue(Boolean.parseBoolean(value));
         }
     }
 
     private void addUsePolygonsSmallerThanAHemisphere(final Map<String, String> headers) {
         final String value = headers.get(HttpHeaders.USE_POLYGONS_SMALLER_THAN_AHEMISPHERE);
-        if (StringUtils.isNotEmpty(value)) {
+        if (Strings.isNotEmpty(value)) {
             this.getUsePolygonsSmallerThanAHemisphere().setValue(Boolean.parseBoolean(value));
         }
     }
 
     private void addReturnPreference(final Map<String, String> headers) {
         final String value = headers.get(HttpHeaders.PREFER);
-        if (StringUtils.isNotEmpty(value) && value.contains(HeaderValues.PREFER_RETURN_MINIMAL)) {
+        if (Strings.isNotEmpty(value) && value.contains(HeaderValues.PREFER_RETURN_MINIMAL)) {
             this.getReturnPreference().setValue(true);
         }
     }
 
     private void addSDKSupportedCapabilities(final Map<String, String> headers) {
         final String value = headers.get(HttpHeaders.SDK_SUPPORTED_CAPABILITIES);
-        if (StringUtils.isNotEmpty(value)) {
+        if (Strings.isNotEmpty(value)) {
             this.getSDKSupportedCapabilities().setValue(Long.valueOf(value));
         }
     }
 
     private void addChangeFeedWireFormatVersion(final Map<String, String> headers) {
         final String value = headers.get(HttpHeaders.CHANGE_FEED_WIRE_FORMAT_VERSION);
-        if (StringUtils.isNotEmpty(value)) {
+        if (Strings.isNotEmpty(value)) {
             this.getChangeFeedWireFormatVersion().setValue(value);
         }
     }
@@ -1354,7 +1355,7 @@ final class RntbdRequestHeaders extends RntbdTokenStream<RntbdRequestHeader> {
 
         final String value = headers.get(name);
 
-        if (StringUtils.isNotEmpty(value)) {
+        if (Strings.isNotEmpty(value)) {
 
             final RntbdToken token = supplier.get();
 

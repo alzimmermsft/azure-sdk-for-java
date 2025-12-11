@@ -26,6 +26,7 @@ import com.azure.cosmos.implementation.MetadataDiagnosticsContext.MetadataType;
 import com.azure.cosmos.implementation.MetadataRequestRetryPolicy;
 import com.azure.cosmos.implementation.OpenConnectionResponse;
 import com.azure.cosmos.implementation.OperationType;
+import com.azure.cosmos.implementation.Pair;
 import com.azure.cosmos.implementation.PartitionKeyRange;
 import com.azure.cosmos.implementation.PartitionKeyRangeGoneException;
 import com.azure.cosmos.implementation.Paths;
@@ -35,12 +36,10 @@ import com.azure.cosmos.implementation.RequestVerb;
 import com.azure.cosmos.implementation.ResourceType;
 import com.azure.cosmos.implementation.RxDocumentServiceRequest;
 import com.azure.cosmos.implementation.RxDocumentServiceResponse;
+import com.azure.cosmos.implementation.Strings;
 import com.azure.cosmos.implementation.UnauthorizedException;
 import com.azure.cosmos.implementation.UserAgentContainer;
 import com.azure.cosmos.implementation.Utils;
-import com.azure.cosmos.implementation.apachecommons.lang.StringUtils;
-import com.azure.cosmos.implementation.apachecommons.lang.tuple.ImmutablePair;
-import com.azure.cosmos.implementation.apachecommons.lang.tuple.Pair;
 import com.azure.cosmos.implementation.caches.AsyncCacheNonBlocking;
 import com.azure.cosmos.implementation.directconnectivity.rntbd.OpenConnectionTask;
 import com.azure.cosmos.implementation.directconnectivity.rntbd.ProactiveOpenConnectionsProcessor;
@@ -49,7 +48,6 @@ import com.azure.cosmos.implementation.http.HttpClient;
 import com.azure.cosmos.implementation.http.HttpHeaders;
 import com.azure.cosmos.implementation.http.HttpRequest;
 import com.azure.cosmos.implementation.http.HttpResponse;
-import com.azure.cosmos.implementation.http.HttpTimeoutPolicy;
 import com.azure.cosmos.implementation.routing.PartitionKeyRangeIdentity;
 import io.netty.handler.codec.http.HttpMethod;
 import org.slf4j.Logger;
@@ -69,6 +67,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
@@ -214,7 +213,7 @@ public class GatewayAddressCache implements IAddressCache {
         logger.debug("PartitionKeyRangeIdentity {}, forceRefreshPartitionAddresses {}",
             partitionKeyRangeIdentity,
             forceRefreshPartitionAddresses);
-        if (StringUtils.equals(partitionKeyRangeIdentity.getPartitionKeyRangeId(),
+        if (Objects.equals(partitionKeyRangeIdentity.getPartitionKeyRangeId(),
             PartitionKeyRange.MASTER_PARTITION_KEY_RANGE_ID)) {
 
             // if that's master partition return master partition address!
@@ -699,7 +698,7 @@ public class GatewayAddressCache implements IAddressCache {
         Mono<List<Pair<PartitionKeyRangeIdentity, AddressInformation[]>>> result =
                 addressInfos
                     .map(addressInfo -> addressInfo.stream()
-                    .filter(a -> StringUtils.equals(a.getLeft().getPartitionKeyRangeId(), partitionKeyRangeId))
+                    .filter(a -> Objects.equals(a.getLeft().getPartitionKeyRangeId(), partitionKeyRangeId))
                     .collect(Collectors.toList()));
 
         return result
@@ -947,7 +946,7 @@ public class GatewayAddressCache implements IAddressCache {
 
     private void validateReplicaAddresses(String collectionRid, AddressInformation[] addresses) {
         checkNotNull(addresses, "Argument 'addresses' can not be null");
-        checkArgument(StringUtils.isNotEmpty(collectionRid), "Argument 'collectionRid' can not be null");
+        checkArgument(Strings.isNotEmpty(collectionRid), "Argument 'collectionRid' can not be null");
 
         // By theory, when we reach here, the status of the address should be in one of the three status: Unknown, Connected, UnhealthyPending
         // using open connection to validate addresses in UnhealthyPending status
@@ -1042,7 +1041,7 @@ public class GatewayAddressCache implements IAddressCache {
         return new AddressInformation(true, address.isPrimary(), address.getPhyicalUri(), address.getProtocolScheme());
     }
 
-    public Flux<ImmutablePair<ImmutablePair<String, DocumentCollection> , AddressInformation>> resolveAddressesAndInitCaches(
+    public Flux<Pair<Pair<String, DocumentCollection> , AddressInformation>> resolveAddressesAndInitCaches(
             String containerLink,
             DocumentCollection collection,
             List<PartitionKeyRangeIdentity> partitionKeyRangeIdentities) {
@@ -1115,7 +1114,7 @@ public class GatewayAddressCache implements IAddressCache {
 
                                 return Flux.fromArray(pkrIdToAddressInfos.getRight());
                             }, Configs.getCPUCnt() * 10, Configs.getCPUCnt() * 3)
-                            .flatMap(addressInformation -> Mono.just(new ImmutablePair<>(new ImmutablePair<>(containerLink, collection), addressInformation)));
+                            .flatMap(addressInformation -> Mono.just(Pair.of(Pair.of(containerLink, collection), addressInformation)));
                 });
     }
 

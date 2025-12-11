@@ -166,6 +166,6 @@ public class QueryMetricsUtils {
     }
 
     static void appendNewlineToStringBuilder(StringBuilder stringBuilder) {
-        QueryMetricsUtils.appendHeaderToStringBuilder(stringBuilder, StringUtils.EMPTY, 0);
+        QueryMetricsUtils.appendHeaderToStringBuilder(stringBuilder, Strings.EMPTY, 0);
     }
 }

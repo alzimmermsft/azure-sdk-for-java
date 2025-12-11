@@ -4,7 +4,6 @@
 package com.azure.cosmos.implementation;
 
 import com.azure.cosmos.implementation.apachecommons.lang.StringUtils;
-import com.azure.cosmos.implementation.apachecommons.lang.tuple.Pair;
 import com.azure.cosmos.implementation.apachecommons.text.StringEscapeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -131,7 +130,7 @@ public class PathsHelper {
         }
 
         if(ownerOrResourceId == null) {
-            ownerOrResourceId = StringUtils.EMPTY;
+            ownerOrResourceId = Strings.EMPTY;
         }
 
         if (isFeed && resourceType == ResourceType.Database) {
@@ -308,7 +307,7 @@ public class PathsHelper {
         int uriSegmentsCount = segments.length;
         String segmentOne = StringUtils.strip(segments[uriSegmentsCount - 1], "/");
         String segmentTwo = (uriSegmentsCount >= 2) ? StringUtils.strip(segments[uriSegmentsCount - 2], "/")
-                : StringUtils.EMPTY;
+                : Strings.EMPTY;
 
         // handle name based operation
         if (uriSegmentsCount >= 2) {
@@ -329,7 +328,7 @@ public class PathsHelper {
         // Feed paths have odd number of segments
         if ((uriSegmentsCount % 2 != 0) && isResourceType(segmentOne)) {
             return new PathInfo(true, segmentOne,
-                    segmentOne.compareToIgnoreCase(Paths.DATABASES_PATH_SEGMENT) != 0 ? segmentTwo : StringUtils.EMPTY,
+                    segmentOne.compareToIgnoreCase(Paths.DATABASES_PATH_SEGMENT) != 0 ? segmentTwo : Strings.EMPTY,
                     false);
         } else if (isResourceType(segmentTwo)) {
             return new PathInfo(false, segmentTwo, segmentOne, false);
@@ -347,11 +346,11 @@ public class PathsHelper {
      * @return
      */
     public static boolean tryParsePathSegments(String resourceUrl, PathInfo pathInfo, String clientVersion) {
-        pathInfo.resourcePath = StringUtils.EMPTY;
-        pathInfo.resourceIdOrFullName = StringUtils.EMPTY;
+        pathInfo.resourcePath = Strings.EMPTY;
+        pathInfo.resourceIdOrFullName = Strings.EMPTY;
         pathInfo.isFeed = false;
         pathInfo.isNameBased = false;
-        if (StringUtils.isEmpty(resourceUrl)) {
+        if (Strings.isEmpty(resourceUrl)) {
             return false;
         }
         String trimmedStr = StringUtils.strip(resourceUrl, Constants.Properties.PATH_SEPARATOR);
@@ -361,7 +360,7 @@ public class PathsHelper {
         }
         int uriSegmentsCount = segments.length;
         String segmentOne = segments[uriSegmentsCount - 1];
-        String segmentTwo = (uriSegmentsCount >= 2) ? segments[uriSegmentsCount - 2] : StringUtils.EMPTY;
+        String segmentTwo = (uriSegmentsCount >= 2) ? segments[uriSegmentsCount - 2] : Strings.EMPTY;
 
         // handle name based operation
         if (uriSegmentsCount >= 2) {
@@ -398,7 +397,7 @@ public class PathsHelper {
                 // we still need to support it.
                 // For new clients, parse to return the attachment id. For old clients do not
                 // modify.
-                if (!StringUtils.isEmpty(clientVersion)
+                if (Strings.isNotEmpty(clientVersion)
                         && pathInfo.resourcePath.equalsIgnoreCase(Paths.MEDIA_PATH_SEGMENT)) {
                     // String attachmentId = null;
                     // byte storeIndex = 0;
@@ -473,7 +472,7 @@ public class PathsHelper {
                                     segments[segments.length - 1],
                                     unescapeJavaAndTrim(
                                         resourceUrl.substring(0,
-                                                StringUtils.removeEnd(resourceUrl, Paths.ROOT).lastIndexOf(Paths.ROOT))),
+                                                Strings.removeEnd(resourceUrl, Paths.ROOT).lastIndexOf(Paths.ROOT))),
                          true);
             }
         }
@@ -517,7 +516,7 @@ public class PathsHelper {
     }
 
     private static boolean isResourceType(String resourcePathSegment) {
-        if (StringUtils.isEmpty(resourcePathSegment)) {
+        if (Strings.isEmpty(resourcePathSegment)) {
             return false;
         }
 
@@ -638,7 +637,7 @@ public class PathsHelper {
     }
 
     public static ResourceType getResourcePathSegment(String resourcePathSegment) throws BadRequestException {
-        if (StringUtils.isEmpty(resourcePathSegment)) {
+        if (Strings.isEmpty(resourcePathSegment)) {
             String message = String.format(RMResources.StringArgumentNullOrEmpty, "resourcePathSegment");
             throw new BadRequestException(message);
         }

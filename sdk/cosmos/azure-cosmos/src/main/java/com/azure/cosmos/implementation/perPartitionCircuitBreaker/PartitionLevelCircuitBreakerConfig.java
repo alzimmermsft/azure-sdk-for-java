@@ -3,8 +3,8 @@
 
 package com.azure.cosmos.implementation.perPartitionCircuitBreaker;
 
+import com.azure.cosmos.implementation.Strings;
 import com.azure.cosmos.implementation.Utils;
-import com.azure.cosmos.implementation.apachecommons.lang.StringUtils;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.annotation.Nulls;
@@ -59,7 +59,7 @@ public class PartitionLevelCircuitBreakerConfig {
 
     public String getConfigAsString() {
 
-        if (StringUtils.isEmpty(this.cachedConfigAsString)) {
+        if (Strings.isEmpty(this.cachedConfigAsString)) {
             this.cachedConfigAsString = "(" + "cb: " + this.isPartitionLevelCircuitBreakerEnabled + ", " +
                 "type: " + this.circuitBreakerType + ", " +
                 "rexcntt: " + this.consecutiveExceptionCountToleratedForReads + ", " +

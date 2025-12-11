@@ -3,9 +3,9 @@
 package com.azure.cosmos.implementation;
 
 import com.azure.cosmos.BridgeInternal;
-import com.azure.cosmos.DirectConnectionConfig;
 import com.azure.cosmos.ConsistencyLevel;
-import com.azure.cosmos.implementation.apachecommons.lang.StringUtils;
+import com.azure.cosmos.DirectConnectionConfig;
+import com.azure.cosmos.implementation.AsyncDocumentClient.Builder;
 import com.azure.cosmos.implementation.clienttelemetry.ClientTelemetry;
 import com.azure.cosmos.implementation.directconnectivity.ConsistencyWriter;
 import com.azure.cosmos.implementation.directconnectivity.Protocol;
@@ -16,7 +16,6 @@ import com.azure.cosmos.implementation.directconnectivity.Uri;
 import com.azure.cosmos.implementation.http.HttpClient;
 import com.azure.cosmos.implementation.http.HttpHeaders;
 import com.azure.cosmos.implementation.http.HttpRequest;
-import com.azure.cosmos.implementation.AsyncDocumentClient.Builder;
 import com.azure.cosmos.implementation.http.HttpResponse;
 import com.azure.cosmos.models.CosmosClientTelemetryConfig;
 import org.mockito.Mockito;
@@ -182,7 +181,7 @@ public class GoneAndRetryPolicyWithSpyClientTest extends TestSuiteBase {
             final RxDocumentServiceRequest rxServiceRequest =
                 invocation.getArgument(1, RxDocumentServiceRequest.class);
 
-            if (StringUtils.isEmpty(rxServiceRequest.requestContext.resourcePhysicalAddress)) {
+            if (Strings.isEmpty(rxServiceRequest.requestContext.resourcePhysicalAddress)) {
                 rxServiceRequest.requestContext.resourcePhysicalAddress = physicalAddress.toString();
             }
 
@@ -319,7 +318,7 @@ public class GoneAndRetryPolicyWithSpyClientTest extends TestSuiteBase {
             final RxDocumentServiceRequest rxServiceRequest =
                 invocation.getArgument(1, RxDocumentServiceRequest.class);
 
-            if (StringUtils.isEmpty(rxServiceRequest.requestContext.resourcePhysicalAddress)) {
+            if (Strings.isEmpty(rxServiceRequest.requestContext.resourcePhysicalAddress)) {
                 rxServiceRequest.requestContext.resourcePhysicalAddress = physicalAddress.toString();
             }
 

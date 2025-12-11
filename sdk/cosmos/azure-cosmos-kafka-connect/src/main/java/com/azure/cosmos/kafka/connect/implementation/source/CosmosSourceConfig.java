@@ -156,7 +156,7 @@ public class CosmosSourceConfig extends KafkaCosmosConfig {
             .define(
                 CONTAINERS_INCLUDED_LIST_CONFIG,
                 ConfigDef.Type.STRING,
-                Strings.Emtpy,
+                Strings.EMPTY,
                 ConfigDef.Importance.MEDIUM,
                 CONTAINERS_INCLUDED_LIST_CONFIG_DOC,
                 containersGroupName,
@@ -167,7 +167,7 @@ public class CosmosSourceConfig extends KafkaCosmosConfig {
             .define(
                 CONTAINERS_TOPIC_MAP_CONFIG,
                 ConfigDef.Type.STRING,
-                Strings.Emtpy,
+                Strings.EMPTY,
                 new ContainersTopicMapValidator(),
                 ConfigDef.Importance.MEDIUM,
                 CONTAINERS_TOPIC_MAP_CONFIG_DOC,

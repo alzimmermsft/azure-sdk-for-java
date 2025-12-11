@@ -8,7 +8,6 @@ import com.azure.cosmos.CosmosAsyncClient;
 import com.azure.cosmos.CosmosAsyncContainer;
 import com.azure.cosmos.CosmosClientBuilder;
 import com.azure.cosmos.CosmosException;
-import com.azure.cosmos.implementation.apachecommons.lang.StringUtils;
 import com.azure.cosmos.implementation.directconnectivity.ReflectionUtils;
 import com.azure.cosmos.models.CosmosItemRequestOptions;
 import com.azure.cosmos.models.CosmosQueryRequestOptions;
@@ -188,7 +187,7 @@ public class SessionNotAvailableRetryTest extends TestSuiteBase {
 
                 // validate the contacted regions follow the preferredRegion sequence
                 List<String> contactedRegions = new ArrayList<>();
-                String previousContactedRegion = StringUtils.EMPTY;
+                String previousContactedRegion = Strings.EMPTY;
                 ClientSideRequestStatistics clientSideRequestStatistics = BridgeInternal.getClientSideRequestStatics(ex.getDiagnostics());
                 for (ClientSideRequestStatistics.StoreResponseStatistics storeResponseStatistics : clientSideRequestStatistics.getResponseStatisticsList()) {
                     if (!storeResponseStatistics.getRegionName().equalsIgnoreCase(previousContactedRegion)) {
@@ -294,7 +293,7 @@ public class SessionNotAvailableRetryTest extends TestSuiteBase {
 
                     // validate the contacted region sequence
                     List<String> contactedRegions = new ArrayList<>();
-                    String previousContactedRegion = StringUtils.EMPTY;
+                    String previousContactedRegion = Strings.EMPTY;
                     ClientSideRequestStatistics clientSideRequestStatistics = BridgeInternal.getClientSideRequestStatics(ex.getDiagnostics());
                     for (ClientSideRequestStatistics.StoreResponseStatistics storeResponseStatistics : clientSideRequestStatistics.getResponseStatisticsList()) {
                         if (!storeResponseStatistics.getRegionName().equalsIgnoreCase(previousContactedRegion)) {

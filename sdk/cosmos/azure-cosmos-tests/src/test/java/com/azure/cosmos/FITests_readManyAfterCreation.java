@@ -2,7 +2,7 @@
 // Licensed under the MIT License.
 package com.azure.cosmos;
 
-import com.azure.cosmos.implementation.apachecommons.lang.tuple.Pair;
+import com.azure.cosmos.implementation.Pair;
 import com.azure.cosmos.test.faultinjection.FaultInjectionOperationType;
 import org.apache.commons.lang3.ArrayUtils;
 import org.testng.annotations.Test;

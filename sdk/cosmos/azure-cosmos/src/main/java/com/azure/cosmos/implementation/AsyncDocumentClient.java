@@ -11,16 +11,15 @@ import com.azure.cosmos.CosmosItemSerializer;
 import com.azure.cosmos.CosmosOperationPolicy;
 import com.azure.cosmos.ReadConsistencyStrategy;
 import com.azure.cosmos.SessionRetryOptions;
-import com.azure.cosmos.implementation.apachecommons.lang.StringUtils;
 import com.azure.cosmos.implementation.batch.ServerBatchRequest;
 import com.azure.cosmos.implementation.caches.RxClientCollectionCache;
 import com.azure.cosmos.implementation.caches.RxPartitionKeyRangeCache;
-import com.azure.cosmos.implementation.interceptor.ITransportClientInterceptor;
-import com.azure.cosmos.implementation.perPartitionAutomaticFailover.GlobalPartitionEndpointManagerForPerPartitionAutomaticFailover;
-import com.azure.cosmos.implementation.perPartitionCircuitBreaker.GlobalPartitionEndpointManagerForPerPartitionCircuitBreaker;
 import com.azure.cosmos.implementation.clienttelemetry.ClientTelemetry;
 import com.azure.cosmos.implementation.directconnectivity.AddressSelector;
 import com.azure.cosmos.implementation.faultinjection.IFaultInjectorProvider;
+import com.azure.cosmos.implementation.interceptor.ITransportClientInterceptor;
+import com.azure.cosmos.implementation.perPartitionAutomaticFailover.GlobalPartitionEndpointManagerForPerPartitionAutomaticFailover;
+import com.azure.cosmos.implementation.perPartitionCircuitBreaker.GlobalPartitionEndpointManagerForPerPartitionCircuitBreaker;
 import com.azure.cosmos.implementation.query.PartitionedQueryExecutionInfo;
 import com.azure.cosmos.implementation.throughputControl.sdk.config.SDKThroughputControlGroupInternal;
 import com.azure.cosmos.implementation.throughputControl.server.config.ServerThroughputControlGroup;
@@ -217,7 +216,7 @@ public interface AsyncDocumentClient {
         }
 
         public Builder withCredential(AzureKeyCredential credential) {
-            if (credential != null && StringUtils.isEmpty(credential.getKey())) {
+            if (credential != null && Strings.isEmpty(credential.getKey())) {
                 throw new IllegalArgumentException("Cannot buildAsyncClient client with empty key credential");
             }
             this.credential = credential;
@@ -296,13 +295,13 @@ public interface AsyncDocumentClient {
 
         public AsyncDocumentClient build() {
 
-            ifThrowIllegalArgException(this.serviceEndpoint == null || StringUtils.isEmpty(this.serviceEndpoint.toString()), "cannot buildAsyncClient client without service endpoint");
+            ifThrowIllegalArgException(this.serviceEndpoint == null || Strings.isEmpty(this.serviceEndpoint.toString()), "cannot buildAsyncClient client without service endpoint");
             ifThrowIllegalArgException(
                     this.masterKeyOrResourceToken == null && (permissionFeed == null || permissionFeed.isEmpty())
                         && this.credential == null && this.tokenCredential == null && this.cosmosAuthorizationTokenResolver == null,
                     "cannot buildAsyncClient client without any one of masterKey, " +
                         "resource token, permissionFeed and azure key credential");
-            ifThrowIllegalArgException(credential != null && StringUtils.isEmpty(credential.getKey()),
+            ifThrowIllegalArgException(credential != null && Strings.isEmpty(credential.getKey()),
                 "cannot buildAsyncClient client without key credential");
 
             RxDocumentClientImpl client = new RxDocumentClientImpl(serviceEndpoint,

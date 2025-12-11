@@ -5,7 +5,7 @@ package com.azure.cosmos.models;
 
 import com.azure.cosmos.implementation.Constants;
 import com.azure.cosmos.implementation.JsonSerializable;
-import com.azure.cosmos.implementation.apachecommons.lang.StringUtils;
+import com.azure.cosmos.implementation.Strings;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.ArrayList;
@@ -135,7 +135,7 @@ public final class ClientEncryptionPolicy {
             throw new IllegalArgumentException("clientEncryptionIncludedPath is null");
         }
 
-        if (StringUtils.isEmpty(clientEncryptionIncludedPath.getPath())) {
+        if (Strings.isEmpty(clientEncryptionIncludedPath.getPath())) {
             throw new IllegalArgumentException("path in clientEncryptionIncludedPath is empty");
         }
 
@@ -154,11 +154,11 @@ public final class ClientEncryptionPolicy {
             }
         }
 
-        if (StringUtils.isEmpty(clientEncryptionIncludedPath.getClientEncryptionKeyId())) {
+        if (Strings.isEmpty(clientEncryptionIncludedPath.getClientEncryptionKeyId())) {
             throw new IllegalArgumentException("clientEncryptionKeyId in clientEncryptionIncludedPath is empty");
         }
 
-        if (StringUtils.isEmpty(clientEncryptionIncludedPath.getEncryptionType())) {
+        if (Strings.isEmpty(clientEncryptionIncludedPath.getEncryptionType())) {
             throw new IllegalArgumentException("encryptionType in clientEncryptionIncludedPath is empty");
         }
 
@@ -167,7 +167,7 @@ public final class ClientEncryptionPolicy {
             throw new IllegalArgumentException("EncryptionType should be either 'Deterministic' or 'Randomized'.");
         }
 
-        if (StringUtils.isEmpty(clientEncryptionIncludedPath.getEncryptionAlgorithm())) {
+        if (Strings.isEmpty(clientEncryptionIncludedPath.getEncryptionAlgorithm())) {
             throw new IllegalArgumentException("encryptionAlgorithm in clientEncryptionIncludedPath is empty");
         }
 

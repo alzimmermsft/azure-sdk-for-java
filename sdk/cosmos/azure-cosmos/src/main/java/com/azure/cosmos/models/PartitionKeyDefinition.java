@@ -96,7 +96,7 @@ public final class PartitionKeyDefinition {
                         Integer.parseInt(versionStr))));
                 } else {
                     this.versionOptional = !Strings.isNullOrEmpty(versionStr)
-                               ? Optional.of(PartitionKeyDefinitionVersion.valueOf(StringUtils.upperCase(versionStr)))
+                               ? Optional.of(PartitionKeyDefinitionVersion.valueOf(Strings.upperCase(versionStr)))
                                : Optional.empty();
                 }
             }

@@ -2,10 +2,9 @@
 // Licensed under the MIT License.
 package com.azure.cosmos.implementation;
 
-import com.azure.cosmos.implementation.apachecommons.lang.StringUtils;
 import com.azure.cosmos.implementation.clienttelemetry.AttributeNamingScheme;
-import com.azure.cosmos.implementation.perPartitionCircuitBreaker.PartitionLevelCircuitBreakerConfig;
 import com.azure.cosmos.implementation.directconnectivity.Protocol;
+import com.azure.cosmos.implementation.perPartitionCircuitBreaker.PartitionLevelCircuitBreakerConfig;
 import io.netty.handler.ssl.ApplicationProtocolConfig;
 import io.netty.handler.ssl.ApplicationProtocolNames;
 import io.netty.handler.ssl.SslContext;
@@ -19,8 +18,6 @@ import java.net.URI;
 import java.time.Duration;
 import java.util.EnumSet;
 import java.util.Locale;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicReference;
 
 import static com.azure.cosmos.implementation.guava25.base.MoreObjects.firstNonNull;
 import static com.azure.cosmos.implementation.guava25.base.Strings.emptyToNull;
@@ -156,7 +153,7 @@ public class Configs {
 
     // RegionScopedSessionContainer related constants
     public static final String SESSION_CAPTURING_TYPE = "COSMOS.SESSION_CAPTURING_TYPE";
-    public static final String DEFAULT_SESSION_CAPTURING_TYPE = StringUtils.EMPTY;
+    public static final String DEFAULT_SESSION_CAPTURING_TYPE = Strings.EMPTY;
     public static final String PK_BASED_BLOOM_FILTER_EXPECTED_INSERTION_COUNT_NAME = "COSMOS.PK_BASED_BLOOM_FILTER_EXPECTED_INSERTION_COUNT";
     private static final long DEFAULT_PK_BASED_BLOOM_FILTER_EXPECTED_INSERTION_COUNT = 5_000_000;
     public static final String PK_BASED_BLOOM_FILTER_EXPECTED_FFP_RATE_NAME = "COSMOS.PK_BASED_BLOOM_FILTER_EXPECTED_FFP_RATE";
@@ -246,11 +243,11 @@ public class Configs {
 
     // Config of CodingErrorAction on charset decoder for malformed input
     public static final String CHARSET_DECODER_ERROR_ACTION_ON_MALFORMED_INPUT = "COSMOS.CHARSET_DECODER_ERROR_ACTION_ON_MALFORMED_INPUT";
-    public static final String DEFAULT_CHARSET_DECODER_ERROR_ACTION_ON_MALFORMED_INPUT = StringUtils.EMPTY;
+    public static final String DEFAULT_CHARSET_DECODER_ERROR_ACTION_ON_MALFORMED_INPUT = Strings.EMPTY;
 
     // Config of CodingErrorAction on charset decoder for unmapped character
     public static final String CHARSET_DECODER_ERROR_ACTION_ON_UNMAPPED_CHARACTER = "COSMOS.CHARSET_DECODER_ERROR_ACTION_ON_UNMAPPED_CHARACTER";
-    public static final String DEFAULT_CHARSET_DECODER_ERROR_ACTION_ON_UNMAPPED_CHARACTER = StringUtils.EMPTY;
+    public static final String DEFAULT_CHARSET_DECODER_ERROR_ACTION_ON_UNMAPPED_CHARACTER = Strings.EMPTY;
 
     // Metrics
     // Samples:
@@ -349,7 +346,7 @@ public class Configs {
 
     // Config to indicate emulator host name
     // Please note that this config should only during development or test, please do not use in prod env
-    private static final String DEFAULT_EMULATOR_HOST = StringUtils.EMPTY;
+    private static final String DEFAULT_EMULATOR_HOST = Strings.EMPTY;
     private static final String EMULATOR_HOST = "COSMOS.EMULATOR_HOST";
     private static final String EMULATOR_HOST_VARIABLE = "COSMOS_EMULATOR_HOST";
 
@@ -800,7 +797,7 @@ public class Configs {
     }
 
     private static int getIntValue(String val, int defaultValue) {
-        if (StringUtils.isEmpty(val)) {
+        if (Strings.isEmpty(val)) {
             return defaultValue;
         } else {
             return Integer.parseInt(val);
@@ -808,7 +805,7 @@ public class Configs {
     }
 
     private static boolean getBooleanValue(String val, boolean defaultValue) {
-        if (StringUtils.isEmpty(val)) {
+        if (Strings.isEmpty(val)) {
             return defaultValue;
         } else {
             return Boolean.parseBoolean(val);
@@ -1044,13 +1041,13 @@ public class Configs {
 
         String valueFromSystemProperty = System.getProperty(STALE_COLLECTION_CACHE_REFRESH_RETRY_COUNT);
 
-        if (StringUtils.isNotEmpty(valueFromSystemProperty)) {
+        if (Strings.isNotEmpty(valueFromSystemProperty)) {
             return Math.max(Integer.parseInt(valueFromSystemProperty), DEFAULT_STALE_COLLECTION_CACHE_REFRESH_RETRY_COUNT);
         }
 
         String valueFromEnvVariable = System.getenv(STALE_COLLECTION_CACHE_REFRESH_RETRY_COUNT);
 
-        if (StringUtils.isNotEmpty(valueFromEnvVariable)) {
+        if (Strings.isNotEmpty(valueFromEnvVariable)) {
             return Math.max(Integer.parseInt(valueFromEnvVariable), DEFAULT_STALE_COLLECTION_CACHE_REFRESH_RETRY_COUNT);
         }
 
@@ -1061,13 +1058,13 @@ public class Configs {
 
         String valueFromSystemProperty = System.getProperty(STALE_COLLECTION_CACHE_REFRESH_RETRY_INTERVAL_IN_SECONDS);
 
-        if (StringUtils.isNotEmpty(valueFromSystemProperty)) {
+        if (Strings.isNotEmpty(valueFromSystemProperty)) {
             return Math.max(Integer.parseInt(valueFromSystemProperty), DEFAULT_STALE_PARTITION_UNAVAILABILITY_REFRESH_INTERVAL_IN_SECONDS);
         }
 
         String valueFromEnvVariable = System.getenv(STALE_COLLECTION_CACHE_REFRESH_RETRY_INTERVAL_IN_SECONDS);
 
-        if (StringUtils.isNotEmpty(valueFromEnvVariable)) {
+        if (Strings.isNotEmpty(valueFromEnvVariable)) {
             return Math.max(Integer.parseInt(valueFromEnvVariable), DEFAULT_STALE_PARTITION_UNAVAILABILITY_REFRESH_INTERVAL_IN_SECONDS);
         }
 
@@ -1078,13 +1075,13 @@ public class Configs {
 
         String valueFromSystemProperty = System.getProperty(STALE_PARTITION_UNAVAILABILITY_REFRESH_INTERVAL_IN_SECONDS);
 
-        if (StringUtils.isNotEmpty(valueFromSystemProperty)) {
+        if (Strings.isNotEmpty(valueFromSystemProperty)) {
             return Math.max(Integer.parseInt(valueFromSystemProperty), DEFAULT_STALE_PARTITION_UNAVAILABILITY_REFRESH_INTERVAL_IN_SECONDS);
         }
 
         String valueFromEnvVariable = System.getenv(STALE_PARTITION_UNAVAILABILITY_REFRESH_INTERVAL_IN_SECONDS);
 
-        if (StringUtils.isNotEmpty(valueFromEnvVariable)) {
+        if (Strings.isNotEmpty(valueFromEnvVariable)) {
             return Math.max(Integer.parseInt(valueFromEnvVariable), DEFAULT_STALE_PARTITION_UNAVAILABILITY_REFRESH_INTERVAL_IN_SECONDS);
         }
 
@@ -1095,13 +1092,13 @@ public class Configs {
 
         String valueFromSystemProperty = System.getProperty(ALLOWED_PARTITION_UNAVAILABILITY_DURATION_IN_SECONDS);
 
-        if (StringUtils.isNotEmpty(valueFromSystemProperty)) {
+        if (Strings.isNotEmpty(valueFromSystemProperty)) {
             return Math.max(Integer.parseInt(valueFromSystemProperty), DEFAULT_ALLOWED_PARTITION_UNAVAILABILITY_DURATION_IN_SECONDS);
         }
 
         String valueFromEnvVariable = System.getenv(ALLOWED_PARTITION_UNAVAILABILITY_DURATION_IN_SECONDS);
 
-        if (StringUtils.isNotEmpty(valueFromEnvVariable)) {
+        if (Strings.isNotEmpty(valueFromEnvVariable)) {
             return Math.max(Integer.parseInt(valueFromEnvVariable), DEFAULT_ALLOWED_PARTITION_UNAVAILABILITY_DURATION_IN_SECONDS);
         }
 
@@ -1112,13 +1109,13 @@ public class Configs {
 
         String valueFromSystemProperty = System.getProperty(CONNECTION_ESTABLISHMENT_TIMEOUT_FOR_PARTITION_RECOVERY_IN_SECONDS);
 
-        if (StringUtils.isNotEmpty(valueFromSystemProperty)) {
+        if (Strings.isNotEmpty(valueFromSystemProperty)) {
             return Math.max(Integer.parseInt(valueFromSystemProperty), DEFAULT_CONNECTION_ESTABLISHMENT_TIMEOUT_FOR_PARTITION_RECOVERY_IN_SECONDS);
         }
 
         String valueFromEnvVariable = System.getenv(CONNECTION_ESTABLISHMENT_TIMEOUT_FOR_PARTITION_RECOVERY_IN_SECONDS);
 
-        if (StringUtils.isNotEmpty(valueFromEnvVariable)) {
+        if (Strings.isNotEmpty(valueFromEnvVariable)) {
             return Math.max(Integer.parseInt(valueFromEnvVariable), DEFAULT_CONNECTION_ESTABLISHMENT_TIMEOUT_FOR_PARTITION_RECOVERY_IN_SECONDS);
         }
 

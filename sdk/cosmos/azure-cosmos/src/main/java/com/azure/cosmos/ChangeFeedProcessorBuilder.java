@@ -2,11 +2,11 @@
 // Licensed under the MIT License.
 package com.azure.cosmos;
 
-import com.azure.cosmos.implementation.apachecommons.lang.StringUtils;
+import com.azure.cosmos.implementation.Strings;
 import com.azure.cosmos.implementation.changefeed.common.ChangeFeedMode;
 import com.azure.cosmos.implementation.changefeed.common.LeaseVersion;
-import com.azure.cosmos.implementation.changefeed.pkversion.IncrementalChangeFeedProcessorImpl;
 import com.azure.cosmos.implementation.changefeed.epkversion.FullFidelityChangeFeedProcessorImpl;
+import com.azure.cosmos.implementation.changefeed.pkversion.IncrementalChangeFeedProcessorImpl;
 import com.azure.cosmos.models.ChangeFeedProcessorItem;
 import com.azure.cosmos.models.ChangeFeedProcessorOptions;
 import com.azure.cosmos.util.Beta;
@@ -375,7 +375,7 @@ public class ChangeFeedProcessorBuilder {
     }
 
     private void validateChangeFeedProcessorBuilder() {
-        checkArgument(StringUtils.isNotEmpty(hostName), "hostName cannot be null or empty");
+        checkArgument(Strings.isNotEmpty(hostName), "hostName cannot be null or empty");
         checkNotNull(feedContainer, "Argument 'feedContainer' can not be null");
         checkNotNull(leaseContainer, "Argument 'leaseContainer' can not be null");
 

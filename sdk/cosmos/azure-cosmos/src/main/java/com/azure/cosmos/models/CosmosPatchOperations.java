@@ -4,7 +4,7 @@
 package com.azure.cosmos.models;
 
 import com.azure.cosmos.implementation.ImplementationBridgeHelpers;
-import com.azure.cosmos.implementation.apachecommons.lang.StringUtils;
+import com.azure.cosmos.implementation.Strings;
 import com.azure.cosmos.implementation.patch.PatchOperation;
 import com.azure.cosmos.implementation.patch.PatchOperationCore;
 import com.azure.cosmos.implementation.patch.PatchOperationType;
@@ -86,7 +86,7 @@ public final class CosmosPatchOperations {
      * @return same instance of {@link CosmosPatchOperations}
      */
     public <T> CosmosPatchOperations add(String path, T value) {
-        checkArgument(StringUtils.isNotEmpty(path), "path empty %s", path);
+        checkArgument(Strings.isNotEmpty(path), "path empty %s", path);
 
         this.patchOperations.add(
             new PatchOperationCore<>(
@@ -115,7 +115,7 @@ public final class CosmosPatchOperations {
      */
     public CosmosPatchOperations remove(String path) {
 
-        checkArgument(StringUtils.isNotEmpty(path), "path empty %s", path);
+        checkArgument(Strings.isNotEmpty(path), "path empty %s", path);
 
         this.patchOperations.add(
             new PatchOperationCore<>(
@@ -147,7 +147,7 @@ public final class CosmosPatchOperations {
      */
     public <T> CosmosPatchOperations replace(String path, T value) {
 
-        checkArgument(StringUtils.isNotEmpty(path), "path empty %s", path);
+        checkArgument(Strings.isNotEmpty(path), "path empty %s", path);
 
         this.patchOperations.add(
             new PatchOperationCore<>(
@@ -183,8 +183,8 @@ public final class CosmosPatchOperations {
      */
     public CosmosPatchOperations move(String fromPath, String toPath) {
 
-        checkArgument(StringUtils.isNotEmpty(fromPath), "Source path empty %s", fromPath);
-        checkArgument(StringUtils.isNotEmpty(toPath), "Destination path empty %s", toPath);
+        checkArgument(Strings.isNotEmpty(fromPath), "Source path empty %s", fromPath);
+        checkArgument(Strings.isNotEmpty(toPath), "Destination path empty %s", toPath);
 
         this.patchOperations.add(
             new PatchOperationCore<>(
@@ -216,7 +216,7 @@ public final class CosmosPatchOperations {
      */
     public <T> CosmosPatchOperations set(String path, T value) {
 
-        checkArgument(StringUtils.isNotEmpty(path), "path empty %s", path);
+        checkArgument(Strings.isNotEmpty(path), "path empty %s", path);
 
         this.patchOperations.add(
             new PatchOperationCore<>(
@@ -248,7 +248,7 @@ public final class CosmosPatchOperations {
      */
     public CosmosPatchOperations increment(String path, long value) {
 
-        checkArgument(StringUtils.isNotEmpty(path), "path empty %s", path);
+        checkArgument(Strings.isNotEmpty(path), "path empty %s", path);
 
         this.patchOperations.add(
             new PatchOperationCore<>(
@@ -280,7 +280,7 @@ public final class CosmosPatchOperations {
      */
     public CosmosPatchOperations increment(String path, double value) {
 
-        checkArgument(StringUtils.isNotEmpty(path), "path empty %s", path);
+        checkArgument(Strings.isNotEmpty(path), "path empty %s", path);
 
         this.patchOperations.add(
             new PatchOperationCore<>(

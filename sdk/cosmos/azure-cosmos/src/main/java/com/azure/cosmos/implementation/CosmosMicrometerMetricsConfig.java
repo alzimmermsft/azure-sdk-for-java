@@ -3,7 +3,6 @@
 
 package com.azure.cosmos.implementation;
 
-import com.azure.cosmos.implementation.apachecommons.lang.StringUtils;
 import com.azure.cosmos.implementation.clienttelemetry.MetricCategory;
 import com.azure.cosmos.implementation.clienttelemetry.TagName;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -89,7 +88,7 @@ public class CosmosMicrometerMetricsConfig {
     }
 
     private static List<String> convertToList(String value) {
-        if (StringUtils.isEmpty(value)) {
+        if (Strings.isEmpty(value)) {
             return new ArrayList<>();
         }
         if (value.startsWith("[") && value.endsWith("]")) {

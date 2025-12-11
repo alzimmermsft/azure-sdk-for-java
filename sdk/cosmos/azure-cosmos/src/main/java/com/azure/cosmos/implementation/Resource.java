@@ -5,7 +5,6 @@ package com.azure.cosmos.implementation;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.azure.cosmos.implementation.apachecommons.lang.StringUtils;
 
 import java.nio.ByteBuffer;
 import java.time.Instant;
@@ -17,7 +16,7 @@ public class Resource extends JsonSerializable {
     private String altLink;
 
     public static void validateResource(Resource resource) {
-        if (!StringUtils.isEmpty(resource.getId())) {
+        if (Strings.isNotEmpty(resource.getId())) {
             if (resource.getId().indexOf('/') != -1
                     || resource.getId().indexOf('\\') != -1
                     || resource.getId().indexOf('?') != -1

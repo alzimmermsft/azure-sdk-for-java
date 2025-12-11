@@ -12,7 +12,6 @@ import com.azure.cosmos.CosmosEndToEndOperationLatencyPolicyConfig;
 import com.azure.cosmos.CosmosItemSerializer;
 import com.azure.cosmos.Http2ConnectionConfig;
 import com.azure.cosmos.SessionRetryOptions;
-import com.azure.cosmos.implementation.apachecommons.lang.tuple.ImmutablePair;
 import com.azure.cosmos.implementation.caches.RxClientCollectionCache;
 import com.azure.cosmos.implementation.caches.RxPartitionKeyRangeCache;
 import com.azure.cosmos.implementation.directconnectivity.ReflectionUtils;
@@ -395,7 +394,7 @@ public class RxDocumentClientImplTest {
 
             @Override
             public CollectionRoutingMap tryCombine(
-                List<ImmutablePair<PartitionKeyRange, IServerIdentity>> ranges,
+                List<Pair<PartitionKeyRange, IServerIdentity>> ranges,
                 String changeFeedIfNoneMatch,
                 String collectionRid) {
                 return null;

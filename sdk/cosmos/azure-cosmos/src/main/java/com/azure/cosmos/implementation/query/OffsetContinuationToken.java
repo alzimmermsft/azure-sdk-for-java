@@ -4,8 +4,8 @@
 package com.azure.cosmos.implementation.query;
 
 import com.azure.cosmos.implementation.JsonSerializable;
+import com.azure.cosmos.implementation.Strings;
 import com.azure.cosmos.implementation.Utils;
-import com.azure.cosmos.implementation.apachecommons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,7 +32,7 @@ public final class OffsetContinuationToken extends JsonSerializable {
 
     public static boolean tryParse(String serializedOffsetContinuationToken,
                                    Utils.ValueHolder<OffsetContinuationToken> outOffsetContinuationToken) {
-        if (StringUtils.isEmpty(serializedOffsetContinuationToken)) {
+        if (Strings.isEmpty(serializedOffsetContinuationToken)) {
             return false;
         }
 

@@ -15,7 +15,6 @@ import com.azure.cosmos.implementation.CosmosClientMetadataCachesSnapshot;
 import com.azure.cosmos.implementation.DiagnosticsProvider;
 import com.azure.cosmos.implementation.Strings;
 import com.azure.cosmos.implementation.WriteRetryPolicy;
-import com.azure.cosmos.implementation.apachecommons.lang.StringUtils;
 import com.azure.cosmos.implementation.apachecommons.lang.time.StopWatch;
 import com.azure.cosmos.implementation.guava25.base.Preconditions;
 import com.azure.cosmos.implementation.routing.LocationHelper;
@@ -921,7 +920,7 @@ public class CosmosClientBuilder implements
     void resetSessionCapturingType() {
         String sessionCapturingType = Configs.getSessionCapturingType();
 
-        if (!StringUtils.isEmpty(sessionCapturingType)) {
+        if (Strings.isNotEmpty(sessionCapturingType)) {
             if (sessionCapturingType.equalsIgnoreCase("REGION_SCOPED")) {
                 logger.info("Session capturing type is set to REGION_SCOPED");
                 this.isRegionScopedSessionCapturingEnabled = true;
@@ -1330,7 +1329,7 @@ public class CosmosClientBuilder implements
             URI finalUri = uri;
             preferredRegions.forEach(
                 preferredRegion -> {
-                    Preconditions.checkArgument(StringUtils.trimToNull(preferredRegion) != null, "preferredRegion can't be empty");
+                    Preconditions.checkArgument(Strings.trimToNull(preferredRegion) != null, "preferredRegion can't be empty");
                     String trimmedPreferredRegion = preferredRegion.toLowerCase(Locale.ROOT).replace(" ", "");
                     LocationHelper.getLocationEndpoint(finalUri, trimmedPreferredRegion);
                 }
@@ -1354,7 +1353,7 @@ public class CosmosClientBuilder implements
                 && this.credential == null && this.tokenCredential == null && this.cosmosAuthorizationTokenResolver == null,
             "cannot buildAsyncClient client without any one of key, resource token, permissions, and "
                 + "azure key credential");
-        ifThrowIllegalArgException(credential != null && StringUtils.isEmpty(credential.getKey()),
+        ifThrowIllegalArgException(credential != null && Strings.isEmpty(credential.getKey()),
             "cannot buildAsyncClient client without key credential");
     }
 
@@ -1373,7 +1372,7 @@ public class CosmosClientBuilder implements
     }
 
     private boolean isEmulatorHost(URI uri) {
-        if (StringUtils.isNotEmpty(Configs.getEmulatorHost())) {
+        if (Strings.isNotEmpty(Configs.getEmulatorHost())) {
             return Configs.getEmulatorHost().equals(uri.getHost());
         }
 

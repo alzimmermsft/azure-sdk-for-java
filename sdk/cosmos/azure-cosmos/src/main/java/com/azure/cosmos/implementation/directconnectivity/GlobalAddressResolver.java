@@ -14,9 +14,9 @@ import com.azure.cosmos.implementation.GlobalEndpointManager;
 import com.azure.cosmos.implementation.IAuthorizationTokenProvider;
 import com.azure.cosmos.implementation.ImplementationBridgeHelpers;
 import com.azure.cosmos.implementation.OpenConnectionResponse;
+import com.azure.cosmos.implementation.Pair;
 import com.azure.cosmos.implementation.RxDocumentServiceRequest;
 import com.azure.cosmos.implementation.UserAgentContainer;
-import com.azure.cosmos.implementation.apachecommons.lang.tuple.ImmutablePair;
 import com.azure.cosmos.implementation.caches.RxCollectionCache;
 import com.azure.cosmos.implementation.caches.RxPartitionKeyRangeCache;
 import com.azure.cosmos.implementation.directconnectivity.rntbd.ProactiveOpenConnectionsProcessor;
@@ -141,7 +141,7 @@ public class GlobalAddressResolver implements IAddressResolver {
                                     logger.warn(
                                         "There is no pkRanges found for collection {}, no connections will be opened",
                                         collection.getResourceId());
-                                    return Mono.just(new ImmutablePair<>(containerLink, new ArrayList<PartitionKeyRangeIdentity>()));
+                                    return Mono.just(Pair.of(containerLink, new ArrayList<PartitionKeyRangeIdentity>()));
                                 }
 
                                 List<PartitionKeyRangeIdentity> pkrs = valueHolder.v
@@ -149,7 +149,7 @@ public class GlobalAddressResolver implements IAddressResolver {
                                     .map(pkRange -> new PartitionKeyRangeIdentity(collection.getResourceId(), pkRange.getId()))
                                     .collect(Collectors.toList());
 
-                                return Mono.just(new ImmutablePair<String, List<PartitionKeyRangeIdentity>>(containerLink, pkrs));
+                                return Mono.just(Pair.of(containerLink, pkrs));
                             })
                             .flatMapMany(containerLinkToPkrs -> {
                                 if (proactiveContainerInitConfig.getProactiveConnectionRegionsCount() > 0) {
@@ -159,14 +159,14 @@ public class GlobalAddressResolver implements IAddressResolver {
                                                 EndpointCache endpointCache = this.addressCacheByEndpoint.get(readEndpoint.getGatewayRegionalEndpoint());
                                                 return this.resolveAddressesPerCollection(
                                                         endpointCache,
-                                                        containerLinkToPkrs.left,
+                                                        containerLinkToPkrs.getLeft(),
                                                         collection,
-                                                        containerLinkToPkrs.right)
+                                                        containerLinkToPkrs.getRight())
                                                     .flatMap(collectionToAddresses -> {
-                                                        ImmutablePair<String, DocumentCollection> containerLinkToCollection
-                                                            = collectionToAddresses.left;
+                                                        Pair<String, DocumentCollection> containerLinkToCollection
+                                                            = collectionToAddresses.getLeft();
                                                         AddressInformation addressInformation =
-                                                            collectionToAddresses.right;
+                                                            collectionToAddresses.getRight();
 
                                                         Map<CosmosContainerIdentity, ContainerDirectConnectionMetadata> containerPropertiesMap = ImplementationBridgeHelpers
                                                             .CosmosContainerProactiveInitConfigHelper
@@ -212,7 +212,7 @@ public class GlobalAddressResolver implements IAddressResolver {
             }, Configs.getCPUCnt(), Configs.getCPUCnt());
     }
 
-    private Flux<ImmutablePair<ImmutablePair<String, DocumentCollection>, AddressInformation>> resolveAddressesPerCollection(
+    private Flux<Pair<Pair<String, DocumentCollection>, AddressInformation>> resolveAddressesPerCollection(
             EndpointCache endpointCache,
             String containerLink,
             DocumentCollection collection,

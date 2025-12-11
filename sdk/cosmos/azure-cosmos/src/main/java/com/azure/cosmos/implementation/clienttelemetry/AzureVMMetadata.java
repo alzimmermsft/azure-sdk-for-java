@@ -2,7 +2,7 @@
 // Licensed under the MIT License.
 package com.azure.cosmos.implementation.clienttelemetry;
 
-import com.azure.cosmos.implementation.apachecommons.lang.StringUtils;
+import com.azure.cosmos.implementation.Strings;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -10,27 +10,27 @@ public class AzureVMMetadata {
     private Compute compute;
 
     public String getLocation() {
-        return compute != null ? compute.getLocation() : StringUtils.EMPTY;
+        return compute != null ? compute.getLocation() : Strings.EMPTY;
     }
 
     public String getSku() {
-        return compute != null ? compute.getSku() : StringUtils.EMPTY;
+        return compute != null ? compute.getSku() : Strings.EMPTY;
     }
 
     public String getAzEnvironment() {
-        return compute != null ? compute.getAzEnvironment() : StringUtils.EMPTY;
+        return compute != null ? compute.getAzEnvironment() : Strings.EMPTY;
     }
 
     public String getOsType() {
-        return compute != null ? compute.getOsType() : StringUtils.EMPTY;
+        return compute != null ? compute.getOsType() : Strings.EMPTY;
     }
 
     public String getVmSize() {
-        return compute != null ? compute.getVmSize() : StringUtils.EMPTY;
+        return compute != null ? compute.getVmSize() : Strings.EMPTY;
     }
 
     public String getVmId() {
-        return compute != null ? compute.getVmId() : StringUtils.EMPTY;
+        return compute != null ? compute.getVmId() : Strings.EMPTY;
     }
 
     public Compute getCompute() {

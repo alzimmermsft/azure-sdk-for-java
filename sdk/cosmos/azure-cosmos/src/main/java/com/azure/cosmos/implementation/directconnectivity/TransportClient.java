@@ -7,7 +7,7 @@ import com.azure.cosmos.implementation.Configs;
 import com.azure.cosmos.implementation.CosmosSchedulers;
 import com.azure.cosmos.implementation.GlobalEndpointManager;
 import com.azure.cosmos.implementation.RxDocumentServiceRequest;
-import com.azure.cosmos.implementation.apachecommons.lang.StringUtils;
+import com.azure.cosmos.implementation.Strings;
 import com.azure.cosmos.implementation.directconnectivity.rntbd.ProactiveOpenConnectionsProcessor;
 import com.azure.cosmos.implementation.faultinjection.IFaultInjectorProvider;
 import com.azure.cosmos.implementation.interceptor.ITransportClientInterceptor;
@@ -54,7 +54,7 @@ public abstract class TransportClient implements AutoCloseable {
 
     // Uses request's ResourceOperation to determine the operation
     public Mono<StoreResponse> invokeResourceOperationInternalAsync(Uri physicalAddress, RxDocumentServiceRequest request) {
-        if (StringUtils.isEmpty(request.requestContext.resourcePhysicalAddress)) {
+        if (Strings.isEmpty(request.requestContext.resourcePhysicalAddress)) {
             request.requestContext.resourcePhysicalAddress = physicalAddress.toString();
         }
 

@@ -5,8 +5,8 @@ package com.azure.cosmos.implementation.changefeed.epkversion;
 import com.azure.cosmos.CosmosException;
 import com.azure.cosmos.ThroughputControlGroupConfig;
 import com.azure.cosmos.implementation.CosmosSchedulers;
+import com.azure.cosmos.implementation.Strings;
 import com.azure.cosmos.implementation.Utils;
-import com.azure.cosmos.implementation.apachecommons.lang.StringUtils;
 import com.azure.cosmos.implementation.changefeed.CancellationToken;
 import com.azure.cosmos.implementation.changefeed.ChangeFeedContextClient;
 import com.azure.cosmos.implementation.changefeed.ChangeFeedObserver;
@@ -34,6 +34,7 @@ import reactor.core.publisher.Mono;
 
 import java.time.Duration;
 import java.time.Instant;
+import java.util.Objects;
 
 import static com.azure.cosmos.implementation.guava25.base.Preconditions.checkArgument;
 import static com.azure.cosmos.implementation.guava25.base.Preconditions.checkNotNull;
@@ -140,8 +141,8 @@ class PartitionProcessorImpl<T> implements PartitionProcessor {
                     "For ChangeFeedProcessor the continuation state should always have one range/continuation");
 
                 this.hasServerContinuationTokenChange =
-                    !StringUtils.equals(this.lastServerContinuationToken, continuationToken)
-                        && StringUtils.isNotEmpty(continuationToken);
+                    !Objects.equals(this.lastServerContinuationToken, continuationToken)
+                        && Strings.isNotEmpty(continuationToken);
 
                 this.lastServerContinuationToken = continuationToken;
                 this.hasMoreResults = !ModelBridgeInternal.noChanges(documentFeedResponse);

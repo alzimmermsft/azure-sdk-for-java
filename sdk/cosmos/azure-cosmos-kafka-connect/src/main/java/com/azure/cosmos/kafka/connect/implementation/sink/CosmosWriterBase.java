@@ -63,7 +63,7 @@ public abstract class CosmosWriterBase implements IWriter {
     @SuppressWarnings("unchecked")
     protected String getEtag(Object recordValue) {
         checkArgument(recordValue instanceof Map, "Argument 'recordValue' is not valid map format.");
-        return ((Map<String, Object>) recordValue).getOrDefault(ETAG, Strings.Emtpy).toString();
+        return ((Map<String, Object>) recordValue).getOrDefault(ETAG, Strings.EMPTY).toString();
     }
 
     @SuppressWarnings("unchecked")

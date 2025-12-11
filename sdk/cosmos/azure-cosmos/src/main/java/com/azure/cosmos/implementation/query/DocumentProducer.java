@@ -12,14 +12,14 @@ import com.azure.cosmos.implementation.InvalidPartitionException;
 import com.azure.cosmos.implementation.JsonSerializable;
 import com.azure.cosmos.implementation.ObservableHelper;
 import com.azure.cosmos.implementation.OperationType;
+import com.azure.cosmos.implementation.Pair;
 import com.azure.cosmos.implementation.PartitionKeyRange;
 import com.azure.cosmos.implementation.QueryMetrics;
 import com.azure.cosmos.implementation.QueryMetricsConstants;
 import com.azure.cosmos.implementation.ResourceType;
 import com.azure.cosmos.implementation.RxDocumentServiceRequest;
+import com.azure.cosmos.implementation.Strings;
 import com.azure.cosmos.implementation.Utils;
-import com.azure.cosmos.implementation.apachecommons.lang.StringUtils;
-import com.azure.cosmos.implementation.apachecommons.lang.tuple.ImmutablePair;
 import com.azure.cosmos.implementation.feedranges.FeedRangeEpkImpl;
 import com.azure.cosmos.implementation.query.metrics.ClientSideMetrics;
 import com.azure.cosmos.implementation.query.metrics.FetchExecutionRangeAccumulator;
@@ -75,13 +75,13 @@ class DocumentProducer<T> {
 
         void populatePartitionedQueryMetrics() {
             String queryMetricsDelimitedString = pageResult.getResponseHeaders().get(HttpConstants.HttpHeaders.QUERY_METRICS);
-            if (!StringUtils.isEmpty(queryMetricsDelimitedString)) {
+            if (Strings.isNotEmpty(queryMetricsDelimitedString)) {
                 queryMetricsDelimitedString += String.format(Locale.ROOT,
                                                              ";%s=%.2f",
                                                              QueryMetricsConstants.RequestCharge,
                                                              pageResult.getRequestCharge());
-                ImmutablePair<String, SchedulingTimeSpan> schedulingTimeSpanMap =
-                        new ImmutablePair<>(feedRange.getRange().toString(), fetchSchedulingMetrics.getElapsedTime());
+                Pair<String, SchedulingTimeSpan> schedulingTimeSpanMap =
+                        Pair.of(feedRange.getRange().toString(), fetchSchedulingMetrics.getElapsedTime());
 
                 QueryMetrics qm =BridgeInternal.createQueryMetricsFromDelimitedStringAndClientSideMetrics(queryMetricsDelimitedString,
                         new ClientSideMetrics(retries,

@@ -11,10 +11,11 @@ import com.azure.cosmos.implementation.RequestRateTooLargeException;
 import com.azure.cosmos.implementation.ResourceType;
 import com.azure.cosmos.implementation.RxDocumentServiceRequest;
 import com.azure.cosmos.implementation.RxDocumentServiceResponse;
+import com.azure.cosmos.implementation.Strings;
 import com.azure.cosmos.implementation.UUIDs;
 import com.azure.cosmos.implementation.Utils;
-import com.azure.cosmos.implementation.apachecommons.lang.StringUtils;
 import com.azure.cosmos.implementation.directconnectivity.StoreResponse;
+import com.azure.cosmos.implementation.guava25.base.Objects;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import reactor.core.Exceptions;
@@ -92,7 +93,7 @@ public class ThroughputRequestThrottler {
                 }));
 
             if (this.availableThroughput.get() > 0) {
-                if (StringUtils.isEmpty(request.requestContext.throughputControlRequestContext.getThroughputControlCycleId())) {
+                if (Strings.isEmpty(request.requestContext.throughputControlRequestContext.getThroughputControlCycleId())) {
                     request.requestContext.throughputControlRequestContext.setThroughputControlCycleId(this.cycleId);
                 }
 
@@ -142,7 +143,7 @@ public class ThroughputRequestThrottler {
         }
 
         String isAtomicBatch = request.getHeaders().get(HttpConstants.HttpHeaders.IS_BATCH_ATOMIC);
-        if(StringUtils.isEmpty(isAtomicBatch)) {
+        if(Strings.isEmpty(isAtomicBatch)) {
             return true;
         } else {
             return !isAtomicBatch.equalsIgnoreCase(Boolean.TRUE.toString());
@@ -178,7 +179,7 @@ public class ThroughputRequestThrottler {
             }
 
             // If the response comes back in a different cycle, discard it.
-            if (StringUtils.equals(this.cycleId, request.requestContext.throughputControlRequestContext.getThroughputControlCycleId())) {
+            if (Objects.equal(this.cycleId, request.requestContext.throughputControlRequestContext.getThroughputControlCycleId())) {
                 this.availableThroughput.getAndAccumulate(requestCharge, (available, consumed) -> available - consumed);
             } else {
                 if (trackingUnit != null) {

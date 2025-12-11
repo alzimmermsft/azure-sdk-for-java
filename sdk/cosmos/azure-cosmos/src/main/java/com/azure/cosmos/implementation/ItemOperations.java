@@ -9,7 +9,6 @@ import com.azure.cosmos.CosmosContainer;
 import com.azure.cosmos.models.CosmosItemIdentity;
 import com.azure.cosmos.models.FeedResponse;
 import com.azure.cosmos.models.PartitionKey;
-import com.azure.cosmos.implementation.apachecommons.lang.tuple.Pair;
 import reactor.core.publisher.Mono;
 
 import java.util.ArrayList;
@@ -62,12 +61,9 @@ final public class ItemOperations {
 
         if (itemKeyList != null) {
             List<CosmosItemIdentity> itemIdentities = new ArrayList<>(itemKeyList.size());
-            for (int i = 0; i < itemKeyList.size(); i++) {
-
+            for (Pair<String, PartitionKey> stringPartitionKeyPair : itemKeyList) {
                 itemIdentities.add(
-                    new CosmosItemIdentity(
-                        itemKeyList.get(i).getRight(),
-                        itemKeyList.get(i).getLeft()));
+                    new CosmosItemIdentity(stringPartitionKeyPair.getRight(), stringPartitionKeyPair.getLeft()));
             }
 
             return itemIdentities;

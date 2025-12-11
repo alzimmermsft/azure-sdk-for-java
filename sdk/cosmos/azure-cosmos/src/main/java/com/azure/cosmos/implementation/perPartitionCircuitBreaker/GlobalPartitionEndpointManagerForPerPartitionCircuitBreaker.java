@@ -10,12 +10,12 @@ import com.azure.cosmos.implementation.Configs;
 import com.azure.cosmos.implementation.GlobalEndpointManager;
 import com.azure.cosmos.implementation.HttpConstants;
 import com.azure.cosmos.implementation.OperationType;
+import com.azure.cosmos.implementation.Pair;
 import com.azure.cosmos.implementation.PartitionKeyRange;
 import com.azure.cosmos.implementation.PartitionKeyRangeWrapper;
 import com.azure.cosmos.implementation.ResourceType;
 import com.azure.cosmos.implementation.RxDocumentServiceRequest;
-import com.azure.cosmos.implementation.apachecommons.lang.StringUtils;
-import com.azure.cosmos.implementation.apachecommons.lang.tuple.Pair;
+import com.azure.cosmos.implementation.Strings;
 import com.azure.cosmos.implementation.directconnectivity.GatewayAddressCache;
 import com.azure.cosmos.implementation.directconnectivity.GlobalAddressResolver;
 import com.azure.cosmos.implementation.routing.RegionalRoutingContext;
@@ -357,7 +357,7 @@ public class GlobalPartitionEndpointManagerForPerPartitionCircuitBreaker impleme
                                                     .this.locationSpecificHealthContextTransitionHandler.handleSuccess(
                                                     locationSpecificContextAsVal,
                                                     partitionKeyRangeWrapper,
-                                                    this.regionalRoutingContextToRegion.getOrDefault(locationWithStaleUnavailabilityInfoAsKey, StringUtils.EMPTY),
+                                                    this.regionalRoutingContextToRegion.getOrDefault(locationWithStaleUnavailabilityInfoAsKey, Strings.EMPTY),
                                                     false,
                                                     true);
                                             }
@@ -377,7 +377,7 @@ public class GlobalPartitionEndpointManagerForPerPartitionCircuitBreaker impleme
                                         .this.locationSpecificHealthContextTransitionHandler.handleSuccess(
                                         locationSpecificContextAsVal,
                                         partitionKeyRangeWrapper,
-                                        this.regionalRoutingContextToRegion.getOrDefault(locationWithStaleUnavailabilityInfoAsKey, StringUtils.EMPTY),
+                                        this.regionalRoutingContextToRegion.getOrDefault(locationWithStaleUnavailabilityInfoAsKey, Strings.EMPTY),
                                         false,
                                         true);
                                 }
@@ -488,7 +488,7 @@ public class GlobalPartitionEndpointManagerForPerPartitionCircuitBreaker impleme
                 LocationSpecificHealthContext locationSpecificHealthContextAfterTransition = this.locationSpecificHealthContextTransitionHandler.handleException(
                     locationSpecificContextAsVal,
                     partitionKeyRangeWrapper,
-                    GlobalPartitionEndpointManagerForPerPartitionCircuitBreaker.this.regionalRoutingContextToRegion.getOrDefault(regionalRoutingContextWithAnException, StringUtils.EMPTY),
+                    GlobalPartitionEndpointManagerForPerPartitionCircuitBreaker.this.regionalRoutingContextToRegion.getOrDefault(regionalRoutingContextWithAnException, Strings.EMPTY),
                     isReadOnlyRequest);
 
 
@@ -536,7 +536,7 @@ public class GlobalPartitionEndpointManagerForPerPartitionCircuitBreaker impleme
                 locationSpecificHealthContextAfterTransition = this.locationSpecificHealthContextTransitionHandler.handleSuccess(
                     locationSpecificContextAsVal,
                     partitionKeyRangeWrapper,
-                    GlobalPartitionEndpointManagerForPerPartitionCircuitBreaker.this.regionalRoutingContextToRegion.getOrDefault(succeededLocation, StringUtils.EMPTY),
+                    GlobalPartitionEndpointManagerForPerPartitionCircuitBreaker.this.regionalRoutingContextToRegion.getOrDefault(succeededLocation, Strings.EMPTY),
                     false,
                     isReadOnlyRequest);
 

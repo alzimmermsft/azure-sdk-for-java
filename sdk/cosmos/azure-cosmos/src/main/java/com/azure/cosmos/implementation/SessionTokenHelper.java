@@ -53,7 +53,7 @@ public class SessionTokenHelper {
                 HttpConstants.SubStatusCodes.MISSING_PARTITION_KEY_RANGE_ID_IN_CONTEXT);
         }
 
-        if (StringUtils.isNotEmpty(originalSessionToken)) {
+        if (Strings.isNotEmpty(originalSessionToken)) {
             ISessionToken sessionToken = getLocalSessionToken(request, originalSessionToken, partitionKeyRangeId);
             request.requestContext.sessionToken = sessionToken;
         } else {
@@ -116,7 +116,7 @@ public class SessionTokenHelper {
         }
 
         if (highestSessionToken == null) {
-            if (StringUtils.isNotEmpty(globalSessionToken)) {
+            if (Strings.isNotEmpty(globalSessionToken)) {
                 Set<String> sessionTokenEvaluationResults = request.requestContext.getSessionTokenEvaluationResults();
 
                 String evaluationResult = "The session token : " + globalSessionToken + " for pkRangeId : " + partitionKeyRangeId +
@@ -248,7 +248,7 @@ public class SessionTokenHelper {
     public static void validateAndRemoveSessionToken(RxDocumentServiceRequest request) {
         String sessionToken = request.getHeaders().get(HttpConstants.HttpHeaders.SESSION_TOKEN);
         if (!Strings.isNullOrEmpty(sessionToken)) {
-            getLocalSessionToken(request, sessionToken, StringUtils.EMPTY);
+            getLocalSessionToken(request, sessionToken, Strings.EMPTY);
             request.getHeaders().remove(HttpConstants.HttpHeaders.SESSION_TOKEN);
         }
     }

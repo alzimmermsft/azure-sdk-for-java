@@ -15,7 +15,6 @@ import com.azure.cosmos.implementation.ResourceType;
 import com.azure.cosmos.implementation.RxDocumentServiceRequest;
 import com.azure.cosmos.implementation.Strings;
 import com.azure.cosmos.implementation.Utils;
-import com.azure.cosmos.implementation.apachecommons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -550,7 +549,7 @@ public class LocationCache {
         DatabaseAccountLocationsInfo currentLocationInfo = this.locationInfo;
         String mostPreferredLocation = Utils.firstOrDefault(currentLocationInfo.preferredLocations);
 
-        if (StringUtils.isEmpty(mostPreferredLocation)) {
+        if (Strings.isEmpty(mostPreferredLocation)) {
             mostPreferredLocation = Utils.firstOrDefault(currentLocationInfo.effectivePreferredLocations);
         }
 

@@ -87,7 +87,7 @@ public class UserAgentContainerTest {
 
         String expectedString = expectedStringFixedPart + SPACE + userProvidedSuffix +
             ((!Strings.isNullOrEmpty(expectedUserAgentFeatureFlagSuffix)) ?
-             expectedUserAgentFeatureFlagSuffix : Strings.Emtpy);
+             expectedUserAgentFeatureFlagSuffix : Strings.EMPTY);
         assertThat(userAgentContainer.getUserAgent()).isEqualTo(expectedString);
     }
 

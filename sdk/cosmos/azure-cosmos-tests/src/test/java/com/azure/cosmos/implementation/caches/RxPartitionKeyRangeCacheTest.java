@@ -5,10 +5,10 @@ package com.azure.cosmos.implementation.caches;
 
 import com.azure.cosmos.implementation.DocumentCollection;
 import com.azure.cosmos.implementation.InCompleteRoutingMapException;
+import com.azure.cosmos.implementation.Pair;
 import com.azure.cosmos.implementation.PartitionKeyRange;
 import com.azure.cosmos.implementation.RxDocumentClientImpl;
 import com.azure.cosmos.implementation.Utils;
-import com.azure.cosmos.implementation.apachecommons.lang.tuple.ImmutablePair;
 import com.azure.cosmos.implementation.routing.CollectionRoutingMap;
 import com.azure.cosmos.implementation.routing.InMemoryCollectionRoutingMap;
 import com.azure.cosmos.models.CosmosQueryRequestOptions;
@@ -35,7 +35,7 @@ public class RxPartitionKeyRangeCacheTest {
     private RxDocumentClientImpl client;
     private RxCollectionCache collectionCache;
     private RxPartitionKeyRangeCache cache;
-    
+
     @BeforeMethod(groups = "unit")
     public void before_test() {
         client = Mockito.mock(RxDocumentClientImpl.class);
@@ -47,14 +47,14 @@ public class RxPartitionKeyRangeCacheTest {
     public void getRoutingMapUsesChangeFeedNextIfNoneMatchWhenNotEmpty() {
         String collectionRid = "collection1";
         String changeFeedToken = "token1";
-        
+
         PartitionKeyRange range1 = new PartitionKeyRange();
         range1.setId("0");
         range1.setMinInclusive(PartitionKeyRange.MINIMUM_INCLUSIVE_EFFECTIVE_PARTITION_KEY);
         range1.setMaxExclusive(PartitionKeyRange.MAXIMUM_EXCLUSIVE_EFFECTIVE_PARTITION_KEY);
-        
+
         CollectionRoutingMap previousRoutingMap = InMemoryCollectionRoutingMap
-            .tryCreateCompleteRoutingMap(Arrays.asList(ImmutablePair.of(range1, null)), collectionRid, changeFeedToken);
+            .tryCreateCompleteRoutingMap(Arrays.asList(Pair.of(range1, null)), collectionRid, changeFeedToken);
 
         DocumentCollection collection = new DocumentCollection();
         collection.setResourceId(collectionRid);
@@ -66,13 +66,13 @@ public class RxPartitionKeyRangeCacheTest {
 
         when(collectionCache.resolveCollectionAsync(any(), any()))
             .thenReturn(Mono.just(new Utils.ValueHolder<>(collection)));
-        
+
         when(client.readPartitionKeyRanges(eq(collection.getSelfLink()), any(CosmosQueryRequestOptions.class)))
             .thenReturn(Flux.just(response));
 
         StepVerifier.create(cache.tryLookupAsync(null, collectionRid, previousRoutingMap, new HashMap<>()))
-            .expectNextMatches(routingMapHolder -> 
-                routingMapHolder != null && 
+            .expectNextMatches(routingMapHolder ->
+                routingMapHolder != null &&
                 routingMapHolder.v != null &&
                 changeFeedToken.equals(previousRoutingMap.getChangeFeedNextIfNoneMatch()))
             .verifyComplete();
@@ -81,15 +81,15 @@ public class RxPartitionKeyRangeCacheTest {
     @Test(groups = "unit")
     public void getRoutingMapWithEmptyChangeFeedNextIfNoneMatch() {
         String collectionRid = "collection1";
-        
+
         PartitionKeyRange range1 = new PartitionKeyRange();
         range1.setId("0");
         range1.setMinInclusive(PartitionKeyRange.MINIMUM_INCLUSIVE_EFFECTIVE_PARTITION_KEY);
         range1.setMaxExclusive(PartitionKeyRange.MAXIMUM_EXCLUSIVE_EFFECTIVE_PARTITION_KEY);
-        
+
         CollectionRoutingMap previousRoutingMap = InMemoryCollectionRoutingMap
             .tryCreateCompleteRoutingMap(
-                Arrays.asList(ImmutablePair.of(range1, null)),
+                Arrays.asList(Pair.of(range1, null)),
                 collectionRid,
                 null);
 
@@ -103,7 +103,7 @@ public class RxPartitionKeyRangeCacheTest {
 
         when(collectionCache.resolveCollectionAsync(any(), any()))
             .thenReturn(Mono.just(new Utils.ValueHolder<>(collection)));
-        
+
         when(client.readPartitionKeyRanges(eq(collection.getSelfLink()), any(CosmosQueryRequestOptions.class)))
             .thenReturn(Flux.just(response));
 
@@ -135,9 +135,9 @@ public class RxPartitionKeyRangeCacheTest {
         CollectionRoutingMap routingMap = InMemoryCollectionRoutingMap
             .tryCreateCompleteRoutingMap(
                 Arrays.asList(
-                    new ImmutablePair<>(range1, null),
-                    new ImmutablePair<>(range2, null),
-                    new ImmutablePair<>(range3, null)
+                    Pair.of(range1, null),
+                    Pair.of(range2, null),
+                    Pair.of(range3, null)
                 ),
                 "dummyCollectionId",
                 null);
@@ -162,8 +162,8 @@ public class RxPartitionKeyRangeCacheTest {
         try {
             InMemoryCollectionRoutingMap.tryCreateCompleteRoutingMap(
                 Arrays.asList(
-                    new ImmutablePair<>(range1, null),
-                    new ImmutablePair<>(range2, null)
+                    Pair.of(range1, null),
+                    Pair.of(range2, null)
                 ),
                 "dummyCollectionId",
                 null);
@@ -204,8 +204,8 @@ public class RxPartitionKeyRangeCacheTest {
         try {
             InMemoryCollectionRoutingMap.tryCreateCompleteRoutingMap(
                 Arrays.asList(
-                    new ImmutablePair<>(range1, null),
-                    new ImmutablePair<>(range2, null)
+                    Pair.of(range1, null),
+                    Pair.of(range2, null)
                 ),
                 "dummyCollectionId",
                 null);

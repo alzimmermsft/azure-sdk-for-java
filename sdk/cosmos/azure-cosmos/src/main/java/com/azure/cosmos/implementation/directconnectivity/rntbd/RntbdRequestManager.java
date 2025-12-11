@@ -26,8 +26,8 @@ import com.azure.cosmos.implementation.RequestTimeoutException;
 import com.azure.cosmos.implementation.RetryWithException;
 import com.azure.cosmos.implementation.RxDocumentServiceRequest;
 import com.azure.cosmos.implementation.ServiceUnavailableException;
+import com.azure.cosmos.implementation.Strings;
 import com.azure.cosmos.implementation.UnauthorizedException;
-import com.azure.cosmos.implementation.apachecommons.lang.StringUtils;
 import com.azure.cosmos.implementation.directconnectivity.StoreResponse;
 import com.azure.cosmos.implementation.faultinjection.RntbdFaultInjectionConnectionCloseEvent;
 import com.azure.cosmos.implementation.faultinjection.RntbdFaultInjectionConnectionResetEvent;
@@ -935,9 +935,9 @@ public final class RntbdRequestManager implements ChannelHandler, ChannelInbound
                 : new ChannelException(throwable);
         }
 
-        String faultInjectionRuleId = StringUtils.EMPTY;
+        String faultInjectionRuleId = Strings.EMPTY;
         if (context.channel().hasAttr(FAULT_INJECTION_RULE_ID_KEY)) {
-            faultInjectionRuleId = context.channel().attr(FAULT_INJECTION_RULE_ID_KEY).getAndSet(StringUtils.EMPTY);
+            faultInjectionRuleId = context.channel().attr(FAULT_INJECTION_RULE_ID_KEY).getAndSet(Strings.EMPTY);
         }
 
         for (RntbdRequestRecord record : this.pendingRequests.values()) {
@@ -948,7 +948,7 @@ public final class RntbdRequestManager implements ChannelHandler, ChannelInbound
             final GoneException error = new GoneException(message, cause, null, requestUri, SubStatusCodes.UNKNOWN);
             BridgeInternal.setRequestHeaders(error, requestHeaders);
 
-            if (StringUtils.isNotEmpty(faultInjectionRuleId)) {
+            if (Strings.isNotEmpty(faultInjectionRuleId)) {
                 record
                     .args()
                     .serviceRequest()

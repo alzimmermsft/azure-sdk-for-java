@@ -61,7 +61,7 @@ public class ContinuationResumeLogicTests {
 
     @Test(groups = {"unit"})
     public void resumeEmptyStart() {
-        Range<String> range = createRange(Strings.Emtpy, "A");
+        Range<String> range = createRange(Strings.EMPTY, "A");
         FeedRangeEpkImpl range1 = new FeedRangeEpkImpl(range);
         FeedRangeEpkImpl range2 = new FeedRangeEpkImpl(createRange("A", "B"));
         FeedRangeEpkImpl range3 = new FeedRangeEpkImpl(createRange("B", "FF"));
@@ -78,7 +78,7 @@ public class ContinuationResumeLogicTests {
 
     @Test(groups = {"unit"})
     public void resumeMaxEnd() {
-        FeedRangeEpkImpl range1 = new FeedRangeEpkImpl(createRange(Strings.Emtpy, "A"));
+        FeedRangeEpkImpl range1 = new FeedRangeEpkImpl(createRange(Strings.EMPTY, "A"));
         FeedRangeEpkImpl range2 = new FeedRangeEpkImpl(createRange("A", "B"));
         Range<String> range = createRange("B", "FF");
         FeedRangeEpkImpl range3 = new FeedRangeEpkImpl(range);
@@ -95,7 +95,7 @@ public class ContinuationResumeLogicTests {
 
     @Test(groups = {"unit"})
     public void resumeLeftPartition() {
-        Range<String> range = createRange(Strings.Emtpy, "A");
+        Range<String> range = createRange(Strings.EMPTY, "A");
         FeedRangeEpkImpl range1 = new FeedRangeEpkImpl(range);
         FeedRangeEpkImpl range2 = new FeedRangeEpkImpl(createRange("A", "B"));
         FeedRangeEpkImpl range3 = new FeedRangeEpkImpl(createRange("B", "C"));
@@ -112,7 +112,7 @@ public class ContinuationResumeLogicTests {
     @Test(groups = {"unit"})
     public void resumeMiddlePartition() {
         Range<String> range = createRange("A", "B");
-        FeedRangeEpkImpl range1 = new FeedRangeEpkImpl(createRange(Strings.Emtpy, "A"));
+        FeedRangeEpkImpl range1 = new FeedRangeEpkImpl(createRange(Strings.EMPTY, "A"));
         FeedRangeEpkImpl range2 = new FeedRangeEpkImpl(range);
         FeedRangeEpkImpl range3 = new FeedRangeEpkImpl(createRange("B", "C"));
         IPartitionedToken token = new CompositeContinuationToken(UUID.randomUUID().toString(), range);
@@ -127,7 +127,7 @@ public class ContinuationResumeLogicTests {
     @Test(groups = {"unit"})
     public void resumeRightPartition() {
         Range<String> range = createRange("B", "C");
-        FeedRangeEpkImpl range1 = new FeedRangeEpkImpl(createRange(Strings.Emtpy, "A"));
+        FeedRangeEpkImpl range1 = new FeedRangeEpkImpl(createRange(Strings.EMPTY, "A"));
         FeedRangeEpkImpl range2 = new FeedRangeEpkImpl(createRange("A", "B"));
         FeedRangeEpkImpl range3 = new FeedRangeEpkImpl(range);
         IPartitionedToken token = new CompositeContinuationToken(UUID.randomUUID().toString(), range);
@@ -142,7 +142,7 @@ public class ContinuationResumeLogicTests {
     @Test(groups = {"unit"})
     public void resumeOnMerge() {
         // Suppose that we read from range 1
-        Range<String> range = createRange(Strings.Emtpy, "A");
+        Range<String> range = createRange(Strings.EMPTY, "A");
         FeedRangeEpkImpl range1 = new FeedRangeEpkImpl(range);
 
         // Then Range 1 Merged with Range 2

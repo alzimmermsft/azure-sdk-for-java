@@ -113,20 +113,6 @@ public class StringUtils {
     }
 
     /**
-     * <p>Removes control characters (char &lt;= 32) from both
-     * ends of this String returning {@code null} if the String is
-     * empty ("") after the trim or if it is {@code null}.
-     *
-     * @param str  the String to be trimmed, may be null
-     * @return the trimmed String,
-     *  {@code null} if only chars &lt;= 32, empty or null String input
-     */
-    public static String trimToNull(final String str) {
-        final String ts = trim(str);
-        return isEmpty(ts) ? null : ts;
-    }
-
-    /**
      * <p>Strips any of a set of characters from the start and end of a String.
      * This is similar to {@link String#trim()} but allows the characters
      * to be stripped to be controlled.</p>
@@ -372,110 +358,6 @@ public class StringUtils {
             }
         }
         return false;
-    }
-
-    /**
-     * <p>Checks if the CharSequence contains any character in the given
-     * set of characters.</p>
-     *
-     * <p>A {@code null} CharSequence will return {@code false}.
-     * A {@code null} or zero length search array will return {@code false}.</p>
-     *
-     * <pre>
-     * StringUtils.containsAny(null, *)                = false
-     * StringUtils.containsAny("", *)                  = false
-     * StringUtils.containsAny(*, null)                = false
-     * StringUtils.containsAny(*, [])                  = false
-     * StringUtils.containsAny("zzabyycdxx",['z','a']) = true
-     * StringUtils.containsAny("zzabyycdxx",['b','y']) = true
-     * StringUtils.containsAny("zzabyycdxx",['z','y']) = true
-     * StringUtils.containsAny("aba", ['z'])           = false
-     * </pre>
-     *
-     * @param cs  the CharSequence to check, may be null
-     * @param searchChars  the chars to search for, may be null
-     * @return the {@code true} if any of the chars are found,
-     * {@code false} if no match or null input
-     */
-    public static boolean containsAny(final CharSequence cs, final char... searchChars) {
-        if (isEmpty(cs) || ArrayUtils.isEmpty(searchChars)) {
-            return false;
-        }
-        final int csLength = cs.length();
-        final int searchLength = searchChars.length;
-        final int csLast = csLength - 1;
-        final int searchLast = searchLength - 1;
-        for (int i = 0; i < csLength; i++) {
-            final char ch = cs.charAt(i);
-            for (int j = 0; j < searchLength; j++) {
-                if (searchChars[j] == ch) {
-                    if (Character.isHighSurrogate(ch)) {
-                        if (j == searchLast) {
-                            // missing low surrogate, fine, like String.indexOf(String)
-                            return true;
-                        }
-                        if (i < csLast && searchChars[j + 1] == cs.charAt(i + 1)) {
-                            return true;
-                        }
-                    } else {
-                        // ch is in the Basic Multilingual Plane
-                        return true;
-                    }
-                }
-            }
-        }
-        return false;
-    }
-
-    /**
-     * <p>Checks that the CharSequence does not contain certain characters.</p>
-     *
-     * <p>A {@code null} CharSequence will return {@code true}.
-     * A {@code null} invalid character array will return {@code true}.
-     * An empty CharSequence (length()=0) always returns true.</p>
-     *
-     * <pre>
-     * StringUtils.containsNone(null, *)       = true
-     * StringUtils.containsNone(*, null)       = true
-     * StringUtils.containsNone("", *)         = true
-     * StringUtils.containsNone("ab", '')      = true
-     * StringUtils.containsNone("abab", 'xyz') = true
-     * StringUtils.containsNone("ab1", 'xyz')  = true
-     * StringUtils.containsNone("abz", 'xyz')  = false
-     * </pre>
-     *
-     * @param cs  the CharSequence to check, may be null
-     * @param searchChars  an array of invalid chars, may be null
-     * @return true if it contains none of the invalid chars, or is null
-     */
-    public static boolean containsNone(final CharSequence cs, final char... searchChars) {
-        if (cs == null || searchChars == null) {
-            return true;
-        }
-        final int csLen = cs.length();
-        final int csLast = csLen - 1;
-        final int searchLen = searchChars.length;
-        final int searchLast = searchLen - 1;
-        for (int i = 0; i < csLen; i++) {
-            final char ch = cs.charAt(i);
-            for (int j = 0; j < searchLen; j++) {
-                if (searchChars[j] == ch) {
-                    if (Character.isHighSurrogate(ch)) {
-                        if (j == searchLast) {
-                            // missing low surrogate, fine, like String.indexOf(String)
-                            return false;
-                        }
-                        if (i < csLast && searchChars[j + 1] == cs.charAt(i + 1)) {
-                            return false;
-                        }
-                    } else {
-                        // ch is in the Basic Multilingual Plane
-                        return false;
-                    }
-                }
-            }
-        }
-        return true;
     }
 
     /**
@@ -946,39 +828,6 @@ public class StringUtils {
     }
 
     /**
-     * <p>Removes a substring only if it is at the beginning of a source string,
-     * otherwise returns the source string.</p>
-     *
-     * <p>A {@code null} source string will return {@code null}.
-     * An empty ("") source string will return the empty string.
-     * A {@code null} search string will return the source string.</p>
-     *
-     * <pre>
-     * StringUtils.removeStart(null, *)      = null
-     * StringUtils.removeStart("", *)        = ""
-     * StringUtils.removeStart(*, null)      = *
-     * StringUtils.removeStart("www.domain.com", "www.")   = "domain.com"
-     * StringUtils.removeStart("domain.com", "www.")       = "domain.com"
-     * StringUtils.removeStart("www.domain.com", "domain") = "www.domain.com"
-     * StringUtils.removeStart("abc", "")    = "abc"
-     * </pre>
-     *
-     * @param str  the source String to search, may be null
-     * @param remove  the String to search for and remove, may be null
-     * @return the substring with the string removed if found,
-     *  {@code null} if null String input
-     */
-    public static String removeStart(final String str, final String remove) {
-        if (isEmpty(str) || isEmpty(remove)) {
-            return str;
-        }
-        if (str.startsWith(remove)){
-            return str.substring(remove.length());
-        }
-        return str;
-    }
-
-    /**
      * <p>Removes a substring only if it is at the end of a source string,
      * otherwise returns the source string.</p>
      *
@@ -1355,25 +1204,6 @@ public class StringUtils {
     }
 
     /**
-     * <p>Checks if the CharSequence contains only whitespace.</p>
-     *
-     * @param cs  the CharSequence to check, may be null
-     * @return {@code true} if only contains whitespace, and is non-null
-     */
-    public static boolean isWhitespace(final CharSequence cs) {
-        if (cs == null) {
-            return false;
-        }
-        final int sz = cs.length();
-        for (int i = 0; i < sz; i++) {
-            if (!Character.isWhitespace(cs.charAt(i))) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    /**
      * <p>Returns either the passed in String, or if the String is
      * {@code null}, the value of {@code defaultStr}.</p>
      *
@@ -1393,38 +1223,4 @@ public class StringUtils {
         return str == null ? defaultStr : str;
     }
 
-    /**
-     * Deletes all whitespaces from a String as defined by
-     * {@link Character#isWhitespace(char)}.
-     *
-     * <pre>
-     * StringUtils.deleteWhitespace(null)         = null
-     * StringUtils.deleteWhitespace("")           = ""
-     * StringUtils.deleteWhitespace("abc")        = "abc"
-     * StringUtils.deleteWhitespace("   ab  c  ") = "abc"
-     * </pre>
-     *
-     * @param str  the String to delete whitespace from, may be null
-     * @return the String without whitespaces, {@code null} if null String input
-     */
-    public static String deleteWhitespace(final String str) {
-        if (isEmpty(str)) {
-            return str;
-        }
-        final int sz = str.length();
-        final char[] chs = new char[sz];
-        int count = 0;
-        for (int i = 0; i < sz; i++) {
-            if (!Character.isWhitespace(str.charAt(i))) {
-                chs[count++] = str.charAt(i);
-            }
-        }
-        if (count == sz) {
-            return str;
-        }
-        if (count == 0) {
-            return EMPTY;
-        }
-        return new String(chs, 0, count);
-    }
 }

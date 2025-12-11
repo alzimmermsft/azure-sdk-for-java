@@ -4,7 +4,7 @@
 package com.azure.cosmos.implementation.throughputControl.sdk.config;
 
 import com.azure.cosmos.CosmosAsyncContainer;
-import com.azure.cosmos.implementation.apachecommons.lang.StringUtils;
+import com.azure.cosmos.implementation.Strings;
 import com.azure.cosmos.implementation.throughputControl.IThroughputControlGroup;
 import com.azure.cosmos.models.PriorityLevel;
 
@@ -33,7 +33,7 @@ public abstract class SDKThroughputControlGroupInternal implements IThroughputCo
         boolean isDefault,
         boolean continueOnInitError) {
 
-        checkArgument(StringUtils.isNotEmpty(groupName), "Group name can not be null or empty");
+        checkArgument(Strings.isNotEmpty(groupName), "Group name can not be null or empty");
         checkNotNull(targetContainer, "Target container can not be null");
         checkArgument(targetThroughput == null || targetThroughput > 0, "Target throughput should be greater than 0");
         checkArgument(

@@ -5,9 +5,10 @@ package com.azure.cosmos.models;
 
 import com.azure.cosmos.implementation.Constants;
 import com.azure.cosmos.implementation.JsonSerializable;
-import com.azure.cosmos.implementation.apachecommons.lang.StringUtils;
+import com.azure.cosmos.implementation.Strings;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+
 import static com.azure.cosmos.implementation.guava25.base.Preconditions.checkNotNull;
 
 /**
@@ -47,7 +48,7 @@ public final class CosmosVectorEmbedding {
      * @return CosmosVectorEmbedding
      */
     public CosmosVectorEmbedding setPath(String path) {
-        if (StringUtils.isEmpty(path)) {
+        if (Strings.isEmpty(path)) {
             throw new NullPointerException("embedding path is either null or empty");
         }
 

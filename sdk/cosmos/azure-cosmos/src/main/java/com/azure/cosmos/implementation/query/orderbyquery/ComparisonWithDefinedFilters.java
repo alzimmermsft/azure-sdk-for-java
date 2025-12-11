@@ -3,7 +3,7 @@
 
 package com.azure.cosmos.implementation.query.orderbyquery;
 
-import com.azure.cosmos.implementation.apachecommons.lang.StringUtils;
+import com.azure.cosmos.implementation.Strings;
 
 import static com.azure.cosmos.implementation.guava25.base.Preconditions.checkArgument;
 
@@ -12,8 +12,8 @@ public class ComparisonWithDefinedFilters implements ComparisonFilters {
     private final String orderByItemToString;
 
     public ComparisonWithDefinedFilters(String expression, String orderByItemToString) {
-        checkArgument(StringUtils.isNotEmpty(expression), "Expression can not be null or empty");
-        checkArgument(StringUtils.isNotEmpty(orderByItemToString), "orderByItemToString can not be null or empty");
+        checkArgument(Strings.isNotEmpty(expression), "Expression can not be null or empty");
+        checkArgument(Strings.isNotEmpty(orderByItemToString), "orderByItemToString can not be null or empty");
 
         this.expression = expression;
         this.orderByItemToString = orderByItemToString;

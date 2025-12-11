@@ -4,7 +4,6 @@
 package com.azure.cosmos.implementation;
 
 import com.azure.core.credential.AzureKeyCredential;
-import com.azure.cosmos.implementation.apachecommons.lang.StringUtils;
 import com.azure.cosmos.models.ModelBridgeInternal;
 
 import javax.crypto.Mac;
@@ -124,7 +123,7 @@ public class BaseAuthorizationTokenProvider implements AuthorizationTokenProvide
             throw new IllegalArgumentException("headers");
         }
 
-        if (StringUtils.isEmpty(this.credential.getKey())) {
+        if (Strings.isEmpty(this.credential.getKey())) {
             throw new IllegalArgumentException("key credentials cannot be empty");
         }
 
@@ -185,13 +184,13 @@ public class BaseAuthorizationTokenProvider implements AuthorizationTokenProvide
         String resourceToken = null;
         if (resourceTokens.containsKey(resourceId) && resourceTokens.get(resourceId) != null) {
             resourceToken = resourceTokens.get(resourceId);
-        } else if (StringUtils.isEmpty(path) || StringUtils.isEmpty(resourceId)) {
+        } else if (Strings.isEmpty(path) || Strings.isEmpty(resourceId)) {
             if (resourceTokens.size() > 0) {
                 resourceToken = resourceTokens.values().iterator().next();
             }
         } else {
             // Get the last resource id from the path and use that to find the corresponding token.
-            String[] pathParts = StringUtils.split(path, "/");
+            String[] pathParts = path.split("/");
             String[] resourceTypes = {"dbs", "colls", "docs", "sprocs", "udfs", "triggers", "users", "permissions",
                     "attachments", "media", "conflicts"};
             HashSet<String> resourceTypesSet = new HashSet<String>();

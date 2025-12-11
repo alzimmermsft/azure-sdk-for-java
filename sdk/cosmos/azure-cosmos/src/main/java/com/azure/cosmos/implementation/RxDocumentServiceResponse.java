@@ -6,7 +6,6 @@ package com.azure.cosmos.implementation;
 import com.azure.cosmos.BridgeInternal;
 import com.azure.cosmos.CosmosDiagnostics;
 import com.azure.cosmos.CosmosItemSerializer;
-import com.azure.cosmos.implementation.apachecommons.lang.StringUtils;
 import com.azure.cosmos.implementation.directconnectivity.Address;
 import com.azure.cosmos.implementation.directconnectivity.StoreResponse;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -238,7 +237,7 @@ public class RxDocumentServiceResponse {
      */
     public double getRequestCharge() {
         String value = this.getResponseHeaders().get(HttpConstants.HttpHeaders.REQUEST_CHARGE);
-        if (StringUtils.isEmpty(value)) {
+        if (Strings.isEmpty(value)) {
             return 0;
         }
         return Double.parseDouble(value);

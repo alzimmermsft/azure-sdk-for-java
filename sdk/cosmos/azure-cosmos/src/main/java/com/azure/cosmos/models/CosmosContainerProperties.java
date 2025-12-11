@@ -5,7 +5,7 @@ package com.azure.cosmos.models;
 import com.azure.cosmos.implementation.DocumentCollection;
 import com.azure.cosmos.implementation.ImplementationBridgeHelpers;
 import com.azure.cosmos.implementation.Resource;
-import com.azure.cosmos.implementation.apachecommons.lang.StringUtils;
+import com.azure.cosmos.implementation.Strings;
 import com.azure.cosmos.util.Beta;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
@@ -418,7 +418,7 @@ public final class CosmosContainerProperties {
             String[] splitPaths = path.split(PARTITION_KEY_TOKEN_DELIMETER);
             List<String> splitPathsList = new ArrayList<>();
             for (int i = 0; i < splitPaths.length; i++) {
-                if (StringUtils.isNotEmpty(splitPaths[i])) {
+                if (Strings.isNotEmpty(splitPaths[i])) {
                     splitPathsList.add(splitPaths[i]);
                 }
             }

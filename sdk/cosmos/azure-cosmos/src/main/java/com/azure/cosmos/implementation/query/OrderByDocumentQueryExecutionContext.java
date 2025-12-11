@@ -12,6 +12,7 @@ import com.azure.cosmos.implementation.DocumentClientRetryPolicy;
 import com.azure.cosmos.implementation.DocumentCollection;
 import com.azure.cosmos.implementation.HttpConstants;
 import com.azure.cosmos.implementation.ImplementationBridgeHelpers;
+import com.azure.cosmos.implementation.Pair;
 import com.azure.cosmos.implementation.QueryMetrics;
 import com.azure.cosmos.implementation.RequestChargeTracker;
 import com.azure.cosmos.implementation.ResourceId;
@@ -20,8 +21,6 @@ import com.azure.cosmos.implementation.RxDocumentServiceRequest;
 import com.azure.cosmos.implementation.Undefined;
 import com.azure.cosmos.implementation.Utils;
 import com.azure.cosmos.implementation.Utils.ValueHolder;
-import com.azure.cosmos.implementation.apachecommons.lang.tuple.ImmutablePair;
-import com.azure.cosmos.implementation.apachecommons.lang.tuple.Pair;
 import com.azure.cosmos.implementation.feedranges.FeedRangeEpkImpl;
 import com.azure.cosmos.implementation.query.orderbyquery.ComparisonFilters;
 import com.azure.cosmos.implementation.query.orderbyquery.ComparisonWithDefinedFilters;
@@ -655,10 +654,8 @@ public class OrderByDocumentQueryExecutionContext
                     // CREATE pairs from the stream to allow the observables downstream to "peek"
                     // 1, 2, 3, null -> (null, 1), (1, 2), (2, 3), (3, null)
                     .map(orderByRowResults -> {
-                        ImmutablePair<FeedResponse<OrderByRowResult<Document>>, FeedResponse<OrderByRowResult<Document>>> previousCurrent =
-                            new ImmutablePair<FeedResponse<OrderByRowResult<Document>>, FeedResponse<OrderByRowResult<Document>>>(
-                                this.previousPage,
-                                orderByRowResults);
+                        Pair<FeedResponse<OrderByRowResult<Document>>, FeedResponse<OrderByRowResult<Document>>> previousCurrent =
+                            Pair.of(this.previousPage, orderByRowResults);
                         this.previousPage = orderByRowResults;
                         return previousCurrent;
                     })
@@ -666,8 +663,8 @@ public class OrderByDocumentQueryExecutionContext
                     .skip(1)
                     // Add the continuation token based on the current and next page.
                     .map(currentNext -> {
-                        FeedResponse<OrderByRowResult<Document>> current = currentNext.left;
-                        FeedResponse<OrderByRowResult<Document>> next = currentNext.right;
+                        FeedResponse<OrderByRowResult<Document>> current = currentNext.getLeft();
+                        FeedResponse<OrderByRowResult<Document>> next = currentNext.getRight();
 
                         FeedResponse<OrderByRowResult<Document>> page;
                         if (next.getResults().size() == 0) {

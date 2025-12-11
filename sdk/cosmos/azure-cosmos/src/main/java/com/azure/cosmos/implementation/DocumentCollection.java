@@ -3,7 +3,6 @@
 
 package com.azure.cosmos.implementation;
 
-import com.azure.cosmos.implementation.apachecommons.lang.StringUtils;
 import com.azure.cosmos.implementation.caches.SerializableWrapper;
 import com.azure.cosmos.models.ChangeFeedPolicy;
 import com.azure.cosmos.models.ClientEncryptionPolicy;
@@ -340,7 +339,7 @@ public final class DocumentCollection extends Resource {
      */
     public String getDocumentsLink() {
         return String.format("%s/%s",
-                StringUtils.stripEnd(super.getSelfLink(), "/"),
+                Strings.stripEnd(super.getSelfLink(), '/'),
                 super.getString(Constants.Properties.DOCUMENTS_LINK));
     }
 
@@ -351,7 +350,7 @@ public final class DocumentCollection extends Resource {
      */
     public String getStoredProceduresLink() {
         return String.format("%s/%s",
-                StringUtils.stripEnd(super.getSelfLink(), "/"),
+                Strings.stripEnd(super.getSelfLink(), '/'),
                 super.getString(Constants.Properties.STORED_PROCEDURES_LINK));
     }
 
@@ -361,7 +360,7 @@ public final class DocumentCollection extends Resource {
      * @return the trigger link.
      */
     public String getTriggersLink() {
-        return StringUtils.removeEnd(this.getSelfLink(), "/") +
+        return Strings.removeEnd(this.getSelfLink(), '/') +
                 "/" + super.getString(Constants.Properties.TRIGGERS_LINK);
     }
 
@@ -371,7 +370,7 @@ public final class DocumentCollection extends Resource {
      * @return the user defined functions link.
      */
     public String getUserDefinedFunctionsLink() {
-        return StringUtils.removeEnd(this.getSelfLink(), "/") +
+        return Strings.removeEnd(this.getSelfLink(), '/') +
                 "/" + super.getString(Constants.Properties.USER_DEFINED_FUNCTIONS_LINK);
     }
 
@@ -381,7 +380,7 @@ public final class DocumentCollection extends Resource {
      * @return the conflicts link.
      */
     public String getConflictsLink() {
-        return StringUtils.removeEnd(this.getSelfLink(), "/") +
+        return Strings.removeEnd(this.getSelfLink(), '/') +
                 "/" + super.getString(Constants.Properties.CONFLICTS_LINK);
     }
 

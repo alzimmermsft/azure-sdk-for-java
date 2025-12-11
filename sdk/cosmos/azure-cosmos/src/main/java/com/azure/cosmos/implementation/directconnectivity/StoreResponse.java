@@ -5,7 +5,7 @@ package com.azure.cosmos.implementation.directconnectivity;
 
 import com.azure.cosmos.implementation.HttpConstants;
 import com.azure.cosmos.implementation.RequestTimeline;
-import com.azure.cosmos.implementation.apachecommons.lang.StringUtils;
+import com.azure.cosmos.implementation.Strings;
 import com.azure.cosmos.implementation.directconnectivity.rntbd.RntbdChannelAcquisitionTimeline;
 import com.azure.cosmos.implementation.directconnectivity.rntbd.RntbdChannelStatistics;
 import com.azure.cosmos.implementation.directconnectivity.rntbd.RntbdEndpointStatistics;
@@ -15,7 +15,6 @@ import io.netty.util.IllegalReferenceCountException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -166,7 +165,7 @@ public class StoreResponse {
 
     public long getLSN() {
         String lsnString = this.getHeaderValue(WFConstants.BackendHeaders.LSN);
-        if (StringUtils.isNotEmpty(lsnString)) {
+        if (Strings.isNotEmpty(lsnString)) {
             return Long.parseLong(lsnString);
         }
 
@@ -220,7 +219,7 @@ public class StoreResponse {
 
     public double getRequestCharge() {
         String value = this.getHeaderValue(HttpConstants.HttpHeaders.REQUEST_CHARGE);
-        if (StringUtils.isEmpty(value)) {
+        if (Strings.isEmpty(value)) {
             return 0;
         }
         return Double.parseDouble(value);
@@ -265,7 +264,7 @@ public class StoreResponse {
     int getSubStatusCode() {
         int subStatusCode = HttpConstants.SubStatusCodes.UNKNOWN;
         String subStatusCodeString = this.getHeaderValue(WFConstants.BackendHeaders.SUB_STATUS);
-        if (StringUtils.isNotEmpty(subStatusCodeString)) {
+        if (Strings.isNotEmpty(subStatusCodeString)) {
             try {
                 subStatusCode = Integer.parseInt(subStatusCodeString);
             } catch (NumberFormatException e) {

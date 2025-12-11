@@ -18,12 +18,11 @@ import com.azure.cosmos.implementation.FeedResponseValidator;
 import com.azure.cosmos.implementation.ImplementationBridgeHelpers;
 import com.azure.cosmos.implementation.InternalObjectNode;
 import com.azure.cosmos.implementation.ItemOperations;
+import com.azure.cosmos.implementation.Pair;
 import com.azure.cosmos.implementation.QueryMetrics;
 import com.azure.cosmos.implementation.Resource;
 import com.azure.cosmos.implementation.TestUtils;
 import com.azure.cosmos.implementation.Utils.ValueHolder;
-import com.azure.cosmos.implementation.apachecommons.lang.NotImplementedException;
-import com.azure.cosmos.implementation.apachecommons.lang.tuple.Pair;
 import com.azure.cosmos.implementation.guava25.base.Function;
 import com.azure.cosmos.implementation.query.CompositeContinuationToken;
 import com.azure.cosmos.implementation.routing.Range;
@@ -757,7 +756,7 @@ public class ParallelDocumentQueryTest extends TestSuiteBase {
                     new CosmosItemSerializerNoExceptionWrapping() {
                         @Override
                         public <T> Map<String, Object> serialize(T item) {
-                            throw new NotImplementedException("Not supported");
+                            throw new UnsupportedOperationException("Not supported");
                         }
 
                         @Override

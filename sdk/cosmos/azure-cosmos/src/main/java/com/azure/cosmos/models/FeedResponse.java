@@ -16,16 +16,13 @@ import com.azure.cosmos.implementation.QueryMetrics;
 import com.azure.cosmos.implementation.QueryMetricsConstants;
 import com.azure.cosmos.implementation.RxDocumentServiceResponse;
 import com.azure.cosmos.implementation.Strings;
-import com.azure.cosmos.implementation.apachecommons.lang.StringUtils;
 import com.azure.cosmos.implementation.query.QueryInfo;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -372,7 +369,7 @@ public class FeedResponse<T> implements ContinuablePage<String, T> {
     public double getRequestCharge() {
         String value = getValueOrNull(header,
             HttpConstants.HttpHeaders.REQUEST_CHARGE);
-        if (StringUtils.isEmpty(value)) {
+        if (Strings.isEmpty(value)) {
             return 0;
         }
         return Double.parseDouble(value);
@@ -480,7 +477,7 @@ public class FeedResponse<T> implements ContinuablePage<String, T> {
         }
 
         //We parse query metrics for un-partitioned container here
-        if (!StringUtils.isEmpty(getQueryMetricsString())) {
+        if (!Strings.isEmpty(getQueryMetricsString())) {
             String qm = getQueryMetricsString();
             qm += String.format(";%s=%.2f", QueryMetricsConstants.RequestCharge, getRequestCharge());
             queryMetricsMap.put(defaultPartition, QueryMetrics.createFromDelimitedString(qm));
@@ -494,8 +491,8 @@ public class FeedResponse<T> implements ContinuablePage<String, T> {
 
     private long currentQuotaHeader(String headerName) {
         if (this.usageHeaders.size() == 0
-                && !StringUtils.isEmpty(this.getMaxResourceQuota())
-                && !StringUtils.isEmpty(this.getCurrentResourceQuotaUsage())) {
+                && !Strings.isEmpty(this.getMaxResourceQuota())
+                && !Strings.isEmpty(this.getCurrentResourceQuotaUsage())) {
             this.populateQuotaHeader(this.getMaxResourceQuota(), this.getCurrentResourceQuotaUsage());
         }
 
@@ -508,8 +505,8 @@ public class FeedResponse<T> implements ContinuablePage<String, T> {
 
     private long maxQuotaHeader(String headerName) {
         if (this.quotaHeaders.size() == 0
-                && !StringUtils.isEmpty(this.getMaxResourceQuota())
-                && !StringUtils.isEmpty(this.getCurrentResourceQuotaUsage())) {
+                && !Strings.isEmpty(this.getMaxResourceQuota())
+                && !Strings.isEmpty(this.getCurrentResourceQuotaUsage())) {
             this.populateQuotaHeader(this.getMaxResourceQuota(), this.getCurrentResourceQuotaUsage());
         }
 

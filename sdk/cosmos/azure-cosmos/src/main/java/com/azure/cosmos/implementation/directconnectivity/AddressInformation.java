@@ -3,7 +3,7 @@
 
 package com.azure.cosmos.implementation.directconnectivity;
 
-import com.azure.cosmos.implementation.apachecommons.lang.StringUtils;
+import com.azure.cosmos.implementation.Strings;
 import com.azure.cosmos.implementation.directconnectivity.rntbd.RntbdUtils;
 
 import java.net.URI;
@@ -85,7 +85,7 @@ public class AddressInformation {
     }
 
     private static String normalizePhysicalUri(String physicalUri) {
-        if (StringUtils.isEmpty(physicalUri)) {
+        if (Strings.isEmpty(physicalUri)) {
             return physicalUri;
         }
 

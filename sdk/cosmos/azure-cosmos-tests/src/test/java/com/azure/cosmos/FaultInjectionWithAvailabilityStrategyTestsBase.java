@@ -11,12 +11,11 @@ import com.azure.cosmos.implementation.GlobalEndpointManager;
 import com.azure.cosmos.implementation.HttpConstants;
 import com.azure.cosmos.implementation.ImplementationBridgeHelpers;
 import com.azure.cosmos.implementation.OperationType;
+import com.azure.cosmos.implementation.Pair;
 import com.azure.cosmos.implementation.ResourceType;
 import com.azure.cosmos.implementation.RxDocumentClientImpl;
 import com.azure.cosmos.implementation.TestConfigurations;
 import com.azure.cosmos.implementation.Utils;
-import com.azure.cosmos.implementation.apachecommons.lang.tuple.ImmutablePair;
-import com.azure.cosmos.implementation.apachecommons.lang.tuple.Pair;
 import com.azure.cosmos.implementation.directconnectivity.ReflectionUtils;
 import com.azure.cosmos.models.CosmosClientTelemetryConfig;
 import com.azure.cosmos.models.CosmosContainerProperties;
@@ -4929,7 +4928,7 @@ public abstract class FaultInjectionWithAvailabilityStrategyTestsBase extends Te
                 }
 
                 String documentId = UUID.randomUUID().toString();
-                Pair<String, String> idAndPkValPair = new ImmutablePair<>(documentId, documentId);
+                Pair<String, String> idAndPkValPair = Pair.of(documentId, documentId);
 
                 CosmosDiagnosticsTest.TestItem createdItem = new CosmosDiagnosticsTest.TestItem(documentId, documentId);
                 CosmosAsyncContainer testContainer = clientWithPreferredRegions

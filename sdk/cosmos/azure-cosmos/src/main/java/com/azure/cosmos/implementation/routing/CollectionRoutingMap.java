@@ -3,8 +3,8 @@
 
 package com.azure.cosmos.implementation.routing;
 
+import com.azure.cosmos.implementation.Pair;
 import com.azure.cosmos.implementation.PartitionKeyRange;
-import com.azure.cosmos.implementation.apachecommons.lang.tuple.ImmutablePair;
 
 import java.util.Collection;
 import java.util.List;
@@ -32,7 +32,7 @@ public interface CollectionRoutingMap {
     String getCollectionUniqueId();
 
     CollectionRoutingMap tryCombine(
-        List<ImmutablePair<PartitionKeyRange, IServerIdentity>> ranges,
+        List<Pair<PartitionKeyRange, IServerIdentity>> ranges,
         String changeFeedNextIfNoneMatch,
         String collectionRid);
 

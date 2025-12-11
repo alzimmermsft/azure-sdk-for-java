@@ -5,7 +5,6 @@ package com.azure.cosmos.implementation;
 
 import com.azure.cosmos.BridgeInternal;
 import com.azure.cosmos.CosmosException;
-import com.azure.cosmos.implementation.apachecommons.lang.StringUtils;
 import com.azure.cosmos.implementation.routing.PartitionKeyInternal;
 import com.azure.cosmos.implementation.routing.RegionNameToRegionIdMap;
 import com.azure.cosmos.models.PartitionKeyDefinition;
@@ -357,7 +356,7 @@ public class PartitionScopedRegionLevelProgress {
                     String normalizedRegionName = RegionNameToRegionIdMap.getRegionName(regionId);
 
                     // the regionId to normalizedRegionName does not exist
-                    if (normalizedRegionName.equals(StringUtils.EMPTY)) {
+                    if (normalizedRegionName.equals(Strings.EMPTY)) {
 
                         if (logger.isDebugEnabled()) {
                             logger.debug("regionId with value - {} which has no known region name has been seen in the vector session token", regionId);

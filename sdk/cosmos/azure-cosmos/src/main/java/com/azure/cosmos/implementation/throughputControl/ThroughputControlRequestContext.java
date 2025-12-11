@@ -3,7 +3,7 @@
 
 package com.azure.cosmos.implementation.throughputControl;
 
-import com.azure.cosmos.implementation.apachecommons.lang.StringUtils;
+import com.azure.cosmos.implementation.Strings;
 
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -14,7 +14,7 @@ public class ThroughputControlRequestContext {
     private final AtomicReference<String> throughputControlCycleId;
 
     public ThroughputControlRequestContext(String configString) {
-        checkArgument(StringUtils.isNotEmpty(configString), "Argument 'configString' cannot be null or empty.");
+        checkArgument(Strings.isNotEmpty(configString), "Argument 'configString' cannot be null or empty.");
         this.configString = configString;
         this.throughputControlCycleId = new AtomicReference<>();
     }

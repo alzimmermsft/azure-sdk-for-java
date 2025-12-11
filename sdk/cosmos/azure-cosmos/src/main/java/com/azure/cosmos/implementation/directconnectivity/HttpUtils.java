@@ -6,7 +6,6 @@ package com.azure.cosmos.implementation.directconnectivity;
 import com.azure.cosmos.implementation.Constants.UrlEncodingInfo;
 import com.azure.cosmos.implementation.HttpConstants;
 import com.azure.cosmos.implementation.Strings;
-import com.azure.cosmos.implementation.apachecommons.lang.StringUtils;
 import com.azure.cosmos.implementation.http.HttpHeaders;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -66,7 +65,7 @@ public class HttpUtils {
 
     public static String getDateHeader(Map<String, String> headerValues) {
         if (headerValues == null) {
-            return StringUtils.EMPTY;
+            return Strings.EMPTY;
         }
 
         // Since Date header is overridden by some proxies/http client libraries, we support
@@ -76,7 +75,7 @@ public class HttpUtils {
             date = headerValues.get(HttpConstants.HttpHeaders.HTTP_DATE);
         }
 
-        return date != null ? date : StringUtils.EMPTY;
+        return date != null ? date : Strings.EMPTY;
     }
 
     public static List<Entry<String, String>> unescape(Set<Entry<String, String>> headers) {

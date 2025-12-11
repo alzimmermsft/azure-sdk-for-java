@@ -2,7 +2,7 @@
 // Licensed under the MIT License.
 package com.azure.cosmos.implementation.query.metrics;
 
-import com.azure.cosmos.implementation.apachecommons.lang.tuple.ImmutablePair;
+import com.azure.cosmos.implementation.Pair;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -23,7 +23,7 @@ public class ClientSideMetrics {
     private final long retries;
     private final double requestCharge;
     private final List<FetchExecutionRange> fetchExecutionRanges;
-    private final List<ImmutablePair<String, SchedulingTimeSpan>> partitionSchedulingTimeSpans;
+    private final List<Pair<String, SchedulingTimeSpan>> partitionSchedulingTimeSpans;
 
     /**
      * Constructor
@@ -34,7 +34,7 @@ public class ClientSideMetrics {
      * @param schedulingTimeSpans The partition scheduling timespans from the query.
      */
     public ClientSideMetrics(int retries, double requestCharge, List<FetchExecutionRange> executionRanges,
-                             List<ImmutablePair<String, SchedulingTimeSpan>> schedulingTimeSpans) {
+                             List<Pair<String, SchedulingTimeSpan>> schedulingTimeSpans) {
         if (executionRanges == null || executionRanges.contains(null)) {
             throw new NullPointerException("executionRanges");
         }
@@ -89,7 +89,7 @@ public class ClientSideMetrics {
         int retries = 0;
         double requestCharge = 0;
         List<FetchExecutionRange> fetchExecutionRanges = new ArrayList<>();
-        List<ImmutablePair<String, SchedulingTimeSpan>> partitionSchedulingTimeSpans = new ArrayList<>();
+        List<Pair<String, SchedulingTimeSpan>> partitionSchedulingTimeSpans = new ArrayList<>();
 
         for (ClientSideMetrics clientSideQueryMetrics : clientSideMetricsCollection) {
             retries += clientSideQueryMetrics.retries;
@@ -120,7 +120,7 @@ public class ClientSideMetrics {
      *
      * @return the List of Partition Scheduling TimeSpans for this query
      */
-    public List<ImmutablePair<String, SchedulingTimeSpan>> getPartitionSchedulingTimeSpans() {
+    public List<Pair<String, SchedulingTimeSpan>> getPartitionSchedulingTimeSpans() {
         return partitionSchedulingTimeSpans;
     }
 }

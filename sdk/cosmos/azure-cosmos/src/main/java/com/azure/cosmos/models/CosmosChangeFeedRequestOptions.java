@@ -3,7 +3,6 @@
 
 package com.azure.cosmos.models;
 
-import com.azure.cosmos.ConsistencyLevel;
 import com.azure.cosmos.CosmosDiagnosticsThresholds;
 import com.azure.cosmos.CosmosItemSerializer;
 import com.azure.cosmos.ReadConsistencyStrategy;
@@ -11,7 +10,7 @@ import com.azure.cosmos.implementation.CosmosChangeFeedRequestOptionsImpl;
 import com.azure.cosmos.implementation.CosmosPagedFluxOptions;
 import com.azure.cosmos.implementation.HttpConstants;
 import com.azure.cosmos.implementation.ImplementationBridgeHelpers;
-import com.azure.cosmos.implementation.apachecommons.lang.StringUtils;
+import com.azure.cosmos.implementation.Strings;
 import com.azure.cosmos.implementation.changefeed.common.ChangeFeedMode;
 import com.azure.cosmos.implementation.changefeed.common.ChangeFeedStartFromInternal;
 import com.azure.cosmos.implementation.changefeed.common.ChangeFeedState;
@@ -323,7 +322,7 @@ public final class CosmosChangeFeedRequestOptions {
 
             final ChangeFeedState changeFeedState = ChangeFeedState.fromString(continuation);
 
-            if (StringUtils.isEmpty(continuationLsn)) {
+            if (Strings.isEmpty(continuationLsn)) {
                 continuationLsn = changeFeedState.getContinuation().getCurrentContinuationToken().getToken();
             }
 

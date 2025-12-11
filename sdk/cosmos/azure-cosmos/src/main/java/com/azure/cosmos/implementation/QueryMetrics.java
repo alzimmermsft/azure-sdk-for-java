@@ -2,7 +2,6 @@
 // Licensed under the MIT License.
 package com.azure.cosmos.implementation;
 
-import com.azure.cosmos.implementation.apachecommons.lang.tuple.ImmutablePair;
 import com.azure.cosmos.implementation.query.metrics.ClientSideMetrics;
 import com.azure.cosmos.implementation.query.metrics.FetchExecutionRange;
 import com.azure.cosmos.implementation.query.metrics.SchedulingTimeSpan;
@@ -249,7 +248,7 @@ public final class QueryMetrics {
     public static QueryMetrics createFromDelimitedString(String delimitedString) {
         return QueryMetrics.createFromDelimitedStringAndClientSideMetrics(delimitedString,
                 new ClientSideMetrics(0, 0, new ArrayList<FetchExecutionRange>(),
-                        new ArrayList<ImmutablePair<String, SchedulingTimeSpan>>()), "", "");
+                        new ArrayList<Pair<String, SchedulingTimeSpan>>()), "", "");
     }
 
     public static QueryMetrics createFromDelimitedStringAndClientSideMetrics(String delimitedString, ClientSideMetrics clientSideMetrics,

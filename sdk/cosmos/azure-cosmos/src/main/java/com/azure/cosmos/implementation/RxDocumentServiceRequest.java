@@ -5,7 +5,6 @@ package com.azure.cosmos.implementation;
 
 import com.azure.cosmos.CosmosDiagnostics;
 import com.azure.cosmos.CosmosItemSerializer;
-import com.azure.cosmos.implementation.apachecommons.lang.StringUtils;
 import com.azure.cosmos.implementation.directconnectivity.WFConstants;
 import com.azure.cosmos.implementation.faultinjection.FaultInjectionRequestContext;
 import com.azure.cosmos.implementation.feedranges.FeedRangeInternal;
@@ -17,8 +16,8 @@ import com.azure.cosmos.models.CosmosChangeFeedRequestOptions;
 import com.azure.cosmos.models.CosmosQueryRequestOptions;
 import com.azure.cosmos.models.ModelBridgeInternal;
 import com.azure.cosmos.models.PartitionKeyDefinition;
-import com.azure.cosmos.models.SqlQuerySpec;
 import com.azure.cosmos.models.PriorityLevel;
+import com.azure.cosmos.models.SqlQuerySpec;
 import reactor.core.publisher.Flux;
 
 import java.net.URI;
@@ -105,7 +104,7 @@ public class RxDocumentServiceRequest implements Cloneable {
 
     public boolean isReadOnlyScript() {
         String isReadOnlyScript = this.headers.get(HttpConstants.HttpHeaders.IS_READ_ONLY_SCRIPT);
-        if(StringUtils.isEmpty(isReadOnlyScript)) {
+        if(Strings.isEmpty(isReadOnlyScript)) {
             return false;
         } else {
             return this.operationType.equals(OperationType.ExecuteJavaScript) && isReadOnlyScript.equalsIgnoreCase(Boolean.TRUE.toString());
@@ -193,7 +192,7 @@ public class RxDocumentServiceRequest implements Cloneable {
         this.authorizationTokenType = authorizationTokenType;
         this.requestContext = new DocumentServiceRequestContext();
         this.faultInjectionRequestContext = new FaultInjectionRequestContext();
-        if (StringUtils.isNotEmpty(this.headers.get(WFConstants.BackendHeaders.PARTITION_KEY_RANGE_ID)))
+        if (Strings.isNotEmpty(this.headers.get(WFConstants.BackendHeaders.PARTITION_KEY_RANGE_ID)))
             this.partitionKeyRangeIdentity = PartitionKeyRangeIdentity.fromHeader(this.headers.get(WFConstants.BackendHeaders.PARTITION_KEY_RANGE_ID));
     }
 
@@ -220,7 +219,7 @@ public class RxDocumentServiceRequest implements Cloneable {
         this.activityId = UUIDs.nonBlockingRandomUUID();
         this.isFeed = false;
 
-        if (StringUtils.isNotEmpty(path)) {
+        if (Strings.isNotEmpty(path)) {
             PathInfo pathInfo = new PathInfo(false, null, null, false);
             if (PathsHelper.tryParsePathSegments(path, pathInfo, null)) {
                 this.isNameBased = pathInfo.isNameBased;
@@ -237,7 +236,7 @@ public class RxDocumentServiceRequest implements Cloneable {
 
                     // throw exception when the address parsing fail
                     // do not parse address for offer resource
-                    if (StringUtils.isNotEmpty(this.resourceId) && !ResourceId.tryParse(this.resourceId).getLeft()
+                    if (Strings.isNotEmpty(this.resourceId) && !ResourceId.tryParse(this.resourceId).getLeft()
                             && !resourceType.equals(ResourceType.Offer) && !resourceType.equals(ResourceType.Media)
                             && !resourceType.equals(ResourceType.MasterPartition)
                             && !resourceType.equals(ResourceType.ServerPartition)
@@ -258,7 +257,7 @@ public class RxDocumentServiceRequest implements Cloneable {
             this.resourceAddress = path;
         }
 
-        if (StringUtils.isNotEmpty(this.headers.get(HttpConstants.HttpHeaders.PARTITION_KEY_RANGE_ID))) {
+        if (Strings.isNotEmpty(this.headers.get(HttpConstants.HttpHeaders.PARTITION_KEY_RANGE_ID))) {
             this.partitionKeyRangeIdentity = PartitionKeyRangeIdentity
                     .fromHeader(this.headers.get(HttpConstants.HttpHeaders.PARTITION_KEY_RANGE_ID));
         }

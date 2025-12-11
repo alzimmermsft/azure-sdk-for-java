@@ -3,7 +3,7 @@
 
 package com.azure.cosmos.implementation.throughputControl.sdk.controller.group.global;
 
-import com.azure.cosmos.implementation.apachecommons.lang.StringUtils;
+import com.azure.cosmos.implementation.Strings;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -38,8 +38,8 @@ public class GlobalThroughputControlConfigItem extends GlobalThroughputControlIt
         boolean isDefault) {
 
         super(id, partitionKeyValue);
-        this.targetThroughput = targetThroughput != null ? targetThroughput.toString() : StringUtils.EMPTY;
-        this.targetThroughputThreshold = targetThroughputThreshold != null ? targetThroughputThreshold.toString() : StringUtils.EMPTY;
+        this.targetThroughput = targetThroughput != null ? targetThroughput.toString() : Strings.EMPTY;
+        this.targetThroughputThreshold = targetThroughputThreshold != null ? targetThroughputThreshold.toString() : Strings.EMPTY;
         this.isDefault = isDefault;
     }
 
@@ -80,10 +80,10 @@ public class GlobalThroughputControlConfigItem extends GlobalThroughputControlIt
 
         GlobalThroughputControlConfigItem that = (GlobalThroughputControlConfigItem) other;
 
-        return StringUtils.equals(this.getId(), that.getId())
-            && StringUtils.equals(this.getGroupId(), that.getGroupId())
-            && StringUtils.equals(this.targetThroughput, that.targetThroughput)
-            && StringUtils.equals(this.targetThroughputThreshold, that.targetThroughputThreshold)
+        return Objects.equals(this.getId(), that.getId())
+            && Objects.equals(this.getGroupId(), that.getGroupId())
+            && Objects.equals(this.targetThroughput, that.targetThroughput)
+            && Objects.equals(this.targetThroughputThreshold, that.targetThroughputThreshold)
             && this.isDefault == that.isDefault;
     }
 

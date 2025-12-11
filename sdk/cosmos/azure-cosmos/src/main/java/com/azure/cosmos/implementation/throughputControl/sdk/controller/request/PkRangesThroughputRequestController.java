@@ -5,7 +5,7 @@ package com.azure.cosmos.implementation.throughputControl.sdk.controller.request
 
 import com.azure.cosmos.implementation.PartitionKeyRange;
 import com.azure.cosmos.implementation.RxDocumentServiceRequest;
-import com.azure.cosmos.implementation.apachecommons.lang.StringUtils;
+import com.azure.cosmos.implementation.Strings;
 import com.azure.cosmos.implementation.caches.RxPartitionKeyRangeCache;
 import com.azure.cosmos.implementation.routing.PartitionKeyInternalHelper;
 import com.azure.cosmos.implementation.routing.Range;
@@ -39,7 +39,7 @@ public class PkRangesThroughputRequestController implements IThroughputRequestCo
         double initialScheduledThroughput) {
 
         checkNotNull(partitionKeyRangeCache, "RxPartitionKeyRangeCache can not be null");
-        checkArgument(StringUtils.isNotEmpty(targetContainerRid), "Target container rid can not be null nor empty");
+        checkArgument(Strings.isNotEmpty(targetContainerRid), "Target container rid can not be null nor empty");
 
         this.partitionKeyRangeCache = partitionKeyRangeCache;
         this.requestThrottlerMap = new ConcurrentHashMap<>();

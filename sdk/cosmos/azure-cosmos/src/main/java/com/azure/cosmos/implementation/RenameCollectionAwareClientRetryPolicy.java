@@ -4,7 +4,6 @@ package com.azure.cosmos.implementation;
 
 import com.azure.cosmos.BridgeInternal;
 import com.azure.cosmos.CosmosException;
-import com.azure.cosmos.implementation.apachecommons.lang.StringUtils;
 import com.azure.cosmos.implementation.caches.RxClientCollectionCache;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -76,7 +75,7 @@ public class RenameCollectionAwareClientRetryPolicy extends DocumentClientRetryP
                     return collectionObs.flatMap(collectionValueHolder -> {
                         if (collectionValueHolder.v == null) {
                             logger.warn("Can't recover from session unavailable exception because resolving collection name {} returned null", request.getResourceAddress());
-                        } else if (!StringUtils.isEmpty(oldCollectionRid) && !StringUtils.isEmpty(collectionValueHolder.v.getResourceId())) {
+                        } else if (Strings.isNotEmpty(oldCollectionRid) && Strings.isNotEmpty(collectionValueHolder.v.getResourceId())) {
                             return Mono.just(ShouldRetryResult.retryAfter(Duration.ZERO));
                         }
                         return Mono.just(shouldRetryResult);

@@ -3,7 +3,6 @@
 
 package com.azure.cosmos.implementation;
 
-import com.azure.cosmos.implementation.apachecommons.lang.StringUtils;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 /**
@@ -72,7 +71,7 @@ public final class HashIndex extends Index {
     public DataType getDataType() {
         DataType result = null;
         try {
-            result = DataType.valueOf(StringUtils.upperCase(super.getString(Constants.Properties.DATA_TYPE)));
+            result = DataType.valueOf(Strings.upperCase(super.getString(Constants.Properties.DATA_TYPE)));
         } catch (IllegalArgumentException e) {
             // Ignore exception and let the caller handle null value.
             super.getLogger().warn("INVALID index dataType value {}.", super.getString(Constants.Properties.DATA_TYPE));

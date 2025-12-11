@@ -23,8 +23,6 @@ import com.azure.cosmos.implementation.ResourceType;
 import com.azure.cosmos.implementation.RxDocumentServiceRequest;
 import com.azure.cosmos.implementation.Strings;
 import com.azure.cosmos.implementation.Utils;
-import com.azure.cosmos.implementation.apachecommons.lang.NotImplementedException;
-import com.azure.cosmos.implementation.apachecommons.lang.StringUtils;
 import com.azure.cosmos.implementation.caches.RxCollectionCache;
 import com.azure.cosmos.implementation.directconnectivity.rntbd.ProactiveOpenConnectionsProcessor;
 import com.azure.cosmos.implementation.routing.CollectionRoutingMap;
@@ -36,6 +34,7 @@ import org.slf4j.LoggerFactory;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.util.Objects;
 import java.util.concurrent.Callable;
 import java.util.function.Function;
 
@@ -93,7 +92,7 @@ public class AddressResolver implements IAddressResolver {
 
     @Override
     public void setOpenConnectionsProcessor(ProactiveOpenConnectionsProcessor proactiveOpenConnectionsProcessor) {
-        throw new NotImplementedException("setOpenConnectionsProcessor is not supported on AddressResolver");
+        throw new UnsupportedOperationException("setOpenConnectionsProcessor is not supported on AddressResolver");
     }
 
     private static boolean isSameCollection(PartitionKeyRange initiallyResolved, PartitionKeyRange newlyResolved) {
@@ -538,7 +537,7 @@ public class AddressResolver implements IAddressResolver {
                         Mono<RefreshState> newRefreshStateObs = newCollectionObs.flatMap(collectionValueHolder -> {
                             state.collection = collectionValueHolder.v;
 
-                            if (!StringUtils.equals(collectionValueHolder.v.getResourceId(), state.routingMap.getCollectionUniqueId())) {
+                            if (!Objects.equals(collectionValueHolder.v.getResourceId(), state.routingMap.getCollectionUniqueId())) {
                                 // Collection cache was stale. We resolved to new Rid. routing map cache is potentially stale
                                 // for this new collection rid. Mark it as such.
                                 state.collectionRoutingMapCacheIsUptoDate = false;
@@ -680,7 +679,7 @@ public class AddressResolver implements IAddressResolver {
             // partition getKey definition cached - like if collection with same getName but with RANGE partitioning is created.
             // In this case server will not pass x-ms-documentdb-collection-rid check and will return back InvalidPartitionException.
             // GATEWAY will refresh its cache and retry.
-            String effectivePartitionKey = StringUtils.isNotEmpty(request.getEffectivePartitionKey())
+            String effectivePartitionKey = Strings.isNotEmpty(request.getEffectivePartitionKey())
                 ? request.getEffectivePartitionKey() : PartitionKeyInternalHelper.getEffectivePartitionKeyString(partitionKey, collection.getPartitionKey());
 
             request.setEffectivePartitionKey(effectivePartitionKey);

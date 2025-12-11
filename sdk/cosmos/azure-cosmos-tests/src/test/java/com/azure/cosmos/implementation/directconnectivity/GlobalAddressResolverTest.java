@@ -13,12 +13,12 @@ import com.azure.cosmos.implementation.GlobalEndpointManager;
 import com.azure.cosmos.implementation.IAuthorizationTokenProvider;
 import com.azure.cosmos.implementation.OpenConnectionResponse;
 import com.azure.cosmos.implementation.OperationType;
+import com.azure.cosmos.implementation.Pair;
 import com.azure.cosmos.implementation.PartitionKeyRange;
 import com.azure.cosmos.implementation.ResourceType;
 import com.azure.cosmos.implementation.RxDocumentServiceRequest;
 import com.azure.cosmos.implementation.UserAgentContainer;
 import com.azure.cosmos.implementation.Utils;
-import com.azure.cosmos.implementation.apachecommons.lang.tuple.ImmutablePair;
 import com.azure.cosmos.implementation.caches.RxCollectionCache;
 import com.azure.cosmos.implementation.caches.RxPartitionKeyRangeCache;
 import com.azure.cosmos.implementation.http.HttpClient;
@@ -190,9 +190,9 @@ public class GlobalAddressResolverTest {
             ranges.add(new PartitionKeyRangeIdentity(documentCollection.getResourceId(), partitionKeyRange.getId()));
         }
 
-        List<ImmutablePair<ImmutablePair<String, DocumentCollection>, AddressInformation>> collectionToAddresses = new ArrayList<>();
+        List<Pair<Pair<String, DocumentCollection>, AddressInformation>> collectionToAddresses = new ArrayList<>();
 
-        collectionToAddresses.add(new ImmutablePair<>(new ImmutablePair<>("coll1", documentCollection), addressInformation));
+        collectionToAddresses.add(Pair.of(Pair.of("coll1", documentCollection), addressInformation));
 
         List<OpenConnectionResponse> openConnectionResponses = new ArrayList<>();
         OpenConnectionResponse response1 = new OpenConnectionResponse(new Uri("http://localhost:8081"), true,null, 1);

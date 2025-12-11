@@ -5,12 +5,11 @@ package com.azure.cosmos.implementation.batch;
 
 import com.azure.cosmos.implementation.Configs;
 import com.azure.cosmos.implementation.CosmosBulkExecutionOptionsImpl;
+import com.azure.cosmos.implementation.Pair;
 import com.azure.cosmos.implementation.UUIDs;
-import com.azure.cosmos.implementation.apachecommons.lang.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;

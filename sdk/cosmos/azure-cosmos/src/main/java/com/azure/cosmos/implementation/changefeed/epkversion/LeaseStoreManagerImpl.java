@@ -8,7 +8,7 @@ import com.azure.cosmos.CosmosException;
 import com.azure.cosmos.implementation.Constants;
 import com.azure.cosmos.implementation.Exceptions;
 import com.azure.cosmos.implementation.InternalObjectNode;
-import com.azure.cosmos.implementation.apachecommons.lang.StringUtils;
+import com.azure.cosmos.implementation.Strings;
 import com.azure.cosmos.implementation.changefeed.CancellationToken;
 import com.azure.cosmos.implementation.changefeed.ChangeFeedContextClient;
 import com.azure.cosmos.implementation.changefeed.Lease;
@@ -24,7 +24,6 @@ import com.azure.cosmos.implementation.changefeed.exceptions.TaskCancelledExcept
 import com.azure.cosmos.implementation.feedranges.FeedRangeEpkImpl;
 import com.azure.cosmos.models.CosmosItemIdentity;
 import com.azure.cosmos.models.FeedResponse;
-import com.azure.cosmos.models.ModelBridgeInternal;
 import com.azure.cosmos.models.PartitionKey;
 import com.azure.cosmos.models.SqlParameter;
 import com.azure.cosmos.models.SqlQuerySpec;
@@ -112,7 +111,7 @@ public class LeaseStoreManagerImpl implements LeaseStoreManager, LeaseStoreManag
         checkNotNull(this.settings, "settings can not be null");
         checkNotNull(this.settings.getContainerNamePrefix(), "settings.containerNamePrefix can not be null");
         checkNotNull(this.settings.getLeaseCollectionLink(), "settings.leaseCollectionLink can not be null");
-        checkArgument(StringUtils.isNotEmpty(this.settings.getHostName()), "settings.getHostName can not be null nor empty");
+        checkArgument(Strings.isNotEmpty(this.settings.getHostName()), "settings.getHostName can not be null nor empty");
         checkNotNull(this.leaseDocumentClient, "leaseDocumentClient can not be null");
         checkNotNull(this.requestOptionsFactory, "requestOptionsFactory can not be null");
 

@@ -3,9 +3,6 @@
 
 package com.azure.cosmos.implementation;
 
-import com.azure.cosmos.implementation.apachecommons.lang.StringUtils;
-import com.azure.cosmos.implementation.apachecommons.lang.tuple.Pair;
-
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.charset.StandardCharsets;
@@ -133,7 +130,7 @@ public class ResourceId {
         ResourceId rid = null;
 
         try {
-            if (StringUtils.isEmpty(id))
+            if (Strings.isEmpty(id))
                 return Pair.of(false, null);
 
             if (id.length() % 4 != 0) {
@@ -222,7 +219,7 @@ public class ResourceId {
     }
 
     public static Pair<Boolean, byte[]> verify(String id) {
-        if (StringUtils.isEmpty(id))
+        if (Strings.isEmpty(id))
             throw new IllegalArgumentException("id");
 
         byte[] buffer = null;

@@ -6,7 +6,6 @@ import com.azure.cosmos.BridgeInternal;
 import com.azure.cosmos.ConsistencyLevel;
 import com.azure.cosmos.CosmosException;
 import com.azure.cosmos.CosmosItemSerializer;
-import com.azure.cosmos.implementation.apachecommons.lang.StringUtils;
 import com.azure.cosmos.models.CosmosChangeFeedRequestOptions;
 import com.azure.cosmos.models.DedicatedGatewayRequestOptions;
 import com.azure.cosmos.models.ModelBridgeInternal;
@@ -287,7 +286,7 @@ public class Utils {
         path1 = trimBeginningAndEndingSlashes(path1);
         String result = "/" + path1 + "/";
 
-        if (!StringUtils.isEmpty(path2)) {
+        if (Strings.isNotEmpty(path2)) {
             path2 = trimBeginningAndEndingSlashes(path2);
             result += path2 + "/";
         }
@@ -605,7 +604,7 @@ public class Utils {
     }
 
     public static <T> T parse(String itemResponseBodyAsString, Class<T> itemClassType) {
-        if (StringUtils.isEmpty(itemResponseBodyAsString)) {
+        if (Strings.isEmpty(itemResponseBodyAsString)) {
             return null;
         }
         try {
@@ -617,7 +616,7 @@ public class Utils {
     }
 
     public static ObjectNode parseJson(String itemResponseBodyAsString) {
-        if (StringUtils.isEmpty(itemResponseBodyAsString)) {
+        if (Strings.isEmpty(itemResponseBodyAsString)) {
             return null;
         }
         try {
@@ -823,10 +822,14 @@ public class Utils {
             nestedException,
             responseHeaders,
             statusCode,
-            Strings.Emtpy);
+            Strings.EMPTY);
 
         BridgeInternal.setSubStatusCode(exceptionToThrow, substatusCode);
 
         return exceptionToThrow;
+    }
+
+    public static <T> T defaultIfNull(T value, T defaultValue) {
+        return (value == null) ? defaultValue : value;
     }
 }

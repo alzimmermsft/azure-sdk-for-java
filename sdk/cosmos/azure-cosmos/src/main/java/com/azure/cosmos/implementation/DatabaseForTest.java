@@ -3,14 +3,10 @@
 
 package com.azure.cosmos.implementation;
 
-import com.azure.cosmos.CosmosAsyncClient;
-import com.azure.cosmos.CosmosClientBuilder;
 import com.azure.cosmos.implementation.apachecommons.lang.RandomStringUtils;
-import com.azure.cosmos.models.CosmosQueryRequestOptions;
 import com.azure.cosmos.models.FeedResponse;
 import com.azure.cosmos.models.SqlParameter;
 import com.azure.cosmos.models.SqlQuerySpec;
-import com.azure.cosmos.implementation.apachecommons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import reactor.core.publisher.Flux;
@@ -21,6 +17,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 public class DatabaseForTest {
     private static Logger logger = LoggerFactory.getLogger(DatabaseForTest.class);
@@ -59,11 +56,11 @@ public class DatabaseForTest {
             return null;
         }
 
-        String[] parts = StringUtils.split(id, DELIMITER);
+        String[] parts = id.split(DELIMITER);
         if (parts.length != 3) {
             return null;
         }
-        if (!StringUtils.equals(parts[0], SHARED_DB_ID_PREFIX)) {
+        if (!Objects.equals(parts[0], SHARED_DB_ID_PREFIX)) {
             return null;
         }
 

@@ -11,7 +11,7 @@ import com.azure.cosmos.implementation.PartitionKeyRange;
 import com.azure.cosmos.implementation.PartitionKeyRangeWrapper;
 import com.azure.cosmos.implementation.ResourceType;
 import com.azure.cosmos.implementation.RxDocumentServiceRequest;
-import com.azure.cosmos.implementation.apachecommons.lang.StringUtils;
+import com.azure.cosmos.implementation.Strings;
 import com.azure.cosmos.implementation.routing.RegionalRoutingContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -77,7 +77,7 @@ public class GlobalPartitionEndpointManagerForPerPartitionAutomaticFailover {
             return false;
         }
 
-        if (StringUtils.isEmpty(resolvedCollectionRid)) {
+        if (Strings.isEmpty(resolvedCollectionRid)) {
             logAsWarnOrDebug("Argument 'request.requestContext.resolvedCollectionRid' is null, " +
                 "hence resetEndToEndTimeoutErrorCountIfPossible cannot be performed", this.warnLevelLoggedCounts);
             return false;
@@ -131,7 +131,7 @@ public class GlobalPartitionEndpointManagerForPerPartitionAutomaticFailover {
             return false;
         }
 
-        if (StringUtils.isEmpty(resolvedCollectionRid)) {
+        if (Strings.isEmpty(resolvedCollectionRid)) {
             logAsWarnOrDebug("Argument 'request.requestContext.resolvedCollectionRid' is null, " +
                 "hence tryAddPartitionLevelLocationOverride cannot be performed", this.warnLevelLoggedCounts);
             return false;
@@ -201,7 +201,7 @@ public class GlobalPartitionEndpointManagerForPerPartitionAutomaticFailover {
             return false;
         }
 
-        if (StringUtils.isEmpty(resolvedCollectionRid)) {
+        if (Strings.isEmpty(resolvedCollectionRid)) {
             logAsWarnOrDebug("Argument 'request.requestContext.resolvedCollectionRid' is null, " +
                 "hence tryMarkEndpointAsUnavailableForPartitionKeyRange cannot be performed", this.warnLevelLoggedCounts);
             return false;

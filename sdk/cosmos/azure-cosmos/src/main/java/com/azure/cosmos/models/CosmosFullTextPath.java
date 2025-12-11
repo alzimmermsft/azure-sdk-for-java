@@ -4,7 +4,7 @@
 package com.azure.cosmos.models;
 
 import com.azure.cosmos.implementation.Constants;
-import com.azure.cosmos.implementation.apachecommons.lang.StringUtils;
+import com.azure.cosmos.implementation.Strings;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
@@ -37,7 +37,7 @@ public final class CosmosFullTextPath {
      * @return CosmosFullTextPath
      */
     public CosmosFullTextPath setPath(String path) {
-        if (StringUtils.isEmpty(path)) {
+        if (Strings.isEmpty(path)) {
             throw new NullPointerException("Full text search path is either null or empty");
         }
 

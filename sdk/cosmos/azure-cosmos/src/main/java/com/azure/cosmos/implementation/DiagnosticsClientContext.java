@@ -10,9 +10,8 @@ import com.azure.cosmos.CosmosDiagnostics;
 import com.azure.cosmos.CosmosEndToEndOperationLatencyPolicyConfig;
 import com.azure.cosmos.ReadConsistencyStrategy;
 import com.azure.cosmos.SessionRetryOptions;
-import com.azure.cosmos.implementation.apachecommons.lang.StringUtils;
-import com.azure.cosmos.implementation.perPartitionCircuitBreaker.PartitionLevelCircuitBreakerConfig;
 import com.azure.cosmos.implementation.clienttelemetry.ClientTelemetry;
+import com.azure.cosmos.implementation.perPartitionCircuitBreaker.PartitionLevelCircuitBreakerConfig;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
@@ -89,11 +88,11 @@ public interface DiagnosticsClientContext {
                 generator.writeStringField("e2ePolicyCfg", clientConfig.endToEndOperationLatencyPolicyConfigAsString);
                 generator.writeStringField("sessionRetryCfg", clientConfig.sessionRetryOptionsAsString);
 
-                if (!StringUtils.isEmpty(clientConfig.regionScopedSessionContainerOptionsAsString)) {
+                if (Strings.isNotEmpty(clientConfig.regionScopedSessionContainerOptionsAsString)) {
                     generator.writeStringField("regionScopedSessionCfg", clientConfig.regionScopedSessionContainerOptionsAsString);
                 }
 
-                if (!StringUtils.isEmpty(clientConfig.partitionLevelCircuitBreakerConfigAsString)) {
+                if (Strings.isNotEmpty(clientConfig.partitionLevelCircuitBreakerConfigAsString)) {
                     generator.writeStringField("partitionLevelCircuitBreakerCfg", clientConfig.partitionLevelCircuitBreakerConfigAsString);
                 }
 

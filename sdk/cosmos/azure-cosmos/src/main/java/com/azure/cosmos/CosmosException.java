@@ -9,8 +9,8 @@ import com.azure.cosmos.implementation.CosmosError;
 import com.azure.cosmos.implementation.HttpConstants;
 import com.azure.cosmos.implementation.ImplementationBridgeHelpers;
 import com.azure.cosmos.implementation.RequestTimeline;
+import com.azure.cosmos.implementation.Strings;
 import com.azure.cosmos.implementation.Utils;
-import com.azure.cosmos.implementation.apachecommons.lang.StringUtils;
 import com.azure.cosmos.implementation.batch.BatchExecUtils;
 import com.azure.cosmos.implementation.directconnectivity.Uri;
 import com.azure.cosmos.implementation.directconnectivity.rntbd.RntbdChannelAcquisitionTimeline;
@@ -319,7 +319,7 @@ public class CosmosException extends AzureException {
         int code = HttpConstants.SubStatusCodes.UNKNOWN;
         if (this.responseHeaders != null) {
             String subStatusString = this.responseHeaders.get(HttpConstants.HttpHeaders.SUB_STATUS);
-            if (StringUtils.isNotEmpty(subStatusString)) {
+            if (Strings.isNotEmpty(subStatusString)) {
                 try {
                     code = Integer.parseInt(subStatusString);
                 } catch (NumberFormatException e) {
@@ -362,7 +362,7 @@ public class CosmosException extends AzureException {
         if (this.responseHeaders != null) {
             String header = this.responseHeaders.get(HttpConstants.HttpHeaders.RETRY_AFTER_IN_MILLISECONDS);
 
-            if (StringUtils.isNotEmpty(header)) {
+            if (Strings.isNotEmpty(header)) {
                 try {
                     retryIntervalInMilliseconds = Math.min(Long.parseLong(header), MAX_RETRY_AFTER_IN_MS);
                 } catch (NumberFormatException e) {
@@ -419,7 +419,7 @@ public class CosmosException extends AzureException {
      */
     public double getRequestCharge() {
         String value = this.getResponseHeaders().get(HttpConstants.HttpHeaders.REQUEST_CHARGE);
-        if (StringUtils.isEmpty(value)) {
+        if (Strings.isEmpty(value)) {
             return 0;
         }
         return Double.parseDouble(value);
@@ -460,7 +460,7 @@ public class CosmosException extends AzureException {
                 exceptionMessageNode.put("requestHeaders", filterRequestHeaders.toString());
             }
 
-            if (StringUtils.isNotEmpty(this.faultInjectionRuleId)) {
+            if (Strings.isNotEmpty(this.faultInjectionRuleId)) {
                 exceptionMessageNode.put("faultInjectionRuleId", this.faultInjectionRuleId);
             }
 
@@ -495,7 +495,7 @@ public class CosmosException extends AzureException {
             }
         }
         // if cosmosError is null as well, try to get the underlying error from the internal cause
-        if (StringUtils.isEmpty(innerErrorMessage) && this.getCause() != null) {
+        if (Strings.isEmpty(innerErrorMessage) && this.getCause() != null) {
             innerErrorMessage = this.getCause().getMessage();
         }
 

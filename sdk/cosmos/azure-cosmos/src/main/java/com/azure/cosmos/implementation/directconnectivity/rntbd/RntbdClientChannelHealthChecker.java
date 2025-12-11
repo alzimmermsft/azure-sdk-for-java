@@ -5,7 +5,7 @@ package com.azure.cosmos.implementation.directconnectivity.rntbd;
 
 import com.azure.cosmos.implementation.ClientSideRequestStatistics;
 import com.azure.cosmos.implementation.CosmosDiagnosticsSystemUsageSnapshot;
-import com.azure.cosmos.implementation.apachecommons.lang.StringUtils;
+import com.azure.cosmos.implementation.Strings;
 import com.azure.cosmos.implementation.clienttelemetry.ClientTelemetry;
 import com.azure.cosmos.implementation.cpu.CpuMemoryMonitor;
 import com.azure.cosmos.implementation.directconnectivity.rntbd.RntbdEndpoint.Config;
@@ -215,27 +215,27 @@ public final class RntbdClientChannelHealthChecker implements ChannelHealthCheck
         }
 
         String writeIsHangMessage = this.isWriteHang(timestamps, currentTime, requestManager, channel);
-        if (StringUtils.isNotEmpty(writeIsHangMessage)) {
+        if (Strings.isNotEmpty(writeIsHangMessage)) {
             return promise.setSuccess(writeIsHangMessage);
         }
 
         String readIsHangMessage = this.isReadHang(timestamps, currentTime, requestManager, channel);
-        if (StringUtils.isNotEmpty(readIsHangMessage)) {
+        if (Strings.isNotEmpty(readIsHangMessage)) {
             return promise.setSuccess(readIsHangMessage);
         }
 
         String transitTimeoutValidationMessage = this.transitTimeoutValidation(timestamps, currentTime, requestManager, channel);
-        if (StringUtils.isNotEmpty(transitTimeoutValidationMessage)) {
+        if (Strings.isNotEmpty(transitTimeoutValidationMessage)) {
             return promise.setSuccess(transitTimeoutValidationMessage);
         }
 
         String idleConnectionValidationMessage = this.idleConnectionValidation(timestamps, currentTime, channel);
-        if(StringUtils.isNotEmpty(idleConnectionValidationMessage)) {
+        if(Strings.isNotEmpty(idleConnectionValidationMessage)) {
             return promise.setSuccess(idleConnectionValidationMessage);
         }
 
         String isCancellationProneChannelMessage = this.isCancellationProneChannel(timestamps, currentTime, requestManager, channel);
-        if (StringUtils.isNotEmpty(isCancellationProneChannelMessage)) {
+        if (Strings.isNotEmpty(isCancellationProneChannelMessage)) {
             return promise.setSuccess(isCancellationProneChannelMessage);
         }
 
@@ -267,7 +267,7 @@ public final class RntbdClientChannelHealthChecker implements ChannelHealthCheck
         final long writeHangDurationInNanos =
                 Duration.between(timestamps.lastChannelWriteAttemptTime(), currentTime).toNanos();
 
-        String writeHangMessage = StringUtils.EMPTY;
+        String writeHangMessage = Strings.EMPTY;
 
         if (writeDelayInNanos > this.writeDelayLimitInNanos && writeHangDurationInNanos > writeHangGracePeriodInNanos) {
 
@@ -304,7 +304,7 @@ public final class RntbdClientChannelHealthChecker implements ChannelHealthCheck
         final long readDelay = Duration.between(timestamps.lastChannelReadTime(), timestamps.lastChannelWriteTime()).toNanos();
         final long readHangDuration = Duration.between(timestamps.lastChannelWriteTime(), currentTime).toNanos();
 
-        String readHangMessage = StringUtils.EMPTY;
+        String readHangMessage = Strings.EMPTY;
 
         if (readDelay > this.readDelayLimitInNanos && readHangDuration > readHangGracePeriodInNanos) {
 
@@ -332,7 +332,7 @@ public final class RntbdClientChannelHealthChecker implements ChannelHealthCheck
     }
 
     private String transitTimeoutValidation(Timestamps timestamps, Instant currentTime, RntbdRequestManager requestManager, Channel channel) {
-        String transitTimeoutValidationMessage = StringUtils.EMPTY;
+        String transitTimeoutValidationMessage = Strings.EMPTY;
 
         if (this.timeoutDetectionEnabled && timestamps.transitTimeoutCount() > 0) {
 
@@ -413,7 +413,7 @@ public final class RntbdClientChannelHealthChecker implements ChannelHealthCheck
     }
 
     private String idleConnectionValidation(Timestamps timestamps, Instant currentTime, Channel channel) {
-        String errorMessage = StringUtils.EMPTY;
+        String errorMessage = Strings.EMPTY;
 
         if (this.idleConnectionTimeoutInNanos > 0L) {
             if (Duration.between(timestamps.lastChannelReadTime(), currentTime).toNanos() > this.idleConnectionTimeoutInNanos) {
@@ -436,7 +436,7 @@ public final class RntbdClientChannelHealthChecker implements ChannelHealthCheck
     }
 
     private String isCancellationProneChannel(Timestamps timestamps, Instant currentTime, RntbdRequestManager requestManager, Channel channel) {
-        String errorMessage = StringUtils.EMPTY;
+        String errorMessage = Strings.EMPTY;
 
         if (timestamps.cancellationCount() >= this.cancellationCountSinceLastReadThreshold) {
 

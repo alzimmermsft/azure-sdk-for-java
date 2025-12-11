@@ -3,16 +3,12 @@
 package com.azure.cosmos.models;
 
 import com.azure.cosmos.BridgeInternal;
-import com.azure.cosmos.CosmosAsyncClient;
 import com.azure.cosmos.implementation.Database;
 import com.azure.cosmos.implementation.ResourceResponse;
 import com.azure.cosmos.implementation.SerializationDiagnosticsContext;
-import com.azure.cosmos.implementation.apachecommons.lang.StringUtils;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import java.time.Instant;
-import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
 
 /**
  * The type Cosmos database response.

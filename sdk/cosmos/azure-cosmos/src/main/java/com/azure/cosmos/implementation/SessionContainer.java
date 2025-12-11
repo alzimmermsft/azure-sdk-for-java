@@ -86,7 +86,7 @@ public final class SessionContainer implements ISessionContainer {
         }
 
         if (partitionKeyRangeIdToTokenMap == null) {
-            return StringUtils.EMPTY;
+            return Strings.EMPTY;
         }
 
         return SessionContainer.getCombinedSessionToken(partitionKeyRangeIdToTokenMap);
@@ -99,7 +99,7 @@ public final class SessionContainer implements ISessionContainer {
     private ConcurrentHashMap<String, ISessionToken> getPartitionKeyRangeIdToTokenMap(boolean isNameBased, String rId, String resourceAddress) {
         ConcurrentHashMap<String, ISessionToken> rangeIdToTokenMap = null;
         if (!isNameBased) {
-            if (!StringUtils.isEmpty(rId)) {
+            if (Strings.isNotEmpty(rId)) {
                 ResourceId resourceId = ResourceId.parse(rId);
                 if (resourceId.getDocumentCollection() != 0) {
                     rangeIdToTokenMap =
@@ -108,7 +108,7 @@ public final class SessionContainer implements ISessionContainer {
             }
         } else {
             String collectionName = Utils.getCollectionName(resourceAddress);
-            if (!StringUtils.isEmpty(collectionName) && this.collectionNameToCollectionResourceId.containsKey(collectionName)) {
+            if (Strings.isNotEmpty(collectionName) && this.collectionNameToCollectionResourceId.containsKey(collectionName)) {
                 rangeIdToTokenMap = this.collectionResourceIdToSessionTokens.get(
                         this.collectionNameToCollectionResourceId.get(collectionName));
             }
@@ -122,7 +122,7 @@ public final class SessionContainer implements ISessionContainer {
             return SessionContainer.getCombinedSessionToken(partitionKeyRangeIdToTokenMap);
         }
 
-        return StringUtils.EMPTY;
+        return Strings.EMPTY;
     }
 
     @Override
@@ -152,7 +152,7 @@ public final class SessionContainer implements ISessionContainer {
 
     @Override
     public void clearTokenByResourceId(String resourceId) {
-        if (!StringUtils.isEmpty(resourceId)) {
+        if (Strings.isNotEmpty(resourceId)) {
             ResourceId resource = ResourceId.parse(resourceId);
             if (resource.getDocumentCollection() != 0) {
                 Long rid = resource.getUniqueDocumentCollectionId();

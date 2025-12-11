@@ -17,11 +17,12 @@ import com.azure.cosmos.implementation.OperationType;
 import com.azure.cosmos.implementation.QueryFeedOperationState;
 import com.azure.cosmos.implementation.ResourceType;
 import com.azure.cosmos.implementation.RxDocumentServiceRequest;
+import com.azure.cosmos.implementation.Strings;
 import com.azure.cosmos.implementation.Utils;
-import com.azure.cosmos.implementation.apachecommons.lang.StringUtils;
 import com.azure.cosmos.implementation.caches.AsyncCache;
 import com.azure.cosmos.implementation.caches.RxCollectionCache;
 import com.azure.cosmos.implementation.caches.RxPartitionKeyRangeCache;
+import com.azure.cosmos.implementation.guava25.base.Objects;
 import com.azure.cosmos.implementation.throughputControl.IThroughputContainerController;
 import com.azure.cosmos.implementation.throughputControl.sdk.LinkedCancellationToken;
 import com.azure.cosmos.implementation.throughputControl.sdk.LinkedCancellationTokenSource;
@@ -155,7 +156,7 @@ public class SDKThroughputContainerController implements IThroughputContainerCon
     }
 
     private Mono<ThroughputResponse> resolveContainerThroughput() {
-        if (StringUtils.isEmpty(this.targetContainerRid)) {
+        if (Strings.isEmpty(this.targetContainerRid)) {
             return this.resolveContainerResourceId()
                 .flatMap(this::resolveThroughputByResourceId)
                 .onErrorResume(throwable -> {
@@ -234,7 +235,7 @@ public class SDKThroughputContainerController implements IThroughputContainerCon
         // we will get 400/0 with error message: Reading or replacing offers is not supported for serverless accounts.
         // We are not supporting serverless account for throughput control for now. But the protocol may change in future,
         // use https://github.com/Azure/azure-sdk-for-java/issues/18776 to keep track for possible future work.
-        checkArgument(StringUtils.isNotEmpty(resourceId), "ResourceId can not be null or empty");
+        checkArgument(Strings.isNotEmpty(resourceId), "ResourceId can not be null or empty");
         QueryFeedOperationState state = new QueryFeedOperationState(
             ImplementationBridgeHelpers.CosmosAsyncDatabaseHelper.getCosmosAsyncDatabaseAccessor().getCosmosAsyncClient(this.targetContainer.getDatabase()),
             "resolveThroughputByResourceId",
@@ -308,7 +309,7 @@ public class SDKThroughputContainerController implements IThroughputContainerCon
     private Mono<Utils.ValueHolder<SDKThroughputGroupControllerBase>> getOrCreateThroughputGroupController(String groupName) {
 
         // If there is no control group defined, using the default group controller
-        if (StringUtils.isEmpty(groupName)) {
+        if (Strings.isEmpty(groupName)) {
             return Mono.just(new Utils.ValueHolder<>(this.defaultGroupController));
         }
 
@@ -329,7 +330,7 @@ public class SDKThroughputContainerController implements IThroughputContainerCon
     public boolean canHandleRequest(RxDocumentServiceRequest request) {
         checkNotNull(request, "Request can not be null");
 
-        return StringUtils.equals(this.targetContainerRid, request.requestContext.resolvedCollectionRid);
+        return Objects.equal(this.targetContainerRid, request.requestContext.resolvedCollectionRid);
     }
 
     private Mono<SDKThroughputContainerController> createAndInitializeGroupControllers() {

@@ -45,7 +45,7 @@ public class KafkaCosmosConfig extends AbstractConfig {
     private static final String ACCOUNT_TENANT_ID = "azure.cosmos.account.tenantId";
     private static final String ACCOUNT_TENANT_ID_DOC = "The tenantId of the CosmosDB account. Required for `ServicePrincipal` authentication.";
     private static final String ACCOUNT_TENANT_ID_DISPLAY = "The tenantId of the CosmosDB account.";
-    private static final String DEFAULT_ACCOUNT_TENANT_ID = Strings.Emtpy;
+    private static final String DEFAULT_ACCOUNT_TENANT_ID = Strings.EMPTY;
 
     private static final String AUTH_TYPE = "azure.cosmos.auth.type";
     private static final String AUTH_TYPE_DOC = "There are two auth types are supported currently: "
@@ -56,17 +56,17 @@ public class KafkaCosmosConfig extends AbstractConfig {
     private static final String ACCOUNT_KEY = "azure.cosmos.account.key";
     private static final String ACCOUNT_KEY_DOC = "Cosmos DB Account Key (only required in case of `auth.type` as `MasterKey`)";
     private static final String ACCOUNT_KEY_DISPLAY = "Cosmos DB Account Key.";
-    private static final String DEFAULT_ACCOUNT_KEY = Strings.Emtpy;
+    private static final String DEFAULT_ACCOUNT_KEY = Strings.EMPTY;
 
     private static final String AAD_CLIENT_ID = "azure.cosmos.auth.aad.clientId";
     private static final String AAD_CLIENT_ID_DOC = "The clientId/ApplicationId of the service principal. Required for `ServicePrincipal` authentication.";
     private static final String AAD_CLIENT_ID_DISPLAY = "The clientId/ApplicationId of the service principal.";
-    private static final String DEFAULT_AAD_CLIENT_ID = Strings.Emtpy;
+    private static final String DEFAULT_AAD_CLIENT_ID = Strings.EMPTY;
 
     private static final String AAD_CLIENT_SECRET = "azure.cosmos.auth.aad.clientSecret";
     private static final String AAD_CLIENT_SECRET_DOC = "The client secret/password of the service principal. Required for `ServicePrincipal` authentication.";
     private static final String AAD_CLIENT_SECRET_DISPLAY = "The client secret/password of the service principal.";
-    private static final String DEFAULT_AAD_CLIENT_SECRET = Strings.Emtpy;
+    private static final String DEFAULT_AAD_CLIENT_SECRET = Strings.EMPTY;
 
     private static final String AAD_AUTH_ENDPOINT_OVERRIDE = "azure.cosmos.auth.aad.authEndpointOverride";
     private static final String AAD_AUTH_ENDPOINT_OVERRIDE_DOC = "Overrides the Azure Active Directory (AAD) authentication endpoint. "
@@ -74,7 +74,7 @@ public class KafkaCosmosConfig extends AbstractConfig {
         + "By default, the SDK uses the standard AAD endpoint for the public Azure cloud. Set this value if your deployment requires a custom authority URI.";
     private static final String AAD_AUTH_ENDPOINT_OVERRIDE_DISPLAY =
         "The Azure Active Directory (AAD) authentication endpoint override. Set this if you are using a cloud environment other than public Azure.";
-    private static final String DEFAULT_AAD_AUTH_ENDPOINT_OVERRIDE = Strings.Emtpy;
+    private static final String DEFAULT_AAD_AUTH_ENDPOINT_OVERRIDE = Strings.EMPTY;
 
     private static final String USE_GATEWAY_MODE = "azure.cosmos.mode.gateway";
     private static final String USE_GATEWAY_MODE_DOC = "Flag to indicate whether to use gateway mode. By default it is false, means SDK uses direct mode. https://learn.microsoft.com/azure/cosmos-db/nosql/sdk-connection-modes";
@@ -101,7 +101,7 @@ public class KafkaCosmosConfig extends AbstractConfig {
     private static final String THROUGHPUT_CONTROL_ACCOUNT_ENDPOINT = "azure.cosmos.throughputControl.account.endpoint";
     private static final String THROUGHPUT_CONTROL_ACCOUNT_ENDPOINT_DOC = "Cosmos DB Throughput Control Account Endpoint Uri.";
     private static final String THROUGHPUT_CONTROL_ACCOUNT_ENDPOINT_DISPLAY = "Cosmos DB Throughput Control Account Endpoint Uri.";
-    private static final String DEFAULT_THROUGHPUT_CONTROL_ACCOUNT_ENDPOINT = Strings.Emtpy;
+    private static final String DEFAULT_THROUGHPUT_CONTROL_ACCOUNT_ENDPOINT = Strings.EMPTY;
 
     private static final String THROUGHPUT_CONTROL_ACCOUNT_AZURE_ENVIRONMENT = "azure.cosmos.throughputControl.account.environment";
     private static final String THROUGHPUT_CONTROL_ACCOUNT_AZURE_ENVIRONMENT_DOC = "The azure environment of the CosmosDB account: `Azure`, `AzureChina`, `AzureUsGovernment`, `AzureGermany`.";
@@ -111,7 +111,7 @@ public class KafkaCosmosConfig extends AbstractConfig {
     private static final String THROUGHPUT_CONTROL_ACCOUNT_TENANT_ID = "azure.cosmos.throughputControl.account.tenantId";
     private static final String THROUGHPUT_CONTROL_ACCOUNT_TENANT_ID_DOC = "The tenantId of the CosmosDB account. Required for `ServicePrincipal` authentication.";
     private static final String THROUGHPUT_CONTROL_ACCOUNT_TENANT_ID_DISPLAY = "The tenantId of the CosmosDB account.";
-    private static final String DEFAULT_THROUGHPUT_CONTROL_ACCOUNT_TENANT_ID = Strings.Emtpy;
+    private static final String DEFAULT_THROUGHPUT_CONTROL_ACCOUNT_TENANT_ID = Strings.EMPTY;
 
     private static final String THROUGHPUT_CONTROL_AUTH_TYPE = "azure.cosmos.throughputControl.auth.type";
     private static final String THROUGHPUT_CONTROL_AUTH_TYPE_DOC = "There are two auth types are supported currently: "
@@ -122,17 +122,17 @@ public class KafkaCosmosConfig extends AbstractConfig {
     private static final String THROUGHPUT_CONTROL_ACCOUNT_KEY = "azure.cosmos.throughputControl.account.key";
     private static final String THROUGHPUT_CONTROL_ACCOUNT_KEY_DOC = "Cosmos DB Throughput Control Account Key (only required in case of `throughputControl.auth.type` as `MasterKey`)";
     private static final String THROUGHPUT_CONTROL_ACCOUNT_KEY_DISPLAY = "Cosmos DB Throughput Control Account Key.";
-    private static final String DEFAULT_THROUGHPUT_CONTROL_ACCOUNT_KEY = Strings.Emtpy;
+    private static final String DEFAULT_THROUGHPUT_CONTROL_ACCOUNT_KEY = Strings.EMPTY;
 
     private static final String THROUGHPUT_CONTROL_AAD_CLIENT_ID = "azure.cosmos.throughputControl.auth.aad.clientId";
     private static final String THROUGHPUT_CONTROL_AAD_CLIENT_ID_DOC = "The clientId/ApplicationId of the service principal. Required for `ServicePrincipal` authentication.";
     private static final String THROUGHPUT_CONTROL_AAD_CLIENT_ID_DISPLAY = "The clientId/ApplicationId of the service principal.";
-    private static final String DEFAULT_THROUGHPUT_CONTROL_AAD_CLIENT_ID = Strings.Emtpy;
+    private static final String DEFAULT_THROUGHPUT_CONTROL_AAD_CLIENT_ID = Strings.EMPTY;
 
     private static final String THROUGHPUT_CONTROL_AAD_CLIENT_SECRET = "azure.cosmos.throughputControl.auth.aad.clientSecret";
     private static final String THROUGHPUT_CONTROL_AAD_CLIENT_SECRET_DOC = "The client secret/password of the service principal. Required for `ServicePrincipal` authentication.";
     private static final String THROUGHPUT_CONTROL_AAD_CLIENT_SECRET_DISPLAY = "The client secret/password of the service principal.";
-    private static final String DEFAULT_THROUGHPUT_CONTROL_AAD_CLIENT_SECRET = Strings.Emtpy;
+    private static final String DEFAULT_THROUGHPUT_CONTROL_AAD_CLIENT_SECRET = Strings.EMPTY;
 
     private static final String THROUGHPUT_CONTROL_PREFERRED_REGIONS_LIST = "azure.cosmos.throughputControl.preferredRegionList";
     private static final String THROUGHPUT_CONTROL_PREFERRED_REGIONS_LIST_DOC = "Preferred regions list to be used for a multi region Cosmos DB account. "
@@ -140,7 +140,7 @@ public class KafkaCosmosConfig extends AbstractConfig {
         + "You should use a collocated kafka cluster with your Cosmos DB account and pass the kafka cluster region as preferred region. "
         + "See list of azure regions [here](https://docs.microsoft.com/dotnet/api/microsoft.azure.documents.locationnames?view=azure-dotnet&preserve-view=true).";
     private static final String THROUGHPUT_CONTROL_PREFERRED_REGIONS_LIST_DISPLAY = "Preferred regions list for throughput control database account";
-    private static final String DEFAULT_THROUGHPUT_CONTROL_PREFERRED_REGIONS_LIST = Strings.Emtpy;
+    private static final String DEFAULT_THROUGHPUT_CONTROL_PREFERRED_REGIONS_LIST = Strings.EMPTY;
 
     private static final String THROUGHPUT_CONTROL_USE_GATEWAY_MODE = "azure.cosmos.throughputControl.mode.gateway";
     private static final String THROUGHPUT_CONTROL_USE_GATEWAY_MODE_DOC = "Flag to indicate whether to use gateway mode. By default it is false, means SDK uses direct mode. https://learn.microsoft.com/azure/cosmos-db/nosql/sdk-connection-modes";
@@ -151,7 +151,7 @@ public class KafkaCosmosConfig extends AbstractConfig {
     private static final String THROUGHPUT_CONTROL_GROUP_NAME_DOC =
         "Throughput control group name. Since customer is allowed to create many groups for a container, the name should be unique.";
     private static final String THROUGHPUT_CONTROL_GROUP_NAME_DISPLAY = "Throughput control group name.";
-    private static final String DEFAULT_THROUGHPUT_CONTROL_GROUP_NAME = Strings.Emtpy;
+    private static final String DEFAULT_THROUGHPUT_CONTROL_GROUP_NAME = Strings.EMPTY;
 
     private static final String THROUGHPUT_CONTROL_TARGET_THROUGHPUT = "azure.cosmos.throughputControl.targetThroughput";
     private static final String THROUGHPUT_CONTROL_TARGET_THROUGHPUT_DOC = "Throughput control group target throughput. The value should be larger than 0.";
@@ -171,12 +171,12 @@ public class KafkaCosmosConfig extends AbstractConfig {
     private static final String THROUGHPUT_CONTROL_GLOBAL_CONTROL_DATABASE = "azure.cosmos.throughputControl.globalControl.database.name";
     private static final String THROUGHPUT_CONTROL_GLOBAL_CONTROL_DATABASE_DOC = "Database which will be used for throughput global control.";
     private static final String THROUGHPUT_CONTROL_GLOBAL_CONTROL_DATABASE_DISPLAY = "Database which will be used for throughput global control.";
-    private static final String DEFAULT_THROUGHPUT_CONTROL_GLOBAL_CONTROL_DATABASE = Strings.Emtpy;
+    private static final String DEFAULT_THROUGHPUT_CONTROL_GLOBAL_CONTROL_DATABASE = Strings.EMPTY;
 
     private static final String THROUGHPUT_CONTROL_GLOBAL_CONTROL_CONTAINER = "azure.cosmos.throughputControl.globalControl.container.name";
     private static final String THROUGHPUT_CONTROL_GLOBAL_CONTROL_CONTAINER_DOC = "Container which will be used for throughput global control.";
     private static final String THROUGHPUT_CONTROL_GLOBAL_CONTROL_CONTAINER_DISPLAY = "Container which will be used for throughput global control.";
-    private static final String DEFAULT_THROUGHPUT_CONTROL_GLOBAL_CONTROL_CONTAINER = Strings.Emtpy;
+    private static final String DEFAULT_THROUGHPUT_CONTROL_GLOBAL_CONTROL_CONTAINER = Strings.EMPTY;
 
     private static final String THROUGHPUT_CONTROL_GLOBAL_CONTROL_RENEW_INTERVAL_IN_MS = "azure.cosmos.throughputControl.globalControl.renewIntervalInMS";
     private static final String THROUGHPUT_CONTROL_GLOBAL_CONTROL_RENEW_INTERVAL_IN_MS_DOC =
@@ -443,7 +443,7 @@ public class KafkaCosmosConfig extends AbstractConfig {
             .define(
                 APPLICATION_NAME,
                 ConfigDef.Type.STRING,
-                Strings.Emtpy,
+                Strings.EMPTY,
                 ConfigDef.Importance.MEDIUM,
                 APPLICATION_NAME_DOC,
                 accountGroupName,
@@ -465,7 +465,7 @@ public class KafkaCosmosConfig extends AbstractConfig {
             .define(
                 PREFERRED_REGIONS_LIST,
                 ConfigDef.Type.STRING,
-                Strings.Emtpy,
+                Strings.EMPTY,
                 ConfigDef.Importance.HIGH,
                 PREFERRED_REGIONS_LIST_DOC,
                 accountGroupName,

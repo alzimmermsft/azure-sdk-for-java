@@ -4,8 +4,6 @@
 package com.azure.cosmos.implementation;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.azure.cosmos.implementation.apachecommons.lang.ObjectUtils;
-import com.azure.cosmos.implementation.apachecommons.lang.StringUtils;
 
 import java.io.IOException;
 import java.util.Collection;
@@ -195,7 +193,7 @@ public final class DatabaseAccount extends Resource {
         if (this.queryEngineConfiguration == null) {
             String queryEngineConfigurationJsonString = super.getObject(Constants.Properties.QUERY_ENGINE_CONFIGURATION,
                 String.class);
-            if (StringUtils.isNotEmpty(queryEngineConfigurationJsonString)) {
+            if (Strings.isNotEmpty(queryEngineConfigurationJsonString)) {
                 try {
                     this.queryEngineConfiguration = Utils
                         .getSimpleObjectMapper()
@@ -276,7 +274,7 @@ public final class DatabaseAccount extends Resource {
      * @return the true if multiple write locations are set
      */
     public boolean getEnableMultipleWriteLocations() {
-        return ObjectUtils.defaultIfNull(super.getBoolean(Constants.Properties.ENABLE_MULTIPLE_WRITE_LOCATIONS), false);
+        return Utils.defaultIfNull(super.getBoolean(Constants.Properties.ENABLE_MULTIPLE_WRITE_LOCATIONS), false);
     }
 
     public void setEnableMultipleWriteLocations(boolean value) {
@@ -294,7 +292,7 @@ public final class DatabaseAccount extends Resource {
     public Boolean isPerPartitionFailoverBehaviorEnabled() {
 
         if (super.has(Constants.Properties.ENABLE_PER_PARTITION_FAILOVER_BEHAVIOR)) {
-            return ObjectUtils.defaultIfNull(super.getBoolean(Constants.Properties.ENABLE_PER_PARTITION_FAILOVER_BEHAVIOR), false);
+            return Utils.defaultIfNull(super.getBoolean(Constants.Properties.ENABLE_PER_PARTITION_FAILOVER_BEHAVIOR), false);
         }
 
         return null;

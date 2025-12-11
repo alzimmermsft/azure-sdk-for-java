@@ -5,7 +5,7 @@ package com.azure.cosmos.models;
 
 import com.azure.cosmos.implementation.Constants;
 import com.azure.cosmos.implementation.JsonSerializable;
-import com.azure.cosmos.implementation.apachecommons.lang.StringUtils;
+import com.azure.cosmos.implementation.Strings;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import java.util.Objects;
@@ -78,10 +78,10 @@ public final class CompositePath {
      */
     public CompositePathSortOrder getOrder() {
         String strValue = this.jsonSerializable.getString(Constants.Properties.ORDER);
-        if (!StringUtils.isEmpty(strValue)) {
+        if (!Strings.isEmpty(strValue)) {
             try {
                 return CompositePathSortOrder
-                           .valueOf(StringUtils.upperCase(this.jsonSerializable.getString(Constants.Properties.ORDER)));
+                           .valueOf(Strings.upperCase(this.jsonSerializable.getString(Constants.Properties.ORDER)));
             } catch (IllegalArgumentException e) {
                 this.jsonSerializable.getLogger().warn("INVALID getIndexingMode getValue {}.",
                     this.jsonSerializable.getString(Constants.Properties.ORDER));

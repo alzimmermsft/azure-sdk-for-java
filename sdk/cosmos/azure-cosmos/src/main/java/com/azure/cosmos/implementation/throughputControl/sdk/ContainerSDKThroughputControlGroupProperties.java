@@ -3,9 +3,9 @@
 
 package com.azure.cosmos.implementation.throughputControl.sdk;
 
+import com.azure.cosmos.implementation.Pair;
 import com.azure.cosmos.implementation.RxDocumentServiceRequest;
-import com.azure.cosmos.implementation.apachecommons.lang.StringUtils;
-import com.azure.cosmos.implementation.apachecommons.lang.tuple.Pair;
+import com.azure.cosmos.implementation.Strings;
 import com.azure.cosmos.implementation.throughputControl.sdk.config.SDKThroughputControlGroupInternal;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,7 +31,7 @@ public class ContainerSDKThroughputControlGroupProperties {
     private final String containerNameLink;
 
     public ContainerSDKThroughputControlGroupProperties(String containerNameLink) {
-        checkArgument(StringUtils.isNotEmpty(containerNameLink), "Argument 'containerNameLink' should not be empty");
+        checkArgument(Strings.isNotEmpty(containerNameLink), "Argument 'containerNameLink' should not be empty");
 
         this.defaultGroup = new AtomicReference<>();
         this.containerNameLink = containerNameLink;
@@ -109,7 +109,7 @@ public class ContainerSDKThroughputControlGroupProperties {
         checkNotNull(request, "Request should not be null");
 
         String requestGroupName = request.getThroughputControlGroupName();
-        if (StringUtils.isEmpty(requestGroupName)) {
+        if (Strings.isEmpty(requestGroupName)) {
             if (defaultGroup.get() == null) {
                 return true;
             }

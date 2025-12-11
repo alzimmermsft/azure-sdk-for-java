@@ -11,15 +11,15 @@ import com.azure.cosmos.implementation.DocumentClientRetryPolicy;
 import com.azure.cosmos.implementation.HttpConstants;
 import com.azure.cosmos.implementation.ImplementationBridgeHelpers;
 import com.azure.cosmos.implementation.OperationType;
+import com.azure.cosmos.implementation.Pair;
 import com.azure.cosmos.implementation.PartitionKeyRange;
 import com.azure.cosmos.implementation.PartitionKeyRangeGoneRetryPolicy;
 import com.azure.cosmos.implementation.PathsHelper;
 import com.azure.cosmos.implementation.QueryMetrics;
 import com.azure.cosmos.implementation.ResourceType;
 import com.azure.cosmos.implementation.RxDocumentServiceRequest;
+import com.azure.cosmos.implementation.Strings;
 import com.azure.cosmos.implementation.Utils.ValueHolder;
-import com.azure.cosmos.implementation.apachecommons.lang.StringUtils;
-import com.azure.cosmos.implementation.apachecommons.lang.tuple.ImmutablePair;
 import com.azure.cosmos.implementation.caches.IPartitionKeyRangeCache;
 import com.azure.cosmos.implementation.caches.RxCollectionCache;
 import com.azure.cosmos.implementation.feedranges.FeedRangeInternal;
@@ -216,9 +216,9 @@ public class DefaultDocumentQueryExecutionContext<T> extends DocumentQueryExecut
                 this.fetchExecutionRangeAccumulator.endFetchRange(tFeedResponse.getActivityId(),
                     tFeedResponse.getResults().size(),
                     this.retries.get());
-                ImmutablePair<String, SchedulingTimeSpan> schedulingTimeSpanMap =
-                    new ImmutablePair<>(DEFAULT_PARTITION_RANGE, this.fetchSchedulingMetrics.getElapsedTime());
-                if (!StringUtils.isEmpty(tFeedResponse.getResponseHeaders().get(HttpConstants.HttpHeaders.QUERY_METRICS))) {
+                Pair<String, SchedulingTimeSpan> schedulingTimeSpanMap =
+                    Pair.of(DEFAULT_PARTITION_RANGE, this.fetchSchedulingMetrics.getElapsedTime());
+                if (!Strings.isEmpty(tFeedResponse.getResponseHeaders().get(HttpConstants.HttpHeaders.QUERY_METRICS))) {
                     QueryMetrics qm =
                         BridgeInternal.createQueryMetricsFromDelimitedStringAndClientSideMetrics(tFeedResponse.getResponseHeaders()
                                 .get(HttpConstants.HttpHeaders.QUERY_METRICS),
@@ -251,7 +251,7 @@ public class DefaultDocumentQueryExecutionContext<T> extends DocumentQueryExecut
                 this.getPartitionKeyInternal(),
                 this.getPartitionKeyDefinition());
 
-        if (!StringUtils.isEmpty(getPartitionKeyRangeIdInternal(cosmosQueryRequestOptions))) {
+        if (Strings.isNotEmpty(getPartitionKeyRangeIdInternal(cosmosQueryRequestOptions))) {
             request.routeTo(new PartitionKeyRangeIdentity(getPartitionKeyRangeIdInternal(cosmosQueryRequestOptions)));
         }
 

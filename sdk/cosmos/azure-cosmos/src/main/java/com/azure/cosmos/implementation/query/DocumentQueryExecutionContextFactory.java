@@ -14,8 +14,8 @@ import com.azure.cosmos.implementation.OperationType;
 import com.azure.cosmos.implementation.PartitionKeyRange;
 import com.azure.cosmos.implementation.ResourceType;
 import com.azure.cosmos.implementation.RxDocumentServiceRequest;
+import com.azure.cosmos.implementation.Strings;
 import com.azure.cosmos.implementation.Utils;
-import com.azure.cosmos.implementation.apachecommons.lang.StringUtils;
 import com.azure.cosmos.implementation.caches.RxCollectionCache;
 import com.azure.cosmos.implementation.feedranges.FeedRangeEpkImpl;
 import com.azure.cosmos.implementation.feedranges.FeedRangeInternal;
@@ -91,7 +91,7 @@ public class DocumentQueryExecutionContextFactory {
         // FeedOptions, but have the below condition
         // for handling ParallelDocumentQueryTest#partitionKeyRangeId
         if (cosmosQueryRequestOptions != null &&
-            !StringUtils.isEmpty(ModelBridgeInternal.getPartitionKeyRangeIdInternal(cosmosQueryRequestOptions))) {
+            Strings.isNotEmpty(ModelBridgeInternal.getPartitionKeyRangeIdInternal(cosmosQueryRequestOptions))) {
 
             Mono<List<PartitionKeyRange>> partitionKeyRanges = queryExecutionContext
                 .getTargetPartitionKeyRangesById(

@@ -6,8 +6,8 @@ package com.azure.cosmos.implementation.throughputControl.server;
 import com.azure.cosmos.BridgeInternal;
 import com.azure.cosmos.implementation.ResourceType;
 import com.azure.cosmos.implementation.RxDocumentServiceRequest;
+import com.azure.cosmos.implementation.Strings;
 import com.azure.cosmos.implementation.Utils;
-import com.azure.cosmos.implementation.apachecommons.lang.StringUtils;
 import com.azure.cosmos.implementation.caches.AsyncCache;
 import com.azure.cosmos.implementation.throughputControl.EmptyThroughputContainerController;
 import com.azure.cosmos.implementation.throughputControl.server.config.ServerThroughputControlGroup;
@@ -74,7 +74,7 @@ public class ServerThroughputControlStore {
     }
 
     public boolean hasGroup(String containerNameLink, String throughputControlGroupName) {
-        if (StringUtils.isEmpty(throughputControlGroupName)) {
+        if (Strings.isEmpty(throughputControlGroupName)) {
             return false;
         }
 
@@ -93,7 +93,7 @@ public class ServerThroughputControlStore {
     }
 
     private Mono<ServerThroughputContainerController> createAndInitContainerController(String containerNameLink) {
-        checkArgument(StringUtils.isNotEmpty(containerNameLink), "Container link should not be null or empty");
+        checkArgument(Strings.isNotEmpty(containerNameLink), "Container link should not be null or empty");
 
         if (this.containerMap.containsKey(containerNameLink)) {
             ContainerServerThroughputControlGroupProperties containerProperties =

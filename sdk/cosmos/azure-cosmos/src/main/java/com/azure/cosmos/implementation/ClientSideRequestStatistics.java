@@ -2,13 +2,12 @@
 // Licensed under the MIT License.
 package com.azure.cosmos.implementation;
 
-import com.azure.cosmos.implementation.apachecommons.lang.StringUtils;
-import com.azure.cosmos.implementation.perPartitionAutomaticFailover.PerPartitionFailoverInfoHolder;
-import com.azure.cosmos.implementation.perPartitionCircuitBreaker.PerPartitionCircuitBreakerInfoHolder;
 import com.azure.cosmos.implementation.cpu.CpuMemoryMonitor;
 import com.azure.cosmos.implementation.directconnectivity.StoreResponseDiagnostics;
 import com.azure.cosmos.implementation.directconnectivity.StoreResultDiagnostics;
 import com.azure.cosmos.implementation.faultinjection.FaultInjectionRequestContext;
+import com.azure.cosmos.implementation.perPartitionAutomaticFailover.PerPartitionFailoverInfoHolder;
+import com.azure.cosmos.implementation.perPartitionCircuitBreaker.PerPartitionCircuitBreakerInfoHolder;
 import com.azure.cosmos.implementation.routing.RegionalRoutingContext;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -329,7 +328,7 @@ public class ClientSideRequestStatistics {
         String exceptionMessage,
         String faultInjectionId,
         List<String> faultInjectionEvaluationResult) {
-        if (StringUtils.isEmpty(identifier)) {
+        if (Strings.isEmpty(identifier)) {
             return;
         }
         Instant responseTime = Instant.now();
@@ -657,7 +656,7 @@ public class ClientSideRequestStatistics {
 
     public String getFirstContactedRegion() {
         if (this.regionsContactedWithContext == null || this.regionsContactedWithContext.isEmpty()) {
-            return StringUtils.EMPTY;
+            return Strings.EMPTY;
         }
 
         return this.regionsContactedWithContext.first().regionContacted;
@@ -1017,7 +1016,7 @@ public class ClientSideRequestStatistics {
                 this.writeNonNullStringField(jsonGenerator, "faultInjectionRuleId", gatewayStatistics.getFaultInjectionRuleId());
                 this.writeNonNullStringField(jsonGenerator, "endpoint", gatewayStatistics.getEndpoint());
 
-                if (StringUtils.isEmpty(gatewayStatistics.getFaultInjectionRuleId())) {
+                if (Strings.isEmpty(gatewayStatistics.getFaultInjectionRuleId())) {
                     this.writeNonEmptyStringArrayField(
                         jsonGenerator,
                         "faultInjectionEvaluationResults",

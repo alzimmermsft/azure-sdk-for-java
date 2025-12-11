@@ -15,6 +15,7 @@ import com.azure.cosmos.implementation.Integers;
 import com.azure.cosmos.implementation.InternalServerErrorException;
 import com.azure.cosmos.implementation.MutableVolatile;
 import com.azure.cosmos.implementation.OperationType;
+import com.azure.cosmos.implementation.Pair;
 import com.azure.cosmos.implementation.PartitionIsMigratingException;
 import com.azure.cosmos.implementation.PartitionKeyRangeGoneException;
 import com.azure.cosmos.implementation.PartitionKeyRangeIsSplittingException;
@@ -24,9 +25,7 @@ import com.azure.cosmos.implementation.SessionTokenHelper;
 import com.azure.cosmos.implementation.Strings;
 import com.azure.cosmos.implementation.Utils;
 import com.azure.cosmos.implementation.apachecommons.lang.StringUtils;
-import com.azure.cosmos.implementation.apachecommons.lang.tuple.Pair;
 import com.azure.cosmos.implementation.directconnectivity.addressEnumerator.AddressEnumerator;
-import com.azure.cosmos.implementation.directconnectivity.rntbd.ClosedClientTransportException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import reactor.core.Exceptions;
@@ -455,7 +454,7 @@ public class StoreReader {
                 entity.requestContext.forceRefreshAddressCache,
                 allApiResults);
 
-        if (!StringUtils.isEmpty(requestedCollectionId) && !StringUtils.isEmpty(entity.requestContext.resolvedCollectionRid)) {
+        if (Strings.isNotEmpty(requestedCollectionId) && Strings.isNotEmpty(entity.requestContext.resolvedCollectionRid)) {
             if (!requestedCollectionId.equals(entity.requestContext.resolvedCollectionRid)) {
                 this.sessionContainer.clearTokenByResourceId(requestedCollectionId);
             }

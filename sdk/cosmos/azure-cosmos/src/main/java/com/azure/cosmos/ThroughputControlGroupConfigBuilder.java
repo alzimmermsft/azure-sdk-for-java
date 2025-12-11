@@ -3,7 +3,7 @@
 
 package com.azure.cosmos;
 
-import com.azure.cosmos.implementation.apachecommons.lang.StringUtils;
+import com.azure.cosmos.implementation.Strings;
 import com.azure.cosmos.models.PriorityLevel;
 import com.azure.cosmos.util.Beta;
 
@@ -31,7 +31,7 @@ public class ThroughputControlGroupConfigBuilder {
     @Deprecated
     @Beta(value = Beta.SinceVersion.V4_13_0, warningText = Beta.PREVIEW_SUBJECT_TO_CHANGE_WARNING)
     public ThroughputControlGroupConfigBuilder setGroupName(String groupName) {
-        checkArgument(StringUtils.isNotEmpty(groupName), "Group name cannot be null nor empty");
+        checkArgument(Strings.isNotEmpty(groupName), "Group name cannot be null nor empty");
 
         this.groupName = groupName;
         return this;
@@ -44,7 +44,7 @@ public class ThroughputControlGroupConfigBuilder {
      * @return The {@link ThroughputControlGroupConfigBuilder}.
      */
     public ThroughputControlGroupConfigBuilder groupName(String groupName) {
-        checkArgument(StringUtils.isNotEmpty(groupName), "Group name cannot be null nor empty");
+        checkArgument(Strings.isNotEmpty(groupName), "Group name cannot be null nor empty");
 
         this.groupName = groupName;
         return this;
@@ -192,7 +192,7 @@ public class ThroughputControlGroupConfigBuilder {
      * @return A new {@link ThroughputControlGroupConfig}.
      */
     public ThroughputControlGroupConfig build() {
-        if (StringUtils.isEmpty(this.groupName)) {
+        if (Strings.isEmpty(this.groupName)) {
             throw new IllegalArgumentException("Group name cannot be null nor empty");
         }
 

@@ -10,8 +10,8 @@ import com.azure.cosmos.implementation.HttpConstants;
 import com.azure.cosmos.implementation.PartitionKeyRange;
 import com.azure.cosmos.implementation.ResourceType;
 import com.azure.cosmos.implementation.RxDocumentServiceRequest;
+import com.azure.cosmos.implementation.Strings;
 import com.azure.cosmos.implementation.Utils;
-import com.azure.cosmos.implementation.apachecommons.lang.StringUtils;
 import com.azure.cosmos.implementation.caches.RxCollectionCache;
 import com.azure.cosmos.implementation.caches.RxPartitionKeyRangeCache;
 import com.azure.cosmos.implementation.http.HttpRequest;
@@ -92,7 +92,7 @@ public class GatewayServerErrorInjector {
                         String partitionKeyRangeId =
                             request.getHeaders().get(HttpConstants.HttpHeaders.PARTITION_KEY_RANGE_ID);
                         PartitionKeyInternal partitionKeyInternal = request.getPartitionKeyInternal();
-                        if (StringUtils.isNotEmpty(partitionKeyRangeId)) {
+                        if (Strings.isNotEmpty(partitionKeyRangeId)) {
                             PartitionKeyRange range =
                                 collectionRoutingMapValueHolder.v.getRangeByPartitionKeyRangeId(partitionKeyRangeId);
                             request.requestContext.resolvedPartitionKeyRange = range;

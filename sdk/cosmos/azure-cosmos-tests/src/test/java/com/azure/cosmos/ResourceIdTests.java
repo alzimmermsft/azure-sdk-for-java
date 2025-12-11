@@ -3,8 +3,8 @@
 
 package com.azure.cosmos;
 
+import com.azure.cosmos.implementation.Pair;
 import com.azure.cosmos.implementation.ResourceId;
-import com.azure.cosmos.implementation.apachecommons.lang.tuple.Pair;
 import org.testng.annotations.Test;
 
 import java.util.HashMap;

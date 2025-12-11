@@ -4,7 +4,7 @@
 package com.azure.cosmos.implementation.throughputControl.server.config;
 
 import com.azure.cosmos.CosmosAsyncContainer;
-import com.azure.cosmos.implementation.apachecommons.lang.StringUtils;
+import com.azure.cosmos.implementation.Strings;
 import com.azure.cosmos.implementation.throughputControl.IThroughputControlGroup;
 import com.azure.cosmos.models.PriorityLevel;
 
@@ -27,7 +27,7 @@ public class ServerThroughputControlGroup implements IThroughputControlGroup {
         Integer throughputBucket,
         CosmosAsyncContainer targetContainer) {
 
-        checkArgument(StringUtils.isNotEmpty(groupName), "Argument 'groupName' cannot be null or empty.");
+        checkArgument(Strings.isNotEmpty(groupName), "Argument 'groupName' cannot be null or empty.");
         checkNotNull(targetContainer, "Argument 'targetContainer' can not be null");
         checkArgument(
             priorityLevel != null || throughputBucket != null,

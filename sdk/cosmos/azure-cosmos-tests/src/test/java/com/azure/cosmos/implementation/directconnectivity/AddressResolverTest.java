@@ -11,12 +11,12 @@ import com.azure.cosmos.implementation.ICollectionRoutingMapCache;
 import com.azure.cosmos.implementation.InvalidPartitionException;
 import com.azure.cosmos.implementation.NotFoundException;
 import com.azure.cosmos.implementation.OperationType;
+import com.azure.cosmos.implementation.Pair;
 import com.azure.cosmos.implementation.PartitionKeyRange;
 import com.azure.cosmos.implementation.PartitionKeyRangeGoneException;
 import com.azure.cosmos.implementation.ResourceType;
 import com.azure.cosmos.implementation.RxDocumentServiceRequest;
 import com.azure.cosmos.implementation.Utils;
-import com.azure.cosmos.implementation.apachecommons.lang.tuple.ImmutablePair;
 import com.azure.cosmos.implementation.caches.RxCollectionCache;
 import com.azure.cosmos.implementation.guava25.collect.ImmutableList;
 import com.azure.cosmos.implementation.guava25.collect.ImmutableMap;
@@ -89,17 +89,16 @@ public class AddressResolverTest {
         partitionKeyDef.setPaths(ImmutableList.of("/field1"));
         this.collection2.setPartitionKey(partitionKeyDef);
 
-        Function<List<ImmutablePair<PartitionKeyRange, IServerIdentity>>, Void> addPartitionKeyRangeFunc = listArg -> {
-            listArg.forEach(tuple -> ((ServiceIdentity) tuple.right).partitionKeyRangeIds.add(new PartitionKeyRangeIdentity(collection1.getResourceId(), tuple.left.getId())));
+        Function<List<Pair<PartitionKeyRange, IServerIdentity>>, Void> addPartitionKeyRangeFunc = listArg -> {
+            listArg.forEach(tuple -> ((ServiceIdentity) tuple.getRight()).partitionKeyRangeIds.add(new PartitionKeyRangeIdentity(collection1.getResourceId(), tuple.getLeft().getId())));
             return null;
         };
 
-        List<ImmutablePair<PartitionKeyRange, IServerIdentity>> rangesBeforeSplit1 =
-            new ArrayList<>();
+        List<Pair<PartitionKeyRange, IServerIdentity>> rangesBeforeSplit1 = new ArrayList<>();
         ServiceIdentity serverServiceIdentity = new ServiceIdentity("federation1", new URI("fabric://serverservice1"), false);
 
         rangesBeforeSplit1.add(
-            ImmutablePair.of(new PartitionKeyRange("0", PartitionKeyInternalHelper.MinimumInclusiveEffectivePartitionKey,
+            Pair.of(new PartitionKeyRange("0", PartitionKeyInternalHelper.MinimumInclusiveEffectivePartitionKey,
                 PartitionKeyInternalHelper.MaximumExclusiveEffectivePartitionKey), serverServiceIdentity));
 
         addPartitionKeyRangeFunc.apply(rangesBeforeSplit1);
@@ -111,18 +110,17 @@ public class AddressResolverTest {
                 collection1.getResourceId(),
                 "1");
 
-        List<ImmutablePair<PartitionKeyRange, IServerIdentity>> rangesAfterSplit1 =
-            new ArrayList<>();
+        List<Pair<PartitionKeyRange, IServerIdentity>> rangesAfterSplit1 = new ArrayList<>();
         ServiceIdentity serverServiceIdentity2 = new ServiceIdentity("federation1", new URI("fabric://serverservice2"), false);
         ServiceIdentity serverServiceIdentity3 = new ServiceIdentity("federation1", new URI("fabric://serverservice3"), false);
 
         rangesAfterSplit1.add(
-            ImmutablePair.of(
+            Pair.of(
                 new PartitionKeyRange("1", PartitionKeyInternalHelper.MinimumInclusiveEffectivePartitionKey, "5E", ImmutableList.of("0")),
                 serverServiceIdentity2));
 
         rangesAfterSplit1.add(
-            ImmutablePair.of(
+            Pair.of(
                 new PartitionKeyRange("2", "5E", PartitionKeyInternalHelper.MaximumExclusiveEffectivePartitionKey, ImmutableList.of("0")),
                 serverServiceIdentity3));
 
@@ -130,12 +128,11 @@ public class AddressResolverTest {
 
         this.routingMapCollection1AfterSplit = InMemoryCollectionRoutingMap.tryCreateCompleteRoutingMap(rangesAfterSplit1, collection1.getResourceId(), "2");
 
-        List<ImmutablePair<PartitionKeyRange, IServerIdentity>> rangesBeforeSplit2 =
-            new ArrayList<>();
+        List<Pair<PartitionKeyRange, IServerIdentity>> rangesBeforeSplit2 = new ArrayList<>();
         ServiceIdentity serverServiceIdentity4 = new ServiceIdentity("federation1", new URI("fabric://serverservice4"), false);
 
         rangesBeforeSplit2.add(
-            ImmutablePair.of(
+            Pair.of(
                 new PartitionKeyRange("0", PartitionKeyInternalHelper.MinimumInclusiveEffectivePartitionKey, PartitionKeyInternalHelper.MaximumExclusiveEffectivePartitionKey),
                 serverServiceIdentity4));
 
@@ -144,18 +141,17 @@ public class AddressResolverTest {
 
         this.routingMapCollection2BeforeSplit = InMemoryCollectionRoutingMap.tryCreateCompleteRoutingMap(rangesBeforeSplit2, collection2.getResourceId(), "2");
 
-        List<ImmutablePair<PartitionKeyRange, IServerIdentity>> rangesAfterSplit2 =
-            new ArrayList<>();
+        List<Pair<PartitionKeyRange, IServerIdentity>> rangesAfterSplit2 = new ArrayList<>();
 
         ServiceIdentity serverServiceIdentity5 = new ServiceIdentity("federation1", new URI("fabric://serverservice5"), false);
         ServiceIdentity serverServiceIdentity6 = new ServiceIdentity("federation1", new URI("fabric://serverservice6"), false);
         rangesAfterSplit2.add(
-            ImmutablePair.of(
+            Pair.of(
                 new PartitionKeyRange("1", PartitionKeyInternalHelper.MinimumInclusiveEffectivePartitionKey, "5E", ImmutableList.of("0")),
                 serverServiceIdentity5));
 
         rangesAfterSplit2.add(
-            ImmutablePair.of(
+            Pair.of(
                 new PartitionKeyRange("2", "5E", PartitionKeyInternalHelper.MaximumExclusiveEffectivePartitionKey, ImmutableList.of("0")),
                 serverServiceIdentity6));
 

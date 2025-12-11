@@ -6,7 +6,6 @@ package com.azure.cosmos.implementation.faultinjection;
 import com.azure.cosmos.implementation.ResourceId;
 import com.azure.cosmos.implementation.RxDocumentServiceRequest;
 import com.azure.cosmos.implementation.Strings;
-import com.azure.cosmos.implementation.apachecommons.lang.StringUtils;
 
 import java.net.URI;
 import java.util.List;
@@ -35,9 +34,9 @@ public class GatewayFaultInjectionRequestArgs extends FaultInjectionRequestArgs 
             return this.getServiceRequest().requestContext.resolvedCollectionRid;
         }
 
-        if (StringUtils.isNotEmpty(this.getServiceRequest().getResourceId())) {
+        if (Strings.isNotEmpty(this.getServiceRequest().getResourceId())) {
             return ResourceId.parse(this.getServiceRequest().getResourceId()).getDocumentCollectionId().toString();
         }
-        return Strings.Emtpy;
+        return Strings.EMPTY;
     }
 }

@@ -6,7 +6,7 @@ package com.azure.cosmos.models;
 import com.azure.cosmos.implementation.Constants;
 import com.azure.cosmos.implementation.Index;
 import com.azure.cosmos.implementation.JsonSerializable;
-import com.azure.cosmos.implementation.apachecommons.lang.StringUtils;
+import com.azure.cosmos.implementation.Strings;
 import com.azure.cosmos.util.Beta;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -123,7 +123,7 @@ public final class IndexingPolicy {
     public IndexingMode getIndexingMode() {
         IndexingMode result = IndexingMode.LAZY;
         try {
-            result = IndexingMode.valueOf(StringUtils.upperCase(this.jsonSerializable.getString(Constants.Properties.INDEXING_MODE)));
+            result = IndexingMode.valueOf(Strings.upperCase(this.jsonSerializable.getString(Constants.Properties.INDEXING_MODE)));
         } catch (IllegalArgumentException e) {
             this.jsonSerializable.getLogger().warn("INVALID indexingMode value {}.",
                 this.jsonSerializable.getString(Constants.Properties.INDEXING_MODE));

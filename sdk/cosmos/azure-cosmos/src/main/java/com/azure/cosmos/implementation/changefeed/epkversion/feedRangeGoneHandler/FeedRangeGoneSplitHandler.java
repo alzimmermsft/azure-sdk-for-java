@@ -4,7 +4,7 @@
 package com.azure.cosmos.implementation.changefeed.epkversion.feedRangeGoneHandler;
 
 import com.azure.cosmos.implementation.PartitionKeyRange;
-import com.azure.cosmos.implementation.apachecommons.lang.StringUtils;
+import com.azure.cosmos.implementation.Strings;
 import com.azure.cosmos.implementation.changefeed.Lease;
 import com.azure.cosmos.implementation.changefeed.LeaseManager;
 import com.azure.cosmos.implementation.changefeed.common.ChangeFeedState;
@@ -99,14 +99,14 @@ public class FeedRangeGoneSplitHandler implements FeedRangeGoneHandler {
                     logger.info(
                             "Lease with token {} split into {}",
                             this.lease.getLeaseToken(),
-                            StringUtils.join(leaseTokens, ","));
+                            Strings.join(leaseTokens, ","));
                 });
     }
 
 
     private String getEffectiveChildLeaseContinuationToken(FeedRangeEpkImpl childLeaseFeedRange, String parentLeaseCT) {
         String childLeaseCT = parentLeaseCT;
-        if (StringUtils.isNotEmpty(parentLeaseCT)) {
+        if (Strings.isNotEmpty(parentLeaseCT)) {
             ChangeFeedState changeFeedState = ChangeFeedStateV1.fromString(parentLeaseCT);
 
             FeedRangeContinuation effectiveFeedRangeContinuation = FeedRangeContinuation.create(

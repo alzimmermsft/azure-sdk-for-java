@@ -3,7 +3,7 @@
 
 package com.azure.cosmos.implementation.throughputControl.server;
 
-import com.azure.cosmos.implementation.apachecommons.lang.StringUtils;
+import com.azure.cosmos.implementation.Strings;
 import com.azure.cosmos.implementation.throughputControl.server.config.ServerThroughputControlGroup;
 
 import java.util.Map;
@@ -20,7 +20,7 @@ public class ContainerServerThroughputControlGroupProperties {
     private final Map<String, ServerThroughputControlGroup> throughputControlGroups;
 
     public ContainerServerThroughputControlGroupProperties(String containerNameLink) {
-        checkArgument(StringUtils.isNotEmpty(containerNameLink), "Argument 'containerNameLink' should not be empty");
+        checkArgument(Strings.isNotEmpty(containerNameLink), "Argument 'containerNameLink' should not be empty");
 
         this.containerNameLink = containerNameLink;
         this.defaultGroup = new AtomicReference<>();

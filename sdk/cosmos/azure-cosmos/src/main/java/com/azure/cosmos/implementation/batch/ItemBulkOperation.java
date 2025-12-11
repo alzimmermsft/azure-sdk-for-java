@@ -7,7 +7,7 @@ import com.azure.cosmos.CosmosItemSerializer;
 import com.azure.cosmos.implementation.DefaultCosmosItemSerializer;
 import com.azure.cosmos.implementation.JsonSerializable;
 import com.azure.cosmos.implementation.RequestOptions;
-import com.azure.cosmos.implementation.apachecommons.lang.StringUtils;
+import com.azure.cosmos.implementation.Strings;
 import com.azure.cosmos.implementation.patch.PatchUtil;
 import com.azure.cosmos.models.CosmosItemOperationType;
 import com.azure.cosmos.models.CosmosPatchOperations;
@@ -77,7 +77,7 @@ public final class ItemBulkOperation<TInternal, TContext> extends CosmosItemOper
             DefaultCosmosItemSerializer.INTERNAL_DEFAULT_SERIALIZER,
             false);
 
-        if (StringUtils.isNotEmpty(this.getPartitionKeyJson())) {
+        if (Strings.isNotEmpty(this.getPartitionKeyJson())) {
             jsonSerializable.set(
                 BatchRequestResponseConstants.FIELD_PARTITION_KEY,
                 this.getPartitionKeyJson(),
@@ -85,7 +85,7 @@ public final class ItemBulkOperation<TInternal, TContext> extends CosmosItemOper
                 false);
         }
 
-        if (StringUtils.isNotEmpty(this.getId())) {
+        if (Strings.isNotEmpty(this.getId())) {
             jsonSerializable.set(
                 BatchRequestResponseConstants.FIELD_ID,
                 this.getId(),
@@ -114,7 +114,7 @@ public final class ItemBulkOperation<TInternal, TContext> extends CosmosItemOper
         if (this.getRequestOptions() != null) {
             RequestOptions requestOptions = this.getRequestOptions();
 
-            if (StringUtils.isNotEmpty(requestOptions.getIfMatchETag())) {
+            if (Strings.isNotEmpty(requestOptions.getIfMatchETag())) {
                 jsonSerializable.set(
                     BatchRequestResponseConstants.FIELD_IF_MATCH,
                     requestOptions.getIfMatchETag(),
@@ -122,7 +122,7 @@ public final class ItemBulkOperation<TInternal, TContext> extends CosmosItemOper
                     false);
             }
 
-            if (StringUtils.isNotEmpty(requestOptions.getIfNoneMatchETag())) {
+            if (Strings.isNotEmpty(requestOptions.getIfNoneMatchETag())) {
                 jsonSerializable.set(
                     BatchRequestResponseConstants.FIELD_IF_NONE_MATCH,
                     requestOptions.getIfNoneMatchETag(),

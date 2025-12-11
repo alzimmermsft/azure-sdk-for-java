@@ -17,9 +17,9 @@ import com.azure.cosmos.ThroughputControlGroupConfigBuilder;
 import com.azure.cosmos.implementation.AsyncDocumentClient;
 import com.azure.cosmos.implementation.ImplementationBridgeHelpers;
 import com.azure.cosmos.implementation.InternalObjectNode;
+import com.azure.cosmos.implementation.Strings;
 import com.azure.cosmos.implementation.TestConfigurations;
 import com.azure.cosmos.implementation.Utils;
-import com.azure.cosmos.implementation.apachecommons.lang.StringUtils;
 import com.azure.cosmos.implementation.changefeed.common.ChangeFeedState;
 import com.azure.cosmos.implementation.changefeed.epkversion.ServiceItemLeaseV1;
 import com.azure.cosmos.models.ChangeFeedProcessorItem;
@@ -1729,7 +1729,7 @@ public class FullFidelityChangeFeedProcessorTest extends TestSuiteBase {
                 JsonNode tempToken = item.get("ContinuationToken");
 
                 long continuationTokenValue = 0;
-                if (tempToken != null && StringUtils.isNotEmpty(tempToken.asText())) {
+                if (tempToken != null && Strings.isNotEmpty(tempToken.asText())) {
                     ChangeFeedState changeFeedState = ChangeFeedState.fromString(tempToken.asText());
                     continuationTokenValue =
                         Long.parseLong(changeFeedState.getContinuation().getCurrentContinuationToken().getToken().replace("\"", ""));

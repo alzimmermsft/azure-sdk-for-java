@@ -2,7 +2,7 @@
 // Licensed under the MIT License.
 package com.azure.cosmos;
 
-import com.azure.cosmos.implementation.apachecommons.lang.tuple.Pair;
+import com.azure.cosmos.implementation.Pair;
 import com.azure.cosmos.models.CosmosPatchItemRequestOptions;
 
 import java.util.List;

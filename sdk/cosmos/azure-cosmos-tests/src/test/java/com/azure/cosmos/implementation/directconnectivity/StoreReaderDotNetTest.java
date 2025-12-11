@@ -483,7 +483,7 @@ public class StoreReaderDotNetTest {
         assertThat(activityId).isEqualTo("ACTIVITYID1_1");
 
         // create a real session container - we don't need session for this test anyway
-        ISessionContainer sessionContainer = new SessionContainer(Strings.Emtpy);
+        ISessionContainer sessionContainer = new SessionContainer(Strings.EMPTY);
 
         // create store reader with mock transport client, real address selector (that has mock address cache), and real session container
         StoreReader storeReader =

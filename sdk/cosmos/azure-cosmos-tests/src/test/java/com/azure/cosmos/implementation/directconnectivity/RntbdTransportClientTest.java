@@ -36,7 +36,6 @@ import com.azure.cosmos.implementation.ServiceUnavailableException;
 import com.azure.cosmos.implementation.UnauthorizedException;
 import com.azure.cosmos.implementation.UserAgentContainer;
 import com.azure.cosmos.implementation.Utils;
-import com.azure.cosmos.implementation.apachecommons.lang.NotImplementedException;
 import com.azure.cosmos.implementation.clienttelemetry.ClientTelemetry;
 import com.azure.cosmos.implementation.clienttelemetry.TagName;
 import com.azure.cosmos.implementation.directconnectivity.rntbd.AsyncRntbdRequestRecord;
@@ -1144,7 +1143,7 @@ public final class RntbdTransportClientTest {
 
         @Override
         public void injectConnectionErrors(String ruleId, double threshold, Class<?> eventType) {
-            throw new NotImplementedException("injectConnectionErrors is not supported in FakeEndpoint");
+            throw new UnsupportedOperationException("injectConnectionErrors is not supported in FakeEndpoint");
         }
 
         @Override
@@ -1154,7 +1153,7 @@ public final class RntbdTransportClientTest {
 
         @Override
         public void setMinChannelsRequired(int minConnectionsRequired) {
-            throw new NotImplementedException("setMinChannelsRequired is not implemented for FakeServiceEndpoint");
+            throw new UnsupportedOperationException("setMinChannelsRequired is not implemented for FakeServiceEndpoint");
         }
 
         @Override
@@ -1180,7 +1179,7 @@ public final class RntbdTransportClientTest {
 
         @Override
         public OpenConnectionRntbdRequestRecord openConnection(RntbdRequestArgs openConnectionRequestArgs) {
-            throw new NotImplementedException("openConnection is not supported in FakeEndpoint.");
+            throw new UnsupportedOperationException("openConnection is not supported in FakeEndpoint.");
         }
 
         // endregion

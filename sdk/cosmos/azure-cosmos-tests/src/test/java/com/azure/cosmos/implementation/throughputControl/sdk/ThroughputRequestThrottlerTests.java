@@ -9,7 +9,7 @@ import com.azure.cosmos.implementation.OperationType;
 import com.azure.cosmos.implementation.RequestRateTooLargeException;
 import com.azure.cosmos.implementation.ResourceType;
 import com.azure.cosmos.implementation.RxDocumentServiceRequest;
-import com.azure.cosmos.implementation.apachecommons.lang.StringUtils;
+import com.azure.cosmos.implementation.Strings;
 import com.azure.cosmos.implementation.directconnectivity.ReflectionUtils;
 import com.azure.cosmos.implementation.directconnectivity.StoreResponse;
 import com.azure.cosmos.implementation.throughputControl.ThroughputControlRequestContext;
@@ -43,7 +43,7 @@ public class ThroughputRequestThrottlerTests {
         StoreResponse responseMock = Mockito.mock(StoreResponse.class);
         Mockito.doReturn(requestChargePerRequest).when(responseMock).getRequestCharge();
 
-        ThroughputRequestThrottler requestThrottler = new ThroughputRequestThrottler(scheduledThroughput, StringUtils.EMPTY);
+        ThroughputRequestThrottler requestThrottler = new ThroughputRequestThrottler(scheduledThroughput, Strings.EMPTY);
 
         // Request1: pass through
         TestPublisher<StoreResponse> requestPublisher1 = TestPublisher.create();
@@ -56,7 +56,7 @@ public class ThroughputRequestThrottlerTests {
         this.assertRequestThrottlerState(requestThrottler, availableThroughput, scheduledThroughput);
 
         // Request2: will get throttled since there is no available throughput
-        request.requestContext.throughputControlRequestContext.setThroughputControlCycleId(StringUtils.EMPTY);
+        request.requestContext.throughputControlRequestContext.setThroughputControlCycleId(Strings.EMPTY);
         TestPublisher requestPublisher2 = TestPublisher.create();
         StepVerifier.create(requestThrottler.processRequest(request, requestPublisher2.mono()))
             .verifyError(RequestRateTooLargeException.class);
@@ -69,7 +69,7 @@ public class ThroughputRequestThrottlerTests {
         assertThat(requestThrottler.getAvailableThroughput()).isEqualTo(availableThroughput);
 
         // Request 3: will get throttled since there is no available throughput
-        request.requestContext.throughputControlRequestContext.setThroughputControlCycleId(StringUtils.EMPTY);
+        request.requestContext.throughputControlRequestContext.setThroughputControlCycleId(Strings.EMPTY);
         TestPublisher requestPublisher3 = TestPublisher.create();
         StepVerifier.create(requestThrottler.processRequest(request, requestPublisher3.mono()))
             .verifyErrorSatisfies((t) -> {
@@ -107,7 +107,7 @@ public class ThroughputRequestThrottlerTests {
         assertThat(requestThrottler.getAvailableThroughput()).isEqualTo(availableThroughput);
 
         // Request 5: will pass the request, and record the charge from exception
-        request.requestContext.throughputControlRequestContext.setThroughputControlCycleId(StringUtils.EMPTY);
+        request.requestContext.throughputControlRequestContext.setThroughputControlCycleId(Strings.EMPTY);
         NotFoundException notFoundException = Mockito.mock(NotFoundException.class);
         Mockito.doReturn(requestChargePerRequest).when(notFoundException).getRequestCharge();
         TestPublisher requestPublisher5 = TestPublisher.create();
@@ -136,7 +136,7 @@ public class ThroughputRequestThrottlerTests {
         StoreResponse responseMock = Mockito.mock(StoreResponse.class);
         Mockito.doReturn(requestChargePerRequest).when(responseMock).getRequestCharge();
 
-        ThroughputRequestThrottler requestThrottler = new ThroughputRequestThrottler(scheduledThroughput, StringUtils.EMPTY);
+        ThroughputRequestThrottler requestThrottler = new ThroughputRequestThrottler(scheduledThroughput, Strings.EMPTY);
 
         // Request1: pass through
         TestPublisher<StoreResponse> requestPublisher1 = TestPublisher.create();

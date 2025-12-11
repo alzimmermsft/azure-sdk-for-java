@@ -6,7 +6,7 @@ package com.azure.cosmos.implementation.batch;
 import com.azure.cosmos.CosmosItemSerializer;
 import com.azure.cosmos.implementation.JsonSerializable;
 import com.azure.cosmos.implementation.RequestOptions;
-import com.azure.cosmos.implementation.apachecommons.lang.StringUtils;
+import com.azure.cosmos.implementation.Strings;
 import com.azure.cosmos.implementation.patch.PatchUtil;
 import com.azure.cosmos.models.CosmosItemOperationType;
 import com.azure.cosmos.models.CosmosPatchOperations;
@@ -69,7 +69,7 @@ public final class ItemBatchOperation<TInternal> extends CosmosItemOperationBase
             ModelBridgeInternal.getOperationValueForCosmosItemOperationType(this.getOperationType())
         );
 
-        if (StringUtils.isNotEmpty(this.getId())) {
+        if (Strings.isNotEmpty(this.getId())) {
             jsonSerializable.set(
                 BatchRequestResponseConstants.FIELD_ID,
                 this.getId()
@@ -94,14 +94,14 @@ public final class ItemBatchOperation<TInternal> extends CosmosItemOperationBase
         if (this.getRequestOptions() != null) {
             RequestOptions requestOptions = this.getRequestOptions();
 
-            if (StringUtils.isNotEmpty(requestOptions.getIfMatchETag())) {
+            if (Strings.isNotEmpty(requestOptions.getIfMatchETag())) {
                 jsonSerializable.set(
                     BatchRequestResponseConstants.FIELD_IF_MATCH,
                     requestOptions.getIfMatchETag()
                 );
             }
 
-            if (StringUtils.isNotEmpty(requestOptions.getIfNoneMatchETag())) {
+            if (Strings.isNotEmpty(requestOptions.getIfNoneMatchETag())) {
                 jsonSerializable.set(
                     BatchRequestResponseConstants.FIELD_IF_NONE_MATCH,
                     requestOptions.getIfNoneMatchETag()

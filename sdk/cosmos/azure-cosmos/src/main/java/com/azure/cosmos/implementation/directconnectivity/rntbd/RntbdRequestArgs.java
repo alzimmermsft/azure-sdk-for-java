@@ -4,7 +4,7 @@
 package com.azure.cosmos.implementation.directconnectivity.rntbd;
 
 import com.azure.cosmos.implementation.RxDocumentServiceRequest;
-import com.azure.cosmos.implementation.apachecommons.lang.StringUtils;
+import com.azure.cosmos.implementation.Strings;
 import com.azure.cosmos.implementation.directconnectivity.Uri;
 import com.azure.cosmos.implementation.guava25.base.Stopwatch;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -56,7 +56,7 @@ public final class RntbdRequestArgs {
         if (emptyUri.equals(physicalAddressUri)) {
             this.replicaPath = emptyUriPath;
         } else {
-            this.replicaPath = StringUtils.stripEnd(physicalAddressUri.getURI().getPath(), "/");
+            this.replicaPath = Strings.stripEnd(physicalAddressUri.getURI().getPath(), '/');
         }
         this.serviceRequest = serviceRequest;
         this.transportRequestId = instanceCount.incrementAndGet();

@@ -6,18 +6,19 @@ package com.azure.cosmos.implementation.throughputControl.sdk;
 import com.azure.cosmos.BridgeInternal;
 import com.azure.cosmos.ConnectionMode;
 import com.azure.cosmos.CosmosException;
+import com.azure.cosmos.implementation.Pair;
 import com.azure.cosmos.implementation.ResourceType;
 import com.azure.cosmos.implementation.RxDocumentServiceRequest;
+import com.azure.cosmos.implementation.Strings;
 import com.azure.cosmos.implementation.Utils;
-import com.azure.cosmos.implementation.apachecommons.lang.StringUtils;
-import com.azure.cosmos.implementation.apachecommons.lang.tuple.Pair;
 import com.azure.cosmos.implementation.caches.AsyncCache;
 import com.azure.cosmos.implementation.caches.RxClientCollectionCache;
 import com.azure.cosmos.implementation.caches.RxPartitionKeyRangeCache;
+import com.azure.cosmos.implementation.guava25.base.Objects;
 import com.azure.cosmos.implementation.throughputControl.EmptyThroughputContainerController;
 import com.azure.cosmos.implementation.throughputControl.IThroughputContainerController;
-import com.azure.cosmos.implementation.throughputControl.sdk.config.SDKThroughputControlGroupInternal;
 import com.azure.cosmos.implementation.throughputControl.IThroughputController;
+import com.azure.cosmos.implementation.throughputControl.sdk.config.SDKThroughputControlGroupInternal;
 import com.azure.cosmos.implementation.throughputControl.sdk.controller.container.SDKThroughputContainerController;
 import com.azure.cosmos.implementation.throughputControl.sdk.exceptions.ThroughputControlInitializationException;
 import org.slf4j.Logger;
@@ -226,7 +227,7 @@ public class SDKThroughputControlStore {
     }
 
     private Mono<IThroughputContainerController> resolveContainerController(String containerNameLink) {
-        checkArgument(StringUtils.isNotEmpty(containerNameLink), "Container name link can not be null or empty");
+        checkArgument(Strings.isNotEmpty(containerNameLink), "Container name link can not be null or empty");
 
         return this.containerControllerCache.getAsync(
                 containerNameLink,
@@ -236,7 +237,7 @@ public class SDKThroughputControlStore {
     }
 
     private Mono<IThroughputContainerController> createAndInitContainerController(String containerNameLink) {
-        checkArgument(StringUtils.isNotEmpty(containerNameLink), "Container link should not be null or empty");
+        checkArgument(Strings.isNotEmpty(containerNameLink), "Container link should not be null or empty");
 
         if (this.containerMap.containsKey(containerNameLink)) {
             return Mono.just(this.containerMap.get(containerNameLink))
@@ -267,11 +268,11 @@ public class SDKThroughputControlStore {
         // TODO: populate diagnostics
         return this.collectionCache.resolveByNameAsync(null, containerLink, null)
             .flatMap(documentCollection ->
-                Mono.just(StringUtils.equals(documentCollection.getResourceId(), request.requestContext.resolvedCollectionRid)));
+                Mono.just(Objects.equal(documentCollection.getResourceId(), request.requestContext.resolvedCollectionRid)));
     }
 
     private void handleException(String containerNameLink, RxDocumentServiceRequest request, Throwable throwable) {
-        checkArgument(StringUtils.isNotEmpty(containerNameLink), "Container name link can not be null nor empty");
+        checkArgument(Strings.isNotEmpty(containerNameLink), "Container name link can not be null nor empty");
         checkNotNull(request, "Request can not be null");
         checkNotNull(throwable, "Exception can not be null");
 
@@ -306,7 +307,7 @@ public class SDKThroughputControlStore {
     }
 
     public boolean hasGroup(String containerNameLink, String throughputControlGroupName) {
-        if (StringUtils.isEmpty(throughputControlGroupName)) {
+        if (Strings.isEmpty(throughputControlGroupName)) {
             return false;
         }
 

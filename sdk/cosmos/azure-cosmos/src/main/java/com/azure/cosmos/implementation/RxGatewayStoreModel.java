@@ -7,7 +7,6 @@ import com.azure.cosmos.ConsistencyLevel;
 import com.azure.cosmos.CosmosContainerProactiveInitConfig;
 import com.azure.cosmos.CosmosException;
 import com.azure.cosmos.ReadConsistencyStrategy;
-import com.azure.cosmos.implementation.apachecommons.lang.StringUtils;
 import com.azure.cosmos.implementation.caches.RxClientCollectionCache;
 import com.azure.cosmos.implementation.caches.RxPartitionKeyRangeCache;
 import com.azure.cosmos.implementation.directconnectivity.GatewayServiceConfigurationReader;
@@ -25,8 +24,6 @@ import com.azure.cosmos.implementation.http.HttpResponse;
 import com.azure.cosmos.implementation.http.HttpTransportSerializer;
 import com.azure.cosmos.implementation.http.ReactorNettyRequestRecord;
 import com.azure.cosmos.implementation.interceptor.ITransportClientInterceptor;
-import com.azure.cosmos.implementation.perPartitionCircuitBreaker.GlobalPartitionEndpointManagerForPerPartitionCircuitBreaker;
-import com.azure.cosmos.implementation.perPartitionCircuitBreaker.LocationSpecificHealthContext;
 import com.azure.cosmos.implementation.routing.PartitionKeyInternal;
 import com.azure.cosmos.implementation.routing.PartitionKeyInternalHelper;
 import com.azure.cosmos.implementation.routing.PartitionKeyRangeIdentity;
@@ -372,7 +369,7 @@ public class RxGatewayStoreModel implements RxStoreModel, HttpTransportSerialize
 
         String path = PathsHelper.generatePath(request.getResourceType(), request, request.isFeed);
         if (request.getResourceType().equals(ResourceType.DatabaseAccount)) {
-            path = StringUtils.EMPTY;
+            path = Strings.EMPTY;
         }
 
         // allow using http connections if customer opt in to use http for vnext emulator
@@ -681,7 +678,7 @@ public class RxGatewayStoreModel implements RxStoreModel, HttpTransportSerialize
             ReferenceCountUtil.safeRelease(retainedBodyAsByteBuf);
 
             CosmosError cosmosError;
-            cosmosError = (StringUtils.isNotEmpty(body)) ? new CosmosError(body) : new CosmosError();
+            cosmosError = (Strings.isNotEmpty(body)) ? new CosmosError(body) : new CosmosError();
             cosmosError = new CosmosError(statusCodeString,
                 String.format("%s, StatusCode: %s", cosmosError.getMessage(), statusCodeString),
                 cosmosError.getPartitionedQueryExecutionInfo());
@@ -846,8 +843,8 @@ public class RxGatewayStoreModel implements RxStoreModel, HttpTransportSerialize
                                                                   Map<String, String> responseHeaders) {
         this.captureSessionToken(request, responseHeaders);
         if (request.requestContext.resolvedPartitionKeyRange != null &&
-            StringUtils.isNotEmpty(request.requestContext.resolvedCollectionRid) &&
-            StringUtils.isNotEmpty(responseHeaders.get(HttpConstants.HttpHeaders.PARTITION_KEY_RANGE_ID)) &&
+            Strings.isNotEmpty(request.requestContext.resolvedCollectionRid) &&
+            Strings.isNotEmpty(responseHeaders.get(HttpConstants.HttpHeaders.PARTITION_KEY_RANGE_ID)) &&
             !responseHeaders.get(HttpConstants.HttpHeaders.PARTITION_KEY_RANGE_ID).equals(request.requestContext.resolvedPartitionKeyRange.getId())) {
             return this.partitionKeyRangeCache.refreshAsync(BridgeInternal.getMetaDataDiagnosticContext(request.requestContext.cosmosDiagnostics), request.requestContext.resolvedCollectionRid)
                 .flatMap(collectionRoutingMapValueHolder -> Mono.empty());
@@ -862,7 +859,7 @@ public class RxGatewayStoreModel implements RxStoreModel, HttpTransportSerialize
     private Mono<Void> addIntendedCollectionRid(RxDocumentServiceRequest request) {
         if (this.collectionCache != null && request.getResourceType().equals(ResourceType.Document)) {
             return this.collectionCache.resolveCollectionAsync(BridgeInternal.getMetaDataDiagnosticContext(request.requestContext.cosmosDiagnostics), request).flatMap(documentCollectionValueHolder -> {
-                if (StringUtils.isEmpty(request.getHeaders().get(INTENDED_COLLECTION_RID_HEADER))) {
+                if (Strings.isEmpty(request.getHeaders().get(INTENDED_COLLECTION_RID_HEADER))) {
                     request.getHeaders().put(INTENDED_COLLECTION_RID_HEADER,
                         request.requestContext.resolvedCollectionRid);
                 } else {
@@ -995,7 +992,7 @@ public class RxGatewayStoreModel implements RxStoreModel, HttpTransportSerialize
                             request.getHeaders().get(HttpConstants.HttpHeaders.PARTITION_KEY_RANGE_ID);
                         PartitionKeyInternal partitionKeyInternal = request.getPartitionKeyInternal();
 
-                        if (StringUtils.isNotEmpty(partitionKeyRangeId)) {
+                        if (Strings.isNotEmpty(partitionKeyRangeId)) {
                             PartitionKeyRange range =
                                 collectionRoutingMapValueHolder.v.getRangeByPartitionKeyRangeId(partitionKeyRangeId);
                             request.requestContext.resolvedPartitionKeyRange = range;
@@ -1006,7 +1003,7 @@ public class RxGatewayStoreModel implements RxStoreModel, HttpTransportSerialize
                                 SessionTokenHelper.setPartitionLocalSessionToken(request, sessionContainer);
                             }
                         } else if (partitionKeyInternal != null) {
-                            String effectivePartitionKeyString = StringUtils.isNotEmpty(request.getEffectivePartitionKey()) ?
+                            String effectivePartitionKeyString = Strings.isNotEmpty(request.getEffectivePartitionKey()) ?
                                 request.getEffectivePartitionKey() : PartitionKeyInternalHelper
                                 .getEffectivePartitionKeyString(
                                     partitionKeyInternal,

@@ -14,7 +14,7 @@ import com.azure.cosmos.implementation.Paths;
 import com.azure.cosmos.implementation.QueryFeedOperationState;
 import com.azure.cosmos.implementation.RequestOptions;
 import com.azure.cosmos.implementation.ResourceType;
-import com.azure.cosmos.implementation.apachecommons.lang.StringUtils;
+import com.azure.cosmos.implementation.Strings;
 import com.azure.cosmos.models.CosmosClientEncryptionKeyProperties;
 import com.azure.cosmos.models.CosmosClientEncryptionKeyResponse;
 import com.azure.cosmos.models.CosmosContainerProperties;
@@ -1283,7 +1283,7 @@ public class CosmosAsyncDatabase {
     }
 
     String getParentLink() {
-        return StringUtils.EMPTY;
+        return Strings.EMPTY;
     }
 
     String getLink() {

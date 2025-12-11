@@ -10,7 +10,7 @@ import com.azure.cosmos.implementation.IndexKind;
 import com.azure.cosmos.implementation.JsonSerializable;
 import com.azure.cosmos.implementation.RangeIndex;
 import com.azure.cosmos.implementation.SpatialIndex;
-import com.azure.cosmos.implementation.apachecommons.lang.StringUtils;
+import com.azure.cosmos.implementation.Strings;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -104,7 +104,7 @@ public final class IncludedPath {
             for (int i = 0; i < jsonArray.size(); i++) {
                 JsonNode jsonObject = jsonArray.get(i);
 
-                IndexKind indexKind = IndexKind.valueOf(StringUtils.upperCase(
+                IndexKind indexKind = IndexKind.valueOf(Strings.upperCase(
                     jsonObject.get(Constants.Properties.INDEX_KIND).asText()));
                 switch (indexKind) {
                     case HASH:

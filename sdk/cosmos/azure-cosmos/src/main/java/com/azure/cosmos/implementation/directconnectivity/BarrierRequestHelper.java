@@ -3,7 +3,6 @@
 
 package com.azure.cosmos.implementation.directconnectivity;
 
-import com.azure.cosmos.implementation.AadTokenAuthorizationHelper;
 import com.azure.cosmos.implementation.AuthorizationTokenType;
 import com.azure.cosmos.implementation.DiagnosticsClientContext;
 import com.azure.cosmos.implementation.HttpConstants;
@@ -11,7 +10,6 @@ import com.azure.cosmos.implementation.IAuthorizationTokenProvider;
 import com.azure.cosmos.implementation.InternalServerErrorException;
 import com.azure.cosmos.implementation.OperationType;
 import com.azure.cosmos.implementation.PathsHelper;
-import com.azure.cosmos.implementation.RMResources;
 import com.azure.cosmos.implementation.ResourceId;
 import com.azure.cosmos.implementation.ResourceType;
 import com.azure.cosmos.implementation.RxDocumentServiceRequest;
@@ -49,7 +47,7 @@ public class BarrierRequestHelper {
             logger.error(message);
         }
 
-        String authorizationToken = Strings.Emtpy;
+        String authorizationToken = Strings.EMPTY;
         RxDocumentServiceRequest barrierLsnRequest = null;
         if (!isCollectionHeadRequest) {
             // DB Feed

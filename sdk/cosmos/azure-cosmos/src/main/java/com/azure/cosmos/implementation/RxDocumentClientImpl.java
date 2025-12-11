@@ -24,7 +24,6 @@ import com.azure.cosmos.ReadConsistencyStrategy;
 import com.azure.cosmos.SessionRetryOptions;
 import com.azure.cosmos.ThresholdBasedAvailabilityStrategy;
 import com.azure.cosmos.implementation.apachecommons.lang.StringUtils;
-import com.azure.cosmos.implementation.apachecommons.lang.tuple.ImmutablePair;
 import com.azure.cosmos.implementation.batch.BatchResponseParser;
 import com.azure.cosmos.implementation.batch.PartitionKeyRangeServerBatchRequest;
 import com.azure.cosmos.implementation.batch.ServerBatchRequest;
@@ -230,7 +229,7 @@ public class RxDocumentClientImpl implements AsyncDocumentClient, IAuthorization
     private CosmosAuthorizationTokenResolver cosmosAuthorizationTokenResolver;
     AuthorizationTokenType authorizationTokenType;
     private ISessionContainer sessionContainer;
-    private String firstResourceTokenFromPermissionFeed = StringUtils.EMPTY;
+    private String firstResourceTokenFromPermissionFeed = Strings.EMPTY;
     private RxClientCollectionCache collectionCache;
     private RxGatewayStoreModel gatewayProxy;
     private RxGatewayStoreModel thinProxy;
@@ -444,7 +443,7 @@ public class RxDocumentClientImpl implements AsyncDocumentClient, IAuthorization
                 }
 
                 List<PartitionKeyAndResourceTokenPair> partitionKeyAndResourceTokenPairs = null;
-                PathInfo pathInfo = new PathInfo(false, StringUtils.EMPTY, StringUtils.EMPTY, false);
+                PathInfo pathInfo = new PathInfo(false, Strings.EMPTY, Strings.EMPTY, false);
                 if (!PathsHelper.tryParsePathSegments(permission.getResourceLink(), pathInfo, null)) {
                     throw new IllegalArgumentException(permission.getResourceLink());
                 }
@@ -1115,7 +1114,7 @@ public class RxDocumentClientImpl implements AsyncDocumentClient, IAuthorization
     private Mono<ResourceResponse<Database>> deleteDatabaseInternal(String databaseLink, RequestOptions options,
                                                                     DocumentClientRetryPolicy retryPolicyInstance) {
         try {
-            if (StringUtils.isEmpty(databaseLink)) {
+            if (Strings.isEmpty(databaseLink)) {
                 throw new IllegalArgumentException("databaseLink");
             }
 
@@ -1144,7 +1143,7 @@ public class RxDocumentClientImpl implements AsyncDocumentClient, IAuthorization
 
     private Mono<ResourceResponse<Database>> readDatabaseInternal(String databaseLink, RequestOptions options, DocumentClientRetryPolicy retryPolicyInstance) {
         try {
-            if (StringUtils.isEmpty(databaseLink)) {
+            if (Strings.isEmpty(databaseLink)) {
                 throw new IllegalArgumentException("databaseLink");
             }
 
@@ -1563,7 +1562,7 @@ public class RxDocumentClientImpl implements AsyncDocumentClient, IAuthorization
     private Mono<ResourceResponse<DocumentCollection>> createCollectionInternal(String databaseLink,
                                                                                 DocumentCollection collection, RequestOptions options, DocumentClientRetryPolicy retryPolicyInstance) {
         try {
-            if (StringUtils.isEmpty(databaseLink)) {
+            if (Strings.isEmpty(databaseLink)) {
                 throw new IllegalArgumentException("databaseLink");
             }
             if (collection == null) {
@@ -1685,7 +1684,7 @@ public class RxDocumentClientImpl implements AsyncDocumentClient, IAuthorization
     private Mono<ResourceResponse<DocumentCollection>> deleteCollectionInternal(String collectionLink,
                                                                                 RequestOptions options, DocumentClientRetryPolicy retryPolicyInstance) {
         try {
-            if (StringUtils.isEmpty(collectionLink)) {
+            if (Strings.isEmpty(collectionLink)) {
                 throw new IllegalArgumentException("collectionLink");
             }
 
@@ -1776,7 +1775,7 @@ public class RxDocumentClientImpl implements AsyncDocumentClient, IAuthorization
         // this is to ensure we capture most up to date information (e.g.,
         // session)
         try {
-            if (StringUtils.isEmpty(collectionLink)) {
+            if (Strings.isEmpty(collectionLink)) {
                 throw new IllegalArgumentException("collectionLink");
             }
 
@@ -1800,7 +1799,7 @@ public class RxDocumentClientImpl implements AsyncDocumentClient, IAuthorization
     @Override
     public Flux<FeedResponse<DocumentCollection>> readCollections(String databaseLink, QueryFeedOperationState state) {
 
-        if (StringUtils.isEmpty(databaseLink)) {
+        if (Strings.isEmpty(databaseLink)) {
             throw new IllegalArgumentException("databaseLink");
         }
 
@@ -1842,7 +1841,7 @@ public class RxDocumentClientImpl implements AsyncDocumentClient, IAuthorization
     }
 
     private static void validateResource(Resource resource) {
-        if (!StringUtils.isEmpty(resource.getId())) {
+        if (Strings.isNotEmpty(resource.getId())) {
             if (resource.getId().indexOf('/') != -1 || resource.getId().indexOf('\\') != -1 ||
                     resource.getId().indexOf('?') != -1 || resource.getId().indexOf('#') != -1) {
                 throw new IllegalArgumentException("Id contains illegal chars.");
@@ -2130,7 +2129,7 @@ public class RxDocumentClientImpl implements AsyncDocumentClient, IAuthorization
                                                                            DiagnosticsClientContext clientContextOverride,
                                                                            CrossRegionAvailabilityContextForRxDocumentServiceRequest crossRegionContextForRequest) {
 
-        if (StringUtils.isEmpty(documentCollectionLink)) {
+        if (Strings.isEmpty(documentCollectionLink)) {
             throw new IllegalArgumentException("documentCollectionLink");
         }
         if (document == null) {
@@ -2191,7 +2190,7 @@ public class RxDocumentClientImpl implements AsyncDocumentClient, IAuthorization
                                                                    RequestOptions options,
                                                                    boolean disableAutomaticIdGeneration) {
 
-        checkArgument(StringUtils.isNotEmpty(documentCollectionLink), "expected non empty documentCollectionLink");
+        checkArgument(Strings.isNotEmpty(documentCollectionLink), "expected non empty documentCollectionLink");
         checkNotNull(serverBatchRequest, "expected non null serverBatchRequest");
 
         Instant serializationStartTimeUTC = Instant.now();
@@ -3176,7 +3175,7 @@ public class RxDocumentClientImpl implements AsyncDocumentClient, IAuthorization
         CrossRegionAvailabilityContextForRxDocumentServiceRequest crossRegionAvailabilityContextForRequest) {
 
         try {
-            if (StringUtils.isEmpty(documentLink)) {
+            if (Strings.isEmpty(documentLink)) {
                 throw new IllegalArgumentException("documentLink");
             }
 
@@ -3510,7 +3509,7 @@ public class RxDocumentClientImpl implements AsyncDocumentClient, IAuthorization
         AtomicReference<RxDocumentServiceRequest> requestReference,
         CrossRegionAvailabilityContextForRxDocumentServiceRequest crossRegionAvailabilityContextForRequest) {
 
-        checkArgument(StringUtils.isNotEmpty(documentLink), "expected non empty documentLink");
+        checkArgument(Strings.isNotEmpty(documentLink), "expected non empty documentLink");
         checkNotNull(cosmosPatchOperations, "expected non null cosmosPatchOperations");
 
         logger.debug("Running patch operations on Document. documentLink: [{}]", documentLink);
@@ -3723,7 +3722,7 @@ public class RxDocumentClientImpl implements AsyncDocumentClient, IAuthorization
         CrossRegionAvailabilityContextForRxDocumentServiceRequest crossRegionAvailabilityContextForRequest) {
 
         try {
-            if (StringUtils.isEmpty(documentLink)) {
+            if (Strings.isEmpty(documentLink)) {
                 throw new IllegalArgumentException("documentLink");
             }
 
@@ -3814,7 +3813,7 @@ public class RxDocumentClientImpl implements AsyncDocumentClient, IAuthorization
     private Mono<ResourceResponse<Document>> deleteAllDocumentsByPartitionKeyInternal(String collectionLink, RequestOptions options,
                                                                                   DocumentClientRetryPolicy retryPolicyInstance) {
         try {
-            if (StringUtils.isEmpty(collectionLink)) {
+            if (Strings.isEmpty(collectionLink)) {
                 throw new IllegalArgumentException("collectionLink");
             }
 
@@ -3914,7 +3913,7 @@ public class RxDocumentClientImpl implements AsyncDocumentClient, IAuthorization
         CrossRegionAvailabilityContextForRxDocumentServiceRequest crossRegionAvailabilityContextForRequest) {
 
         try {
-            if (StringUtils.isEmpty(documentLink)) {
+            if (Strings.isEmpty(documentLink)) {
                 throw new IllegalArgumentException("documentLink");
             }
 
@@ -3998,7 +3997,7 @@ public class RxDocumentClientImpl implements AsyncDocumentClient, IAuthorization
     public <T> Flux<FeedResponse<T>>  readDocuments(
         String collectionLink, QueryFeedOperationState state, Class<T> classOfT) {
 
-        if (StringUtils.isEmpty(collectionLink)) {
+        if (Strings.isEmpty(collectionLink)) {
             throw new IllegalArgumentException("collectionLink");
         }
 
@@ -4793,7 +4792,7 @@ public class RxDocumentClientImpl implements AsyncDocumentClient, IAuthorization
         QueryFeedOperationState state,
         Class<T> classOfT) {
 
-        if (StringUtils.isEmpty(collectionLink)) {
+        if (Strings.isEmpty(collectionLink)) {
             throw new IllegalArgumentException("collectionLink");
         }
 
@@ -4935,7 +4934,7 @@ public class RxDocumentClientImpl implements AsyncDocumentClient, IAuthorization
     public Flux<FeedResponse<PartitionKeyRange>> readPartitionKeyRanges(final String collectionLink,
                                                                         QueryFeedOperationState state) {
 
-        if (StringUtils.isEmpty(collectionLink)) {
+        if (Strings.isEmpty(collectionLink)) {
             throw new IllegalArgumentException("collectionLink");
         }
 
@@ -4945,7 +4944,7 @@ public class RxDocumentClientImpl implements AsyncDocumentClient, IAuthorization
 
     @Override
     public Flux<FeedResponse<PartitionKeyRange>> readPartitionKeyRanges(String collectionLink, CosmosQueryRequestOptions options) {
-        if (StringUtils.isEmpty(collectionLink)) {
+        if (Strings.isEmpty(collectionLink)) {
             throw new IllegalArgumentException("collectionLink");
         }
 
@@ -4959,7 +4958,7 @@ public class RxDocumentClientImpl implements AsyncDocumentClient, IAuthorization
 
     private RxDocumentServiceRequest getStoredProcedureRequest(String collectionLink, StoredProcedure storedProcedure,
                                                                RequestOptions options, OperationType operationType) {
-        if (StringUtils.isEmpty(collectionLink)) {
+        if (Strings.isEmpty(collectionLink)) {
             throw new IllegalArgumentException("collectionLink");
         }
         if (storedProcedure == null) {
@@ -4976,7 +4975,7 @@ public class RxDocumentClientImpl implements AsyncDocumentClient, IAuthorization
 
     private RxDocumentServiceRequest getUserDefinedFunctionRequest(String collectionLink, UserDefinedFunction udf,
                                                                    RequestOptions options, OperationType operationType) {
-        if (StringUtils.isEmpty(collectionLink)) {
+        if (Strings.isEmpty(collectionLink)) {
             throw new IllegalArgumentException("collectionLink");
         }
         if (udf == null) {
@@ -5073,7 +5072,7 @@ public class RxDocumentClientImpl implements AsyncDocumentClient, IAuthorization
         // session)
         try {
 
-            if (StringUtils.isEmpty(storedProcedureLink)) {
+            if (Strings.isEmpty(storedProcedureLink)) {
                 throw new IllegalArgumentException("storedProcedureLink");
             }
 
@@ -5112,7 +5111,7 @@ public class RxDocumentClientImpl implements AsyncDocumentClient, IAuthorization
         // session)
         try {
 
-            if (StringUtils.isEmpty(storedProcedureLink)) {
+            if (Strings.isEmpty(storedProcedureLink)) {
                 throw new IllegalArgumentException("storedProcedureLink");
             }
 
@@ -5139,7 +5138,7 @@ public class RxDocumentClientImpl implements AsyncDocumentClient, IAuthorization
     public Flux<FeedResponse<StoredProcedure>> readStoredProcedures(String collectionLink,
                                                                     QueryFeedOperationState state) {
 
-        if (StringUtils.isEmpty(collectionLink)) {
+        if (Strings.isEmpty(collectionLink)) {
             throw new IllegalArgumentException("collectionLink");
         }
 
@@ -5312,7 +5311,7 @@ public class RxDocumentClientImpl implements AsyncDocumentClient, IAuthorization
 
     private RxDocumentServiceRequest getTriggerRequest(String collectionLink, Trigger trigger, RequestOptions options,
                                                        OperationType operationType) {
-        if (StringUtils.isEmpty(collectionLink)) {
+        if (Strings.isEmpty(collectionLink)) {
             throw new IllegalArgumentException("collectionLink");
         }
         if (trigger == null) {
@@ -5369,7 +5368,7 @@ public class RxDocumentClientImpl implements AsyncDocumentClient, IAuthorization
 
     private Mono<ResourceResponse<Trigger>> deleteTriggerInternal(String triggerLink, RequestOptions options, DocumentClientRetryPolicy retryPolicyInstance) {
         try {
-            if (StringUtils.isEmpty(triggerLink)) {
+            if (Strings.isEmpty(triggerLink)) {
                 throw new IllegalArgumentException("triggerLink");
             }
 
@@ -5400,7 +5399,7 @@ public class RxDocumentClientImpl implements AsyncDocumentClient, IAuthorization
     private Mono<ResourceResponse<Trigger>> readTriggerInternal(String triggerLink, RequestOptions options,
                                                                       DocumentClientRetryPolicy retryPolicyInstance) {
         try {
-            if (StringUtils.isEmpty(triggerLink)) {
+            if (Strings.isEmpty(triggerLink)) {
                 throw new IllegalArgumentException("triggerLink");
             }
 
@@ -5425,7 +5424,7 @@ public class RxDocumentClientImpl implements AsyncDocumentClient, IAuthorization
     @Override
     public Flux<FeedResponse<Trigger>> readTriggers(String collectionLink, QueryFeedOperationState state) {
 
-        if (StringUtils.isEmpty(collectionLink)) {
+        if (Strings.isEmpty(collectionLink)) {
             throw new IllegalArgumentException("collectionLink");
         }
 
@@ -5529,7 +5528,7 @@ public class RxDocumentClientImpl implements AsyncDocumentClient, IAuthorization
         // this is to ensure we capture most up to date information (e.g.,
         // session)
         try {
-            if (StringUtils.isEmpty(udfLink)) {
+            if (Strings.isEmpty(udfLink)) {
                 throw new IllegalArgumentException("udfLink");
             }
 
@@ -5566,7 +5565,7 @@ public class RxDocumentClientImpl implements AsyncDocumentClient, IAuthorization
         // this is to ensure we capture most up to date information (e.g.,
         // session)
         try {
-            if (StringUtils.isEmpty(udfLink)) {
+            if (Strings.isEmpty(udfLink)) {
                 throw new IllegalArgumentException("udfLink");
             }
 
@@ -5593,7 +5592,7 @@ public class RxDocumentClientImpl implements AsyncDocumentClient, IAuthorization
     public Flux<FeedResponse<UserDefinedFunction>> readUserDefinedFunctions(String collectionLink,
                                                                                   QueryFeedOperationState state) {
 
-        if (StringUtils.isEmpty(collectionLink)) {
+        if (Strings.isEmpty(collectionLink)) {
             throw new IllegalArgumentException("collectionLink");
         }
 
@@ -5628,7 +5627,7 @@ public class RxDocumentClientImpl implements AsyncDocumentClient, IAuthorization
     private Mono<ResourceResponse<Conflict>> readConflictInternal(String conflictLink, RequestOptions options, DocumentClientRetryPolicy retryPolicyInstance) {
 
         try {
-            if (StringUtils.isEmpty(conflictLink)) {
+            if (Strings.isEmpty(conflictLink)) {
                 throw new IllegalArgumentException("conflictLink");
             }
 
@@ -5656,7 +5655,7 @@ public class RxDocumentClientImpl implements AsyncDocumentClient, IAuthorization
     @Override
     public Flux<FeedResponse<Conflict>> readConflicts(String collectionLink, QueryFeedOperationState state) {
 
-        if (StringUtils.isEmpty(collectionLink)) {
+        if (Strings.isEmpty(collectionLink)) {
             throw new IllegalArgumentException("collectionLink");
         }
 
@@ -5686,7 +5685,7 @@ public class RxDocumentClientImpl implements AsyncDocumentClient, IAuthorization
                                                                           DocumentClientRetryPolicy retryPolicyInstance) {
 
         try {
-            if (StringUtils.isEmpty(conflictLink)) {
+            if (Strings.isEmpty(conflictLink)) {
                 throw new IllegalArgumentException("conflictLink");
             }
 
@@ -5754,7 +5753,7 @@ public class RxDocumentClientImpl implements AsyncDocumentClient, IAuthorization
 
     private RxDocumentServiceRequest getUserRequest(String databaseLink, User user, RequestOptions options,
                                                     OperationType operationType) {
-        if (StringUtils.isEmpty(databaseLink)) {
+        if (Strings.isEmpty(databaseLink)) {
             throw new IllegalArgumentException("databaseLink");
         }
         if (user == null) {
@@ -5809,7 +5808,7 @@ public class RxDocumentClientImpl implements AsyncDocumentClient, IAuthorization
                                                                   DocumentClientRetryPolicy retryPolicyInstance) {
 
         try {
-            if (StringUtils.isEmpty(userLink)) {
+            if (Strings.isEmpty(userLink)) {
                 throw new IllegalArgumentException("userLink");
             }
             logger.debug("Deleting a User. userLink [{}]", userLink);
@@ -5837,7 +5836,7 @@ public class RxDocumentClientImpl implements AsyncDocumentClient, IAuthorization
 
     private Mono<ResourceResponse<User>> readUserInternal(String userLink, RequestOptions options, DocumentClientRetryPolicy retryPolicyInstance) {
         try {
-            if (StringUtils.isEmpty(userLink)) {
+            if (Strings.isEmpty(userLink)) {
                 throw new IllegalArgumentException("userLink");
             }
             logger.debug("Reading a User. userLink [{}]", userLink);
@@ -5860,7 +5859,7 @@ public class RxDocumentClientImpl implements AsyncDocumentClient, IAuthorization
     @Override
     public Flux<FeedResponse<User>> readUsers(String databaseLink, QueryFeedOperationState state) {
 
-        if (StringUtils.isEmpty(databaseLink)) {
+        if (Strings.isEmpty(databaseLink)) {
             throw new IllegalArgumentException("databaseLink");
         }
 
@@ -5888,7 +5887,7 @@ public class RxDocumentClientImpl implements AsyncDocumentClient, IAuthorization
 
     private Mono<ResourceResponse<ClientEncryptionKey>> readClientEncryptionKeyInternal(String clientEncryptionKeyLink, RequestOptions options, DocumentClientRetryPolicy retryPolicyInstance) {
         try {
-            if (StringUtils.isEmpty(clientEncryptionKeyLink)) {
+            if (Strings.isEmpty(clientEncryptionKeyLink)) {
                 throw new IllegalArgumentException("clientEncryptionKeyLink");
             }
             logger.debug("Reading a client encryption key. clientEncryptionKeyLink [{}]", clientEncryptionKeyLink);
@@ -5930,7 +5929,7 @@ public class RxDocumentClientImpl implements AsyncDocumentClient, IAuthorization
 
     private RxDocumentServiceRequest getClientEncryptionKeyRequest(String databaseLink, ClientEncryptionKey clientEncryptionKey, RequestOptions options,
                                                     OperationType operationType) {
-        if (StringUtils.isEmpty(databaseLink)) {
+        if (Strings.isEmpty(databaseLink)) {
             throw new IllegalArgumentException("databaseLink");
         }
         if (clientEncryptionKey == null) {
@@ -5985,7 +5984,7 @@ public class RxDocumentClientImpl implements AsyncDocumentClient, IAuthorization
     public Flux<FeedResponse<ClientEncryptionKey>> readClientEncryptionKeys(
         String databaseLink,
         QueryFeedOperationState state) {
-        if (StringUtils.isEmpty(databaseLink)) {
+        if (Strings.isEmpty(databaseLink)) {
             throw new IllegalArgumentException("databaseLink");
         }
 
@@ -6051,7 +6050,7 @@ public class RxDocumentClientImpl implements AsyncDocumentClient, IAuthorization
 
     private RxDocumentServiceRequest getPermissionRequest(String userLink, Permission permission,
                                                           RequestOptions options, OperationType operationType) {
-        if (StringUtils.isEmpty(userLink)) {
+        if (Strings.isEmpty(userLink)) {
             throw new IllegalArgumentException("userLink");
         }
         if (permission == null) {
@@ -6107,7 +6106,7 @@ public class RxDocumentClientImpl implements AsyncDocumentClient, IAuthorization
                                                                               DocumentClientRetryPolicy retryPolicyInstance) {
 
         try {
-            if (StringUtils.isEmpty(permissionLink)) {
+            if (Strings.isEmpty(permissionLink)) {
                 throw new IllegalArgumentException("permissionLink");
             }
             logger.debug("Deleting a Permission. permissionLink [{}]", permissionLink);
@@ -6136,7 +6135,7 @@ public class RxDocumentClientImpl implements AsyncDocumentClient, IAuthorization
 
     private Mono<ResourceResponse<Permission>> readPermissionInternal(String permissionLink, RequestOptions options, DocumentClientRetryPolicy retryPolicyInstance ) {
         try {
-            if (StringUtils.isEmpty(permissionLink)) {
+            if (Strings.isEmpty(permissionLink)) {
                 throw new IllegalArgumentException("permissionLink");
             }
             logger.debug("Reading a Permission. permissionLink [{}]", permissionLink);
@@ -6159,7 +6158,7 @@ public class RxDocumentClientImpl implements AsyncDocumentClient, IAuthorization
     @Override
     public Flux<FeedResponse<Permission>> readPermissions(String userLink, QueryFeedOperationState state) {
 
-        if (StringUtils.isEmpty(userLink)) {
+        if (Strings.isEmpty(userLink)) {
             throw new IllegalArgumentException("userLink");
         }
 
@@ -6212,7 +6211,7 @@ public class RxDocumentClientImpl implements AsyncDocumentClient, IAuthorization
 
     private Mono<ResourceResponse<Offer>> readOfferInternal(String offerLink, DocumentClientRetryPolicy retryPolicyInstance) {
         try {
-            if (StringUtils.isEmpty(offerLink)) {
+            if (Strings.isEmpty(offerLink)) {
                 throw new IllegalArgumentException("offerLink");
             }
             logger.debug("Reading an Offer. offerLink [{}]", offerLink);
@@ -6266,7 +6265,7 @@ public class RxDocumentClientImpl implements AsyncDocumentClient, IAuthorization
                 requestHeaders.put(HttpConstants.HttpHeaders.A_IM, HttpConstants.A_IMHeaderValues.INCREMENTAL_FEED);
             }
 
-            if (StringUtils.isNotEmpty(continuationToken)) {
+            if (Strings.isNotEmpty(continuationToken)) {
                 requestHeaders.put(
                     isChangeFeed ? HttpConstants.HttpHeaders.IF_NONE_MATCH : HttpConstants.HttpHeaders.CONTINUATION,
                     continuationToken);
@@ -6657,7 +6656,7 @@ public class RxDocumentClientImpl implements AsyncDocumentClient, IAuthorization
 
         logger.debug("getFeedRange collectionLink=[{}] - forceRefresh={}", collectionLink, forceRefresh);
 
-        if (StringUtils.isEmpty(collectionLink)) {
+        if (Strings.isEmpty(collectionLink)) {
             throw new IllegalArgumentException("collectionLink");
         }
 

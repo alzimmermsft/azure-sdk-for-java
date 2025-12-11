@@ -42,8 +42,6 @@ import com.azure.cosmos.implementation.Strings;
 import com.azure.cosmos.implementation.UnauthorizedException;
 import com.azure.cosmos.implementation.UserAgentContainer;
 import com.azure.cosmos.implementation.Utils;
-import com.azure.cosmos.implementation.apachecommons.lang.NotImplementedException;
-import com.azure.cosmos.implementation.apachecommons.lang.StringUtils;
 import com.azure.cosmos.implementation.directconnectivity.rntbd.ProactiveOpenConnectionsProcessor;
 import com.azure.cosmos.implementation.faultinjection.IFaultInjectorProvider;
 import com.azure.cosmos.implementation.http.HttpClient;
@@ -249,7 +247,7 @@ public class HttpTransportClient extends TransportClient {
 
     @Override
     public void configureFaultInjectorProvider(IFaultInjectorProvider injectorProvider) {
-        throw new NotImplementedException("configureFaultInjectorProvider is not supported in httpTransportClient");
+        throw new UnsupportedOperationException("configureFaultInjectorProvider is not supported in httpTransportClient");
     }
 
     @Override
@@ -264,12 +262,12 @@ public class HttpTransportClient extends TransportClient {
 
     @Override
     public void recordOpenConnectionsAndInitCachesCompleted(List<CosmosContainerIdentity> cosmosContainerIdentities) {
-        throw new NotImplementedException("recordOpenConnectionsAndInitCachesComplete is not supported in httpTransportClient");
+        throw new UnsupportedOperationException("recordOpenConnectionsAndInitCachesComplete is not supported in httpTransportClient");
     }
 
     @Override
     public void recordOpenConnectionsAndInitCachesStarted(List<CosmosContainerIdentity> cosmosContainerIdentities) {
-        throw new NotImplementedException("recordOpenConnectionsAndInitCachesStarted is not supported in httpTransportClient");
+        throw new UnsupportedOperationException("recordOpenConnectionsAndInitCachesStarted is not supported in httpTransportClient");
     }
 
     private void beforeRequest(String activityId, URI uri, ResourceType resourceType, HttpHeaders requestHeaders) {
@@ -624,7 +622,7 @@ public class HttpTransportClient extends TransportClient {
     }
 
     private static String getDatabaseFeedUri(String baseAddress) {
-        return createURI(baseAddress, PathsHelper.generatePath(ResourceType.Database, StringUtils.EMPTY, true));
+        return createURI(baseAddress, PathsHelper.generatePath(ResourceType.Database, Strings.EMPTY, true));
     }
 
     private static String getDatabaseEntryUri(String baseAddress, RxDocumentServiceRequest request) {

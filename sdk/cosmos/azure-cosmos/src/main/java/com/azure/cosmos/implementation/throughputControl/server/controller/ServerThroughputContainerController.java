@@ -4,8 +4,8 @@
 package com.azure.cosmos.implementation.throughputControl.server.controller;
 
 import com.azure.cosmos.implementation.RxDocumentServiceRequest;
+import com.azure.cosmos.implementation.Strings;
 import com.azure.cosmos.implementation.Utils;
-import com.azure.cosmos.implementation.apachecommons.lang.StringUtils;
 import com.azure.cosmos.implementation.caches.AsyncCache;
 import com.azure.cosmos.implementation.throughputControl.IThroughputContainerController;
 import com.azure.cosmos.implementation.throughputControl.server.config.ServerThroughputControlGroup;
@@ -58,7 +58,7 @@ public class ServerThroughputContainerController implements IThroughputContainer
     private Mono<Utils.ValueHolder<ServerThroughputGroupController>> getOrCreateThroughputGroupController(String groupName) {
 
         // If there is no control group defined, using the default group controller
-        if (StringUtils.isEmpty(groupName)) {
+        if (Strings.isEmpty(groupName)) {
             return Mono.just(new Utils.ValueHolder<>(this.defaultGroupController));
         }
 

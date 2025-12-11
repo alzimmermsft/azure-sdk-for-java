@@ -18,9 +18,9 @@ import com.azure.cosmos.implementation.FailureValidator;
 import com.azure.cosmos.implementation.ImplementationBridgeHelpers;
 import com.azure.cosmos.implementation.InternalObjectNode;
 import com.azure.cosmos.implementation.OperationType;
+import com.azure.cosmos.implementation.Pair;
+import com.azure.cosmos.implementation.Strings;
 import com.azure.cosmos.implementation.TestConfigurations;
-import com.azure.cosmos.implementation.apachecommons.lang.StringUtils;
-import com.azure.cosmos.implementation.apachecommons.lang.tuple.Pair;
 import com.azure.cosmos.implementation.throughputControl.sdk.controller.group.global.GlobalThroughputControlClientItem;
 import com.azure.cosmos.models.CosmosChangeFeedRequestOptions;
 import com.azure.cosmos.models.CosmosContainerProperties;
@@ -1024,7 +1024,7 @@ public class ThroughputControlTests extends TestSuiteBase {
     private static TestItem getDocumentDefinition(String partitionKey) {
         return new TestItem(
             UUID.randomUUID().toString(),
-            StringUtils.isEmpty(partitionKey) ? UUID.randomUUID().toString() : partitionKey,
+            Strings.isEmpty(partitionKey) ? UUID.randomUUID().toString() : partitionKey,
             UUID.randomUUID().toString()
         );
     }
@@ -1061,7 +1061,7 @@ public class ThroughputControlTests extends TestSuiteBase {
         try {
             if (operationType == OperationType.Query) {
                 CosmosQueryRequestOptions queryRequestOptions = new CosmosQueryRequestOptions();
-                if (!StringUtils.isEmpty(throughputControlGroup)) {
+                if (Strings.isNotEmpty(throughputControlGroup)) {
                     queryRequestOptions.setThroughputControlGroupName(throughputControlGroup);
                 }
 
@@ -1075,7 +1075,7 @@ public class ThroughputControlTests extends TestSuiteBase {
             if (operationType == OperationType.ReadFeed) {
                 CosmosChangeFeedRequestOptions changeFeedRequestOptions = CosmosChangeFeedRequestOptions
                     .createForProcessingFromBeginning(FeedRange.forFullRange());
-                if (!StringUtils.isEmpty(throughputControlGroup)) {
+                if (Strings.isNotEmpty(throughputControlGroup)) {
                     changeFeedRequestOptions.setThroughputControlGroupName(throughputControlGroup);
                 }
 
@@ -1088,7 +1088,7 @@ public class ThroughputControlTests extends TestSuiteBase {
                 || operationType == OperationType.Replace
                 || operationType == OperationType.Create) {
                 CosmosItemRequestOptions itemRequestOptions = new CosmosItemRequestOptions();
-                if (!StringUtils.isEmpty((throughputControlGroup))) {
+                if (Strings.isNotEmpty((throughputControlGroup))) {
                     itemRequestOptions.setThroughputControlGroupName(throughputControlGroup);
                 }
 

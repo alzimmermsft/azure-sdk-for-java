@@ -3,9 +3,7 @@
 
 package com.azure.cosmos.implementation;
 
-import com.azure.cosmos.implementation.apachecommons.lang.NotImplementedException;
 import com.azure.cosmos.implementation.apachecommons.lang.StringUtils;
-import com.azure.cosmos.implementation.apachecommons.lang.tuple.Pair;
 import com.azure.cosmos.implementation.routing.PartitionKeyInternal;
 import com.azure.cosmos.implementation.routing.PartitionKeyInternalHelper;
 import com.azure.cosmos.implementation.routing.RegionalRoutingContext;
@@ -288,7 +286,7 @@ public class RegionScopedSessionContainer implements ISessionContainer {
 
     @Override
     public void setSessionToken(String collectionRid, String collectionFullName, Map<String, String> responseHeaders) {
-        throw new NotImplementedException("setSessionToken(String collectionRid, String collectionFullName, Map<String, String> responseHeaders) not implemented for RegionScopedSessionContainer");
+        throw new UnsupportedOperationException("setSessionToken(String collectionRid, String collectionFullName, Map<String, String> responseHeaders) not implemented for RegionScopedSessionContainer");
     }
 
     private void setSessionToken(RxDocumentServiceRequest request, ResourceId resourceId, String collectionName, String token) {

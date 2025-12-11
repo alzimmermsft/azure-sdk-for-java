@@ -12,12 +12,12 @@ import com.azure.cosmos.implementation.MetadataDiagnosticsContext;
 import com.azure.cosmos.implementation.NotFoundException;
 import com.azure.cosmos.implementation.ObservableHelper;
 import com.azure.cosmos.implementation.OperationType;
+import com.azure.cosmos.implementation.Pair;
 import com.azure.cosmos.implementation.PartitionKeyRange;
 import com.azure.cosmos.implementation.ResourceType;
 import com.azure.cosmos.implementation.RxDocumentClientImpl;
 import com.azure.cosmos.implementation.RxDocumentServiceRequest;
 import com.azure.cosmos.implementation.Utils;
-import com.azure.cosmos.implementation.apachecommons.lang.tuple.ImmutablePair;
 import com.azure.cosmos.implementation.routing.CollectionRoutingMap;
 import com.azure.cosmos.implementation.routing.IServerIdentity;
 import com.azure.cosmos.implementation.routing.InMemoryCollectionRoutingMap;
@@ -300,8 +300,8 @@ public class RxPartitionKeyRangeCache implements IPartitionKeyRangeCache {
             changeFeedNextIfNoneMatch,
             ranges.size());
 
-        List<ImmutablePair<PartitionKeyRange, IServerIdentity>> rangesTuples =
-            ranges.stream().map(range -> new ImmutablePair<>(range, (IServerIdentity) null)).collect(Collectors.toList());
+        List<Pair<PartitionKeyRange, IServerIdentity>> rangesTuples =
+            ranges.stream().map(range -> Pair.of(range, (IServerIdentity) null)).collect(Collectors.toList());
 
         CollectionRoutingMap routingMap;
         if (previousRoutingMap == null)
@@ -312,7 +312,7 @@ public class RxPartitionKeyRangeCache implements IPartitionKeyRangeCache {
                 .collect(Collectors.toSet());
 
             routingMap = InMemoryCollectionRoutingMap.tryCreateCompleteRoutingMap(
-                rangesTuples.stream().filter(tuple -> !goneRanges.contains(tuple.left.getId())).collect(Collectors.toList()),
+                rangesTuples.stream().filter(tuple -> !goneRanges.contains(tuple.getLeft().getId())).collect(Collectors.toList()),
                 collectionRid,
                 changeFeedNextIfNoneMatch);
         }

@@ -4,7 +4,7 @@
 package com.azure.cosmos.implementation.batch;
 
 import com.azure.cosmos.implementation.HttpConstants;
-import com.azure.cosmos.implementation.apachecommons.lang.StringUtils;
+import com.azure.cosmos.implementation.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,7 +25,7 @@ public final class BatchExecUtils {
         if (responseHeaders != null) {
             String header = responseHeaders.get(HttpConstants.HttpHeaders.RETRY_AFTER_IN_MILLISECONDS);
 
-            if (StringUtils.isNotEmpty(header)) {
+            if (Strings.isNotEmpty(header)) {
                 try {
                     retryIntervalInMilliseconds = Math.min(Long.parseLong(header), MAX_RETRY_AFTER_IN_MS);
                 } catch (NumberFormatException e) {
@@ -58,7 +58,7 @@ public final class BatchExecUtils {
         if (responseHeaders != null) {
 
             String contentLength = responseHeaders.get(HttpConstants.HttpHeaders.CONTENT_LENGTH);
-            if(contentLength == null || StringUtils.isEmpty(contentLength))
+            if(Strings.isEmpty(contentLength))
             {
                 return 0;
             }
@@ -80,7 +80,7 @@ public final class BatchExecUtils {
         }
 
         final String value = responseHeaders.get(HttpConstants.HttpHeaders.REQUEST_CHARGE);
-        if (StringUtils.isEmpty(value)) {
+        if (Strings.isEmpty(value)) {
             return 0;
         }
 
@@ -97,7 +97,7 @@ public final class BatchExecUtils {
 
         if (responseHeaders != null) {
             String subStatusString = responseHeaders.get(HttpConstants.HttpHeaders.SUB_STATUS);
-            if (StringUtils.isNotEmpty(subStatusString)) {
+            if (Strings.isNotEmpty(subStatusString)) {
                 try {
                     code = Integer.parseInt(subStatusString);
                 } catch (NumberFormatException e) {

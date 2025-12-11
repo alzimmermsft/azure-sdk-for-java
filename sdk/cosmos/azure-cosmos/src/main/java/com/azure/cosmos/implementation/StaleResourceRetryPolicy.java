@@ -5,7 +5,6 @@ package com.azure.cosmos.implementation;
 import com.azure.cosmos.BridgeInternal;
 import com.azure.cosmos.CosmosDiagnostics;
 import com.azure.cosmos.CosmosException;
-import com.azure.cosmos.implementation.apachecommons.lang.StringUtils;
 import com.azure.cosmos.implementation.caches.RxCollectionCache;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,6 +12,7 @@ import reactor.core.publisher.Mono;
 
 import java.time.Duration;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -90,7 +90,7 @@ public class StaleResourceRetryPolicy extends DocumentClientRetryPolicy {
 
                         if (this.request == null
                             || this.request.requestContext == null
-                            || StringUtils.equals(collectionInCache.getResourceId(), this.request.requestContext.resolvedCollectionRid)) {
+                            || Objects.equals(collectionInCache.getResourceId(), this.request.requestContext.resolvedCollectionRid)) {
 
                             this.clientCollectionCache.refresh(
                                 this.getMetadataDiagnosticsContext(),
@@ -110,7 +110,7 @@ public class StaleResourceRetryPolicy extends DocumentClientRetryPolicy {
                         return Mono.just(oldCollectionRid.get());
                     })
                     .flatMap(refreshedCollectionRid -> {
-                        if (!StringUtils.equals(refreshedCollectionRid, oldCollectionRid.get())) {
+                        if (!Objects.equals(refreshedCollectionRid, oldCollectionRid.get())) {
                             this.sessionContainer.clearTokenByResourceId(oldCollectionRid.get());
                         }
 
@@ -181,8 +181,6 @@ public class StaleResourceRetryPolicy extends DocumentClientRetryPolicy {
         // Refresh the sdk collection cache and throw the exception if intendedCollectionRid was passed by outside sdk,
         // so caller will refresh their own collection cache if they have one
         // Cosmos encryption is one use case
-        return
-            StringUtils.isNotEmpty(
-                requestCustomHeaders.get(HttpConstants.HttpHeaders.INTENDED_COLLECTION_RID_HEADER));
+        return Strings.isNotEmpty(requestCustomHeaders.get(HttpConstants.HttpHeaders.INTENDED_COLLECTION_RID_HEADER));
     }
 }

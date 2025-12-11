@@ -4,13 +4,13 @@
 package com.azure.cosmos.implementation.query.metrics;
 
 import com.azure.cosmos.BridgeInternal;
+import com.azure.cosmos.implementation.Pair;
 import com.azure.cosmos.implementation.QueryMetrics;
 import com.azure.cosmos.implementation.QueryPreparationTimes;
 import com.azure.cosmos.implementation.RuntimeExecutionTimes;
 import com.azure.cosmos.implementation.IndexUtilizationInfo;
 import com.azure.cosmos.implementation.SingleIndexUtilizationEntity;
 import com.azure.cosmos.implementation.CompositeIndexUtilizationEntity;
-import com.azure.cosmos.implementation.apachecommons.lang.tuple.ImmutablePair;
 
 import java.time.Duration;
 import java.time.Instant;
@@ -183,9 +183,9 @@ abstract class QueryMetricsWriter {
 
     private void writeSchedulingMetrics(ClientSideMetrics clientSideMetrics) {
         this.writeBeforeSchedulingMetrics();
-        List<ImmutablePair<String, SchedulingTimeSpan>> partitionSchedulingTimeSpans = clientSideMetrics.getPartitionSchedulingTimeSpans();
-        partitionSchedulingTimeSpans.sort((o1, o2) -> (int) (o2.right.getResponseTime() - o1.right.getResponseTime()));
-        for (ImmutablePair<String, SchedulingTimeSpan> partitionSchedulingDuration :
+        List<Pair<String, SchedulingTimeSpan>> partitionSchedulingTimeSpans = clientSideMetrics.getPartitionSchedulingTimeSpans();
+        partitionSchedulingTimeSpans.sort((o1, o2) -> (int) (o2.getRight().getResponseTime() - o1.getRight().getResponseTime()));
+        for (Pair<String, SchedulingTimeSpan> partitionSchedulingDuration :
                 partitionSchedulingTimeSpans) {
             String partitionId = partitionSchedulingDuration.getLeft();
             SchedulingTimeSpan schedulingDuration = partitionSchedulingDuration.getRight();
