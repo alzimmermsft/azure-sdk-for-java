@@ -7,7 +7,6 @@ import com.azure.cosmos.CosmosException;
 import com.azure.cosmos.implementation.Exceptions;
 import com.azure.cosmos.implementation.RxDocumentServiceRequest;
 import com.azure.cosmos.implementation.Strings;
-import com.azure.cosmos.implementation.apachecommons.lang.ArrayUtils;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.ser.std.StdSerializer;
@@ -154,14 +153,14 @@ public class StoreResultDiagnostics {
 
     public static String[] getPartitionAndReplicaId(String serviceAddress) {
         if (serviceAddress == null) {
-            return ArrayUtils.EMPTY_STRING_ARRAY;
+            return Strings.EMPTY_ARRAY;
         }
 
         String[] serviceAddressParts = serviceAddress.split("/");
         // Sample value for serviceAddress
         // /apps/f88bfdf4-2954-4324-aad3-f1686668076d/services/3359112a-719d-474e-aa51-e89a142ae1b3/partitions/512fe816-24fa-4fbb-bbb1-587d2ce19851/replicas/133038444008943156p/
         if (serviceAddressParts.length != 9) {
-            return ArrayUtils.EMPTY_STRING_ARRAY;
+            return Strings.EMPTY_ARRAY;
         }
         String[] result = new String[2];
         result[0] = serviceAddressParts[6];

@@ -3,8 +3,8 @@
 
 package com.azure.cosmos.spark
 
-import com.azure.cosmos.implementation.apachecommons.lang.StringUtils
-import com.azure.cosmos.models.{CosmosContainerProperties, PartitionKeyBuilder, PartitionKeyDefinition, PartitionKeyDefinitionVersion, PartitionKind, ThroughputProperties}
+import com.azure.cosmos.implementation.Strings
+import com.azure.cosmos.models._
 import com.azure.cosmos.spark.utils.{CosmosPatchTestHelper, TestOutputMetricsPublisher}
 import com.azure.cosmos.{CosmosAsyncContainer, CosmosException}
 import com.fasterxml.jackson.databind.ObjectMapper
@@ -884,7 +884,7 @@ class PointWriterSubpartitionITest extends IntegrationSpec with CosmosClient wit
     val container = getContainer
     val containerProperties = container.read().block().getProperties
     val partitionKeyDefinition = containerProperties.getPartitionKeyDefinition
-    val partitionKeyPath = StringUtils.join(partitionKeyDefinition.getPaths, "")
+    val partitionKeyPath = Strings.join(partitionKeyDefinition.getPaths, "")
 
     val id = UUID.randomUUID().toString
 

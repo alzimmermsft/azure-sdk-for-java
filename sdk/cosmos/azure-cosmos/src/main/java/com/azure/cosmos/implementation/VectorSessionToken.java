@@ -3,14 +3,13 @@
 
 package com.azure.cosmos.implementation;
 
-import com.azure.cosmos.implementation.apachecommons.lang.ObjectUtils;
-import com.azure.cosmos.implementation.apachecommons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import static com.azure.cosmos.implementation.Utils.ValueHolder;
@@ -246,7 +245,7 @@ public class VectorSessionToken implements ISessionToken {
             ValueHolder<Long> localLsn2 = ValueHolder.initialize(-1l);
 
             if (Utils.tryGetValue(other, regionId, localLsn2)) {
-                if (ObjectUtils.notEqual(localLsn1.v, localLsn2.v)) {
+                if (!Objects.equals(localLsn1.v, localLsn2.v)) {
                     return false;
                 }
             }
@@ -269,7 +268,7 @@ public class VectorSessionToken implements ISessionToken {
             return false;
         }
 
-        String[] segments = StringUtils.split(sessionToken, VectorSessionToken.SegmentSeparator);
+        String[] segments = sessionToken.split(Character.toString(VectorSessionToken.SegmentSeparator));
 
         if (segments.length < 2) {
             return false;
@@ -286,7 +285,7 @@ public class VectorSessionToken implements ISessionToken {
         for (int i = 2; i < segments.length; i++) {
             String regionSegment = segments[i];
 
-            String[] regionIdWithLsn = StringUtils.split(regionSegment, VectorSessionToken.RegionProgressSeparator);
+            String[] regionIdWithLsn = regionSegment.split(Character.toString(VectorSessionToken.RegionProgressSeparator));
 
             if (regionIdWithLsn.length != 2) {
                 logger.warn("Unexpected region progress segment length '{}' in session token.", regionIdWithLsn.length);

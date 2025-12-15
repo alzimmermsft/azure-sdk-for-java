@@ -5,7 +5,7 @@ package com.azure.cosmos.kafka.connect.implementation;
 
 import com.azure.cosmos.CosmosAsyncClient;
 import com.azure.cosmos.implementation.CosmosClientMetadataCachesSnapshot;
-import com.azure.cosmos.implementation.apachecommons.lang.StringUtils;
+import com.azure.cosmos.implementation.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,7 +20,7 @@ public class KafkaCosmosUtils {
     private static final Logger LOGGER = LoggerFactory.getLogger(KafkaCosmosUtils.class);
 
     public static CosmosClientMetadataCachesSnapshot getCosmosClientMetadataFromString(String metadataCacheString) {
-        if (StringUtils.isNotEmpty(metadataCacheString)) {
+        if (Strings.isNotEmpty(metadataCacheString)) {
             byte[] inputByteArray = Base64.getDecoder().decode(metadataCacheString);
             try (ObjectInputStream objectInputStream =
                      new ObjectInputStream(new ByteArrayInputStream(inputByteArray))) {

@@ -3,11 +3,10 @@
 
 package com.azure.cosmos.spark
 
-import com.azure.cosmos.implementation.apachecommons.lang.StringUtils
-import com.azure.cosmos.{CosmosAsyncContainer, CosmosException}
 import com.azure.cosmos.implementation.{CosmosClientMetadataCachesSnapshot, TestConfigurations, Utils}
 import com.azure.cosmos.models.{PartitionKey, ThroughputProperties}
 import com.azure.cosmos.spark.diagnostics.DiagnosticsContext
+import com.azure.cosmos.{CosmosAsyncContainer, CosmosException}
 import com.fasterxml.jackson.databind.node.ObjectNode
 import org.apache.spark.broadcast.Broadcast
 import org.apache.spark.sql.SparkSession
@@ -401,7 +400,7 @@ class ChangeFeedPartitionReaderITest
 
  private[this] def getLSN(sessionToken: String): Long = {
   val parsedSessionToken = sessionToken.substring(sessionToken.indexOf(":"))
-  val segments = StringUtils.split(parsedSessionToken, "#")
+  val segments = parsedSessionToken.split("#")
   var latestLsn = segments(0)
   if (segments.length >= 2) {
    // default to Global LSN

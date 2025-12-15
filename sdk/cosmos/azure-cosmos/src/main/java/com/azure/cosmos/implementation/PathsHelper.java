@@ -354,7 +354,7 @@ public class PathsHelper {
             return false;
         }
         String trimmedStr = StringUtils.strip(resourceUrl, Constants.Properties.PATH_SEPARATOR);
-        String[] segments = StringUtils.split(trimmedStr, Constants.Properties.PATH_SEPARATOR);
+        String[] segments = trimmedStr.split(Constants.Properties.PATH_SEPARATOR);
         if (segments == null || segments.length < 1) {
             return false;
         }
@@ -472,7 +472,7 @@ public class PathsHelper {
                                     segments[segments.length - 1],
                                     unescapeJavaAndTrim(
                                         resourceUrl.substring(0,
-                                                Strings.removeEnd(resourceUrl, Paths.ROOT).lastIndexOf(Paths.ROOT))),
+                                                Strings.removeEnd(resourceUrl, Paths.ROOT.charAt(0)).lastIndexOf(Paths.ROOT))),
                          true);
             }
         }
@@ -745,12 +745,12 @@ public class PathsHelper {
     }
 
     public static boolean validateResourceFullName(ResourceType resourceType, String resourceFullName) {
-        String[] segments = StringUtils.split(resourceFullName, '/');
         String[] resourcePathArray = getResourcePathArray(resourceType);
         if (resourcePathArray == null) {
             return false;
         }
 
+        String[] segments = resourceFullName.split("/");
         if (segments.length != resourcePathArray.length * 2) {
             return false;
         }

@@ -3,8 +3,8 @@
 
 package com.azure.cosmos.kafka.connect;
 
-import com.azure.cosmos.implementation.apachecommons.lang.StringUtils;
-import com.azure.cosmos.implementation.guava25.base.Strings;
+import com.azure.cosmos.implementation.Strings;
+import com.azure.cosmos.implementation.Utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,174 +35,39 @@ public class KafkaCosmosTestConfigurations {
     public static final String DEFAULT_CONNECT_REST_ADVERTISED_HOST_NAME = "connect";
     public static final String DEFAULT_ACR_NAME = "confluentinc";
 
-    public final static String ACR_NAME =
-        properties
-            .getProperty(
-                "COSMOS_ACR_NAME",
-                StringUtils.defaultString(Strings.emptyToNull(System.getenv().get("COSMOS_ACR_NAME")), DEFAULT_ACR_NAME));
-
-    public final static String MASTER_KEY =
-        properties
-            .getProperty(
-                "ACCOUNT_KEY",
-                StringUtils.defaultString(Strings.emptyToNull(System.getenv().get("ACCOUNT_KEY")), COSMOS_EMULATOR_KEY));
-
-    public final static String SECONDARY_MASTER_KEY =
-        properties
-            .getProperty(
-                "SECONDARY_ACCOUNT_KEY",
-                StringUtils.defaultString(Strings.emptyToNull(System.getenv().get("SECONDARY_ACCOUNT_KEY")), COSMOS_EMULATOR_KEY));
-
-    public final static String HOST =
-        properties
-            .getProperty(
-                "ACCOUNT_HOST",
-                StringUtils.defaultString(
-                    Strings.emptyToNull(System.getenv().get("ACCOUNT_HOST")), COSMOS_EMULATOR_HOST));
-
-    public final static String ACCOUNT_TENANT_ID =
-        properties
-            .getProperty(
-                "ACCOUNT_TENANT_ID",
-                StringUtils.defaultString(
-                    Strings.emptyToNull(System.getenv().get("ACCOUNT_TENANT_ID")), StringUtils.EMPTY));
-
-    public final static String ACCOUNT_AAD_CLIENT_ID =
-        properties
-            .getProperty(
-                "ACCOUNT_AAD_CLIENT_ID",
-                StringUtils.defaultString(
-                    Strings.emptyToNull(System.getenv().get("ACCOUNT_AAD_CLIENT_ID")), StringUtils.EMPTY));
-
-    public final static String ACCOUNT_AAD_CLIENT_SECRET =
-        properties
-            .getProperty(
-                "ACCOUNT_AAD_CLIENT_SECRET",
-                StringUtils.defaultString(
-                    Strings.emptyToNull(System.getenv().get("ACCOUNT_AAD_CLIENT_SECRET")), StringUtils.EMPTY));
-
-    public final static String KAFKA_CLUSTER_KEY =
-        properties
-            .getProperty(
-                "KAFKA_CLUSTER_KEY",
-                StringUtils.defaultString(
-                    Strings.emptyToNull(System.getenv().get("KAFKA_CLUSTER_KEY")), ""));
-
-    public final static String KAFKA_CLUSTER_SECRET =
-        properties
-            .getProperty(
-                "KAFKA_CLUSTER_SECRET",
-                StringUtils.defaultString(
-                    Strings.emptyToNull(System.getenv().get("KAFKA_CLUSTER_SECRET")), ""));
-
-    public final static String SCHEMA_REGISTRY_KEY =
-        properties
-            .getProperty(
-                "SCHEMA_REGISTRY_KEY",
-                StringUtils.defaultString(
-                    Strings.emptyToNull(System.getenv().get("SCHEMA_REGISTRY_KEY")), ""));
-
-    public final static String SCHEMA_REGISTRY_SECRET =
-        properties
-            .getProperty(
-                "SCHEMA_REGISTRY_SECRET",
-                StringUtils.defaultString(
-                    Strings.emptyToNull(System.getenv().get("SCHEMA_REGISTRY_SECRET")), ""));
+    public final static String ACR_NAME = getConfig("COSMOS_ACR_NAME", DEFAULT_ACR_NAME);
+    public final static String MASTER_KEY = getConfig("ACCOUNT_KEY", COSMOS_EMULATOR_KEY);
+    public final static String SECONDARY_MASTER_KEY = getConfig("SECONDARY_ACCOUNT_KEY", COSMOS_EMULATOR_KEY);
+    public final static String HOST = getConfig("ACCOUNT_HOST", COSMOS_EMULATOR_HOST);
+    public final static String ACCOUNT_TENANT_ID = getConfig("ACCOUNT_TENANT_ID", Strings.EMPTY);
+    public final static String ACCOUNT_AAD_CLIENT_ID = getConfig("ACCOUNT_AAD_CLIENT_ID", Strings.EMPTY);
+    public final static String ACCOUNT_AAD_CLIENT_SECRET = getConfig("ACCOUNT_AAD_CLIENT_SECRET", Strings.EMPTY);
+    public final static String KAFKA_CLUSTER_KEY = getConfig("KAFKA_CLUSTER_KEY", Strings.EMPTY);
+    public final static String KAFKA_CLUSTER_SECRET = getConfig("KAFKA_CLUSTER_SECRET", Strings.EMPTY);
+    public final static String SCHEMA_REGISTRY_KEY = getConfig("SCHEMA_REGISTRY_KEY", Strings.EMPTY);
+    public final static String SCHEMA_REGISTRY_SECRET = getConfig("SCHEMA_REGISTRY_SECRET", Strings.EMPTY);
 
     public final static String SCHEMA_REGISTRY_BASIC_AUTH_USER_INFO = SCHEMA_REGISTRY_KEY + ":" + SCHEMA_REGISTRY_SECRET;
 
-    public final static String SCHEMA_REGISTRY_URL =
-        properties
-            .getProperty(
-                "SCHEMA_REGISTRY_URL",
-                StringUtils.defaultString(
-                    Strings.emptyToNull(System.getenv().get("SCHEMA_REGISTRY_URL")), ""));
+    public final static String SCHEMA_REGISTRY_URL = getConfig("SCHEMA_REGISTRY_URL", Strings.EMPTY);
+    public final static String BOOTSTRAP_SERVER = getConfig("BOOTSTRAP_SERVER", Strings.EMPTY);
+    public final static String SASL_JAAS = getConfig("SASL_JAAS", Strings.EMPTY);
+    public final static String CONFLUENT_VERSION = getConfig("CONFLUENT_VERSION", DEFAULT_CONFLUENT_VERSION);
+    public final static String CONNECT_GROUP_ID = getConfig("CONNECT_GROUP_ID", DEFAULT_CONNECT_GROUP_ID);
+    public final static String CONNECT_CONFIG_STORAGE_TOPIC = getConfig("CONNECT_CONFIG_STORAGE_TOPIC", DEFAULT_CONNECT_CONFIG_STORAGE_TOPIC);
+    public final static String CONNECT_CONFIG_STORAGE_REPLICATION_FACTOR = getConfig("CONNECT_CONFIG_STORAGE_REPLICATION_FACTOR", DEFAULT_CONNECT_CONFIG_STORAGE_REPLICATION_FACTOR);
+    public final static String CONNECT_OFFSET_STORAGE_TOPIC = getConfig("CONNECT_OFFSET_STORAGE_TOPIC", DEFAULT_CONNECT_OFFSET_STORAGE_TOPIC);
+    public final static String CONNECT_OFFSET_STORAGE_REPLICATION_FACTOR = getConfig("CONNECT_OFFSET_STORAGE_REPLICATION_FACTOR", DEFAULT_CONNECT_OFFSET_STORAGE_REPLICATION_FACTOR);
+    public final static String CONNECT_STATUS_STORAGE_TOPIC = getConfig("CONNECT_STATUS_STORAGE_TOPIC", DEFAULT_CONNECT_STATUS_STORAGE_TOPIC);
+    public final static String CONNECT_STATUS_STORAGE_REPLICATION_FACTOR = getConfig("CONNECT_STATUS_STORAGE_REPLICATION_FACTOR", DEFAULT_CONNECT_STATUS_STORAGE_REPLICATION_FACTOR);
+    public final static String CONNECT_KEY_CONVERTER = getConfig("CONNECT_KEY_CONVERTER", DEFAULT_CONNECT_KEY_CONVERTER);
+    public final static String CONNECT_VALUE_CONVERTER = getConfig("CONNECT_VALUE_CONVERTER", DEFAULT_CONNECT_VALUE_CONVERTER);
+    public final static String CONNECT_PLUGIN_PATH = getConfig("CONNECT_PLUGIN_PATH", DEFAULT_CONNECT_PLUGIN_PATH);
+    public final static String CONNECT_REST_ADVERTISED_HOST_NAME = getConfig("CONNECT_REST_ADVERTISED_HOST_NAME", DEFAULT_CONNECT_REST_ADVERTISED_HOST_NAME);
 
-    public final static String BOOTSTRAP_SERVER =
-        properties
-            .getProperty(
-                "BOOTSTRAP_SERVER",
-                StringUtils.defaultString(
-                    Strings.emptyToNull(System.getenv().get("BOOTSTRAP_SERVER")), ""));
-
-    public final static String SASL_JAAS =
-        properties
-            .getProperty(
-                "SASL_JAAS",
-                StringUtils.defaultString(
-                    Strings.emptyToNull(System.getenv().get("SASL_JAAS")), ""));
-
-    public final static String CONFLUENT_VERSION =
-        properties
-            .getProperty(
-                "CONFLUENT_VERSION",
-                StringUtils.defaultString(Strings.emptyToNull(System.getenv().get("CONFLUENT_VERSION")), DEFAULT_CONFLUENT_VERSION));
-
-    public final static String CONNECT_GROUP_ID =
-        properties
-            .getProperty(
-                "CONNECT_GROUP_ID",
-                StringUtils.defaultString(Strings.emptyToNull(System.getenv().get("CONNECT_GROUP_ID")), DEFAULT_CONNECT_GROUP_ID));
-
-    public final static String CONNECT_CONFIG_STORAGE_TOPIC =
-        properties
-            .getProperty(
-                "CONNECT_CONFIG_STORAGE_TOPIC",
-                StringUtils.defaultString(Strings.emptyToNull(System.getenv().get("CONNECT_CONFIG_STORAGE_TOPIC")), DEFAULT_CONNECT_CONFIG_STORAGE_TOPIC));
-
-    public final static String CONNECT_CONFIG_STORAGE_REPLICATION_FACTOR =
-        properties
-            .getProperty(
-                "CONNECT_CONFIG_STORAGE_REPLICATION_FACTOR",
-                StringUtils.defaultString(Strings.emptyToNull(System.getenv().get("CONNECT_CONFIG_STORAGE_REPLICATION_FACTOR")), DEFAULT_CONNECT_CONFIG_STORAGE_REPLICATION_FACTOR));
-
-    public final static String CONNECT_OFFSET_STORAGE_TOPIC =
-        properties
-            .getProperty(
-                "CONNECT_OFFSET_STORAGE_TOPIC",
-                StringUtils.defaultString(Strings.emptyToNull(System.getenv().get("CONNECT_OFFSET_STORAGE_TOPIC")), DEFAULT_CONNECT_OFFSET_STORAGE_TOPIC));
-
-    public final static String CONNECT_OFFSET_STORAGE_REPLICATION_FACTOR =
-        properties
-            .getProperty(
-                "CONNECT_OFFSET_STORAGE_REPLICATION_FACTOR",
-                StringUtils.defaultString(Strings.emptyToNull(System.getenv().get("CONNECT_OFFSET_STORAGE_REPLICATION_FACTOR")), DEFAULT_CONNECT_OFFSET_STORAGE_REPLICATION_FACTOR));
-
-    public final static String CONNECT_STATUS_STORAGE_TOPIC =
-        properties
-            .getProperty(
-                "CONNECT_STATUS_STORAGE_TOPIC",
-                StringUtils.defaultString(Strings.emptyToNull(System.getenv().get("CONNECT_STATUS_STORAGE_TOPIC")), DEFAULT_CONNECT_STATUS_STORAGE_TOPIC));
-
-    public final static String CONNECT_STATUS_STORAGE_REPLICATION_FACTOR =
-        properties
-            .getProperty(
-                "CONNECT_STATUS_STORAGE_REPLICATION_FACTOR",
-                StringUtils.defaultString(Strings.emptyToNull(System.getenv().get("CONNECT_STATUS_STORAGE_REPLICATION_FACTOR")), DEFAULT_CONNECT_STATUS_STORAGE_REPLICATION_FACTOR));
-
-    public final static String CONNECT_KEY_CONVERTER =
-        properties
-            .getProperty(
-                "CONNECT_KEY_CONVERTER",
-                StringUtils.defaultString(Strings.emptyToNull(System.getenv().get("CONNECT_KEY_CONVERTER")), DEFAULT_CONNECT_KEY_CONVERTER));
-
-    public final static String CONNECT_VALUE_CONVERTER =
-        properties
-            .getProperty(
-                "CONNECT_VALUE_CONVERTER",
-                StringUtils.defaultString(Strings.emptyToNull(System.getenv().get("CONNECT_VALUE_CONVERTER")), DEFAULT_CONNECT_VALUE_CONVERTER));
-
-    public final static String CONNECT_PLUGIN_PATH =
-        properties
-            .getProperty(
-                "CONNECT_PLUGIN_PATH",
-                StringUtils.defaultString(Strings.emptyToNull(System.getenv().get("CONNECT_PLUGIN_PATH")), DEFAULT_CONNECT_PLUGIN_PATH));
-
-    public final static String CONNECT_REST_ADVERTISED_HOST_NAME =
-        properties
-            .getProperty(
-                "CONNECT_REST_ADVERTISED_HOST_NAME",
-                StringUtils.defaultString(Strings.emptyToNull(System.getenv().get("CONNECT_REST_ADVERTISED_HOST_NAME")), DEFAULT_CONNECT_REST_ADVERTISED_HOST_NAME));
+    private static String getConfig(String name, String def) {
+        return properties.getProperty(name, Utils.defaultIfNull(Strings.trimToNull(System.getenv().get(name)), def));
+    }
 
     private static Properties loadProperties() {
         Path root = FileSystems.getDefault().getPath("").toAbsolutePath();

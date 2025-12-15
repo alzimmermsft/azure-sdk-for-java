@@ -6,7 +6,6 @@ import com.azure.cosmos.implementation.Paths;
 import com.azure.cosmos.implementation.Permission;
 import com.azure.cosmos.implementation.Resource;
 import com.azure.cosmos.implementation.Utils;
-import com.azure.cosmos.implementation.apachecommons.lang.StringUtils;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import java.time.Instant;
@@ -64,7 +63,7 @@ public final class CosmosPermissionProperties {
         this.resourcePartitionKey = permission.getResourcePartitionKey();
         this.resourceToken = permission.getToken();
 
-        String[] parts = StringUtils.split(Utils.trimBeginningAndEndingSlashes(permission.getResourceLink()), "/");
+        String[] parts = Utils.trimBeginningAndEndingSlashes(permission.getResourceLink()).split("/");
 
         if (parts.length < 4) {
             throw new IllegalArgumentException("jsonString");

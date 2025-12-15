@@ -3,7 +3,7 @@
 
 package com.azure.cosmos.kafka.connect.implementation.source;
 
-import com.azure.cosmos.implementation.apachecommons.lang.StringUtils;
+import com.azure.cosmos.implementation.Strings;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -18,10 +18,10 @@ public class ContainersMetadataTopicPartition {
     private final String connectorName;
 
     public ContainersMetadataTopicPartition(String databaseName, String connectorName) {
-        checkArgument(StringUtils.isNotEmpty(databaseName), "Argument 'databaseName' can not be null");
+        checkArgument(Strings.isNotEmpty(databaseName), "Argument 'databaseName' can not be null");
 
         this.databaseName = databaseName;
-        this.connectorName = StringUtils.isEmpty(connectorName) ? "EMPTY" : connectorName;
+        this.connectorName = Strings.isEmpty(connectorName) ? "EMPTY" : connectorName;
     }
 
     public String getDatabaseName() {

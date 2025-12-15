@@ -23,7 +23,7 @@ import com.azure.cosmos.encryption.CosmosEncryptionClientBuilder;
 import com.azure.cosmos.encryption.models.CosmosEncryptionAlgorithm;
 import com.azure.cosmos.encryption.models.CosmosEncryptionType;
 import com.azure.cosmos.implementation.HttpConstants;
-import com.azure.cosmos.implementation.apachecommons.lang.StringUtils;
+import com.azure.cosmos.implementation.Strings;
 import com.azure.cosmos.models.ClientEncryptionIncludedPath;
 import com.azure.cosmos.models.ClientEncryptionPolicy;
 import com.azure.cosmos.models.CosmosClientEncryptionKeyProperties;
@@ -51,7 +51,6 @@ import com.codahale.metrics.jvm.CachedThreadStatesGaugeSet;
 import com.codahale.metrics.jvm.GarbageCollectorMetricSet;
 import com.codahale.metrics.jvm.MemoryUsageGaugeSet;
 import io.micrometer.core.instrument.MeterRegistry;
-import org.apache.commons.lang3.RandomStringUtils;
 import org.mpierce.metrics.reservoir.hdrhistogram.HdrHistogramResetOnSnapshotReservoir;
 import org.reactivestreams.Subscription;
 import org.slf4j.Logger;
@@ -151,7 +150,7 @@ public abstract class AsyncEncryptionBenchmark<T> {
             && configuration.getOperationType() != Configuration.Operation.WriteThroughput
             && configuration.getOperationType() != Configuration.Operation.ReadMyWrites) {
             logger.info("PRE-populating {} documents ....", cfg.getNumberOfPreCreatedDocuments());
-            String dataFieldValue = RandomStringUtils.randomAlphabetic(cfg.getDocumentDataFieldSize());
+            String dataFieldValue = Strings.randomAlphabetic(cfg.getDocumentDataFieldSize());
             for (int i = 0; i < cfg.getNumberOfPreCreatedDocuments(); i++) {
                 String uuid = UUID.randomUUID().toString();
                 PojoizedJson newDoc = BenchmarkHelper.generateDocument(uuid,
@@ -445,18 +444,18 @@ public abstract class AsyncEncryptionBenchmark<T> {
 
     private TokenCredential getTokenCredential(Properties properties) {
         String clientId = getConfiguration("ClientId", properties);
-        if (StringUtils.isEmpty(clientId)) {
+        if (Strings.isEmpty(clientId)) {
             throw new IllegalArgumentException("Please specify a valid ClientId in the appSettings.json");
         }
 
         // Get the Tenant ID
         String tenantId = getConfiguration("TenantId", properties);
-        if (StringUtils.isEmpty(tenantId)) {
+        if (Strings.isEmpty(tenantId)) {
             throw new IllegalArgumentException("Please specify a valid Tenant Id in the appSettings.json");
         }
 
         String clientSecret = getConfiguration("ClientSecret", properties);
-        if (StringUtils.isEmpty(tenantId)) {
+        if (Strings.isEmpty(tenantId)) {
             throw new IllegalArgumentException("Please specify a valid ClientSecret in the appSettings.json");
         }
 
@@ -506,7 +505,7 @@ public abstract class AsyncEncryptionBenchmark<T> {
                 cosmosEncryptionAsyncDatabase =
                     cosmosEncryptionAsyncClient.getCosmosEncryptionAsyncDatabase(this.configuration.getDatabaseId());
                 String masterKeyUrlFromConfig = getConfiguration("KeyVaultMasterKeyUrl", keyVaultProperties);
-                if (StringUtils.isEmpty(masterKeyUrlFromConfig)) {
+                if (Strings.isEmpty(masterKeyUrlFromConfig)) {
                     throw new IllegalArgumentException("Please specify a valid MasterKeyUrl in the appSettings.json");
                 }
 

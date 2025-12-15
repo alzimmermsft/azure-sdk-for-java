@@ -2,8 +2,6 @@
 // Licensed under the MIT License.
 package com.azure.cosmos.implementation;
 
-import com.azure.cosmos.implementation.guava25.base.Strings;
-import com.azure.cosmos.implementation.apachecommons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,63 +36,20 @@ public final class TestConfigurations {
     // REPLACE MASTER_KEY and HOST with values from your Azure Cosmos DB account.
     // The default values are credentials of the local emulator, which are not used in any production environment.
     // <!--[SuppressMessage("Microsoft.Security", "CS002:SecretInNextLine")]-->
-    public final static String MASTER_KEY =
-        properties.getProperty("ACCOUNT_KEY",
-                    StringUtils.defaultString(Strings.emptyToNull(
-                            System.getenv().get("ACCOUNT_KEY")),
-                            COSMOS_EMULATOR_KEY));
+    public final static String MASTER_KEY = getConfig("ACCOUNT_KEY", COSMOS_EMULATOR_KEY);
+    public final static String SECONDARY_MASTER_KEY = getConfig("SECONDARY_ACCOUNT_KEY", COSMOS_EMULATOR_KEY);
+    public final static String HOST = getConfig("ACCOUNT_HOST", COSMOS_EMULATOR_HOST);
+    public final static String THROUGHPUT_CONTROL_ACCOUNT_HOST = getConfig("THROUGHPUT_CONTROL_ACCOUNT_HOST", COSMOS_EMULATOR_HOST);
+    public final static String THROUGHPUT_CONTROL_MASTER_KEY = getConfig("THROUGHPUT_CONTROL_ACCOUNT_KEY", COSMOS_EMULATOR_KEY);
+    public final static String CONSISTENCY = getConfig("ACCOUNT_CONSISTENCY", "Strong");
+    public final static String PREFERRED_LOCATIONS = getConfig("PREFERRED_LOCATIONS", null);
+    public final static String MAX_RETRY_LIMIT = getConfig("MAX_RETRY_LIMIT", "2");
+    public final static String DESIRED_CONSISTENCIES = getConfig("DESIRED_CONSISTENCIES", null);
+    public final static String PROTOCOLS = getConfig("PROTOCOLS", null);
 
-    public final static String SECONDARY_MASTER_KEY =
-        properties.getProperty("SECONDARY_ACCOUNT_KEY",
-            StringUtils.defaultString(Strings.emptyToNull(
-                System.getenv().get("SECONDARY_ACCOUNT_KEY")),
-                COSMOS_EMULATOR_KEY));
-
-    public final static String HOST =
-        properties.getProperty("ACCOUNT_HOST",
-                    StringUtils.defaultString(Strings.emptyToNull(
-                            System.getenv().get("ACCOUNT_HOST")),
-                            COSMOS_EMULATOR_HOST));
-
-    public final static String THROUGHPUT_CONTROL_ACCOUNT_HOST =
-            properties.getProperty("THROUGHPUT_CONTROL_ACCOUNT_HOST",
-                    StringUtils.defaultString(Strings.emptyToNull(
-                                    System.getenv().get("THROUGHPUT_CONTROL_ACCOUNT_HOST")),
-                            COSMOS_EMULATOR_HOST));
-
-    public final static String THROUGHPUT_CONTROL_MASTER_KEY =
-            properties.getProperty("THROUGHPUT_CONTROL_ACCOUNT_KEY",
-                    StringUtils.defaultString(Strings.emptyToNull(
-                                    System.getenv().get("THROUGHPUT_CONTROL_ACCOUNT_KEY")),
-                            COSMOS_EMULATOR_KEY));
-
-    public final static String CONSISTENCY =
-        properties.getProperty("ACCOUNT_CONSISTENCY",
-                               StringUtils.defaultString(Strings.emptyToNull(
-                                       System.getenv().get("ACCOUNT_CONSISTENCY")), "Strong"));
-
-    public final static String PREFERRED_LOCATIONS =
-        properties.getProperty("PREFERRED_LOCATIONS",
-                               StringUtils.defaultString(Strings.emptyToNull(
-                                       System.getenv().get("PREFERRED_LOCATIONS")), null));
-
-    public final static String MAX_RETRY_LIMIT =
-        properties.getProperty("MAX_RETRY_LIMIT",
-                               StringUtils.defaultString(Strings.emptyToNull(
-                                       System.getenv().get("MAX_RETRY_LIMIT")),
-                                                         "2"));
-
-    public final static String DESIRED_CONSISTENCIES =
-        properties.getProperty("DESIRED_CONSISTENCIES",
-                               StringUtils.defaultString(Strings.emptyToNull(
-                                       System.getenv().get("DESIRED_CONSISTENCIES")),
-                                                         null));
-
-    public final static String PROTOCOLS =
-        properties.getProperty("PROTOCOLS",
-                               StringUtils.defaultString(Strings.emptyToNull(
-                                       System.getenv().get("PROTOCOLS")),
-                                                         null));
+    private static String getConfig(String name, String def) {
+        return properties.getProperty(name, Utils.defaultIfNull(Strings.trimToNull(System.getenv().get(name)), def));
+    }
 
     /**
      * If ${ProjectPath}/cosmos-v4.properties is present, it will be used

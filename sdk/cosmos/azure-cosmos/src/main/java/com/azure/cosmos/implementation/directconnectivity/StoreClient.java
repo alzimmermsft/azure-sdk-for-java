@@ -27,7 +27,6 @@ import com.azure.cosmos.implementation.RxDocumentServiceResponse;
 import com.azure.cosmos.implementation.SessionTokenHelper;
 import com.azure.cosmos.implementation.Strings;
 import com.azure.cosmos.implementation.Utils;
-import com.azure.cosmos.implementation.apachecommons.lang.math.NumberUtils;
 import com.azure.cosmos.implementation.faultinjection.IFaultInjectorProvider;
 import com.azure.cosmos.implementation.interceptor.ITransportClientInterceptor;
 import com.azure.cosmos.implementation.throughputControl.ThroughputControlStore;
@@ -203,7 +202,7 @@ public class StoreClient implements IStoreClient {
         String value = headers.get(WFConstants.BackendHeaders.LSN);
 
         if (!Strings.isNullOrEmpty(value)) {
-            return NumberUtils.toLong(value, defaultValue);
+            return Utils.parseLong(value, defaultValue);
 
         }
 

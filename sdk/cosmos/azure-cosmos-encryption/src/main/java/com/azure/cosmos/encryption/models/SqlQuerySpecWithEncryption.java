@@ -3,7 +3,6 @@
 
 package com.azure.cosmos.encryption.models;
 
-import com.azure.cosmos.CosmosItemSerializer;
 import com.azure.cosmos.encryption.CosmosEncryptionAsyncContainer;
 import com.azure.cosmos.encryption.implementation.Constants;
 import com.azure.cosmos.encryption.implementation.EncryptionImplementationBridgeHelpers;
@@ -12,9 +11,9 @@ import com.azure.cosmos.encryption.implementation.EncryptionUtils;
 import com.azure.cosmos.encryption.implementation.mdesrc.cryptography.EncryptionType;
 import com.azure.cosmos.encryption.implementation.mdesrc.cryptography.MicrosoftDataEncryptionException;
 import com.azure.cosmos.implementation.DefaultCosmosItemSerializer;
+import com.azure.cosmos.implementation.Pair;
+import com.azure.cosmos.implementation.Strings;
 import com.azure.cosmos.implementation.Utils;
-import com.azure.cosmos.implementation.apachecommons.lang.StringUtils;
-import com.azure.cosmos.implementation.apachecommons.lang.tuple.Pair;
 import com.azure.cosmos.models.SqlParameter;
 import com.azure.cosmos.models.SqlQuerySpec;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -54,7 +53,7 @@ public final class SqlQuerySpecWithEncryption {
 
     Mono<Void> addEncryptionParameterAsync(String path, SqlParameter sqlParameter,
                                            CosmosEncryptionAsyncContainer cosmosEncryptionAsyncContainer) {
-        if (StringUtils.isEmpty(path) || path.charAt(0) != '/' || path.lastIndexOf('/') != 0) {
+        if (Strings.isEmpty(path) || path.charAt(0) != '/' || path.lastIndexOf('/') != 0) {
             return Mono.empty();
         }
 

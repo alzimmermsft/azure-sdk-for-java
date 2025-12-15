@@ -12,5 +12,19 @@ public enum MigrateCollectionDirective {
     /**
      * Move to HDD
      */
-    Freeze
+    Freeze;
+
+    public static MigrateCollectionDirective getIgnoreCase(String str) {
+        if (Strings.isEmpty(str)) {
+            return null;
+        }
+
+        if ("Thaw".equalsIgnoreCase(str)) {
+            return Thaw;
+        } else if ("Freeze".equalsIgnoreCase(str)) {
+            return Freeze;
+        }
+
+        return null;
+    }
 }

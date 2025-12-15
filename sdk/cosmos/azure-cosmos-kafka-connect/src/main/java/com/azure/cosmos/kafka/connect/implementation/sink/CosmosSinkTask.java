@@ -4,7 +4,7 @@
 package com.azure.cosmos.kafka.connect.implementation.sink;
 
 import com.azure.cosmos.CosmosAsyncContainer;
-import com.azure.cosmos.implementation.apachecommons.lang.StringUtils;
+import com.azure.cosmos.implementation.Strings;
 import com.azure.cosmos.kafka.connect.implementation.CosmosClientCache;
 import com.azure.cosmos.kafka.connect.implementation.CosmosClientCacheItem;
 import com.azure.cosmos.kafka.connect.implementation.CosmosThroughputControlHelper;
@@ -101,10 +101,10 @@ public class CosmosSinkTask extends SinkTask {
                             record -> this.sinkTaskConfig
                                         .getContainersConfig()
                                         .getTopicToContainerMap()
-                                        .getOrDefault(record.topic(), StringUtils.EMPTY)));
+                                        .getOrDefault(record.topic(), Strings.EMPTY)));
 
-        if (recordsByContainer.containsKey(StringUtils.EMPTY)) {
-            throw new IllegalStateException("There is no container defined for topics " + recordsByContainer.get(StringUtils.EMPTY));
+        if (recordsByContainer.containsKey(Strings.EMPTY)) {
+            throw new IllegalStateException("There is no container defined for topics " + recordsByContainer.get(Strings.EMPTY));
         }
 
         for (Map.Entry<String, List<SinkRecord>> entry : recordsByContainer.entrySet()) {

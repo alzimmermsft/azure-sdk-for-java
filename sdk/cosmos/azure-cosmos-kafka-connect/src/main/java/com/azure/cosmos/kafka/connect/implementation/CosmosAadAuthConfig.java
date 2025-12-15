@@ -3,7 +3,7 @@
 
 package com.azure.cosmos.kafka.connect.implementation;
 
-import com.azure.cosmos.implementation.apachecommons.lang.StringUtils;
+import com.azure.cosmos.implementation.Strings;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -34,9 +34,9 @@ public class CosmosAadAuthConfig implements CosmosAuthConfig {
         String authEndpointOverride,
         String tenantId,
         CosmosAzureEnvironment azureEnvironment) {
-        checkArgument(StringUtils.isNotEmpty(clientId), "Argument 'clientId' should not be null");
-        checkArgument(StringUtils.isNotEmpty(clientSecret), "Argument 'clientSecret' should not be null");
-        checkArgument(StringUtils.isNotEmpty(tenantId), "Argument 'tenantId' should not be null");
+        checkArgument(Strings.isNotEmpty(clientId), "Argument 'clientId' should not be null");
+        checkArgument(Strings.isNotEmpty(clientSecret), "Argument 'clientSecret' should not be null");
+        checkArgument(Strings.isNotEmpty(tenantId), "Argument 'tenantId' should not be null");
 
         this.clientId = clientId;
         this.clientSecret = clientSecret;
@@ -59,7 +59,7 @@ public class CosmosAadAuthConfig implements CosmosAuthConfig {
 
     public String getAuthEndpoint() {
         String defaultAuthEndpoint = ACTIVE_DIRECTORY_ENDPOINT_MAP.get(azureEnvironment);
-        String authEndpoint = StringUtils.isNotEmpty(authEndpointOverride) ? authEndpointOverride : defaultAuthEndpoint;
+        String authEndpoint = Strings.isNotEmpty(authEndpointOverride) ? authEndpointOverride : defaultAuthEndpoint;
         return authEndpoint.replaceAll("/$", "") + "/";
     }
 

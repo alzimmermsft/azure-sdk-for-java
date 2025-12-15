@@ -3,7 +3,6 @@
 
 package com.azure.cosmos.implementation;
 
-import com.azure.cosmos.implementation.apachecommons.lang.StringUtils;
 import com.azure.cosmos.implementation.routing.PartitionKeyInternal;
 import com.azure.cosmos.implementation.routing.PartitionKeyInternalHelper;
 import com.azure.cosmos.implementation.routing.RegionalRoutingContext;
@@ -77,7 +76,7 @@ public class RegionScopedSessionContainer implements ISessionContainer {
         this.hostName = hostName;
         this.disableSessionCapturing = disableSessionCapturing;
         this.globalEndpointManager = globalEndpointManager;
-        this.firstPreferredReadableRegionCached = new AtomicReference<>(StringUtils.EMPTY);
+        this.firstPreferredReadableRegionCached = new AtomicReference<>(Strings.EMPTY);
         this.partitionKeyBasedBloomFilter = new PartitionKeyBasedBloomFilter();
         this.regionScopedSessionCapturingOptionsAsString = stringifyConfig();
     }
@@ -128,7 +127,7 @@ public class RegionScopedSessionContainer implements ISessionContainer {
         }
 
         if (partitionScopedRegionLevelProgress == null) {
-            return StringUtils.EMPTY;
+            return Strings.EMPTY;
         }
 
         return this.getCombinedSessionToken(partitionScopedRegionLevelProgress);
@@ -143,7 +142,7 @@ public class RegionScopedSessionContainer implements ISessionContainer {
         Long collectionResourceId = null;
 
         if (!isNameBased) {
-            if (!StringUtils.isEmpty(rId)) {
+            if (Strings.isNotEmpty(rId)) {
                 ResourceId resourceId = ResourceId.parse(rId);
                 if (resourceId.getDocumentCollection() != 0) {
                     collectionResourceId = resourceId.getUniqueDocumentCollectionId();
@@ -152,7 +151,7 @@ public class RegionScopedSessionContainer implements ISessionContainer {
             }
         } else {
             String collectionName = Utils.getCollectionName(resourceAddress);
-            if (!StringUtils.isEmpty(collectionName) && this.collectionNameToCollectionResourceId.containsKey(collectionName)) {
+            if (Strings.isNotEmpty(collectionName) && this.collectionNameToCollectionResourceId.containsKey(collectionName)) {
                 collectionResourceId = this.collectionNameToCollectionResourceId.get(collectionName);
                 partitionScopedRegionLevelProgress = this.collectionResourceIdToPartitionScopedRegionLevelProgress.get(collectionResourceId);
             }
@@ -169,7 +168,7 @@ public class RegionScopedSessionContainer implements ISessionContainer {
         Pair<Long, PartitionScopedRegionLevelProgress> collectionRidToPartitionScopedRegionLevelProgress = this.getCollectionRidToPartitionScopedRegionLevelProgress(request);
 
         if (collectionRidToPartitionScopedRegionLevelProgress == null) {
-            return StringUtils.EMPTY;
+            return Strings.EMPTY;
         }
 
         checkNotNull(collectionRidToPartitionScopedRegionLevelProgress.getKey(), "collectionRid cannot be null!");
@@ -196,7 +195,7 @@ public class RegionScopedSessionContainer implements ISessionContainer {
         Utils.ValueHolder<PartitionKeyInternal> partitionKeyInternal = Utils.ValueHolder.initialize(null);
         Utils.ValueHolder<PartitionKeyDefinition> partitionKeyDefinition = Utils.ValueHolder.initialize(null);
 
-        if (this.firstPreferredReadableRegionCached.get().equals(StringUtils.EMPTY)) {
+        if (this.firstPreferredReadableRegionCached.get().equals(Strings.EMPTY)) {
             this.firstPreferredReadableRegionCached.set(extractFirstEffectivePreferredReadableRegion());
         }
 
@@ -232,7 +231,7 @@ public class RegionScopedSessionContainer implements ISessionContainer {
 
     @Override
     public void clearTokenByResourceId(String resourceId) {
-        if (!StringUtils.isEmpty(resourceId)) {
+        if (Strings.isNotEmpty(resourceId)) {
             ResourceId resource = ResourceId.parse(resourceId);
             if (resource.getDocumentCollection() != 0) {
                 Long rid = resource.getUniqueDocumentCollectionId();
@@ -293,7 +292,7 @@ public class RegionScopedSessionContainer implements ISessionContainer {
         String partitionKeyRangeId;
         ISessionToken parsedSessionToken;
 
-        String[] tokenParts = StringUtils.split(token, ':');
+        String[] tokenParts = token.split(":");
         partitionKeyRangeId = tokenParts[0];
         parsedSessionToken = SessionTokenHelper.parse(tokenParts[1]);
 
@@ -338,7 +337,7 @@ public class RegionScopedSessionContainer implements ISessionContainer {
         PartitionScopedRegionLevelProgress partitionScopedRegionLevelProgress
             = this.collectionResourceIdToPartitionScopedRegionLevelProgress.get(collectionResourceId);
 
-        if (this.firstPreferredReadableRegionCached.get().equals(StringUtils.EMPTY)) {
+        if (this.firstPreferredReadableRegionCached.get().equals(Strings.EMPTY)) {
             this.firstPreferredReadableRegionCached.set(extractFirstEffectivePreferredReadableRegion());
         }
 

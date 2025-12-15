@@ -3,14 +3,14 @@
 
 package com.azure.cosmos.spark
 
-import com.azure.cosmos.implementation.apachecommons.lang.StringUtils
-import com.azure.cosmos.models.{CosmosContainerProperties, PartitionKey, ThroughputProperties, UniqueKey, UniqueKeyPolicy}
+import com.azure.cosmos.implementation.Strings
+import com.azure.cosmos.models._
 import com.azure.cosmos.spark.utils.{CosmosPatchTestHelper, TestOutputMetricsPublisher}
 import com.azure.cosmos.{CosmosAsyncContainer, CosmosException}
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.node.ObjectNode
 import org.apache.commons.lang3.RandomUtils
-import org.apache.spark.sql.types.{BooleanType, DoubleType, FloatType, IntegerType, LongType, StringType, StructField, StructType}
+import org.apache.spark.sql.types._
 
 import scala.collection.concurrent.TrieMap
 import scala.collection.mutable
@@ -1275,7 +1275,7 @@ class BulkWriterITest extends IntegrationSpec with CosmosClient with AutoCleanab
     val containerConfig = CosmosContainerConfig(container.getDatabase.getId, container.getId, None)
     val containerProperties = container.read().block().getProperties
     val partitionKeyDefinition = containerProperties.getPartitionKeyDefinition
-    val partitionKeyPath = StringUtils.join(partitionKeyDefinition.getPaths, "")
+    val partitionKeyPath = Strings.join(partitionKeyDefinition.getPaths, "")
     val id = UUID.randomUUID().toString
     val partitionKey = new PartitionKey(id)
 

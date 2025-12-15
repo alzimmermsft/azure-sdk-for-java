@@ -3,7 +3,6 @@
 
 package com.azure.cosmos.implementation;
 
-import com.azure.cosmos.implementation.apachecommons.lang.StringUtils;
 import com.azure.cosmos.implementation.routing.PartitionKeyInternal;
 import com.azure.cosmos.models.PartitionKeyDefinition;
 import org.slf4j.Logger;
@@ -87,7 +86,7 @@ public class SessionTokenHelper {
         //          2:425344,748:2341234,99:42344
         // Local session token is single <partitionkeyrangeid>:<lsn> pair.
         // Backend only cares about pair which relates to the range owned by the partition.
-        String[] localTokens = StringUtils.split(globalSessionToken, ",");
+        String[] localTokens = globalSessionToken.split(",");
         Set<String> partitionKeyRangeSet = new HashSet<>();
         partitionKeyRangeSet.add(partitionKeyRangeId);
 
@@ -98,7 +97,7 @@ public class SessionTokenHelper {
         }
 
         for (String localToken : localTokens) {
-            String[] items = StringUtils.split(localToken, ":");
+            String[] items = localToken.split(":");
             if (items.length != 2) {
                 throw new BadRequestException(String.format(RMResources.InvalidSessionToken, partitionKeyRangeId));
             }
@@ -238,7 +237,7 @@ public class SessionTokenHelper {
     static boolean tryParse(String sessionToken, ValueHolder<ISessionToken> parsedSessionToken) {
         parsedSessionToken.v = null;
         if (!Strings.isNullOrEmpty(sessionToken)) {
-            String[] sessionTokenSegments = StringUtils.split(sessionToken,":");
+            String[] sessionTokenSegments = sessionToken.split(":");
             return VectorSessionToken.tryCreate(sessionTokenSegments[sessionTokenSegments.length - 1], parsedSessionToken);
         } else {
             return false;

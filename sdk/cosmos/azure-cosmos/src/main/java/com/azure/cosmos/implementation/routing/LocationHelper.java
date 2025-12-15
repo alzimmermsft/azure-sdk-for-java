@@ -3,8 +3,6 @@
 
 package com.azure.cosmos.implementation.routing;
 
-import com.azure.cosmos.implementation.apachecommons.lang.StringUtils;
-
 import java.net.URI;
 
 public class LocationHelper {
@@ -21,7 +19,7 @@ public class LocationHelper {
         // Split the host into 2 parts seperated by '.'
         // For example, "contoso.documents.azure.com" is separated into "contoso" and "documents.azure.com"
         // If the host doesn't contains '.', this will return the host as is, as the only element
-        String[] hostParts = StringUtils.split(serviceEndpoint.getHost(), ".", 2);
+        String[] hostParts = serviceEndpoint.getHost().split("\\.", 2);
 
         String host;
         if (hostParts.length != 0) {

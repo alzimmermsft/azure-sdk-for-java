@@ -7,7 +7,7 @@ import com.azure.cosmos.BridgeInternal;
 import com.azure.cosmos.CosmosAsyncContainer;
 import com.azure.cosmos.implementation.AsyncDocumentClient;
 import com.azure.cosmos.implementation.ImplementationBridgeHelpers;
-import com.azure.cosmos.implementation.apachecommons.lang.StringUtils;
+import com.azure.cosmos.implementation.Strings;
 import com.azure.cosmos.implementation.faultinjection.FaultInjectionRequestArgs;
 import com.azure.cosmos.implementation.faultinjection.RntbdFaultInjectionRequestArgs;
 import com.azure.cosmos.test.faultinjection.FaultInjectionConnectionType;
@@ -54,7 +54,7 @@ public class FaultInjectionRuleStore {
 
     public Mono<IFaultInjectionRuleInternal> configureFaultInjectionRule(FaultInjectionRule rule, String containerNameLink) {
         checkNotNull(rule, "Argument 'rule' can not be null");
-        checkArgument(StringUtils.isNotEmpty(containerNameLink), "Argument 'containerNameLink' can not be null");
+        checkArgument(Strings.isNotEmpty(containerNameLink), "Argument 'containerNameLink' can not be null");
 
         return this.ruleProcessor.processFaultInjectionRule(rule, containerNameLink)
             .doOnSuccess(effectiveRule -> {

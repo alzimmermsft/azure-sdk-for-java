@@ -3,6 +3,9 @@
 
 package com.azure.cosmos.models;
 
+import com.azure.cosmos.implementation.FanoutOperationState;
+import com.azure.cosmos.implementation.Strings;
+
 /**
  * Specifies whether or not the resource is to be indexed in the Azure Cosmos DB database service.
  */
@@ -32,5 +35,21 @@ public enum IndexingDirective {
     @Override
     public String toString() {
         return this.overWireValue;
+    }
+
+    public static IndexingDirective getIgnoreCase(String str) {
+        if (Strings.isEmpty(str)) {
+            return null;
+        }
+
+        if ("DEFAULT".equalsIgnoreCase(str)) {
+            return DEFAULT;
+        } else if ("INCLUDE".equalsIgnoreCase(str)) {
+            return INCLUDE;
+        } else if ("EXCLUDE".equalsIgnoreCase(str)) {
+            return EXCLUDE;
+        }
+
+        return null;
     }
 }

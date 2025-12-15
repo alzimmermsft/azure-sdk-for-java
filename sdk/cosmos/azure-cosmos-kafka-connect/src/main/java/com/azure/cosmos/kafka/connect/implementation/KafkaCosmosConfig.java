@@ -4,7 +4,6 @@
 package com.azure.cosmos.kafka.connect.implementation;
 
 import com.azure.cosmos.implementation.Strings;
-import com.azure.cosmos.implementation.apachecommons.lang.StringUtils;
 import com.azure.cosmos.kafka.connect.implementation.sink.ItemWriteStrategy;
 import com.azure.cosmos.kafka.connect.implementation.source.CosmosSourceContainersConfig;
 import org.apache.kafka.common.config.AbstractConfig;
@@ -288,7 +287,7 @@ public class KafkaCosmosConfig extends AbstractConfig {
         String accountEndpoint = this.getString(THROUGHPUT_CONTROL_ACCOUNT_ENDPOINT);
 
         CosmosAccountConfig throughputControlAccountConfig = null;
-        if (enabled && StringUtils.isNotEmpty(accountEndpoint)) {
+        if (enabled && Strings.isNotEmpty(accountEndpoint)) {
             throughputControlAccountConfig = parseAccountConfigCore(
                 THROUGHPUT_CONTROL_ACCOUNT_ENDPOINT,
                 THROUGHPUT_CONTROL_ACCOUNT_AZURE_ENVIRONMENT,
@@ -692,7 +691,7 @@ public class KafkaCosmosConfig extends AbstractConfig {
     }
 
     protected static List<String> convertToList(String configValue) {
-        if (StringUtils.isNotEmpty(configValue)) {
+        if (Strings.isNotEmpty(configValue)) {
             if (configValue.startsWith("[") && configValue.endsWith("]")) {
                 configValue = configValue.substring(1, configValue.length() - 1);
             }
@@ -713,7 +712,7 @@ public class KafkaCosmosConfig extends AbstractConfig {
         // throughput control enabled, validate required configs
         // throughput control group name is required
         String throughputControlGroupName = configValueMap.get(THROUGHPUT_CONTROL_GROUP_NAME).value().toString();
-        if (StringUtils.isEmpty(throughputControlGroupName)) {
+        if (Strings.isEmpty(throughputControlGroupName)) {
             configValueMap
                 .get(THROUGHPUT_CONTROL_GROUP_NAME)
                 .addErrorMessage("ThroughputControl is enabled, group name can not be null or empty");
@@ -739,7 +738,7 @@ public class KafkaCosmosConfig extends AbstractConfig {
 
         // throughput control databaseName is required
         String throughputControlDatabaseName = configValueMap.get(THROUGHPUT_CONTROL_GLOBAL_CONTROL_DATABASE).value().toString();
-        if (StringUtils.isEmpty(throughputControlDatabaseName)) {
+        if (Strings.isEmpty(throughputControlDatabaseName)) {
             configValueMap
                 .get(THROUGHPUT_CONTROL_GLOBAL_CONTROL_DATABASE)
                 .addErrorMessage("ThroughputControl is enabled, throughput control database name can not be null or empty");
@@ -747,14 +746,14 @@ public class KafkaCosmosConfig extends AbstractConfig {
 
         // throughput control containerName is required
         String throughputControlContainerName = configValueMap.get(THROUGHPUT_CONTROL_GLOBAL_CONTROL_CONTAINER).value().toString();
-        if (StringUtils.isEmpty(throughputControlContainerName)) {
+        if (Strings.isEmpty(throughputControlContainerName)) {
             configValueMap
                 .get(THROUGHPUT_CONTROL_GLOBAL_CONTROL_CONTAINER)
                 .addErrorMessage("ThroughputControl is enabled, throughput control container name can not be null or empty");
         }
 
         String throughputControlAccountEndpoint = configValueMap.get(THROUGHPUT_CONTROL_ACCOUNT_ENDPOINT).value().toString();
-        if (StringUtils.isNotEmpty(throughputControlAccountEndpoint)) {
+        if (Strings.isNotEmpty(throughputControlAccountEndpoint)) {
             validateAccountAuthConfigCore(
                 configValueMap,
                 THROUGHPUT_CONTROL_ACCOUNT_TENANT_ID,
@@ -767,7 +766,7 @@ public class KafkaCosmosConfig extends AbstractConfig {
 
         // if throughput control is using aad auth, then only targetThroughput is supported
         String throughputControlAuthTypeString =
-            StringUtils.isNotEmpty(throughputControlAccountEndpoint)
+            Strings.isNotEmpty(throughputControlAccountEndpoint)
                 ? configValueMap.get(THROUGHPUT_CONTROL_AUTH_TYPE).value().toString() : configValueMap.get(AUTH_TYPE).value().toString();
         CosmosAuthType throughputControlAuthType = CosmosAuthType.fromName(throughputControlAuthTypeString);
         if (throughputControlAuthType == CosmosAuthType.SERVICE_PRINCIPAL) {
@@ -804,7 +803,7 @@ public class KafkaCosmosConfig extends AbstractConfig {
         switch (authType) {
             case MASTER_KEY:
                 String masterKey = ((Password) configValueMap.get(accountKeyConfig).value()).value();
-                if (StringUtils.isEmpty(masterKey)) {
+                if (Strings.isEmpty(masterKey)) {
                     configValueMap
                         .get(accountKeyConfig)
                         .addErrorMessage("MasterKey is required for masterKey auth type");
@@ -812,28 +811,28 @@ public class KafkaCosmosConfig extends AbstractConfig {
                 break;
             case SERVICE_PRINCIPAL:
                 String tenantId = configValueMap.get(accountTenantIdConfig).value().toString();
-                if (StringUtils.isEmpty(tenantId)) {
+                if (Strings.isEmpty(tenantId)) {
                     configValueMap
                         .get(accountTenantIdConfig)
                         .addErrorMessage("TenantId is required for Service Principal auth type");
                 }
 
                 String clientId = configValueMap.get(clientIdConfig).value().toString();
-                if (StringUtils.isEmpty(clientId)) {
+                if (Strings.isEmpty(clientId)) {
                     configValueMap
                         .get(clientIdConfig)
                         .addErrorMessage("ClientId is required for Service Principal auth type");
                 }
 
                 String clientSecret = ((Password) configValueMap.get(clientSecretConfig).value()).value();
-                if (StringUtils.isEmpty(clientSecret)) {
+                if (Strings.isEmpty(clientSecret)) {
                     configValueMap
                         .get(clientSecretConfig)
                         .addErrorMessage("ClientSecret is required for Service Principal auth type");
                 }
 
                 String authEndpointOverride = configValueMap.get(authEndpointOverrideConfig).value().toString();
-                if (StringUtils.isNotEmpty(authEndpointOverride)) {
+                if (Strings.isNotEmpty(authEndpointOverride)) {
                     try {
                         new URL(authEndpointOverride);
                     } catch (MalformedURLException e) {
@@ -883,7 +882,7 @@ public class KafkaCosmosConfig extends AbstractConfig {
         @SuppressWarnings("unchecked")
         public void ensureValid(String name, Object o) {
             String accountEndpointUriString = (String) o;
-            if (StringUtils.isEmpty(accountEndpointUriString)) {
+            if (Strings.isEmpty(accountEndpointUriString)) {
                 throw new ConfigException(name, o, "Account endpoint can not be empty");
             }
 
@@ -910,7 +909,7 @@ public class KafkaCosmosConfig extends AbstractConfig {
         @SuppressWarnings("unchecked")
         public void ensureValid(String name, Object o) {
             String configValue = (String) o;
-            if (StringUtils.isEmpty(configValue)) {
+            if (Strings.isEmpty(configValue)) {
                 return;
             }
 
@@ -941,7 +940,7 @@ public class KafkaCosmosConfig extends AbstractConfig {
         @SuppressWarnings("unchecked")
         public void ensureValid(String name, Object o) {
             String authTypeString = (String) o;
-            if (StringUtils.isEmpty(authTypeString)) {
+            if (Strings.isEmpty(authTypeString)) {
                 throw new ConfigException(name, o, "AuthType can not be empty or null");
             }
 
@@ -962,7 +961,7 @@ public class KafkaCosmosConfig extends AbstractConfig {
         @SuppressWarnings("unchecked")
         public void ensureValid(String name, Object o) {
             String azureEnvironmentString = (String) o;
-            if (StringUtils.isEmpty(azureEnvironmentString)) {
+            if (Strings.isEmpty(azureEnvironmentString)) {
                 throw new ConfigException(name, o, "AzureEnvironment can not be empty or null");
             }
 

@@ -26,6 +26,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -37,6 +39,7 @@ import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Collection;
 import java.util.Collections;
@@ -44,6 +47,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 import java.util.regex.Pattern;
@@ -51,7 +55,6 @@ import java.util.regex.Pattern;
 import static com.azure.cosmos.implementation.guava25.base.MoreObjects.firstNonNull;
 import static com.azure.cosmos.implementation.guava25.base.Preconditions.checkArgument;
 import static com.azure.cosmos.implementation.guava25.base.Preconditions.checkNotNull;
-import static com.azure.cosmos.implementation.guava25.base.Strings.emptyToNull;
 
 /**
  * While this class is public, but it is not part of our published public APIs.
@@ -798,7 +801,7 @@ public class Utils {
             System.getProperty(
                 ALLOW_UNQUOTED_CONTROL_CHARS,
                 firstNonNull(
-                    emptyToNull(System.getenv().get(ALLOW_UNQUOTED_CONTROL_CHARS)),
+                    Strings.trimToNull(System.getenv().get(ALLOW_UNQUOTED_CONTROL_CHARS)),
                     String.valueOf(DEFAULT_ALLOW_UNQUOTED_CONTROL_CHARS)));
 
         return Boolean.parseBoolean(shouldAllowUnquotedControlCharsConfig);
@@ -831,5 +834,63 @@ public class Utils {
 
     public static <T> T defaultIfNull(T value, T defaultValue) {
         return (value == null) ? defaultValue : value;
+    }
+
+    public static long parseLong(String str, long def) {
+        if (Strings.isEmpty(str)) {
+            return def;
+        }
+
+        try {
+            return Long.parseLong(str);
+        } catch (NumberFormatException e) {
+            return def;
+        }
+    }
+
+    public static String getStackTrace(final Throwable throwable) {
+        final StringWriter sw = new StringWriter();
+        final PrintWriter pw = new PrintWriter(sw, true);
+        throwable.printStackTrace(pw);
+        return sw.getBuffer().toString();
+    }
+
+    /**
+     * Creates an immutable list from {@code values}.
+     *
+     * @param <T> The value type.
+     * @param values The values to turn into an immutable list.
+     * @return An immutable list using {@code values}.
+     * @throws NullPointerException If {@code values} is null or if any value in {@code values} is null.
+     */
+    @SafeVarargs
+    public static <T> List<T> immutableList(T... values) {
+        Objects.requireNonNull(values, "'values' cannot be null.");
+        List<T> list = new ArrayList<>(values.length);
+
+        for (int i = 0; i < values.length; i++) {
+            list.add(Objects.requireNonNull(values[i], "Null value found at index " + i));
+        }
+
+        return Collections.unmodifiableList(list);
+    }
+
+    /**
+     * Creates an immutable list copy of {@code values}.
+     *
+     * @param <T> The value type.
+     * @param values The values to copy into a new immutable list.
+     * @return An immutable list using {@code values}.
+     * @throws NullPointerException If {@code values} is null or if any value in {@code values} is null.
+     */
+    public static <T> List<T> immutableCopyOf(List<T> values) {
+        Objects.requireNonNull(values, "'values' cannot be null.");
+        List<T> list = new ArrayList<>(values.size());
+
+        for (int i = 0; i < values.size(); i++) {
+            list.add(Objects.requireNonNull(values.get(i), "Null value found at index " + i));
+        }
+
+        return Collections.unmodifiableList(list);
     }
 }

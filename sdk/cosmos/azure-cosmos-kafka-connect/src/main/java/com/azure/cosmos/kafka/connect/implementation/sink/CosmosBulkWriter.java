@@ -8,7 +8,7 @@ import com.azure.cosmos.CosmosAsyncContainer;
 import com.azure.cosmos.CosmosException;
 import com.azure.cosmos.implementation.HttpConstants;
 import com.azure.cosmos.implementation.ImplementationBridgeHelpers;
-import com.azure.cosmos.implementation.apachecommons.lang.StringUtils;
+import com.azure.cosmos.implementation.Strings;
 import com.azure.cosmos.kafka.connect.implementation.CosmosThroughputControlConfig;
 import com.azure.cosmos.kafka.connect.implementation.CosmosThroughputControlHelper;
 import com.azure.cosmos.kafka.connect.implementation.KafkaCosmosExceptionsHelper;
@@ -159,7 +159,7 @@ public class CosmosBulkWriter extends CosmosWriterBase {
                         break;
                     case ITEM_OVERWRITE_IF_NOT_MODIFIED:
                         String etag = getEtag(sinkOperation.getSinkRecord().value());
-                        if (StringUtils.isEmpty(etag)) {
+                        if (Strings.isEmpty(etag)) {
                             cosmosItemOperation = this.getCreateItemOperation(sinkOperation, partitionKeyDefinition);
                         } else {
                             cosmosItemOperation = this.getReplaceItemOperation(sinkOperation, partitionKeyDefinition, etag);
@@ -211,7 +211,7 @@ public class CosmosBulkWriter extends CosmosWriterBase {
         String etag) {
 
         CosmosBulkItemRequestOptions itemRequestOptions = new CosmosBulkItemRequestOptions();
-        if (StringUtils.isNotEmpty(etag)) {
+        if (Strings.isNotEmpty(etag)) {
             itemRequestOptions.setIfMatchETag(etag);
         }
 
@@ -229,7 +229,7 @@ public class CosmosBulkWriter extends CosmosWriterBase {
         String etag) {
 
         CosmosBulkItemRequestOptions itemRequestOptions = new CosmosBulkItemRequestOptions();
-        if (StringUtils.isNotEmpty(etag)) {
+        if (Strings.isNotEmpty(etag)) {
             itemRequestOptions.setIfMatchETag(etag);
         }
 
@@ -245,7 +245,7 @@ public class CosmosBulkWriter extends CosmosWriterBase {
         PartitionKeyDefinition partitionKeyDefinition) {
 
         CosmosBulkPatchItemRequestOptions patchItemRequestOptions = new CosmosBulkPatchItemRequestOptions();
-        if (StringUtils.isNotEmpty(this.writeConfig.getCosmosPatchConfig().getFilter())) {
+        if (Strings.isNotEmpty(this.writeConfig.getCosmosPatchConfig().getFilter())) {
             patchItemRequestOptions.setFilterPredicate(this.writeConfig.getCosmosPatchConfig().getFilter());
         }
 

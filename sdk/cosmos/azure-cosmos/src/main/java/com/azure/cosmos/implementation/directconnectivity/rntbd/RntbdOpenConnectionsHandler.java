@@ -8,7 +8,6 @@ import com.azure.cosmos.implementation.OpenConnectionResponse;
 import com.azure.cosmos.implementation.OperationType;
 import com.azure.cosmos.implementation.ResourceType;
 import com.azure.cosmos.implementation.RxDocumentServiceRequest;
-import com.azure.cosmos.implementation.apachecommons.lang.StringUtils;
 import com.azure.cosmos.implementation.directconnectivity.Uri;
 import com.azure.cosmos.implementation.routing.RegionalRoutingContext;
 import org.slf4j.Logger;
@@ -18,6 +17,8 @@ import reactor.core.publisher.Mono;
 
 import java.net.URI;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 import static com.azure.cosmos.implementation.guava25.base.Preconditions.checkNotNull;
 
@@ -41,7 +42,7 @@ public class RntbdOpenConnectionsHandler implements IOpenConnectionsHandler {
         if (logger.isDebugEnabled()) {
             logger.debug(
                     "Open connections for endpoints {}",
-                    StringUtils.join(endpoints, ","));
+                    endpoints.stream().map(endpoint -> Objects.toString(endpoint, "")).collect(Collectors.joining(",")));
         }
 
         return Flux.fromIterable(endpoints)

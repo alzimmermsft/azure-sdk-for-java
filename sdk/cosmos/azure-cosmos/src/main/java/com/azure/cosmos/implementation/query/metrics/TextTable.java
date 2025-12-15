@@ -2,7 +2,7 @@
 // Licensed under the MIT License.
 package com.azure.cosmos.implementation.query.metrics;
 
-import com.azure.cosmos.implementation.apachecommons.lang.StringUtils;
+import com.azure.cosmos.implementation.Strings;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -63,11 +63,11 @@ class TextTable {
         StringBuilder lineStringBuilder = new StringBuilder();
         lineStringBuilder.append(firstChar);
         for (Column column : columns.subList(0, columns.size() - 1)) {
-            lineStringBuilder.append(StringUtils.repeat(CellHorizontalLine, column.columnWidth));
+            lineStringBuilder.append(Strings.repeat(CellHorizontalLine, column.columnWidth));
             lineStringBuilder.append(seperator);
         }
 
-        lineStringBuilder.append(StringUtils.repeat(CellHorizontalLine, columns.get(columns.size() - 1).columnWidth));
+        lineStringBuilder.append(Strings.repeat(CellHorizontalLine, columns.get(columns.size() - 1).columnWidth));
         lineStringBuilder.append(lastChar);
 
         return lineStringBuilder.toString();

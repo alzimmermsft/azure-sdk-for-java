@@ -3,7 +3,7 @@
 
 package com.azure.cosmos.kafka.connect.implementation.sink;
 
-import com.azure.cosmos.implementation.apachecommons.lang.StringUtils;
+import com.azure.cosmos.implementation.Strings;
 import com.azure.cosmos.kafka.connect.implementation.KafkaCosmosConfig;
 import com.azure.cosmos.kafka.connect.implementation.sink.patch.CosmosPatchConfig;
 import com.azure.cosmos.kafka.connect.implementation.sink.patch.CosmosPatchJsonPropertyConfig;
@@ -81,12 +81,12 @@ public class CosmosSinkConfig extends KafkaCosmosConfig {
         + " It can contain multiple definitions matching the following patterns separated by comma. property(jsonProperty).op(operationType) or property(jsonProperty).path(patchInCosmosdb).op(operationType) - The difference of the second pattern is that it also allows you to define a different cosmosdb path. "
         + "Note: It does not support nested json property config.";
     private static final String PATCH_PROPERTY_CONFIGS_DISPLAY = "Cosmos DB patch json property configs.";
-    private static final String DEFAULT_PATCH_PROPERTY_CONFIGS = StringUtils.EMPTY;
+    private static final String DEFAULT_PATCH_PROPERTY_CONFIGS = Strings.EMPTY;
 
     public static final String PATCH_FILTER = "azure.cosmos.sink.write.patch.filter";
     private static final String PATCH_FILTER_DOC = "Used for [Conditional patch](https://docs.microsoft.com/azure/cosmos-db/partial-document-update-getting-started#java)";
     private static final String PATCH_FILTER_DISPLAY = "Used for [Conditional patch].";
-    private static final String DEFAULT_PATCH_FILTER = StringUtils.EMPTY;
+    private static final String DEFAULT_PATCH_FILTER = Strings.EMPTY;
 
     // max retry
     public static final String MAX_RETRY_COUNT_CONF = "azure.cosmos.sink.maxRetryCount";
@@ -361,14 +361,14 @@ public class CosmosSinkConfig extends KafkaCosmosConfig {
             if (jsonPropertyConfigMatcher.matches()) {
                 String jsonProperty = jsonPropertyConfigMatcher.group(1);
                 String mappingPath = jsonPropertyConfigMatcher.group(3);
-                if (StringUtils.isEmpty(mappingPath)) {
+                if (Strings.isEmpty(mappingPath)) {
                     // in the cases no mapping path defined, using the json property as the mapping path
                     mappingPath = "/" + jsonProperty;
                 }
 
                 KafkaCosmosPatchOperationType patchOperationType = KafkaCosmosPatchOperationType.fromName(jsonPropertyConfigMatcher.group(4));
 
-                if (StringUtils.isEmpty(jsonProperty) || patchOperationType == null) {
+                if (Strings.isEmpty(jsonProperty) || patchOperationType == null) {
                     throw new IllegalArgumentException("Patch config invalid " + patchPropertyConfigString);
                 }
 
@@ -410,7 +410,7 @@ public class CosmosSinkConfig extends KafkaCosmosConfig {
         @SuppressWarnings("unchecked")
         public void ensureValid(String name, Object o) {
             String itemWriteStrategyString = (String) o;
-            if (StringUtils.isEmpty(itemWriteStrategyString)) {
+            if (Strings.isEmpty(itemWriteStrategyString)) {
                 throw new ConfigException(name, o, "WriteStrategy can not be empty or null");
             }
 
@@ -431,7 +431,7 @@ public class CosmosSinkConfig extends KafkaCosmosConfig {
         @SuppressWarnings("unchecked")
         public void ensureValid(String name, Object o) {
             String patchOperationTypeString = (String) o;
-            if (StringUtils.isEmpty(patchOperationTypeString)) {
+            if (Strings.isEmpty(patchOperationTypeString)) {
                 throw new ConfigException(name, o, "PatchOperationType can not be empty or null");
             }
 

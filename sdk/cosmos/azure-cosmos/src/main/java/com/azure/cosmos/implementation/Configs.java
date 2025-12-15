@@ -20,7 +20,6 @@ import java.util.EnumSet;
 import java.util.Locale;
 
 import static com.azure.cosmos.implementation.guava25.base.MoreObjects.firstNonNull;
-import static com.azure.cosmos.implementation.guava25.base.Strings.emptyToNull;
 
 public class Configs {
     private static final Logger logger = LoggerFactory.getLogger(Configs.class);
@@ -434,7 +433,7 @@ public class Configs {
 
     public Protocol getProtocol() {
         String protocol = System.getProperty(PROTOCOL_PROPERTY, firstNonNull(
-            emptyToNull(System.getenv().get(PROTOCOL_ENVIRONMENT_VARIABLE)),
+            Strings.trimToNull(System.getenv().get(PROTOCOL_ENVIRONMENT_VARIABLE)),
             DEFAULT_PROTOCOL.name()));
         try {
             return Protocol.valueOf(protocol.toUpperCase(Locale.ROOT));
@@ -848,7 +847,7 @@ public class Configs {
     public static int getMaxItemCountForVectorSearch() {
         return Integer.parseInt(System.getProperty(MAX_ITEM_COUNT_FOR_VECTOR_SEARCH,
              firstNonNull(
-                emptyToNull(System.getenv().get(MAX_ITEM_COUNT_FOR_VECTOR_SEARCH)),
+                Strings.trimToNull(System.getenv().get(MAX_ITEM_COUNT_FOR_VECTOR_SEARCH)),
                 String.valueOf(DEFAULT_MAX_ITEM_COUNT_FOR_VECTOR_SEARCH))));
     }
 
@@ -876,7 +875,7 @@ public class Configs {
         }
         return Boolean.parseBoolean(System.getProperty(AZURE_COSMOS_DISABLE_NON_STREAMING_ORDER_BY,
             firstNonNull(
-                emptyToNull(System.getenv().get(AZURE_COSMOS_DISABLE_NON_STREAMING_ORDER_BY)),
+                Strings.trimToNull(System.getenv().get(AZURE_COSMOS_DISABLE_NON_STREAMING_ORDER_BY)),
                 String.valueOf(DEFAULT_AZURE_COSMOS_DISABLE_NON_STREAMING_ORDER_BY))));
     }
 
@@ -912,7 +911,7 @@ public class Configs {
         return System.getProperty(
             SESSION_CAPTURING_TYPE,
             firstNonNull(
-                emptyToNull(System.getenv().get(SESSION_CAPTURING_TYPE)),
+                Strings.trimToNull(System.getenv().get(SESSION_CAPTURING_TYPE)),
                 DEFAULT_SESSION_CAPTURING_TYPE));
     }
 
@@ -921,7 +920,7 @@ public class Configs {
         String pkBasedBloomFilterExpectedInsertionCount = System.getProperty(
             PK_BASED_BLOOM_FILTER_EXPECTED_INSERTION_COUNT_NAME,
             firstNonNull(
-                emptyToNull(System.getenv().get(PK_BASED_BLOOM_FILTER_EXPECTED_INSERTION_COUNT_NAME)),
+                Strings.trimToNull(System.getenv().get(PK_BASED_BLOOM_FILTER_EXPECTED_INSERTION_COUNT_NAME)),
                 String.valueOf(DEFAULT_PK_BASED_BLOOM_FILTER_EXPECTED_INSERTION_COUNT)));
 
         return Long.parseLong(pkBasedBloomFilterExpectedInsertionCount);
@@ -931,7 +930,7 @@ public class Configs {
         String pkBasedBloomFilterExpectedFfpRate = System.getProperty(
             PK_BASED_BLOOM_FILTER_EXPECTED_FFP_RATE_NAME,
             firstNonNull(
-                emptyToNull(System.getenv().get(PK_BASED_BLOOM_FILTER_EXPECTED_FFP_RATE_NAME)),
+                Strings.trimToNull(System.getenv().get(PK_BASED_BLOOM_FILTER_EXPECTED_FFP_RATE_NAME)),
                 String.valueOf(DEFAULT_PK_BASED_BLOOM_FILTER_EXPECTED_FFP_RATE)));
 
         return Double.parseDouble(pkBasedBloomFilterExpectedFfpRate);
@@ -942,7 +941,7 @@ public class Configs {
             System.getProperty(
                 DIAGNOSTICS_PROVIDER_SYSTEM_EXIT_ON_ERROR,
                 firstNonNull(
-                    emptyToNull(System.getenv().get(DIAGNOSTICS_PROVIDER_SYSTEM_EXIT_ON_ERROR)),
+                    Strings.trimToNull(System.getenv().get(DIAGNOSTICS_PROVIDER_SYSTEM_EXIT_ON_ERROR)),
                     String.valueOf(DEFAULT_DIAGNOSTICS_PROVIDER_SYSTEM_EXIT_ON_ERROR)));
 
         return Boolean.parseBoolean(shouldSystemExit);
@@ -953,7 +952,7 @@ public class Configs {
             System.getProperty(
                 SHOULD_LOG_INCORRECTLY_MAPPED_SESSION_TOKEN,
                 firstNonNull(
-                    emptyToNull(System.getenv().get(SHOULD_LOG_INCORRECTLY_MAPPED_SESSION_TOKEN)),
+                    Strings.trimToNull(System.getenv().get(SHOULD_LOG_INCORRECTLY_MAPPED_SESSION_TOKEN)),
                     String.valueOf(DEFAULT_SHOULD_LOG_INCORRECTLY_MAPPED_SESSION_TOKEN)));
 
         return Boolean.parseBoolean(shouldSystemExit);
@@ -965,7 +964,7 @@ public class Configs {
             System.getProperty(
                 PARTITION_LEVEL_CIRCUIT_BREAKER_DEFAULT_CONFIG_OPT_IN,
                 firstNonNull(
-                    emptyToNull(System.getenv().get(PARTITION_LEVEL_CIRCUIT_BREAKER_DEFAULT_CONFIG_OPT_IN)),
+                    Strings.trimToNull(System.getenv().get(PARTITION_LEVEL_CIRCUIT_BREAKER_DEFAULT_CONFIG_OPT_IN)),
                     String.valueOf(DEFAULT_PARTITION_LEVEL_CIRCUIT_BREAKER_DEFAULT_CONFIG_OPT_IN)));
 
         return Boolean.parseBoolean(shouldOptInDefaultPartitionLevelCircuitBreakerConfig);
@@ -976,7 +975,7 @@ public class Configs {
             System.getProperty(
                 IS_SESSION_TOKEN_FALSE_PROGRESS_MERGE_ENABLED,
                 firstNonNull(
-                    emptyToNull(System.getenv().get(IS_SESSION_TOKEN_FALSE_PROGRESS_MERGE_ENABLED_VARIABLE)),
+                    Strings.trimToNull(System.getenv().get(IS_SESSION_TOKEN_FALSE_PROGRESS_MERGE_ENABLED_VARIABLE)),
                     String.valueOf(DEFAULT_SESSION_TOKEN_FALSE_PROGRESS_MERGE_ENABLED)));
 
         return Boolean.parseBoolean(isSessionTokenFalseProgressMergeDisabledAsString);
@@ -987,7 +986,7 @@ public class Configs {
             System.getProperty(
                 E2E_TIMEOUT_ERROR_HIT_THRESHOLD_FOR_PPAF,
                 firstNonNull(
-                    emptyToNull(System.getenv().get(E2E_TIMEOUT_ERROR_HIT_THRESHOLD_FOR_PPAF_VARIABLE)),
+                    Strings.trimToNull(System.getenv().get(E2E_TIMEOUT_ERROR_HIT_THRESHOLD_FOR_PPAF_VARIABLE)),
                     String.valueOf(DEFAULT_E2E_TIMEOUT_ERROR_HIT_THRESHOLD_FOR_PPAF)));
 
         return Integer.parseInt(allowedE2ETimeoutHitCountForPPAF);
@@ -998,7 +997,7 @@ public class Configs {
             System.getProperty(
                 E2E_TIMEOUT_ERROR_HIT_TIME_WINDOW_IN_SECONDS_FOR_PPAF,
                 firstNonNull(
-                    emptyToNull(System.getenv().get(E2E_TIMEOUT_ERROR_HIT_TIME_WINDOW_IN_SECONDS_FOR_PPAF_VARIABLE)),
+                    Strings.trimToNull(System.getenv().get(E2E_TIMEOUT_ERROR_HIT_TIME_WINDOW_IN_SECONDS_FOR_PPAF_VARIABLE)),
                     String.valueOf(DEFAULT_E2E_TIMEOUT_ERROR_HIT_TIME_WINDOW_IN_SECONDS_FOR_PPAF)));
 
         return Integer.parseInt(timeWindowForE2ETimeoutHitCountTrackingInSecsForPPAF);
@@ -1009,7 +1008,7 @@ public class Configs {
             System.getProperty(
                 METRICS_CONFIG,
                 firstNonNull(
-                    emptyToNull(System.getenv().get(METRICS_CONFIG)),
+                    Strings.trimToNull(System.getenv().get(METRICS_CONFIG)),
                     DEFAULT_METRICS_CONFIG));
 
         return CosmosMicrometerMetricsConfig.fromJsonString(metricsConfig);
@@ -1020,7 +1019,7 @@ public class Configs {
             System.getProperty(
                 PARTITION_LEVEL_CIRCUIT_BREAKER_CONFIG,
                 firstNonNull(
-                    emptyToNull(System.getenv().get(PARTITION_LEVEL_CIRCUIT_BREAKER_CONFIG)),
+                    Strings.trimToNull(System.getenv().get(PARTITION_LEVEL_CIRCUIT_BREAKER_CONFIG)),
                     DEFAULT_PARTITION_LEVEL_CIRCUIT_BREAKER_CONFIG));
 
         PartitionLevelCircuitBreakerConfig partitionLevelCircuitBreakerConfig
@@ -1126,7 +1125,7 @@ public class Configs {
         return System.getProperty(
                 CHARSET_DECODER_ERROR_ACTION_ON_MALFORMED_INPUT,
                 firstNonNull(
-                    emptyToNull(System.getenv().get(CHARSET_DECODER_ERROR_ACTION_ON_MALFORMED_INPUT)),
+                    Strings.trimToNull(System.getenv().get(CHARSET_DECODER_ERROR_ACTION_ON_MALFORMED_INPUT)),
                     DEFAULT_CHARSET_DECODER_ERROR_ACTION_ON_MALFORMED_INPUT));
     }
 
@@ -1134,7 +1133,7 @@ public class Configs {
         return System.getProperty(
                 CHARSET_DECODER_ERROR_ACTION_ON_UNMAPPED_CHARACTER,
                 firstNonNull(
-                    emptyToNull(System.getenv().get(CHARSET_DECODER_ERROR_ACTION_ON_UNMAPPED_CHARACTER)),
+                    Strings.trimToNull(System.getenv().get(CHARSET_DECODER_ERROR_ACTION_ON_UNMAPPED_CHARACTER)),
                     DEFAULT_CHARSET_DECODER_ERROR_ACTION_ON_UNMAPPED_CHARACTER));
     }
 
@@ -1143,7 +1142,7 @@ public class Configs {
             System.getProperty(
                 COSMOS_DISABLE_IMDS_ACCESS,
                 firstNonNull(
-                    emptyToNull(System.getenv().get(COSMOS_DISABLE_IMDS_ACCESS_VARIABLE)),
+                    Strings.trimToNull(System.getenv().get(COSMOS_DISABLE_IMDS_ACCESS_VARIABLE)),
                     String.valueOf(COSMOS_DISABLE_IMDS_ACCESS_DEFAULT)));
 
         return Boolean.parseBoolean(shouldDisableIMDSAccess);
@@ -1153,7 +1152,7 @@ public class Configs {
         String httpForEmulatorAllowed = System.getProperty(
             HTTP_CONNECTION_WITHOUT_TLS_ALLOWED,
             firstNonNull(
-                emptyToNull(System.getenv().get(HTTP_CONNECTION_WITHOUT_TLS_ALLOWED_VARIABLE)),
+                Strings.trimToNull(System.getenv().get(HTTP_CONNECTION_WITHOUT_TLS_ALLOWED_VARIABLE)),
                 String.valueOf(DEFAULT_HTTP_CONNECTION_WITHOUT_TLS_ALLOWED)));
 
         return Boolean.parseBoolean(httpForEmulatorAllowed);
@@ -1163,7 +1162,7 @@ public class Configs {
         String httpEnabledConfig = System.getProperty(
             HTTP2_ENABLED,
             firstNonNull(
-                emptyToNull(System.getenv().get(HTTP2_ENABLED_VARIABLE)),
+                Strings.trimToNull(System.getenv().get(HTTP2_ENABLED_VARIABLE)),
                 String.valueOf(DEFAULT_HTTP2_ENABLED)));
 
         return Boolean.parseBoolean(httpEnabledConfig);
@@ -1173,7 +1172,7 @@ public class Configs {
         String http2MaxConnectionPoolSize = System.getProperty(
             HTTP2_MAX_CONNECTION_POOL_SIZE,
             firstNonNull(
-                emptyToNull(System.getenv().get(HTTP2_MAX_CONNECTION_POOL_SIZE_VARIABLE)),
+                Strings.trimToNull(System.getenv().get(HTTP2_MAX_CONNECTION_POOL_SIZE_VARIABLE)),
                 String.valueOf(DEFAULT_HTTP2_MAX_CONNECTION_POOL_SIZE)));
 
         return Integer.parseInt(http2MaxConnectionPoolSize);
@@ -1183,7 +1182,7 @@ public class Configs {
         String http2MinConnectionPoolSize = System.getProperty(
             HTTP2_MIN_CONNECTION_POOL_SIZE,
             firstNonNull(
-                emptyToNull(System.getenv().get(HTTP2_MIN_CONNECTION_POOL_SIZE_VARIABLE)),
+                Strings.trimToNull(System.getenv().get(HTTP2_MIN_CONNECTION_POOL_SIZE_VARIABLE)),
                 String.valueOf(DEFAULT_HTTP2_MIN_CONNECTION_POOL_SIZE)));
 
         return Integer.parseInt(http2MinConnectionPoolSize);
@@ -1193,7 +1192,7 @@ public class Configs {
         String http2MaxConcurrentStreams = System.getProperty(
             HTTP2_MAX_CONCURRENT_STREAMS,
             firstNonNull(
-                emptyToNull(System.getenv().get(HTTP2_MAX_CONCURRENT_STREAMS_VARIABLE)),
+                Strings.trimToNull(System.getenv().get(HTTP2_MAX_CONCURRENT_STREAMS_VARIABLE)),
                 String.valueOf(DEFAULT_HTTP2_MAX_CONCURRENT_STREAMS)));
 
         return Integer.parseInt(http2MaxConcurrentStreams);
@@ -1203,7 +1202,7 @@ public class Configs {
         String certVerificationDisabledConfig = System.getProperty(
             EMULATOR_SERVER_CERTIFICATE_VALIDATION_DISABLED,
             firstNonNull(
-                emptyToNull(System.getenv().get(EMULATOR_SERVER_CERTIFICATE_VALIDATION_DISABLED_VARIABLE)),
+                Strings.trimToNull(System.getenv().get(EMULATOR_SERVER_CERTIFICATE_VALIDATION_DISABLED_VARIABLE)),
                 String.valueOf(DEFAULT_EMULATOR_SERVER_CERTIFICATE_VALIDATION_DISABLED)));
 
         return Boolean.parseBoolean(certVerificationDisabledConfig);
@@ -1213,7 +1212,7 @@ public class Configs {
         String hostNameVerificationDisabledConfig = System.getProperty(
             HOSTNAME_VALIDATION_DISABLED,
             firstNonNull(
-                emptyToNull(System.getenv().get(HOSTNAME_VALIDATION_DISABLED_VARIABLE)),
+                Strings.trimToNull(System.getenv().get(HOSTNAME_VALIDATION_DISABLED_VARIABLE)),
                 String.valueOf(DEFAULT_HOSTNAME_VALIDATION_DISABLED)));
 
         return Boolean.parseBoolean(hostNameVerificationDisabledConfig);
@@ -1245,7 +1244,7 @@ public class Configs {
         return System.getProperty(
             EMULATOR_HOST,
             firstNonNull(
-                emptyToNull(System.getenv().get(EMULATOR_HOST_VARIABLE)),
+                Strings.trimToNull(System.getenv().get(EMULATOR_HOST_VARIABLE)),
                 DEFAULT_EMULATOR_HOST));
     }
 
@@ -1253,7 +1252,7 @@ public class Configs {
         String isReadAvailabilityStrategyEnabledWithPpaf = System.getProperty(
             IS_READ_AVAILABILITY_STRATEGY_ENABLED_WITH_PPAF,
             firstNonNull(
-                emptyToNull(System.getenv().get(IS_READ_AVAILABILITY_STRATEGY_ENABLED_WITH_PPAF_VARIABLE)),
+                Strings.trimToNull(System.getenv().get(IS_READ_AVAILABILITY_STRATEGY_ENABLED_WITH_PPAF_VARIABLE)),
                 DEFAULT_IS_READ_AVAILABILITY_STRATEGY_ENABLED_WITH_PPAF));
 
         return Boolean.parseBoolean(isReadAvailabilityStrategyEnabledWithPpaf);
@@ -1263,7 +1262,7 @@ public class Configs {
         return System.getProperty(
             AAD_SCOPE_OVERRIDE,
             firstNonNull(
-                emptyToNull(System.getenv().get(AAD_SCOPE_OVERRIDE_VARIABLE)),
+                Strings.trimToNull(System.getenv().get(AAD_SCOPE_OVERRIDE_VARIABLE)),
                 DEFAULT_AAD_SCOPE_OVERRIDE));
     }
 
@@ -1271,7 +1270,7 @@ public class Configs {
         String warnLevelLoggingThresholdForPpaf = System.getProperty(
             WARN_LEVEL_LOGGING_THRESHOLD_FOR_PPAF,
             firstNonNull(
-                emptyToNull(System.getenv().get(WARN_LEVEL_LOGGING_THRESHOLD_FOR_PPAF_VARIABLE)),
+                Strings.trimToNull(System.getenv().get(WARN_LEVEL_LOGGING_THRESHOLD_FOR_PPAF_VARIABLE)),
                 String.valueOf(DEFAULT_WARN_LEVEL_LOGGING_THRESHOLD_FOR_PPAF)));
 
         return Integer.parseInt(warnLevelLoggingThresholdForPpaf);
@@ -1302,7 +1301,7 @@ public class Configs {
         String isNonParseableDocumentLoggingEnabledAsString = System.getProperty(
             IS_NON_PARSEABLE_DOCUMENT_LOGGING_ENABLED,
             firstNonNull(
-                emptyToNull(System.getenv().get(IS_NON_PARSEABLE_DOCUMENT_LOGGING_ENABLED_VARIABLE)),
+                Strings.trimToNull(System.getenv().get(IS_NON_PARSEABLE_DOCUMENT_LOGGING_ENABLED_VARIABLE)),
                 String.valueOf(DEFAULT_IS_NON_PARSEABLE_DOCUMENT_LOGGING_ENABLED)));
 
         return Boolean.parseBoolean(isNonParseableDocumentLoggingEnabledAsString);

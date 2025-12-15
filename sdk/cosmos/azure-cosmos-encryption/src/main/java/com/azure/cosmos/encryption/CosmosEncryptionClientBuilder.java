@@ -3,12 +3,11 @@
 
 package com.azure.cosmos.encryption;
 
-
 import com.azure.core.annotation.ServiceClientBuilder;
 import com.azure.core.cryptography.KeyEncryptionKeyResolver;
 import com.azure.cosmos.CosmosAsyncClient;
 import com.azure.cosmos.CosmosClient;
-import com.azure.cosmos.implementation.apachecommons.lang.StringUtils;
+import com.azure.cosmos.implementation.Strings;
 
 /**
  * Helper class to build {@link CosmosEncryptionAsyncClient} and {@link CosmosEncryptionClient}
@@ -117,7 +116,7 @@ public class CosmosEncryptionClientBuilder {
             throw new IllegalArgumentException("KeyEncryptionKeyResolver has not been provided.");
         }
 
-        if(StringUtils.isEmpty(this.keyEncryptionKeyResolverName)) {
+        if(Strings.isEmpty(this.keyEncryptionKeyResolverName)) {
             throw new IllegalArgumentException("KeyEncryptionKeyResolverName has not been provided.");
         }
 
@@ -138,7 +137,7 @@ public class CosmosEncryptionClientBuilder {
             throw new IllegalArgumentException("KeyEncryptionKeyResolver has not been provided.");
         }
 
-        if(StringUtils.isEmpty(this.keyEncryptionKeyResolverName)) {
+        if(Strings.isEmpty(this.keyEncryptionKeyResolverName)) {
             throw new IllegalArgumentException("KeyEncryptionKeyResolverName has not been provided.");
         }
 

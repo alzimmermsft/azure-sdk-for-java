@@ -15,9 +15,9 @@ import com.azure.cosmos.implementation.ResourceType;
 import com.azure.cosmos.implementation.RetryContext;
 import com.azure.cosmos.implementation.RxDocumentServiceRequest;
 import com.azure.cosmos.implementation.ShouldRetryResult;
+import com.azure.cosmos.implementation.Strings;
 import com.azure.cosmos.implementation.Utils;
 import com.azure.cosmos.implementation.WebExceptionRetryPolicy;
-import com.azure.cosmos.implementation.apachecommons.lang.StringUtils;
 import com.azure.cosmos.implementation.caches.RxCollectionCache;
 import com.azure.cosmos.implementation.caches.RxPartitionKeyRangeCache;
 import com.azure.cosmos.implementation.directconnectivity.AddressSelector;
@@ -96,7 +96,7 @@ public class FaultInjectionRuleProcessor {
         String containerNameLink) {
         checkNotNull(rule, "Argument 'rule' can not be null");
         checkArgument(
-            StringUtils.isNotEmpty(containerNameLink),
+            Strings.isNotEmpty(containerNameLink),
             "Argument 'containerNameLink' can not be null nor empty.");
 
         return this.collectionCache.resolveByNameAsync(null, containerNameLink, null)
@@ -167,7 +167,7 @@ public class FaultInjectionRuleProcessor {
                 }
 
                 List<RegionalRoutingContext> regionalRoutingContexts = this.getRegionalRoutingContexts(rule.getCondition());
-                if (StringUtils.isEmpty(rule.getCondition().getRegion())) {
+                if (Strings.isEmpty(rule.getCondition().getRegion())) {
                     // if region is not specific configured, then also add the defaultEndpoint
                     List<RegionalRoutingContext> regionalRoutingContextsWithDefault = new ArrayList<>(regionalRoutingContexts);
                     regionalRoutingContextsWithDefault.add(new RegionalRoutingContext(this.globalEndpointManager.getDefaultEndpoint()));
@@ -309,7 +309,7 @@ public class FaultInjectionRuleProcessor {
     private List<RegionalRoutingContext> getRegionalRoutingContexts(FaultInjectionCondition condition) {
         boolean isWriteOnlyEndpoints = this.isWriteOnly(condition);
 
-        if (StringUtils.isNotEmpty(condition.getRegion())) {
+        if (Strings.isNotEmpty(condition.getRegion())) {
             return Arrays.asList(
                 this.globalEndpointManager.resolveFaultInjectionServiceEndpoint(condition.getRegion(), isWriteOnlyEndpoints));
         } else {

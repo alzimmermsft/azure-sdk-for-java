@@ -3,7 +3,6 @@
 
 package com.azure.cosmos.implementation;
 
-import com.azure.cosmos.implementation.apachecommons.lang.StringUtils;
 import com.azure.cosmos.models.TriggerOperation;
 import com.azure.cosmos.models.TriggerType;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -58,8 +57,7 @@ public class Trigger extends Resource {
     public TriggerType getTriggerType() {
         TriggerType result = TriggerType.PRE;
         try {
-            result = TriggerType.valueOf(
-                    StringUtils.upperCase(super.getString(Constants.Properties.TRIGGER_TYPE)));
+            result = TriggerType.valueOf(Strings.upperCase(super.getString(Constants.Properties.TRIGGER_TYPE)));
         } catch (IllegalArgumentException e) {
             // ignore the exception and return the default
             this.getLogger().warn("INVALID triggerType value {}.", super.getString(Constants.Properties.TRIGGER_TYPE));
@@ -84,8 +82,7 @@ public class Trigger extends Resource {
     public TriggerOperation getTriggerOperation() {
         TriggerOperation result = TriggerOperation.CREATE;
         try {
-            result = TriggerOperation.valueOf(
-                    StringUtils.upperCase(super.getString(Constants.Properties.TRIGGER_OPERATION)));
+            result = TriggerOperation.valueOf(Strings.upperCase(super.getString(Constants.Properties.TRIGGER_OPERATION)));
         } catch (IllegalArgumentException e) {
             // ignore the exception and return the default
             this.getLogger().warn("INVALID triggerOperation value {}.", super.getString(Constants.Properties.TRIGGER_OPERATION));

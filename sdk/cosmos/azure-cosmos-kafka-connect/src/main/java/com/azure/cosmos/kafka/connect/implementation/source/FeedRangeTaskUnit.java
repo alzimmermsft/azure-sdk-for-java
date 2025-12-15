@@ -3,8 +3,8 @@
 
 package com.azure.cosmos.kafka.connect.implementation.source;
 
+import com.azure.cosmos.implementation.Strings;
 import com.azure.cosmos.implementation.Utils;
-import com.azure.cosmos.implementation.apachecommons.lang.StringUtils;
 import com.azure.cosmos.models.FeedRange;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonParser;
@@ -39,11 +39,11 @@ public class FeedRangeTaskUnit implements ITaskUnit {
         KafkaCosmosChangeFeedState continuationState,
         String topic) {
 
-        checkArgument(StringUtils.isNotEmpty(databaseName), "Argument 'databaseName' should not be null");
-        checkArgument(StringUtils.isNotEmpty(containerName), "Argument 'containerName' should not be null");
-        checkArgument(StringUtils.isNotEmpty(containerRid), "Argument 'containerRid' should not be null");
+        checkArgument(Strings.isNotEmpty(databaseName), "Argument 'databaseName' should not be null");
+        checkArgument(Strings.isNotEmpty(containerName), "Argument 'containerName' should not be null");
+        checkArgument(Strings.isNotEmpty(containerRid), "Argument 'containerRid' should not be null");
         checkNotNull(feedRange, "Argument 'feedRange' can not be null");
-        checkArgument(StringUtils.isNotEmpty(topic), "Argument 'topic' should not be null");
+        checkArgument(Strings.isNotEmpty(topic), "Argument 'topic' should not be null");
 
         this.databaseName = databaseName;
         this.containerName = containerName;

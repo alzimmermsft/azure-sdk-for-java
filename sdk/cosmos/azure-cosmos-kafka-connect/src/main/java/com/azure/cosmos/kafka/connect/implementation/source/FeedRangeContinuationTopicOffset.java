@@ -3,7 +3,7 @@
 
 package com.azure.cosmos.kafka.connect.implementation.source;
 
-import com.azure.cosmos.implementation.apachecommons.lang.StringUtils;
+import com.azure.cosmos.implementation.Strings;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -20,8 +20,8 @@ public class FeedRangeContinuationTopicOffset {
     public FeedRangeContinuationTopicOffset(
         String responseContinuation,
         String itemLsn) {
-        checkArgument(StringUtils.isNotEmpty(responseContinuation), "Argument 'responseContinuation' should not be null");
-        checkArgument(StringUtils.isNotEmpty(itemLsn), "Argument 'itemLsn' should not be null");
+        checkArgument(Strings.isNotEmpty(responseContinuation), "Argument 'responseContinuation' should not be null");
+        checkArgument(Strings.isNotEmpty(itemLsn), "Argument 'itemLsn' should not be null");
 
         this.itemLsn = itemLsn;
         this.responseContinuation = responseContinuation;

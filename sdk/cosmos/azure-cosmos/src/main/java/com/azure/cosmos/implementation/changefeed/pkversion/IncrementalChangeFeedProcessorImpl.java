@@ -6,7 +6,6 @@ import com.azure.cosmos.ChangeFeedProcessor;
 import com.azure.cosmos.ConsistencyLevel;
 import com.azure.cosmos.CosmosAsyncContainer;
 import com.azure.cosmos.implementation.Pair;
-import com.azure.cosmos.implementation.apachecommons.lang.StringUtils;
 import com.azure.cosmos.implementation.changefeed.Bootstrapper;
 import com.azure.cosmos.implementation.changefeed.ChangeFeedContextClient;
 import com.azure.cosmos.implementation.changefeed.ChangeFeedObserverFactory;
@@ -227,7 +226,7 @@ public class IncrementalChangeFeedProcessorImpl implements ChangeFeedProcessor, 
                                 String sessionTokenLsn = feedResponse.getSessionToken();
                                 String parsedSessionToken = sessionTokenLsn.substring(
                                     sessionTokenLsn.indexOf(PK_RANGE_ID_SEPARATOR));
-                                String[] segments = StringUtils.split(parsedSessionToken, SEGMENT_SEPARATOR);
+                                String[] segments = parsedSessionToken.split(SEGMENT_SEPARATOR);
                                 String latestLsn = segments[0];
 
                                 if (segments.length >= 2) {
@@ -305,7 +304,7 @@ public class IncrementalChangeFeedProcessorImpl implements ChangeFeedProcessor, 
                                 String sessionTokenLsn = feedResponse.getSessionToken();
                                 String parsedSessionToken = sessionTokenLsn.substring(
                                     sessionTokenLsn.indexOf(PK_RANGE_ID_SEPARATOR));
-                                String[] segments = StringUtils.split(parsedSessionToken, SEGMENT_SEPARATOR);
+                                String[] segments = parsedSessionToken.split(SEGMENT_SEPARATOR);
                                 String latestLsn = segments[0];
 
                                 if (segments.length >= 2) {

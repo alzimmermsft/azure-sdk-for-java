@@ -3,7 +3,7 @@
 
 package com.azure.cosmos.kafka.connect.implementation.source;
 
-import com.azure.cosmos.implementation.apachecommons.lang.StringUtils;
+import com.azure.cosmos.implementation.Strings;
 import com.azure.cosmos.models.FeedRange;
 
 import java.util.HashMap;
@@ -25,8 +25,8 @@ public class FeedRangeContinuationTopicPartition {
         String databaseName,
         String containerRid,
         FeedRange feedRange) {
-        checkArgument(StringUtils.isNotEmpty(databaseName), "Argument 'databaseName' should not be null");
-        checkArgument(StringUtils.isNotEmpty(containerRid), "Argument 'containerRid' should not be null");
+        checkArgument(Strings.isNotEmpty(databaseName), "Argument 'databaseName' should not be null");
+        checkArgument(Strings.isNotEmpty(containerRid), "Argument 'containerRid' should not be null");
         checkNotNull(feedRange, "Argument 'feedRange' can not be null");
 
         this.databaseName = databaseName;

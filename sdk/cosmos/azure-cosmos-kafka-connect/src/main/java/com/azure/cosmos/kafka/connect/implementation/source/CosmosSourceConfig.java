@@ -4,7 +4,6 @@
 package com.azure.cosmos.kafka.connect.implementation.source;
 
 import com.azure.cosmos.implementation.Strings;
-import com.azure.cosmos.implementation.apachecommons.lang.StringUtils;
 import com.azure.cosmos.kafka.connect.implementation.KafkaCosmosConfig;
 import org.apache.kafka.common.config.ConfigDef;
 import org.apache.kafka.common.config.ConfigException;
@@ -405,7 +404,7 @@ public class CosmosSourceConfig extends KafkaCosmosConfig {
         @SuppressWarnings("unchecked")
         public void ensureValid(String name, Object o) {
             String configValue = (String) o;
-            if (StringUtils.isEmpty(configValue)) {
+            if (Strings.isEmpty(configValue)) {
                 return;
             }
 
@@ -436,7 +435,7 @@ public class CosmosSourceConfig extends KafkaCosmosConfig {
         @SuppressWarnings("unchecked")
         public void ensureValid(String name, Object o) {
             String changeFeedModeString = (String) o;
-            if (StringUtils.isEmpty(changeFeedModeString)) {
+            if (Strings.isEmpty(changeFeedModeString)) {
                 throw new ConfigException(name, o, "ChangeFeedMode can not be empty or null");
             }
 
@@ -457,7 +456,7 @@ public class CosmosSourceConfig extends KafkaCosmosConfig {
         @SuppressWarnings("unchecked")
         public void ensureValid(String name, Object o) {
             String changeFeedStartFromString = (String) o;
-            if (StringUtils.isEmpty(changeFeedStartFromString)) {
+            if (Strings.isEmpty(changeFeedStartFromString)) {
                 throw new ConfigException(name, o, "ChangeFeedStartFrom can not be empty or null");
             }
 
@@ -504,7 +503,7 @@ public class CosmosSourceConfig extends KafkaCosmosConfig {
         @SuppressWarnings("unchecked")
         public void ensureValid(String name, Object o) {
             String storageTypeString = (String) o;
-            if (StringUtils.isEmpty(storageTypeString)) {
+            if (Strings.isEmpty(storageTypeString)) {
                 throw new ConfigException(name, o, "Cosmos metadata storage type can not be empty or null");
             }
 

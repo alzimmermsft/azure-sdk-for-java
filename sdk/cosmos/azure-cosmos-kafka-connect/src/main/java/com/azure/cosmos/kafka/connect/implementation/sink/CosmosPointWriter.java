@@ -5,7 +5,7 @@ package com.azure.cosmos.kafka.connect.implementation.sink;
 
 import com.azure.cosmos.CosmosAsyncContainer;
 import com.azure.cosmos.implementation.ImplementationBridgeHelpers;
-import com.azure.cosmos.implementation.apachecommons.lang.StringUtils;
+import com.azure.cosmos.implementation.Strings;
 import com.azure.cosmos.implementation.guava25.base.Function;
 import com.azure.cosmos.kafka.connect.implementation.CosmosThroughputControlConfig;
 import com.azure.cosmos.kafka.connect.implementation.CosmosThroughputControlHelper;
@@ -50,7 +50,7 @@ public class CosmosPointWriter extends CosmosWriterBase {
                     break;
                 case ITEM_OVERWRITE_IF_NOT_MODIFIED:
                     String etag = this.getEtag(sinkOperation.getSinkRecord().value());
-                    if (StringUtils.isNotEmpty(etag)) {
+                    if (Strings.isNotEmpty(etag)) {
                         this.replaceIfNotModifiedWithRetry(container, sinkOperation, etag);
                     } else {
                         this.createWithRetry(container, sinkOperation);
@@ -128,7 +128,7 @@ public class CosmosPointWriter extends CosmosWriterBase {
                 CosmosItemRequestOptions itemRequestOptions = this.getCosmosItemRequestOptions();
                 if (onlyIfModified) {
                     String etag = this.getEtag(operation.getSinkRecord().value());
-                    if (StringUtils.isNotEmpty(etag)) {
+                    if (Strings.isNotEmpty(etag)) {
                         itemRequestOptions.setIfMatchETag(etag);
                     }
                 }
@@ -158,7 +158,7 @@ public class CosmosPointWriter extends CosmosWriterBase {
             (operation) -> {
                 CosmosPatchItemRequestOptions patchItemRequestOptions = new CosmosPatchItemRequestOptions();
                 CosmosThroughputControlHelper.tryPopulateThroughputControlGroupName(patchItemRequestOptions, this.throughputControlConfig);
-                if (StringUtils.isNotEmpty(this.writeConfig.getCosmosPatchConfig().getFilter())) {
+                if (Strings.isNotEmpty(this.writeConfig.getCosmosPatchConfig().getFilter())) {
                     patchItemRequestOptions.setFilterPredicate(this.writeConfig.getCosmosPatchConfig().getFilter());
                 }
 

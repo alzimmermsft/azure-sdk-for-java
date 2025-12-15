@@ -12,5 +12,19 @@ public enum FanoutOperationState {
     /**
      * Fanout operation completed
      */
-    Completed
+    Completed;
+
+    public static FanoutOperationState getIgnoreCase(String str) {
+        if (Strings.isEmpty(str)) {
+            return null;
+        }
+
+        if ("Started".equalsIgnoreCase(str)) {
+            return Started;
+        } else if ("Completed".equalsIgnoreCase(str)) {
+            return Completed;
+        }
+
+        return null;
+    }
 }

@@ -3,14 +3,13 @@
 
 package com.azure.cosmos.spark
 
-import com.azure.cosmos.implementation.apachecommons.lang.StringUtils
 import com.azure.cosmos.implementation.patch.{PatchOperationCore, PatchOperationType}
-import com.azure.cosmos.implementation.{Constants, ImplementationBridgeHelpers, Utils}
+import com.azure.cosmos.implementation.{Constants, ImplementationBridgeHelpers, Strings, Utils}
 import com.azure.cosmos.models.{CosmosPatchOperations, PartitionKeyDefinition}
 import com.azure.cosmos.spark.CosmosPredicates.{assertNotNull, assertNotNullOrEmpty}
 import com.azure.cosmos.spark.diagnostics.LoggerHelper
 import com.fasterxml.jackson.core.JsonPointer
-import com.fasterxml.jackson.databind.node.{ArrayNode, BigIntegerNode, DecimalNode, DoubleNode, FloatNode, IntNode, LongNode, MissingNode, ObjectNode, ShortNode}
+import com.fasterxml.jackson.databind.node._
 import com.fasterxml.jackson.databind.{JsonNode, ObjectMapper}
 
 import java.io.IOException
@@ -43,7 +42,7 @@ private class CosmosPatchHelper(diagnosticsConfig: DiagnosticsConfig,
   // 1. System properties : _ts, _rid, _etag
   // 2. id, and partitionKeyPath
   if ((path.startsWith("/") && !systemProperties.contains(path.substring(1)) && IdAttributeName != path.substring(1))
-   && !StringUtils.join(partitionKeyDefinition.getPaths, "").contains(path)) {
+   && !Strings.join(partitionKeyDefinition.getPaths, "").contains(path)) {
    true
   } else {
    false

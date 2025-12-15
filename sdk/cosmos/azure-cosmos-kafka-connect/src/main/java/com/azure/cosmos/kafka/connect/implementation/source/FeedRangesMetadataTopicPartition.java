@@ -3,7 +3,7 @@
 
 package com.azure.cosmos.kafka.connect.implementation.source;
 
-import com.azure.cosmos.implementation.apachecommons.lang.StringUtils;
+import com.azure.cosmos.implementation.Strings;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -19,12 +19,12 @@ public class FeedRangesMetadataTopicPartition {
     private final String connectorName;
 
     public FeedRangesMetadataTopicPartition(String databaseName, String containerRid, String connectorName) {
-        checkArgument(StringUtils.isNotEmpty(databaseName), "Argument 'databaseName' should not be null");
-        checkArgument(StringUtils.isNotEmpty(containerRid), "Argument 'containerRid' should not be null");
+        checkArgument(Strings.isNotEmpty(databaseName), "Argument 'databaseName' should not be null");
+        checkArgument(Strings.isNotEmpty(containerRid), "Argument 'containerRid' should not be null");
 
         this.databaseName = databaseName;
         this.containerRid = containerRid;
-        this.connectorName = StringUtils.isEmpty(connectorName) ? "EMPTY" : connectorName;
+        this.connectorName = Strings.isEmpty(connectorName) ? "EMPTY" : connectorName;
     }
 
     public String getDatabaseName() {

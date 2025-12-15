@@ -3,7 +3,7 @@
 
 package com.azure.cosmos.kafka.connect.implementation.source;
 
-import com.azure.cosmos.implementation.apachecommons.lang.StringUtils;
+import com.azure.cosmos.implementation.Strings;
 
 import static com.azure.cosmos.implementation.guava25.base.Preconditions.checkArgument;
 
@@ -18,7 +18,7 @@ public class CosmosMetadataConfig {
         String storageName) {
 
         checkArgument(metadataPollDelayInMs > 0, "Argument 'metadataPollDelayInMs' should be larger than 0");
-        checkArgument(StringUtils.isNotEmpty(storageName), "Argument 'storageName' should not be null");
+        checkArgument(Strings.isNotEmpty(storageName), "Argument 'storageName' should not be null");
 
         this.metadataPollDelayInMs = metadataPollDelayInMs;
         this.storageType = metadataStorageType;

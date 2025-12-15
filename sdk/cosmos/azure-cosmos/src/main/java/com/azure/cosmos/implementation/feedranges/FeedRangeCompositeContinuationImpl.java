@@ -11,7 +11,6 @@ import com.azure.cosmos.implementation.RxDocumentClientImpl;
 import com.azure.cosmos.implementation.ShouldRetryResult;
 import com.azure.cosmos.implementation.Strings;
 import com.azure.cosmos.implementation.Utils;
-import com.azure.cosmos.implementation.apachecommons.lang.StringUtils;
 import com.azure.cosmos.implementation.caches.RxPartitionKeyRangeCache;
 import com.azure.cosmos.implementation.query.CompositeContinuationToken;
 import com.azure.cosmos.implementation.routing.Range;
@@ -329,7 +328,7 @@ final class FeedRangeCompositeContinuationImpl extends FeedRangeContinuation {
     private Long getLatestLsnFromSessionToken(String sessionToken) {
         String parsedSessionToken = sessionToken.substring(
             sessionToken.indexOf(PK_RANGE_ID_SEPARATOR));
-        String[] segments = StringUtils.split(parsedSessionToken, SEGMENT_SEPARATOR);
+        String[] segments = parsedSessionToken.split(SEGMENT_SEPARATOR);
         String latestLsn = segments[0];
         if (segments.length >= 2) {
             // default to Global LSN

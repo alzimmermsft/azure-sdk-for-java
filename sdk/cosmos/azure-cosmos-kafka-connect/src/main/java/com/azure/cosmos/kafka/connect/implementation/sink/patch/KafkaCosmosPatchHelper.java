@@ -4,8 +4,8 @@
 package com.azure.cosmos.kafka.connect.implementation.sink.patch;
 
 import com.azure.cosmos.implementation.ImplementationBridgeHelpers;
+import com.azure.cosmos.implementation.Strings;
 import com.azure.cosmos.implementation.Utils;
-import com.azure.cosmos.implementation.apachecommons.lang.StringUtils;
 import com.azure.cosmos.models.CosmosPatchOperations;
 import com.azure.cosmos.models.PartitionKeyDefinition;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -126,7 +126,7 @@ public class KafkaCosmosPatchHelper {
     }
 
     private static boolean isAllowedProperty(String path, PartitionKeyDefinition partitionKeyDefinition) {
-        checkArgument(StringUtils.isNotEmpty(path), "Argument 'path' can not be null");
+        checkArgument(Strings.isNotEmpty(path), "Argument 'path' can not be null");
         checkNotNull(partitionKeyDefinition, "Argument 'partitionKeyDefinition' can not be null");
         // There are some properties are immutable, these kind properties include:
         // 1. System properties : _ts, _rid, _etag
@@ -134,7 +134,7 @@ public class KafkaCosmosPatchHelper {
         String effectivePath = path.startsWith("/") ? path.substring(1) : path;
         if (SYSTEM_PROPERTIES.contains(effectivePath)
             || ID_ATTRIBUTE_NAME.equals(effectivePath)
-            || StringUtils.join(partitionKeyDefinition.getPaths(), "").contains(effectivePath)) {
+            || Strings.join(partitionKeyDefinition.getPaths(), "").contains(effectivePath)) {
             return false;
         }
 

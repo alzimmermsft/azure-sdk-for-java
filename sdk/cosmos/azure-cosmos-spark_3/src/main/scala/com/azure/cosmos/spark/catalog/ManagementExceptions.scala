@@ -4,7 +4,6 @@
 package com.azure.cosmos.spark.catalog
 
 import com.azure.core.management.exception.ManagementException
-import com.azure.cosmos.implementation.apachecommons.lang.StringUtils
 
 private[spark] object ManagementExceptions {
     private val notFoundCode = "NotFound"
@@ -12,16 +11,14 @@ private[spark] object ManagementExceptions {
 
     def isNotFoundException(throwable: Throwable): Boolean = {
         throwable match {
-            case managementException: ManagementException =>
-                StringUtils.equalsIgnoreCase(managementException.getValue.getCode, notFoundCode)
+            case managementException: ManagementException => notFoundCode.equalsIgnoreCase(managementException.getValue.getCode)
             case _ => false
         }
     }
 
     def isBadRequestException(throwable: Throwable): Boolean = {
         throwable match {
-            case managementException: ManagementException =>
-                StringUtils.equalsIgnoreCase(managementException.getValue.getCode, badRequestCode)
+            case managementException: ManagementException => badRequestCode.equalsIgnoreCase(managementException.getValue.getCode)
             case _ => false
         }
     }

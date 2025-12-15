@@ -13,7 +13,6 @@ import com.azure.cosmos.CosmosException;
 import com.azure.cosmos.DirectConnectionConfig;
 import com.azure.cosmos.implementation.TestConfigurations;
 import com.azure.cosmos.implementation.Utils;
-import com.azure.cosmos.implementation.guava25.collect.ImmutableList;
 import com.azure.cosmos.models.CosmosContainerProperties;
 import com.azure.cosmos.models.CosmosFullTextIndex;
 import com.azure.cosmos.models.CosmosFullTextPath;
@@ -24,8 +23,6 @@ import com.azure.cosmos.models.IndexingMode;
 import com.azure.cosmos.models.IndexingPolicy;
 import com.azure.cosmos.models.PartitionKeyDefinition;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Fail.fail;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testng.annotations.AfterClass;
@@ -37,6 +34,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.UUID;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Fail.fail;
 
 @Ignore("TODO: Ignore these test cases until the public emulator with full text is released.")
 public class FullTextIndexTest extends TestSuiteBase{
@@ -198,7 +198,7 @@ public class FullTextIndexTest extends TestSuiteBase{
 
         IncludedPath includedPath1 = new IncludedPath("/name/?");
         IncludedPath includedPath2 = new IncludedPath("/description/?");
-        indexingPolicy.setIncludedPaths(ImmutableList.of(includedPath1, includedPath2));
+        indexingPolicy.setIncludedPaths(Utils.immutableList(includedPath1, includedPath2));
 
         CosmosFullTextIndex cosmosFullTextIndex = new CosmosFullTextIndex();
         cosmosFullTextIndex.setPath(path);

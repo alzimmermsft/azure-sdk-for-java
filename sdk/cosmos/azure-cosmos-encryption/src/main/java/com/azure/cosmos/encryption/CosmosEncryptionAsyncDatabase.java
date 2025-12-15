@@ -12,7 +12,7 @@ import com.azure.cosmos.encryption.implementation.mdesrc.cryptography.KeyEncrypt
 import com.azure.cosmos.encryption.implementation.mdesrc.cryptography.MicrosoftDataEncryptionException;
 import com.azure.cosmos.encryption.implementation.mdesrc.cryptography.ProtectedDataEncryptionKey;
 import com.azure.cosmos.implementation.ImplementationBridgeHelpers;
-import com.azure.cosmos.implementation.apachecommons.lang.StringUtils;
+import com.azure.cosmos.implementation.Strings;
 import com.azure.cosmos.models.CosmosClientEncryptionKeyProperties;
 import com.azure.cosmos.models.CosmosClientEncryptionKeyResponse;
 import com.azure.cosmos.models.EncryptionKeyWrapMetadata;
@@ -75,15 +75,15 @@ public final class CosmosEncryptionAsyncDatabase {
     public Mono<CosmosClientEncryptionKeyResponse> createClientEncryptionKey(String clientEncryptionKeyId,
                                                                              String encryptionAlgorithm,
                                                                              EncryptionKeyWrapMetadata encryptionKeyWrapMetadata) {
-        if (StringUtils.isEmpty(clientEncryptionKeyId)) {
+        if (Strings.isEmpty(clientEncryptionKeyId)) {
              throw new IllegalArgumentException("clientEncryptionKeyId is null or empty");
         }
 
-        if (StringUtils.isEmpty(encryptionAlgorithm)) {
+        if (Strings.isEmpty(encryptionAlgorithm)) {
             throw new IllegalArgumentException("encryptionAlgorithm is null or empty");
         }
 
-        if (StringUtils.isEmpty(encryptionKeyWrapMetadata.getAlgorithm())) {
+        if (Strings.isEmpty(encryptionKeyWrapMetadata.getAlgorithm())) {
             throw new IllegalArgumentException("Key Encryption Key Algorithm in EncryptionKeyWrapMetadata is null or empty");
         }
 
@@ -125,11 +125,11 @@ public final class CosmosEncryptionAsyncDatabase {
      */
     public Mono<CosmosClientEncryptionKeyResponse> rewrapClientEncryptionKey(String clientEncryptionKeyId,
                                                                              EncryptionKeyWrapMetadata newEncryptionKeyWrapMetadata) {
-        if (StringUtils.isEmpty(clientEncryptionKeyId)) {
+        if (Strings.isEmpty(clientEncryptionKeyId)) {
             throw new IllegalArgumentException("clientEncryptionKeyId is null or empty");
         }
 
-        if (StringUtils.isEmpty(newEncryptionKeyWrapMetadata.getAlgorithm())) {
+        if (Strings.isEmpty(newEncryptionKeyWrapMetadata.getAlgorithm())) {
             throw new IllegalArgumentException("Key Encryption Key Algorithm in EncryptionKeyWrapMetadata is null or " +
                 "empty");
         }

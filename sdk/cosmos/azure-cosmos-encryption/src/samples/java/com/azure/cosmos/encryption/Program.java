@@ -11,7 +11,7 @@ import com.azure.cosmos.encryption.implementation.mdesrc.cryptography.MicrosoftD
 import com.azure.cosmos.encryption.models.CosmosEncryptionAlgorithm;
 import com.azure.cosmos.encryption.models.CosmosEncryptionType;
 import com.azure.cosmos.encryption.models.SqlQuerySpecWithEncryption;
-import com.azure.cosmos.implementation.apachecommons.lang.StringUtils;
+import com.azure.cosmos.implementation.Strings;
 import com.azure.cosmos.models.ClientEncryptionIncludedPath;
 import com.azure.cosmos.models.ClientEncryptionPolicy;
 import com.azure.cosmos.models.CosmosClientEncryptionKeyProperties;
@@ -125,7 +125,7 @@ public class Program {
         // Master key identifier: https://{keyvault-name}.vault.azure
         //.net/{object-type}/{object-name}/{object-version}
         String masterKeyUrlFromConfig = getConfiguration("KeyVaultMasterKeyUrl", properties);
-        if (StringUtils.isEmpty(masterKeyUrlFromConfig)) {
+        if (Strings.isEmpty(masterKeyUrlFromConfig)) {
             throw new IllegalArgumentException("Please specify a valid MasterKeyUrl in the appSettings.json");
         }
 
@@ -167,25 +167,25 @@ public class Program {
 
     private static TokenCredential getTokenCredential(Properties properties) {
         String clientId = getConfiguration("ClientId", properties);
-        if (StringUtils.isEmpty(clientId)) {
+        if (Strings.isEmpty(clientId)) {
             throw new IllegalArgumentException("Please specify a valid ClientId in the appSettings.json");
         }
 
         // TODO: add sample for certificate base token credentials
 //        // Certificate's public key must be at least 2048 bits.
 //        String clientCertThumbprint = getConfiguration("ClientCertThumbprint", properties);
-//        if (StringUtils.isEmpty(clientCertThumbprint)) {
+//        if (Strings.isEmpty(clientCertThumbprint)) {
 //            throw new IllegalArgumentException("Please specify a valid ClientCertThumbprint in the appSettings.json");
 //        }
 
         // Get the Tenant ID
         String tenantId = getConfiguration("TenantId", properties);
-        if (StringUtils.isEmpty(tenantId)) {
+        if (Strings.isEmpty(tenantId)) {
             throw new IllegalArgumentException("Please specify a valid Tenant Id in the appSettings.json");
         }
 
         String clientSecret = getConfiguration("ClientSecret", properties);
-        if (StringUtils.isEmpty(tenantId)) {
+        if (Strings.isEmpty(tenantId)) {
             throw new IllegalArgumentException("Please specify a valid ClientSecret in the appSettings.json");
         }
 

@@ -2,8 +2,6 @@
 // Licensed under the MIT License.
 package com.azure.cosmos.implementation.http;
 
-import com.azure.cosmos.implementation.apachecommons.lang.StringUtils;
-
 /**
  * A single header within a HTTP request or response.
  *
@@ -50,7 +48,7 @@ public class HttpHeader {
      * @return the values of this Header that are separated by a comma
      */
     public String[] values() {
-        return value == null ? null : StringUtils.split(value, ",");
+        return value == null ? null : value.split(",");
     }
 
     /**

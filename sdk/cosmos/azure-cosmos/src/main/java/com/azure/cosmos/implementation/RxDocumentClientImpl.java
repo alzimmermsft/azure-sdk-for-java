@@ -435,8 +435,7 @@ public class RxDocumentClientImpl implements AsyncDocumentClient, IAuthorization
         if (permissionFeed != null && permissionFeed.size() > 0) {
             this.resourceTokensMap = new HashMap<>();
             for (Permission permission : permissionFeed) {
-                String[] segments = StringUtils.split(permission.getResourceLink(),
-                        Constants.Properties.PATH_SEPARATOR.charAt(0));
+                String[] segments = permission.getResourceLink().split(Constants.Properties.PATH_SEPARATOR);
 
                 if (segments.length == 0) {
                     throw new IllegalArgumentException("resourceLink");
@@ -1837,7 +1836,7 @@ public class RxDocumentClientImpl implements AsyncDocumentClient, IAuthorization
             }
         }
 
-        return String.format("[%s]", StringUtils.join(stringArray, ","));
+        return String.format("[%s]", Strings.join(stringArray, ","));
     }
 
     private static void validateResource(Resource resource) {
@@ -1949,12 +1948,12 @@ public class RxDocumentClientImpl implements AsyncDocumentClient, IAuthorization
         }
 
         if (options.getPostTriggerInclude() != null && options.getPostTriggerInclude().size() > 0) {
-            String postTriggerInclude = StringUtils.join(options.getPostTriggerInclude(), ",");
+            String postTriggerInclude = Strings.join(options.getPostTriggerInclude(), ",");
             headers.put(HttpConstants.HttpHeaders.POST_TRIGGER_INCLUDE, postTriggerInclude);
         }
 
         if (options.getPreTriggerInclude() != null && options.getPreTriggerInclude().size() > 0) {
-            String preTriggerInclude = StringUtils.join(options.getPreTriggerInclude(), ",");
+            String preTriggerInclude = Strings.join(options.getPreTriggerInclude(), ",");
             headers.put(HttpConstants.HttpHeaders.PRE_TRIGGER_INCLUDE, preTriggerInclude);
         }
 
@@ -4331,7 +4330,7 @@ public class RxDocumentClientImpl implements AsyncDocumentClient, IAuthorization
     private List<String> createPkSelectors(PartitionKeyDefinition partitionKeyDefinition) {
         return partitionKeyDefinition.getPaths()
             .stream()
-            .map(pathPart -> StringUtils.substring(pathPart, 1)) // skip starting /
+            .map(Strings::stripFirstCharacter) // skip starting /
             .map(pathPart -> StringUtils.replace(pathPart, "\"", "\\")) // escape quote
             .map(part -> "[\"" + part + "\"]")
             .collect(Collectors.toList());
@@ -4416,9 +4415,7 @@ public class RxDocumentClientImpl implements AsyncDocumentClient, IAuthorization
                         .toRequestOptions(queryRequestOptions);
                     requestOptions.setPartitionKey(firstIdentity.getPartitionKey());
                     return this.readDocument((resourceLink + firstIdentity.getId()), requestOptions, diagnosticsFactory)
-                        .flatMap(resourceResponse -> Mono.just(
-                            new ImmutablePair<ResourceResponse<Document>, CosmosException>(resourceResponse, null)
-                        ))
+                        .flatMap(resourceResponse -> Mono.just(Pair.of(resourceResponse, null)))
                         .onErrorResume(throwable -> {
                             Throwable unwrappedThrowable = Exceptions.unwrap(throwable);
 
@@ -4430,7 +4427,7 @@ public class RxDocumentClientImpl implements AsyncDocumentClient, IAuthorization
                                 int subStatusCode = cosmosException.getSubStatusCode();
 
                                 if (statusCode == HttpConstants.StatusCodes.NOTFOUND && subStatusCode == HttpConstants.SubStatusCodes.UNKNOWN) {
-                                    return Mono.just(new ImmutablePair<ResourceResponse<Document>, CosmosException>(null, cosmosException));
+                                    return Mono.just(Pair.of(null, cosmosException));
                                 }
                             }
 

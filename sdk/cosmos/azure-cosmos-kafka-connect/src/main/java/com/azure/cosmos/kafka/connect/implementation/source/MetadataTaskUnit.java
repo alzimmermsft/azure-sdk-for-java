@@ -3,8 +3,8 @@
 
 package com.azure.cosmos.kafka.connect.implementation.source;
 
-import com.azure.cosmos.implementation.apachecommons.lang.StringUtils;
-import com.azure.cosmos.implementation.apachecommons.lang.tuple.Pair;
+import com.azure.cosmos.implementation.Pair;
+import com.azure.cosmos.implementation.Strings;
 import com.azure.cosmos.models.FeedRange;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonParser;
@@ -47,10 +47,10 @@ public class MetadataTaskUnit implements ITaskUnit {
         String storageName,
         CosmosMetadataStorageType storageType) {
 
-        checkArgument(StringUtils.isNotEmpty(databaseName), "Argument 'databaseName' should not be null");
+        checkArgument(Strings.isNotEmpty(databaseName), "Argument 'databaseName' should not be null");
         checkNotNull(containerRids, "Argument 'containerRids' can not be null");
         checkNotNull(containersEffectiveRangesMap, "Argument 'containersEffectiveRangesMap' can not be null");
-        checkArgument(StringUtils.isNotEmpty(storageName), "Argument 'storageName' should not be null");
+        checkArgument(Strings.isNotEmpty(storageName), "Argument 'storageName' should not be null");
 
         this.connectorName = connectorName;
         this.databaseName = databaseName;

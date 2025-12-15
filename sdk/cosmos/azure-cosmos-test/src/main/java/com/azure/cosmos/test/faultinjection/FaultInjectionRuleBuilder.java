@@ -3,7 +3,7 @@
 
 package com.azure.cosmos.test.faultinjection;
 
-import com.azure.cosmos.implementation.apachecommons.lang.StringUtils;
+import com.azure.cosmos.implementation.Strings;
 import com.azure.cosmos.test.implementation.ImplementationBridgeHelpers;
 
 import java.time.Duration;
@@ -30,7 +30,7 @@ public final class FaultInjectionRuleBuilder {
      * @param id the fault injection rule id.
      */
     public FaultInjectionRuleBuilder(String id) {
-        checkArgument(StringUtils.isNotEmpty(id), "Argument 'id' can not be null or empty");
+        checkArgument(Strings.isNotEmpty(id), "Argument 'id' can not be null or empty");
         this.id = id;
     }
 

@@ -3,13 +3,13 @@
 package com.azure.cosmos.implementation;
 
 import com.azure.core.util.CoreUtils;
-import com.azure.cosmos.implementation.apachecommons.lang.StringUtils;
-import com.azure.cosmos.implementation.guava25.base.Objects;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
+import java.util.Objects;
+import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * While this class is public, but it is not part of our published public APIs.
@@ -17,6 +17,8 @@ import java.util.List;
  */
 public class Strings {
     public static final String EMPTY = "";
+    public static final String SPACE = " ";
+    public static final String[] EMPTY_ARRAY = new String[0];
 
     private final static String UTF8_CHARSET = StandardCharsets.UTF_8.name();
 
@@ -103,6 +105,73 @@ public class Strings {
         return CoreUtils.stringJoin(join, strings);
     }
 
+    /**
+     * Creates a string of the given {@code length} comprising {@code a} to {@code z} characters.
+     *
+     * @param length The length of the string.
+     * @return A random alphabetic string.
+     * @throws IllegalArgumentException If {@code length} is less than zero.
+     */
+    public static String randomAlphabetic(int length) {
+        if (length < 0) {
+            throw new IllegalArgumentException("'length' must be zero or greater.");
+        } else if (length == 0) {
+            return EMPTY;
+        }
+
+        ThreadLocalRandom random = ThreadLocalRandom.current();
+        StringBuilder builder = new StringBuilder(length);
+        for (int i = 0; i < length; i++) {
+            builder.append('a' + random.nextInt(26));
+        }
+
+        return builder.toString();
+    }
+
+    /**
+     * Repeats the given {@code str} the {@code count} number of times.
+     * <p>
+     * If {@code count} is 0 an empty string is returned. If {@code str} is null, null is returned.
+     *
+     * @param str The string to repeat.
+     * @param count The number of times to repeat.
+     * @return The repeated string.
+     */
+    public static String repeat(String str, int count) {
+        if (str == null) {
+            return null;
+        }
+
+        if (count == 0) {
+            return EMPTY;
+        } else if (count == 1) {
+            return str;
+        }
+
+        StringBuilder builder = new StringBuilder(str.length() * count);
+        for (int i = 0; i < count; i++) {
+            builder.append(str);
+        }
+
+        return builder.toString();
+    }
+
+    public static String repeat(char c, int count) {
+        return repeat("" + c, count);
+    }
+
+    public static String stripFirstCharacter(String str) {
+        if (str == null) {
+            return null;
+        }
+
+        if (str.length() <= 1) {
+            return EMPTY;
+        }
+
+        return str.substring(1);
+    }
+
     public static String toString(boolean value) {
         return Boolean.toString(value);
     }
@@ -112,15 +181,33 @@ public class Strings {
     }
 
     public static boolean areEqual(String str1, String str2) {
-        return Objects.equal(str1, str2);
+        return Objects.equals(str1, str2);
     }
 
     public static boolean areEqualIgnoreCase(String str1, String str2) {
-        return StringUtils.equalsIgnoreCase(str1, str2);
+        if (str1 == null || str2 == null) {
+            return str1 == str2;
+        } else if (str1 == str2) {
+            return true;
+        }
+
+        return str1.equalsIgnoreCase(str2);
     }
 
     public static boolean containsIgnoreCase(String str1, String str2) {
-        return StringUtils.containsIgnoreCase(str1, str2);
+        if (str1 == null || str2 == null) {
+            return false;
+        }
+
+        int searchLength = str2.length();
+        int searchCutOff = str1.length() - searchLength;
+        for (int i = 0; i < searchCutOff; i++) {
+            if (str1.regionMatches(true, i, str2, 0, searchLength)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     public static String fromCamelCaseToUpperCase(String str) {

@@ -6,10 +6,9 @@ package com.azure.cosmos.kafka.connect;
 import com.azure.cosmos.CosmosAsyncContainer;
 import com.azure.cosmos.CosmosAsyncDatabase;
 import com.azure.cosmos.implementation.ImplementationBridgeHelpers;
+import com.azure.cosmos.implementation.Pair;
+import com.azure.cosmos.implementation.Strings;
 import com.azure.cosmos.implementation.UUIDs;
-import com.azure.cosmos.implementation.apachecommons.lang.RandomUtils;
-import com.azure.cosmos.implementation.apachecommons.lang.StringUtils;
-import com.azure.cosmos.implementation.apachecommons.lang.tuple.Pair;
 import com.azure.cosmos.kafka.connect.implementation.CosmosClientCache;
 import com.azure.cosmos.kafka.connect.implementation.CosmosClientCacheItem;
 import com.azure.cosmos.kafka.connect.implementation.CosmosMasterKeyAuthConfig;
@@ -58,6 +57,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -314,14 +314,14 @@ public final class CosmosSourceConnector extends SourceConnector implements Auto
                 String.format("%s-%s-%d",
                     "source",
                     this.connectorName,
-                    RandomUtils.nextInt(1, 9999999)));
-            if (StringUtils.isNotEmpty(clientMetadataCachesString)) {
+                    ThreadLocalRandom.current().nextInt(1, 9999999)));
+            if (Strings.isNotEmpty(clientMetadataCachesString)) {
                 taskConfigs.put(
                     CosmosSourceTaskConfig.COSMOS_CLIENT_METADATA_CACHES_SNAPSHOT,
                     clientMetadataCachesString);
             }
 
-            if (StringUtils.isNotEmpty(throughputControlClientMetadataCachesString)) {
+            if (Strings.isNotEmpty(throughputControlClientMetadataCachesString)) {
                 taskConfigs.put(
                     CosmosSourceTaskConfig.THROUGHPUT_CONTROL_COSMOS_CLIENT_METADATA_CACHES_SNAPSHOT,
                     throughputControlClientMetadataCachesString);

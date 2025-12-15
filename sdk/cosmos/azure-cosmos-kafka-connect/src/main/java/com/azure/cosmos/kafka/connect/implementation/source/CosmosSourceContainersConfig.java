@@ -3,7 +3,7 @@
 
 package com.azure.cosmos.kafka.connect.implementation.source;
 
-import com.azure.cosmos.implementation.apachecommons.lang.StringUtils;
+import com.azure.cosmos.implementation.Strings;
 
 import java.util.List;
 import java.util.Map;
@@ -25,7 +25,7 @@ public class CosmosSourceContainersConfig {
         List<String> includedContainers,
         Map<String, String> containerToTopicMap) {
 
-        checkArgument(StringUtils.isNotEmpty(databaseName), "Argument 'databaseName' can not be null");
+        checkArgument(Strings.isNotEmpty(databaseName), "Argument 'databaseName' can not be null");
         checkNotNull(includedContainers, "Argument 'includedContainers' can not be null");
 
         this.databaseName = databaseName;

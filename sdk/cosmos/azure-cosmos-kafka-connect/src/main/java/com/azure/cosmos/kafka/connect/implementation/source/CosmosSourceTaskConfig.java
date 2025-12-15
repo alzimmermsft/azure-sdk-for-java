@@ -4,8 +4,8 @@
 package com.azure.cosmos.kafka.connect.implementation.source;
 
 import com.azure.cosmos.implementation.CosmosClientMetadataCachesSnapshot;
+import com.azure.cosmos.implementation.Strings;
 import com.azure.cosmos.implementation.Utils;
-import com.azure.cosmos.implementation.apachecommons.lang.StringUtils;
 import com.azure.cosmos.kafka.connect.implementation.KafkaCosmosUtils;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -91,7 +91,7 @@ public class CosmosSourceTaskConfig extends CosmosSourceConfig {
         String feedRangesTaskUnitsConfig = this.getString(SOURCE_FEED_RANGE_TASK_UNITS);
 
         try {
-            if (!StringUtils.isEmpty(feedRangesTaskUnitsConfig)) {
+            if (Strings.isNotEmpty(feedRangesTaskUnitsConfig)) {
                 return OBJECT_MAPPER
                     .readValue(feedRangesTaskUnitsConfig, new TypeReference<List<String>>() {})
                     .stream()
@@ -114,7 +114,7 @@ public class CosmosSourceTaskConfig extends CosmosSourceConfig {
 
     private MetadataTaskUnit parseMetadataTaskUnit() {
         String metadataTaskUnitConfig = this.getString(SOURCE_METADATA_TASK_UNIT);
-        if (!StringUtils.isEmpty(metadataTaskUnitConfig)) {
+        if (Strings.isNotEmpty(metadataTaskUnitConfig)) {
             try {
                 return OBJECT_MAPPER.readValue(metadataTaskUnitConfig, MetadataTaskUnit.class);
             } catch (JsonProcessingException e) {

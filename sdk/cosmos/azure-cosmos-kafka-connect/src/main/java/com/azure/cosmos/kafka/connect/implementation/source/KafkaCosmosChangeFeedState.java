@@ -3,7 +3,7 @@
 
 package com.azure.cosmos.kafka.connect.implementation.source;
 
-import com.azure.cosmos.implementation.apachecommons.lang.StringUtils;
+import com.azure.cosmos.implementation.Strings;
 import com.azure.cosmos.models.FeedRange;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonParser;
@@ -32,7 +32,7 @@ public class KafkaCosmosChangeFeedState {
     }
 
     public KafkaCosmosChangeFeedState(String responseContinuation, FeedRange targetRange, String itemLsn) {
-        checkArgument(StringUtils.isNotEmpty(responseContinuation), "Argument 'responseContinuation' can not be null nor empty");
+        checkArgument(Strings.isNotEmpty(responseContinuation), "Argument 'responseContinuation' can not be null nor empty");
         checkNotNull(targetRange, "Argument 'targetRange' can not be null");
 
         this.responseContinuation = responseContinuation;
@@ -61,7 +61,7 @@ public class KafkaCosmosChangeFeedState {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        
+
         KafkaCosmosChangeFeedState that = (KafkaCosmosChangeFeedState) o;
         return Objects.equals(responseContinuation, that.responseContinuation)
             && Objects.equals(targetRange, that.targetRange)

@@ -3,7 +3,7 @@
 
 package com.azure.cosmos.kafka.connect.implementation.sink.patch;
 
-import com.azure.cosmos.implementation.apachecommons.lang.StringUtils;
+import com.azure.cosmos.implementation.Strings;
 
 import static com.azure.cosmos.implementation.guava25.base.Preconditions.checkArgument;
 import static com.azure.cosmos.implementation.guava25.base.Preconditions.checkNotNull;
@@ -18,8 +18,8 @@ public class CosmosPatchJsonPropertyConfig {
         KafkaCosmosPatchOperationType patchOperationType,
         String mappingPath) {
 
-        checkArgument(StringUtils.isNotEmpty(property), "Argument 'property' should not be null");
-        checkArgument(StringUtils.isNotEmpty(mappingPath), "Argument 'mappingPath' should not be null");
+        checkArgument(Strings.isNotEmpty(property), "Argument 'property' should not be null");
+        checkArgument(Strings.isNotEmpty(mappingPath), "Argument 'mappingPath' should not be null");
         checkNotNull(patchOperationType, "Argument 'patchOperationType' should not be null");
 
         this.property = property;

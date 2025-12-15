@@ -2,15 +2,13 @@
 // Licensed under the MIT License.
 package com.azure.cosmos.implementation;
 
-import com.azure.cosmos.implementation.apachecommons.lang.StringUtils;
-
 import java.time.Duration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 
 public class QueryMetricsUtils {
-    static final String Indent = StringUtils.SPACE;
+    static final String Indent = Strings.SPACE;
     private static final int NANOS_TO_MILLIS = 1000000;
     private static final String BytesUnitString = "bytes";
 
@@ -23,10 +21,10 @@ public class QueryMetricsUtils {
 
         final int key = 0;
         final int value = 1;
-        String[] headerAttributes = StringUtils.split(delimitedString, ";");
+        String[] headerAttributes = delimitedString.split(";");
 
         for (String attribute : headerAttributes) {
-            String[] attributeKeyValue = StringUtils.split(attribute, "=");
+            String[] attributeKeyValue = attribute.split("=");
 
             if (attributeKeyValue.length != 2) {
                 throw new NullPointerException("recieved a malformed delimited STRING");
@@ -73,7 +71,7 @@ public class QueryMetricsUtils {
         stringBuilder.append(String.format(
                 Locale.ROOT,
                 FormatString,
-                StringUtils.repeat(Indent, indentLevel) + property,
+                Strings.repeat(Indent, indentLevel) + property,
                 value,
                 units,
                 System.lineSeparator()));
@@ -116,7 +114,7 @@ public class QueryMetricsUtils {
         stringBuilder.append(String.format(
                 Locale.ROOT,
                 FormatString,
-                String.join(StringUtils.repeat(Indent, indentLevel)) + headerTitle,
+                String.join(Strings.repeat(Indent, indentLevel)) + headerTitle,
                 System.lineSeparator()));
     }
 

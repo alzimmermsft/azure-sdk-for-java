@@ -3,24 +3,24 @@
 
 package com.azure.cosmos.implementation.directconnectivity;
 
-import com.azure.cosmos.implementation.apachecommons.text.WordUtils;
-
 public enum Protocol {
-    HTTPS, TCP;
+    HTTPS("https", "Https"),
+    TCP("rntbd", "Rntbd");
+
+    private final String scheme;
+    private final String capitalizedScheme;
+
+    private Protocol(String scheme, String capitalizedScheme) {
+        this.scheme = scheme;
+        this.capitalizedScheme = capitalizedScheme;
+    }
 
     String scheme() {
-        switch (this) {
-            case HTTPS:
-                return "https";
-            case TCP:
-                return "rntbd";
-            default:
-                throw new IllegalStateException();
-        }
+        return scheme;
     }
 
     @Override
     public String toString() {
-        return WordUtils.capitalizeFully(this.name());
+        return capitalizedScheme;
     }
 }

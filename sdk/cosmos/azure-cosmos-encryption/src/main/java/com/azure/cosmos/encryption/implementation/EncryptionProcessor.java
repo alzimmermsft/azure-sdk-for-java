@@ -9,14 +9,14 @@ import com.azure.cosmos.CosmosItemSerializer;
 import com.azure.cosmos.encryption.CosmosEncryptionAsyncClient;
 import com.azure.cosmos.encryption.implementation.keyprovider.EncryptionKeyStoreProviderImpl;
 import com.azure.cosmos.encryption.implementation.mdesrc.cryptography.EncryptionType;
+import com.azure.cosmos.encryption.implementation.mdesrc.cryptography.MicrosoftDataEncryptionException;
 import com.azure.cosmos.encryption.implementation.mdesrc.cryptography.ProtectedDataEncryptionKey;
 import com.azure.cosmos.encryption.implementation.mdesrc.cryptography.SqlSerializerFactory;
 import com.azure.cosmos.encryption.models.CosmosEncryptionType;
-import com.azure.cosmos.encryption.implementation.mdesrc.cryptography.MicrosoftDataEncryptionException;
 import com.azure.cosmos.implementation.ImplementationBridgeHelpers;
+import com.azure.cosmos.implementation.Pair;
+import com.azure.cosmos.implementation.Strings;
 import com.azure.cosmos.implementation.Utils;
-import com.azure.cosmos.implementation.apachecommons.lang.StringUtils;
-import com.azure.cosmos.implementation.apachecommons.lang.tuple.Pair;
 import com.azure.cosmos.models.ClientEncryptionIncludedPath;
 import com.azure.cosmos.models.ClientEncryptionPolicy;
 import com.azure.cosmos.models.CosmosClientEncryptionKeyProperties;
@@ -275,7 +275,7 @@ public class EncryptionProcessor {
         assert (itemObj != null);
         return initEncryptionSettingsIfNotInitializedAsync().then(Mono.defer(() -> {
             for (ClientEncryptionIncludedPath includedPath : this.clientEncryptionPolicy.getIncludedPaths()) {
-                if (StringUtils.isEmpty(includedPath.getPath()) || includedPath.getPath().charAt(0) != '/' || includedPath.getPath().lastIndexOf('/') != 0) {
+                if (Strings.isEmpty(includedPath.getPath()) || includedPath.getPath().charAt(0) != '/' || includedPath.getPath().lastIndexOf('/') != 0) {
                     return Mono.error(new IllegalArgumentException("Invalid encryption path: " + includedPath.getPath()));
                 }
             }
@@ -316,7 +316,7 @@ public class EncryptionProcessor {
         assert (itemJObj != null);
         return initEncryptionSettingsIfNotInitializedAsync().then(Mono.defer(() -> {
             for (ClientEncryptionIncludedPath includedPath : this.clientEncryptionPolicy.getIncludedPaths()) {
-                if (StringUtils.isEmpty(includedPath.getPath()) || includedPath.getPath().charAt(0) != '/' || includedPath.getPath().lastIndexOf('/') != 0) {
+                if (Strings.isEmpty(includedPath.getPath()) || includedPath.getPath().charAt(0) != '/' || includedPath.getPath().lastIndexOf('/') != 0) {
                     return Mono.error(new IllegalArgumentException("Invalid encryption path: " + includedPath.getPath()));
                 }
             }
@@ -394,8 +394,7 @@ public class EncryptionProcessor {
             } else {
                 List<byte[]> encryptedArray = new ArrayList<>();
                 for (Iterator<JsonNode> it = arrayNode.elements(); it.hasNext(); ) {
-                    encryptedArray.add(encryptAndSerializeValue(encryptionSettings, null, it.next(),
-                        StringUtils.EMPTY));
+                    encryptedArray.add(encryptAndSerializeValue(encryptionSettings, null, it.next(), Strings.EMPTY));
                 }
                 arrayNode.removeAll();
                 for (byte[] encryptedValue : encryptedArray) {
@@ -435,8 +434,7 @@ public class EncryptionProcessor {
                 for (Iterator<JsonNode> arrayIterator = arrayNode.elements(); arrayIterator.hasNext(); ) {
                     JsonNode nodeInArray = arrayIterator.next();
                     if (nodeInArray.isArray()) {
-                        encryptAndSerializeProperty(encryptionSettings, (ObjectNode) null,
-                            nodeInArray, StringUtils.EMPTY);
+                        encryptAndSerializeProperty(encryptionSettings, (ObjectNode) null, nodeInArray, Strings.EMPTY);
                     } else {
                         for (Iterator<Map.Entry<String, JsonNode>> it = nodeInArray.fields(); it.hasNext(); ) {
                             Map.Entry<String, JsonNode> child = it.next();
@@ -453,8 +451,7 @@ public class EncryptionProcessor {
             } else {
                 List<byte[]> encryptedArray = new ArrayList<>();
                 for (Iterator<JsonNode> it = arrayNode.elements(); it.hasNext(); ) {
-                    encryptedArray.add(encryptAndSerializeValue(encryptionSettings, null, it.next(),
-                        StringUtils.EMPTY));
+                    encryptedArray.add(encryptAndSerializeValue(encryptionSettings, null, it.next(), Strings.EMPTY));
                 }
                 arrayNode.removeAll();
                 for (byte[] encryptedValue : encryptedArray) {
@@ -535,7 +532,7 @@ public class EncryptionProcessor {
         }
         return initEncryptionSettingsIfNotInitializedAsync().then(Mono.defer(() -> {
             for (ClientEncryptionIncludedPath includedPath : this.clientEncryptionPolicy.getIncludedPaths()) {
-                if (StringUtils.isEmpty(includedPath.getPath()) || includedPath.getPath().charAt(0) != '/' || includedPath.getPath().lastIndexOf('/') != 0) {
+                if (Strings.isEmpty(includedPath.getPath()) || includedPath.getPath().charAt(0) != '/' || includedPath.getPath().lastIndexOf('/') != 0) {
                     return Mono.error(new IllegalArgumentException("Invalid encryption path: " + includedPath.getPath()));
                 }
             }
@@ -592,8 +589,7 @@ public class EncryptionProcessor {
                 for (Iterator<JsonNode> arrayIterator = arrayNode.elements(); arrayIterator.hasNext(); ) {
                     JsonNode nodeInArray = arrayIterator.next();
                     if (nodeInArray.isArray()) {
-                        decryptAndSerializeProperty(encryptionSettings, (ObjectNode) null,
-                            nodeInArray, StringUtils.EMPTY);
+                        decryptAndSerializeProperty(encryptionSettings, (ObjectNode) null, nodeInArray, Strings.EMPTY);
                     } else {
                         for (Iterator<Map.Entry<String, JsonNode>> it = nodeInArray.fields(); it.hasNext(); ) {
                             Map.Entry<String, JsonNode> child = it.next();
@@ -610,8 +606,7 @@ public class EncryptionProcessor {
             } else {
                 List<JsonNode> decryptedArray = new ArrayList<>();
                 for (Iterator<JsonNode> it = arrayNode.elements(); it.hasNext(); ) {
-                    decryptedArray.add(decryptAndSerializeValue(encryptionSettings, null, it.next(),
-                        StringUtils.EMPTY));
+                    decryptedArray.add(decryptAndSerializeValue(encryptionSettings, null, it.next(), Strings.EMPTY));
                 }
                 arrayNode.removeAll();
                 for (JsonNode encryptedValue : decryptedArray) {

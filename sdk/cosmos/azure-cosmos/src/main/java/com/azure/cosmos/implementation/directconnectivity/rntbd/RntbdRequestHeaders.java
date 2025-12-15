@@ -17,8 +17,6 @@ import com.azure.cosmos.implementation.RemoteStorageType;
 import com.azure.cosmos.implementation.ResourceId;
 import com.azure.cosmos.implementation.RxDocumentServiceRequest;
 import com.azure.cosmos.implementation.Strings;
-import com.azure.cosmos.implementation.apachecommons.lang.EnumUtils;
-import com.azure.cosmos.implementation.apachecommons.lang.StringUtils;
 import com.azure.cosmos.models.IndexingDirective;
 import com.azure.cosmos.models.PriorityLevel;
 import com.fasterxml.jackson.annotation.JsonFilter;
@@ -731,9 +729,7 @@ final class RntbdRequestHeaders extends RntbdTokenStream<RntbdRequestHeader> {
 
         if (Strings.isNotEmpty(value)) {
 
-            final ContentSerializationFormat format = EnumUtils.getEnumIgnoreCase(
-                ContentSerializationFormat.class,
-                value);
+            final ContentSerializationFormat format = ContentSerializationFormat.getIgnoreCase(value);
 
             if (format == null) {
                 final String reason = String.format(Locale.ROOT, RMResources.InvalidRequestHeaderValue,
@@ -872,7 +868,7 @@ final class RntbdRequestHeaders extends RntbdTokenStream<RntbdRequestHeader> {
 
         if (Strings.isNotEmpty(value)) {
 
-            final EnumerationDirection direction = EnumUtils.getEnumIgnoreCase(EnumerationDirection.class, value);
+            final EnumerationDirection direction = EnumerationDirection.getIgnoreCase(value);
 
             if (direction == null) {
                 final String reason = String.format(Locale.ROOT, RMResources.InvalidRequestHeaderValue,
@@ -907,7 +903,7 @@ final class RntbdRequestHeaders extends RntbdTokenStream<RntbdRequestHeader> {
 
         if (Strings.isNotEmpty(value)) {
 
-            final FanoutOperationState format = EnumUtils.getEnumIgnoreCase(FanoutOperationState.class, value);
+            final FanoutOperationState format = FanoutOperationState.getIgnoreCase(value);
 
             if (format == null) {
                 final String reason = String.format(Locale.ROOT, RMResources.InvalidRequestHeaderValue,
@@ -942,7 +938,7 @@ final class RntbdRequestHeaders extends RntbdTokenStream<RntbdRequestHeader> {
 
         if (Strings.isNotEmpty(value)) {
 
-            final IndexingDirective directive = EnumUtils.getEnumIgnoreCase(IndexingDirective.class, value);
+            final IndexingDirective directive = IndexingDirective.getIgnoreCase(value);
 
             if (directive == null) {
                 final String reason = String.format(Locale.ROOT, RMResources.InvalidRequestHeaderValue,
@@ -1020,7 +1016,7 @@ final class RntbdRequestHeaders extends RntbdTokenStream<RntbdRequestHeader> {
 
         if (Strings.isNotEmpty(value)) {
 
-            final MigrateCollectionDirective directive = EnumUtils.getEnumIgnoreCase(MigrateCollectionDirective.class, value);
+            final MigrateCollectionDirective directive = MigrateCollectionDirective.getIgnoreCase(value);
 
             if (directive == null) {
                 final String reason = String.format(Locale.ROOT, RMResources.InvalidRequestHeaderValue,
@@ -1122,7 +1118,7 @@ final class RntbdRequestHeaders extends RntbdTokenStream<RntbdRequestHeader> {
 
         if (Strings.isNotEmpty(value)) {
 
-            final RemoteStorageType type = EnumUtils.getEnumIgnoreCase(RemoteStorageType.class, value);
+            final RemoteStorageType type = RemoteStorageType.getIgnoreCase(value);
 
             if (type == null) {
                 final String reason = String.format(Locale.ROOT, RMResources.InvalidRequestHeaderValue,
@@ -1162,7 +1158,7 @@ final class RntbdRequestHeaders extends RntbdTokenStream<RntbdRequestHeader> {
             // not "apps/appName/partitions/partitionKey/replicas/replicaId/dbs/dbName"
 
             final String address = request.getResourceAddress();
-            final String[] fragments = StringUtils.split(address, URL_TRIM);
+            final String[] fragments = address.split(URL_TRIM);
             int count = fragments.length;
 
             if (count >= 2) {
@@ -1265,7 +1261,7 @@ final class RntbdRequestHeaders extends RntbdTokenStream<RntbdRequestHeader> {
 
         if (Strings.isNotEmpty(value)) {
 
-            final ReadFeedKeyType type = EnumUtils.getEnumIgnoreCase(ReadFeedKeyType.class, value);
+            final ReadFeedKeyType type = ReadFeedKeyType.getIgnoreCase(value);
 
             if (type == null) {
                 final String reason = String.format(Locale.ROOT, RMResources.InvalidRequestHeaderValue,

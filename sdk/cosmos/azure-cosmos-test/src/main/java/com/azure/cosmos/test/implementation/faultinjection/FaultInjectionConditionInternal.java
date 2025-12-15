@@ -6,13 +6,13 @@ package com.azure.cosmos.test.implementation.faultinjection;
 import com.azure.cosmos.implementation.OperationType;
 import com.azure.cosmos.implementation.ResourceType;
 import com.azure.cosmos.implementation.Utils;
-import com.azure.cosmos.implementation.apachecommons.lang.StringUtils;
 import com.azure.cosmos.implementation.faultinjection.FaultInjectionRequestArgs;
 import com.azure.cosmos.implementation.routing.RegionalRoutingContext;
 
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class FaultInjectionConditionInternal {
@@ -177,7 +177,7 @@ public class FaultInjectionConditionInternal {
         }
 
         private boolean isApplicableContainerRid(FaultInjectionRequestArgs requestArgs) {
-            return StringUtils.equals(this.containerResourceId, requestArgs.getCollectionRid());
+            return Objects.equals(this.containerResourceId, requestArgs.getCollectionRid());
         }
 
         private boolean isApplicableCollectionRead(FaultInjectionRequestArgs requestArgs) {

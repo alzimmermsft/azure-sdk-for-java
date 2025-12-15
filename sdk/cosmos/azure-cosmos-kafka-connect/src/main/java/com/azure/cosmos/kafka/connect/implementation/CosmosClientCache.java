@@ -9,7 +9,7 @@ import com.azure.cosmos.GatewayConnectionConfig;
 import com.azure.cosmos.ThrottlingRetryOptions;
 import com.azure.cosmos.implementation.CosmosClientMetadataCachesSnapshot;
 import com.azure.cosmos.implementation.ImplementationBridgeHelpers;
-import com.azure.cosmos.implementation.apachecommons.lang.StringUtils;
+import com.azure.cosmos.implementation.Strings;
 import com.azure.identity.ClientSecretCredential;
 import com.azure.identity.ClientSecretCredentialBuilder;
 import org.slf4j.Logger;
@@ -168,11 +168,11 @@ public class CosmosClientCache implements AutoCloseable {
         checkNotNull(accountConfig, "Argument 'accountConfig' must not be null");
 
         String userAgentSuffix = KafkaCosmosConstants.USER_AGENT_SUFFIX;
-        if (StringUtils.isNotEmpty(sourceName)) {
+        if (Strings.isNotEmpty(sourceName)) {
             userAgentSuffix += "|" + sourceName;
         }
 
-        if (StringUtils.isNotEmpty(accountConfig.getApplicationName())) {
+        if (Strings.isNotEmpty(accountConfig.getApplicationName())) {
             userAgentSuffix += "|" + accountConfig.getApplicationName();
         }
 

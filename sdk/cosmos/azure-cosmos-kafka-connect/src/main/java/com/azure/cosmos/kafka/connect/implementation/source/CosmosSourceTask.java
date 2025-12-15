@@ -5,8 +5,8 @@ package com.azure.cosmos.kafka.connect.implementation.source;
 
 import com.azure.cosmos.CosmosAsyncContainer;
 import com.azure.cosmos.implementation.ImplementationBridgeHelpers;
+import com.azure.cosmos.implementation.Pair;
 import com.azure.cosmos.implementation.Utils;
-import com.azure.cosmos.implementation.apachecommons.lang.tuple.Pair;
 import com.azure.cosmos.implementation.guava25.base.Stopwatch;
 import com.azure.cosmos.kafka.connect.implementation.CosmosClientCache;
 import com.azure.cosmos.kafka.connect.implementation.CosmosClientCacheItem;
@@ -193,7 +193,7 @@ public class CosmosSourceTask extends SourceTask {
                 }
 
                 stopwatch.stop();
-                
+
                 // Update count for this feed range
                 String feedRangeKey = ((FeedRangeTaskUnit) taskUnit).getFeedRange().toString();
                 feedRangeCounts.compute(feedRangeKey, (key, loggingContext) -> {

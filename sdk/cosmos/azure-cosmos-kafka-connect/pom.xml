@@ -59,7 +59,6 @@ Licensed under the MIT License.
     <javaModulesSurefireArgLine>
       --add-opens com.azure.core/com.azure.core.implementation.util=ALL-UNNAMED
       --add-opens com.azure.cosmos/com.azure.cosmos.implementation=ALL-UNNAMED
-      --add-opens com.azure.cosmos/com.azure.cosmos.implementation.apachecommons.lang=ALL-UNNAMED
       --add-opens com.azure.cosmos/com.azure.cosmos.implementation.caches=ALL-UNNAMED
       --add-opens com.azure.cosmos/com.azure.cosmos.implementation.caches=com.azure.cosmos.kafka.connect
       --add-opens com.azure.cosmos/com.azure.cosmos.implementation.faultinjection=ALL-UNNAMED

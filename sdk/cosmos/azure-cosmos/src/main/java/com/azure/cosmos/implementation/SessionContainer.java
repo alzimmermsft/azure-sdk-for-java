@@ -4,7 +4,6 @@
 package com.azure.cosmos.implementation;
 
 import com.azure.cosmos.CosmosException;
-import com.azure.cosmos.implementation.apachecommons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -222,7 +221,7 @@ public final class SessionContainer implements ISessionContainer {
         String partitionKeyRangeId;
         ISessionToken parsedSessionToken;
 
-        String[] tokenParts = StringUtils.split(token, ':');
+        String[] tokenParts = token.split(":");
         partitionKeyRangeId = tokenParts[0];
         parsedSessionToken = SessionTokenHelper.parse(tokenParts[1]);
 

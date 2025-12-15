@@ -3,7 +3,7 @@
 
 package com.azure.cosmos.kafka.connect;
 
-import com.azure.cosmos.implementation.apachecommons.lang.StringUtils;
+import com.azure.cosmos.implementation.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testcontainers.containers.KafkaContainer;
@@ -59,7 +59,7 @@ public class KafkaCosmosIntegrationTestSuiteBase extends KafkaCosmosTestSuiteBas
         logger.info("Setting up docker containers...");
 
         network = Network.newNetwork();
-        if (StringUtils.isEmpty(KafkaCosmosTestConfigurations.BOOTSTRAP_SERVER)) {
+        if (Strings.isEmpty(KafkaCosmosTestConfigurations.BOOTSTRAP_SERVER)) {
             setupDockerContainersForLocal();
         } else {
             setupDockerContainersForCloud();

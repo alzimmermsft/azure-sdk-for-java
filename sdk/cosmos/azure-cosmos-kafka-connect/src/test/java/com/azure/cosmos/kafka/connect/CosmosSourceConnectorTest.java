@@ -11,7 +11,6 @@ import com.azure.cosmos.implementation.DocumentCollection;
 import com.azure.cosmos.implementation.ImplementationBridgeHelpers;
 import com.azure.cosmos.implementation.Strings;
 import com.azure.cosmos.implementation.Utils;
-import com.azure.cosmos.implementation.apachecommons.lang.StringUtils;
 import com.azure.cosmos.implementation.caches.AsyncCache;
 import com.azure.cosmos.implementation.changefeed.common.ChangeFeedMode;
 import com.azure.cosmos.implementation.changefeed.common.ChangeFeedStartFromInternal;
@@ -29,16 +28,16 @@ import com.azure.cosmos.kafka.connect.implementation.source.CosmosChangeFeedMode
 import com.azure.cosmos.kafka.connect.implementation.source.CosmosChangeFeedStartFromMode;
 import com.azure.cosmos.kafka.connect.implementation.source.CosmosMetadataStorageType;
 import com.azure.cosmos.kafka.connect.implementation.source.CosmosSourceConfig;
-import com.azure.cosmos.kafka.connect.implementation.source.CosmosSourceTaskConfig;
-import com.azure.cosmos.kafka.connect.implementation.source.MetadataCosmosStorageManager;
-import com.azure.cosmos.kafka.connect.implementation.source.MetadataKafkaStorageManager;
 import com.azure.cosmos.kafka.connect.implementation.source.CosmosSourceTask;
+import com.azure.cosmos.kafka.connect.implementation.source.CosmosSourceTaskConfig;
 import com.azure.cosmos.kafka.connect.implementation.source.FeedRangeContinuationTopicOffset;
 import com.azure.cosmos.kafka.connect.implementation.source.FeedRangeContinuationTopicPartition;
 import com.azure.cosmos.kafka.connect.implementation.source.FeedRangeTaskUnit;
 import com.azure.cosmos.kafka.connect.implementation.source.FeedRangesMetadataTopicOffset;
 import com.azure.cosmos.kafka.connect.implementation.source.FeedRangesMetadataTopicPartition;
 import com.azure.cosmos.kafka.connect.implementation.source.KafkaCosmosChangeFeedState;
+import com.azure.cosmos.kafka.connect.implementation.source.MetadataCosmosStorageManager;
+import com.azure.cosmos.kafka.connect.implementation.source.MetadataKafkaStorageManager;
 import com.azure.cosmos.kafka.connect.implementation.source.MetadataMonitorThread;
 import com.azure.cosmos.kafka.connect.implementation.source.MetadataTaskUnit;
 import com.azure.cosmos.models.CosmosContainerProperties;
@@ -839,7 +838,7 @@ public class CosmosSourceConnectorTest extends KafkaCosmosTestSuiteBase {
             .stream()
             .map(feedRange -> {
                 KafkaCosmosChangeFeedState kafkaCosmosChangeFeedState = null;
-                if (StringUtils.isNotEmpty(continuationState)) {
+                if (Strings.isNotEmpty(continuationState)) {
                     ChangeFeedState changeFeedState = ChangeFeedStateV1.fromString(continuationState);
                     kafkaCosmosChangeFeedState =
                         new KafkaCosmosChangeFeedState(

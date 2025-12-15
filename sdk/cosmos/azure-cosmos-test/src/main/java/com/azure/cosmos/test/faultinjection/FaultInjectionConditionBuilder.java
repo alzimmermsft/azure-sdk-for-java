@@ -3,7 +3,7 @@
 
 package com.azure.cosmos.test.faultinjection;
 
-import com.azure.cosmos.implementation.apachecommons.lang.StringUtils;
+import com.azure.cosmos.implementation.Strings;
 
 import static com.azure.cosmos.implementation.guava25.base.Preconditions.checkArgument;
 import static com.azure.cosmos.implementation.guava25.base.Preconditions.checkNotNull;
@@ -27,7 +27,7 @@ public final class FaultInjectionConditionBuilder {
      * @return the builder.
      */
     public FaultInjectionConditionBuilder region(String region) {
-        checkArgument(StringUtils.isNotEmpty(region), "Argument 'region' can not be null nor empty");
+        checkArgument(Strings.isNotEmpty(region), "Argument 'region' can not be null nor empty");
         this.region = region;
 
         return this;

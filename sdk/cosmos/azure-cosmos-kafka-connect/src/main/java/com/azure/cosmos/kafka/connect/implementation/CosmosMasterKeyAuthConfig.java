@@ -3,7 +3,7 @@
 
 package com.azure.cosmos.kafka.connect.implementation;
 
-import com.azure.cosmos.implementation.apachecommons.lang.StringUtils;
+import com.azure.cosmos.implementation.Strings;
 
 import java.util.Objects;
 
@@ -13,7 +13,7 @@ public class CosmosMasterKeyAuthConfig implements CosmosAuthConfig {
     private final String masterKey;
 
     public CosmosMasterKeyAuthConfig(String masterKey) {
-        checkArgument(StringUtils.isNotEmpty(masterKey), "Argument 'masterKey' should not be null");
+        checkArgument(Strings.isNotEmpty(masterKey), "Argument 'masterKey' should not be null");
 
         this.masterKey = masterKey;
     }

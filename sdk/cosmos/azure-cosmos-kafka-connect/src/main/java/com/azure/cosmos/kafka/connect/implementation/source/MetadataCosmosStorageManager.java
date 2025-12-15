@@ -4,8 +4,8 @@
 package com.azure.cosmos.kafka.connect.implementation.source;
 
 import com.azure.cosmos.CosmosAsyncContainer;
+import com.azure.cosmos.implementation.Pair;
 import com.azure.cosmos.implementation.Utils;
-import com.azure.cosmos.implementation.apachecommons.lang.tuple.Pair;
 import com.azure.cosmos.kafka.connect.implementation.KafkaCosmosExceptionsHelper;
 import com.azure.cosmos.models.PartitionKey;
 import com.fasterxml.jackson.annotation.JsonProperty;

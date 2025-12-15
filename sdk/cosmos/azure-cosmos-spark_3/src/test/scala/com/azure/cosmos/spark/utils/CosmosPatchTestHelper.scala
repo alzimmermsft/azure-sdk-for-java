@@ -4,14 +4,14 @@
 package com.azure.cosmos.spark.utils
 
 import com.azure.cosmos.CosmosAsyncContainer
-import com.azure.cosmos.implementation.apachecommons.lang.StringUtils
+import com.azure.cosmos.implementation.Strings
 import com.azure.cosmos.models.PartitionKeyDefinition
-import com.azure.cosmos.spark.{BulkWriter, CosmosContainerConfig, CosmosPatchColumnConfig, CosmosPatchConfigs, CosmosWriteConfig, DiagnosticsConfig, ItemWriteStrategy, OutputMetricsPublisherTrait, PointWriter}
+import com.azure.cosmos.spark._
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.node.ObjectNode
 import org.apache.commons.lang3.RandomUtils
 import org.apache.spark.MockTaskContext
-import org.apache.spark.sql.types.{ArrayType, BinaryType, BooleanType, ByteType, DecimalType, DoubleType, FloatType, IntegerType, LongType, ShortType, StringType, StructField, StructType}
+import org.apache.spark.sql.types._
 
 import java.util.UUID
 import scala.collection.concurrent.TrieMap
@@ -302,6 +302,6 @@ def getPatchFullTestSchemaWithSubpartitions(): StructType = {
   */
   // for hierarchical partitioning this is not used/circumvented, see logic in getPatchItemWithSchema()
  def getStrippedPartitionKeyPath(partitionKeyDefinition: PartitionKeyDefinition): String = {
-  StringUtils.join(partitionKeyDefinition.getPaths, "").substring(1)
+  Strings.join(partitionKeyDefinition.getPaths, "").substring(1)
  }
 }

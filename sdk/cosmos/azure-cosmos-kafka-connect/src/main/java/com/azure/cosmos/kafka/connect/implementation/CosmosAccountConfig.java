@@ -3,7 +3,7 @@
 
 package com.azure.cosmos.kafka.connect.implementation;
 
-import com.azure.cosmos.implementation.apachecommons.lang.StringUtils;
+import com.azure.cosmos.implementation.Strings;
 
 import java.util.List;
 
@@ -24,7 +24,7 @@ public class CosmosAccountConfig {
         boolean useGatewayMode,
         List<String> preferredRegionsList) {
 
-        checkArgument(StringUtils.isNotEmpty(endpoint), "Argument 'endpoint' should not be null");
+        checkArgument(Strings.isNotEmpty(endpoint), "Argument 'endpoint' should not be null");
         checkNotNull(cosmosAuthConfig, "Argument 'cosmosAuthConfig' should not be null");
 
         this.endpoint = endpoint;

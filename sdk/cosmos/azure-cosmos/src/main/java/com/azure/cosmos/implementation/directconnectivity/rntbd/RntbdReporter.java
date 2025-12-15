@@ -4,7 +4,7 @@
 package com.azure.cosmos.implementation.directconnectivity.rntbd;
 
 import com.azure.core.exception.AzureException;
-import com.azure.cosmos.implementation.apachecommons.lang.exception.ExceptionUtils;
+import com.azure.cosmos.implementation.Utils;
 import org.slf4j.Logger;
 import org.slf4j.helpers.FormattingTuple;
 import org.slf4j.helpers.MessageFormatter;
@@ -71,7 +71,7 @@ public final class RntbdReporter {
             subject,
             stackTrace[2],
             formattingTuple.getMessage(),
-            ExceptionUtils.getStackTrace(throwable != null ? throwable : exception)
+            Utils.getStackTrace(throwable != null ? throwable : exception)
         );
     }
 }

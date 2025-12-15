@@ -19,7 +19,7 @@ import com.azure.cosmos.implementation.RequestTimeoutException;
 import com.azure.cosmos.implementation.RetryWithException;
 import com.azure.cosmos.implementation.RxDocumentServiceRequest;
 import com.azure.cosmos.implementation.ServiceUnavailableException;
-import com.azure.cosmos.implementation.apachecommons.lang.StringUtils;
+import com.azure.cosmos.implementation.Strings;
 import com.azure.cosmos.implementation.directconnectivity.WFConstants;
 import com.azure.cosmos.test.faultinjection.FaultInjectionServerErrorType;
 
@@ -193,13 +193,13 @@ public class FaultInjectionServerErrorResultInternal {
         String sessionToken = request.getHeaders().get(HttpConstants.HttpHeaders.SESSION_TOKEN);
 
         responseHeaders.put(WFConstants.BackendHeaders.LOCAL_LSN, String.valueOf(lsn));
-        if (StringUtils.isNotEmpty(partitionKeyRangeId)) {
+        if (Strings.isNotEmpty(partitionKeyRangeId)) {
             responseHeaders.put(HttpConstants.HttpHeaders.PARTITION_KEY_RANGE_ID, partitionKeyRangeId);
         }
-        if (StringUtils.isNotEmpty(activityId)) {
+        if (Strings.isNotEmpty(activityId)) {
             responseHeaders.put(HttpConstants.HttpHeaders.ACTIVITY_ID, activityId);
         }
-        if (StringUtils.isNotEmpty(sessionToken)) {
+        if (Strings.isNotEmpty(sessionToken)) {
             responseHeaders.put(HttpConstants.HttpHeaders.SESSION_TOKEN, sessionToken);
         }
 

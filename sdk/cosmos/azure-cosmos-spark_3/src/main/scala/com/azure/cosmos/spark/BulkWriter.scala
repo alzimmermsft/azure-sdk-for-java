@@ -3,11 +3,10 @@
 package com.azure.cosmos.spark
 
 // scalastyle:off underscore.import
-import com.azure.cosmos.implementation.apachecommons.lang.StringUtils
 import com.azure.cosmos.implementation.batch.{BatchRequestResponseConstants, BulkExecutorDiagnosticsTracker, ItemBulkOperation}
-import com.azure.cosmos.implementation.{CosmosDaemonThreadFactory, UUIDs}
+import com.azure.cosmos.implementation.{CosmosDaemonThreadFactory, Strings, UUIDs}
 import com.azure.cosmos.models._
-import com.azure.cosmos.spark.BulkWriter.{BulkOperationFailedException, bulkWriterInputBoundedElastic, bulkWriterRequestsBoundedElastic, bulkWriterResponsesBoundedElastic, getThreadInfo, readManyBoundedElastic}
+import com.azure.cosmos.spark.BulkWriter._
 import com.azure.cosmos.spark.diagnostics.DefaultDiagnostics
 import com.azure.cosmos.{BridgeInternal, CosmosAsyncContainer, CosmosDiagnosticsContext, CosmosEndToEndOperationLatencyPolicyConfigBuilder, CosmosException}
 import reactor.core.Scannable
@@ -790,7 +789,7 @@ private class BulkWriter
     val cosmosPatchOperations = cosmosPatchHelper.createCosmosPatchOperations(itemId, partitionKeyDefinition, objectNode)
 
     val requestOptions = new CosmosBulkPatchItemRequestOptions()
-    if (patchConfigs.filter.isDefined && !StringUtils.isEmpty(patchConfigs.filter.get)) {
+    if (patchConfigs.filter.isDefined && Strings.isNotEmpty(patchConfigs.filter.get)) {
       requestOptions.setFilterPredicate(patchConfigs.filter.get)
     }
 

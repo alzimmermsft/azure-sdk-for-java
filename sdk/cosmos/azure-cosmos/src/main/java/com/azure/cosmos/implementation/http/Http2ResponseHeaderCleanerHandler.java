@@ -5,7 +5,6 @@ package com.azure.cosmos.implementation.http;
 
 import com.azure.cosmos.implementation.HttpConstants;
 import com.azure.cosmos.implementation.Strings;
-import com.azure.cosmos.implementation.apachecommons.lang.StringUtils;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.handler.codec.http2.Http2Headers;
@@ -31,7 +30,7 @@ public class Http2ResponseHeaderCleanerHandler extends ChannelInboundHandlerAdap
 
                 // Based on the tests, only 'x-ms-serviceversion' header has extra value,
                 // so only check this specific header here
-                if (StringUtils.equalsIgnoreCase(key, HttpConstants.HttpHeaders.SERVER_VERSION)) {
+                if (HttpConstants.HttpHeaders.SERVER_VERSION.equalsIgnoreCase(String.valueOf(key))) {
                     // Check for leading whitespace or other prohibited characters
                     if (Strings.isNotEmpty(value) && (value.charAt(0) == ' ' || value.charAt(value.length() - 1) == ' ')) {
                         // Clean up the header value by trimming or handling as needed

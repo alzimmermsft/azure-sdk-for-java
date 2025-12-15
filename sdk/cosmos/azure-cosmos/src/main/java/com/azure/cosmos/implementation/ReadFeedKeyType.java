@@ -20,5 +20,21 @@ public enum ReadFeedKeyType {
     /**
      * Use effective partition key range
      */
-    EffectivePartitionKeyRange
+    EffectivePartitionKeyRange;
+
+    public static ReadFeedKeyType getIgnoreCase(String str) {
+        if (Strings.isEmpty(str)) {
+            return null;
+        }
+
+        if ("ResourceId".equalsIgnoreCase(str)) {
+            return ResourceId;
+        } else if ("EffectivePartitionKey".equalsIgnoreCase(str)) {
+            return EffectivePartitionKey;
+        } else if ("EffectivePartitionKeyRange".equalsIgnoreCase(str)) {
+            return EffectivePartitionKeyRange;
+        }
+
+        return null;
+    }
 }

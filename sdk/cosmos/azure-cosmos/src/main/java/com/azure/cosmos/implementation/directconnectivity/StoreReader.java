@@ -24,7 +24,6 @@ import com.azure.cosmos.implementation.RxDocumentServiceRequest;
 import com.azure.cosmos.implementation.SessionTokenHelper;
 import com.azure.cosmos.implementation.Strings;
 import com.azure.cosmos.implementation.Utils;
-import com.azure.cosmos.implementation.apachecommons.lang.StringUtils;
 import com.azure.cosmos.implementation.directconnectivity.addressEnumerator.AddressEnumerator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -736,7 +735,7 @@ public class StoreReader {
             // maxPageSize = request.getHeaders().get(HttpConstants.HttpHeaders.PAGE_SIZE);
 
             if (continuation != null && continuation.contains(";")) {
-                String[] parts = StringUtils.split(continuation, ';');
+                String[] parts = continuation.split(";");
                 if (parts.length < 3) {
                     throw new BadRequestException(String.format(
                             RMResources.InvalidHeaderValue,

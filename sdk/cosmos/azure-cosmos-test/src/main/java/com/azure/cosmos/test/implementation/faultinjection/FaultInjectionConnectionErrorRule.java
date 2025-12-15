@@ -3,7 +3,7 @@
 
 package com.azure.cosmos.test.implementation.faultinjection;
 
-import com.azure.cosmos.implementation.apachecommons.lang.StringUtils;
+import com.azure.cosmos.implementation.Strings;
 import com.azure.cosmos.implementation.routing.RegionalRoutingContext;
 import com.azure.cosmos.test.faultinjection.FaultInjectionConnectionErrorResult;
 import com.azure.cosmos.test.faultinjection.FaultInjectionConnectionType;
@@ -40,7 +40,7 @@ public class FaultInjectionConnectionErrorRule implements IFaultInjectionRuleInt
         FaultInjectionConnectionType connectionType,
         FaultInjectionConnectionErrorResult result) {
 
-        checkArgument(StringUtils.isNotEmpty(id), "Argument 'id' cannot be null nor empty");
+        checkArgument(Strings.isNotEmpty(id), "Argument 'id' cannot be null nor empty");
         checkNotNull(result, "Argument 'result' can not be null");
         checkNotNull(connectionType, "Argument 'connectionType' can not be null");
 

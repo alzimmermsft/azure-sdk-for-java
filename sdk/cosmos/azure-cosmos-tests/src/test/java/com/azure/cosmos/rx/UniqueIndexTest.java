@@ -11,19 +11,16 @@ import com.azure.cosmos.CosmosClientBuilder;
 import com.azure.cosmos.CosmosDatabaseForTest;
 import com.azure.cosmos.CosmosException;
 import com.azure.cosmos.DirectConnectionConfig;
-import com.azure.cosmos.implementation.InternalObjectNode;
 import com.azure.cosmos.implementation.HttpConstants;
+import com.azure.cosmos.implementation.InternalObjectNode;
 import com.azure.cosmos.implementation.TestConfigurations;
 import com.azure.cosmos.implementation.Utils;
-import com.azure.cosmos.implementation.guava25.collect.ImmutableList;
-import com.azure.cosmos.implementation.guava25.collect.Lists;
 import com.azure.cosmos.models.CosmosContainerProperties;
 import com.azure.cosmos.models.CosmosItemRequestOptions;
 import com.azure.cosmos.models.ExcludedPath;
 import com.azure.cosmos.models.IncludedPath;
 import com.azure.cosmos.models.IndexingMode;
 import com.azure.cosmos.models.IndexingPolicy;
-import com.azure.cosmos.models.ModelBridgeInternal;
 import com.azure.cosmos.models.PartitionKey;
 import com.azure.cosmos.models.PartitionKeyDefinition;
 import com.azure.cosmos.models.UniqueKey;
@@ -36,9 +33,9 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.fail;
@@ -63,8 +60,8 @@ public class UniqueIndexTest extends TestSuiteBase {
 
         CosmosContainerProperties collectionDefinition = new CosmosContainerProperties(UUID.randomUUID().toString(), partitionKeyDef);
         UniqueKeyPolicy uniqueKeyPolicy = new UniqueKeyPolicy();
-        UniqueKey uniqueKey = new UniqueKey(ImmutableList.of("/name", "/description"));
-        uniqueKeyPolicy.setUniqueKeys(Lists.newArrayList(uniqueKey));
+        UniqueKey uniqueKey = new UniqueKey(Utils.immutableList("/name", "/description"));
+        uniqueKeyPolicy.setUniqueKeys(Arrays.asList(uniqueKey));
         collectionDefinition.setUniqueKeyPolicy(uniqueKeyPolicy);
 
         IndexingPolicy indexingPolicy = new IndexingPolicy();
@@ -75,7 +72,7 @@ public class UniqueIndexTest extends TestSuiteBase {
         IncludedPath includedPath1 = new IncludedPath("/name/?");
 
         IncludedPath includedPath2 = new IncludedPath("/description/?");
-        indexingPolicy.setIncludedPaths(ImmutableList.of(includedPath1, includedPath2));
+        indexingPolicy.setIncludedPaths(Utils.immutableList(includedPath1, includedPath2));
         collectionDefinition.setIndexingPolicy(indexingPolicy);
 
         ObjectMapper om = new ObjectMapper();
@@ -116,8 +113,8 @@ public class UniqueIndexTest extends TestSuiteBase {
 
         CosmosContainerProperties collectionDefinition = new CosmosContainerProperties(UUID.randomUUID().toString(), partitionKeyDef);
         UniqueKeyPolicy uniqueKeyPolicy = new UniqueKeyPolicy();
-        UniqueKey uniqueKey = new UniqueKey(ImmutableList.of("/name", "/description"));
-        uniqueKeyPolicy.setUniqueKeys(Lists.newArrayList(uniqueKey));
+        UniqueKey uniqueKey = new UniqueKey(Utils.immutableList("/name", "/description"));
+        uniqueKeyPolicy.setUniqueKeys(Arrays.asList(uniqueKey));
         collectionDefinition.setUniqueKeyPolicy(uniqueKeyPolicy);
 
         database.createContainer(collectionDefinition).block();
@@ -166,9 +163,9 @@ public class UniqueIndexTest extends TestSuiteBase {
 
         CosmosContainerProperties collectionDefinition = new CosmosContainerProperties(UUID.randomUUID().toString(), partitionKeyDef);
         UniqueKeyPolicy uniqueKeyPolicy = new UniqueKeyPolicy();
-        UniqueKey uniqueKey = new UniqueKey(ImmutableList.of("/name"));
-        UniqueKey uniqueKey1 = new UniqueKey(ImmutableList.of("/description"));
-        uniqueKeyPolicy.setUniqueKeys(Lists.newArrayList(uniqueKey, uniqueKey1));
+        UniqueKey uniqueKey = new UniqueKey(Utils.immutableList("/name"));
+        UniqueKey uniqueKey1 = new UniqueKey(Utils.immutableList("/description"));
+        uniqueKeyPolicy.setUniqueKeys(Arrays.asList(uniqueKey, uniqueKey1));
         collectionDefinition.setUniqueKeyPolicy(uniqueKeyPolicy);
 
         IndexingPolicy indexingPolicy = new IndexingPolicy();
@@ -179,7 +176,7 @@ public class UniqueIndexTest extends TestSuiteBase {
         IncludedPath includedPath1 = new IncludedPath("/name/?");
 
         IncludedPath includedPath2 = new IncludedPath("/description/?");
-        indexingPolicy.setIncludedPaths(ImmutableList.of(includedPath1, includedPath2));
+        indexingPolicy.setIncludedPaths(Utils.immutableList(includedPath1, includedPath2));
 
         collectionDefinition.setIndexingPolicy(indexingPolicy);
 

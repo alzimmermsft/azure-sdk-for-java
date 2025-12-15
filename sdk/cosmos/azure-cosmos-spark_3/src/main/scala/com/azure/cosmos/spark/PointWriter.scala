@@ -4,22 +4,20 @@
 package com.azure.cosmos.spark
 
 import com.azure.cosmos.implementation.ImplementationBridgeHelpers.CosmosItemRequestOptionsHelper
-import com.azure.cosmos.implementation.UUIDs
-import com.azure.cosmos.implementation.apachecommons.lang.StringUtils
 import com.azure.cosmos.implementation.guava25.base.Preconditions.checkState
 import com.azure.cosmos.implementation.spark.{OperationContextAndListenerTuple, OperationListener}
-import com.azure.cosmos.models.{CosmosItemRequestOptions, CosmosItemResponse, CosmosPatchItemRequestOptions, PartitionKey, PartitionKeyDefinition}
+import com.azure.cosmos.implementation.{Strings, UUIDs}
+import com.azure.cosmos.models._
 import com.azure.cosmos.spark.BulkWriter.getThreadInfo
 import com.azure.cosmos.spark.PointWriter.MaxNumberOfThreadsPerCPUCore
-import com.azure.cosmos.spark.diagnostics.{CosmosItemIdentifier, CreateOperation, DeleteOperation, DiagnosticsContext, DiagnosticsLoader, LoggerHelper, PatchBulkUpdateOperation, PatchOperation, ReplaceOperation, SparkTaskContext, UpsertOperation}
+import com.azure.cosmos.spark.diagnostics._
 import com.azure.cosmos.{CosmosAsyncContainer, CosmosException}
 import com.fasterxml.jackson.databind.node.ObjectNode
 import org.apache.spark.TaskContext
 import reactor.core.scala.publisher.SMono.PimpJMono
 
-import java.util.UUID
 import java.util.concurrent.atomic.{AtomicBoolean, AtomicReference}
-import java.util.concurrent.{Callable, CompletableFuture, ExecutorService, SynchronousQueue, ThreadPoolExecutor, TimeUnit}
+import java.util.concurrent._
 import scala.collection.concurrent.TrieMap
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration.Duration
@@ -495,7 +493,7 @@ private class PointWriter(container: CosmosAsyncContainer,
     val cosmosPatchOperations = cosmosPatchHelper.createCosmosPatchOperations(itemId, partitionKeyDefinition, objectNode)
     val requestOptions = this.getPatchOption
 
-    if (patchConfigs.filter.isDefined && !StringUtils.isEmpty(patchConfigs.filter.get)) {
+    if (patchConfigs.filter.isDefined && Strings.isNotEmpty(patchConfigs.filter.get)) {
       requestOptions.setFilterPredicate(patchConfigs.filter.get)
     }
 

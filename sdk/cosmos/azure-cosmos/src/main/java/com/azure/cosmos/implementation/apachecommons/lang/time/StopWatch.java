@@ -46,12 +46,6 @@ public class StopWatch {
             boolean isStarted() {
                 return false;
             }
-        },
-        SUSPENDED {
-            @Override
-            boolean isStarted() {
-                return true;
-            }
         };
 
         /**
@@ -135,12 +129,10 @@ public class StopWatch {
      *             if the StopWatch is not running.
      */
     public void stop() {
-        if (this.runningState != State.RUNNING && this.runningState != State.SUSPENDED) {
+        if (this.runningState != State.RUNNING) {
             throw new IllegalStateException("Stopwatch is not running. ");
         }
-        if (this.runningState == State.RUNNING) {
-            this.stopTime = System.nanoTime();
-        }
+        this.stopTime = System.nanoTime();
         this.runningState = State.STOPPED;
     }
 
@@ -205,7 +197,7 @@ public class StopWatch {
      * @return the time in nanoseconds
      */
     public long getNanoTime() {
-        if (this.runningState == State.STOPPED || this.runningState == State.SUSPENDED) {
+        if (this.runningState == State.STOPPED) {
             return this.stopTime - this.startTime;
         } else if (this.runningState == State.UNSTARTED) {
             return 0;

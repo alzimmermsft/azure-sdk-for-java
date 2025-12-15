@@ -3,8 +3,6 @@
 
 package com.azure.cosmos.implementation.routing;
 
-import com.azure.cosmos.implementation.apachecommons.lang.StringUtils;
-
 import java.util.Objects;
 
 /**
@@ -47,7 +45,7 @@ public final class PartitionKeyRangeIdentity {
     }
 
     public static PartitionKeyRangeIdentity fromHeader(String header) {
-        String[] parts = StringUtils.split(header,",");
+        String[] parts = header.split(",");
         if (parts.length == 2) {
             return new PartitionKeyRangeIdentity(parts[0], parts[1]);
         } else if (parts.length == 1) {

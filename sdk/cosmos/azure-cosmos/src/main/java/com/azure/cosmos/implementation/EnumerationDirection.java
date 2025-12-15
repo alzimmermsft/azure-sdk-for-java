@@ -12,5 +12,19 @@ public enum EnumerationDirection {
     /**
      * Use reverse direction
      */
-    Reverse
+    Reverse;
+
+    public static EnumerationDirection getIgnoreCase(String str) {
+        if (Strings.isEmpty(str)) {
+            return null;
+        }
+
+        if ("Forward".equalsIgnoreCase(str)) {
+            return Forward;
+        } else if ("Reverse".equalsIgnoreCase(str)) {
+            return Reverse;
+        }
+
+        return null;
+    }
 }
