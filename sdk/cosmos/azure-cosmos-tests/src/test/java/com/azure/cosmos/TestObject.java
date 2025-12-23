@@ -3,8 +3,7 @@
 
 package com.azure.cosmos;
 
-import com.azure.cosmos.implementation.guava25.collect.ImmutableList;
-
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
@@ -30,7 +29,8 @@ public class TestObject {
     }
 
     public static TestObject create(String pkValue) {
-        return new TestObject(UUID.randomUUID().toString(), pkValue, ImmutableList.of(ImmutableList.of(5)), UUID.randomUUID().toString());
+        return new TestObject(UUID.randomUUID().toString(), pkValue,
+            Collections.singletonList(Collections.singletonList(5)), UUID.randomUUID().toString());
     }
 
     public String getId() {

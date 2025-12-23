@@ -2,11 +2,11 @@
 // Licensed under the MIT License.
 package com.azure.cosmos.implementation.query.metrics;
 
-import com.azure.cosmos.implementation.apachecommons.lang.time.StopWatch;
+import com.azure.cosmos.implementation.StopWatch;
 
 public class HybridSearchCumulativeSchedulingStopWatch extends SchedulingStopwatch {
     private long cumulativeRunTime;
-    private StopWatch runTimeStopwatch;
+    private final StopWatch runTimeStopwatch;
     private long numPreemptions;
     private boolean responded;
 
@@ -21,8 +21,8 @@ public class HybridSearchCumulativeSchedulingStopWatch extends SchedulingStopwat
         SchedulingTimeSpan parentTimeSpan = super.getElapsedTime();
 
         long totalRunTime = this.cumulativeRunTime;
-        if (this.runTimeStopwatch.isStarted()) {
-            totalRunTime += this.runTimeStopwatch.getTime();
+        if (this.runTimeStopwatch.getState() == StopWatch.State.STARTED) {
+            totalRunTime += this.runTimeStopwatch.getElapsedMillis();
         }
 
         return new SchedulingTimeSpan(
@@ -37,7 +37,7 @@ public class HybridSearchCumulativeSchedulingStopWatch extends SchedulingStopwat
     @Override
     public void start() {
         synchronized (this.runTimeStopwatch) {
-            if (this.runTimeStopwatch.isStarted()) {
+            if (this.runTimeStopwatch.getState() == StopWatch.State.STARTED) {
                 return;
             }
             if (!this.responded) {
@@ -51,12 +51,12 @@ public class HybridSearchCumulativeSchedulingStopWatch extends SchedulingStopwat
     @Override
     public void stop() {
         synchronized (this.runTimeStopwatch) {
-            if (!this.runTimeStopwatch.isStarted()) {
+            if (this.runTimeStopwatch.getState() != StopWatch.State.STARTED) {
                 return;
             }
             this.runTimeStopwatch.stop();
             // Add elapsed time to cumulative total
-            this.cumulativeRunTime += this.runTimeStopwatch.getTime();
+            this.cumulativeRunTime += this.runTimeStopwatch.getElapsedMillis();
             // Reset for next cycle
             this.runTimeStopwatch.reset();
             this.numPreemptions++;

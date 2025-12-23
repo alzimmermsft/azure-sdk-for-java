@@ -22,7 +22,6 @@ import com.azure.cosmos.CosmosResponseValidator;
 import com.azure.cosmos.DirectConnectionConfig;
 import com.azure.cosmos.GatewayConnectionConfig;
 import com.azure.cosmos.Http2ConnectionConfig;
-import com.azure.cosmos.TestNGLogListener;
 import com.azure.cosmos.ThrottlingRetryOptions;
 import com.azure.cosmos.implementation.Configs;
 import com.azure.cosmos.implementation.ConnectionPolicy;
@@ -31,6 +30,7 @@ import com.azure.cosmos.implementation.FeedResponseListValidator;
 import com.azure.cosmos.implementation.HttpConstants;
 import com.azure.cosmos.implementation.ImplementationBridgeHelpers;
 import com.azure.cosmos.implementation.InternalObjectNode;
+import com.azure.cosmos.implementation.CollectionUtils;
 import com.azure.cosmos.implementation.PathParser;
 import com.azure.cosmos.implementation.QueryFeedOperationState;
 import com.azure.cosmos.implementation.Resource;
@@ -70,11 +70,9 @@ import io.reactivex.subscribers.TestSubscriber;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.mockito.stubbing.Answer;
-import org.testng.ITestContext;
 import org.testng.annotations.AfterSuite;
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.DataProvider;
-import org.testng.annotations.Listeners;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
@@ -156,7 +154,7 @@ public abstract class TestSuiteBase extends CosmosAsyncClientTest {
                 allEqualOrLowerConsistencies(accountConsistency)));
         preferredLocations = immutableListOrNull(parsePreferredLocation(TestConfigurations.PREFERRED_LOCATIONS));
         protocols = ObjectUtils.defaultIfNull(immutableListOrNull(parseProtocols(TestConfigurations.PROTOCOLS)),
-            Utils.immutableList(Protocol.TCP));
+            CollectionUtils.immutableList(Protocol.TCP));
 
         //  Object mapper configurations
         objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
@@ -172,7 +170,7 @@ public abstract class TestSuiteBase extends CosmosAsyncClientTest {
     }
 
     private static <T> List<T> immutableListOrNull(List<T> list) {
-        return list != null ? Utils.immutableCopyOf(list) : null;
+        return list != null ? CollectionUtils.immutableCopyOf(list) : null;
     }
 
     private static class DatabaseManagerImpl implements CosmosDatabaseForTest.DatabaseManager {
@@ -1246,7 +1244,7 @@ public abstract class TestSuiteBase extends CosmosAsyncClientTest {
         Protocol... protocols) {
 
         logger.info("Max test consistency to use is [{}]", accountConsistency);
-        List<ConsistencyLevel> testConsistencies = Utils.immutableList(ConsistencyLevel.EVENTUAL);
+        List<ConsistencyLevel> testConsistencies = CollectionUtils.immutableList(ConsistencyLevel.EVENTUAL);
 
         boolean isMultiMasterEnabled = preferredLocations != null && accountConsistency == ConsistencyLevel.SESSION;
 

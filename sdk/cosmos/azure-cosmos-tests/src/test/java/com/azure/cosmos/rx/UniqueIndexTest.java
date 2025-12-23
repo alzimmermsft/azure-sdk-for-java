@@ -13,6 +13,7 @@ import com.azure.cosmos.CosmosException;
 import com.azure.cosmos.DirectConnectionConfig;
 import com.azure.cosmos.implementation.HttpConstants;
 import com.azure.cosmos.implementation.InternalObjectNode;
+import com.azure.cosmos.implementation.CollectionUtils;
 import com.azure.cosmos.implementation.TestConfigurations;
 import com.azure.cosmos.implementation.Utils;
 import com.azure.cosmos.models.CosmosContainerProperties;
@@ -54,13 +55,13 @@ public class UniqueIndexTest extends TestSuiteBase {
     @Test(groups = { "long" }, timeOut = TIMEOUT)
     public void insertWithUniqueIndex() throws Exception {
         PartitionKeyDefinition partitionKeyDef = new PartitionKeyDefinition();
-        ArrayList<String> paths = new ArrayList<String>();
+        ArrayList<String> paths = new ArrayList<>();
         paths.add("/mypk");
         partitionKeyDef.setPaths(paths);
 
         CosmosContainerProperties collectionDefinition = new CosmosContainerProperties(UUID.randomUUID().toString(), partitionKeyDef);
         UniqueKeyPolicy uniqueKeyPolicy = new UniqueKeyPolicy();
-        UniqueKey uniqueKey = new UniqueKey(Utils.immutableList("/name", "/description"));
+        UniqueKey uniqueKey = new UniqueKey(CollectionUtils.immutableList("/name", "/description"));
         uniqueKeyPolicy.setUniqueKeys(Arrays.asList(uniqueKey));
         collectionDefinition.setUniqueKeyPolicy(uniqueKeyPolicy);
 
@@ -72,14 +73,14 @@ public class UniqueIndexTest extends TestSuiteBase {
         IncludedPath includedPath1 = new IncludedPath("/name/?");
 
         IncludedPath includedPath2 = new IncludedPath("/description/?");
-        indexingPolicy.setIncludedPaths(Utils.immutableList(includedPath1, includedPath2));
+        indexingPolicy.setIncludedPaths(CollectionUtils.immutableList(includedPath1, includedPath2));
         collectionDefinition.setIndexingPolicy(indexingPolicy);
 
         ObjectMapper om = new ObjectMapper();
 
-        JsonNode doc1 = om.readValue("{\"name\":\"Alexander Pushkin\",\"description\":\"poet\",\"id\": \""+ UUID.randomUUID().toString() +"\"}", JsonNode.class);
-        JsonNode doc2 = om.readValue("{\"name\":\"Alexander Pushkin\",\"description\":\"playwright\",\"id\": \"" + UUID.randomUUID().toString() + "\"}", JsonNode.class);
-        JsonNode doc3 = om.readValue("{\"name\":\"حافظ شیرازی\",\"description\":\"poet\",\"id\": \"" + UUID.randomUUID().toString() + "\"}", JsonNode.class);
+        JsonNode doc1 = om.readValue("{\"name\":\"Alexander Pushkin\",\"description\":\"poet\",\"id\": \""+ UUID.randomUUID() +"\"}", JsonNode.class);
+        JsonNode doc2 = om.readValue("{\"name\":\"Alexander Pushkin\",\"description\":\"playwright\",\"id\": \"" + UUID.randomUUID() + "\"}", JsonNode.class);
+        JsonNode doc3 = om.readValue("{\"name\":\"حافظ شیرازی\",\"description\":\"poet\",\"id\": \"" + UUID.randomUUID() + "\"}", JsonNode.class);
 
         database.createContainer(collectionDefinition).block();
         collection = database.getContainer(collectionDefinition.getId());
@@ -107,13 +108,13 @@ public class UniqueIndexTest extends TestSuiteBase {
     @Test(groups = { "long" }, timeOut = TIMEOUT * 10)
     public void replaceAndDeleteWithUniqueIndex() throws Exception {
         PartitionKeyDefinition partitionKeyDef = new PartitionKeyDefinition();
-        ArrayList<String> paths = new ArrayList<String>();
+        ArrayList<String> paths = new ArrayList<>();
         paths.add("/mypk");
         partitionKeyDef.setPaths(paths);
 
         CosmosContainerProperties collectionDefinition = new CosmosContainerProperties(UUID.randomUUID().toString(), partitionKeyDef);
         UniqueKeyPolicy uniqueKeyPolicy = new UniqueKeyPolicy();
-        UniqueKey uniqueKey = new UniqueKey(Utils.immutableList("/name", "/description"));
+        UniqueKey uniqueKey = new UniqueKey(CollectionUtils.immutableList("/name", "/description"));
         uniqueKeyPolicy.setUniqueKeys(Arrays.asList(uniqueKey));
         collectionDefinition.setUniqueKeyPolicy(uniqueKeyPolicy);
 
@@ -122,9 +123,9 @@ public class UniqueIndexTest extends TestSuiteBase {
 
         ObjectMapper om = new ObjectMapper();
 
-        ObjectNode doc1 = om.readValue("{\"name\":\"عمر خیّام\",\"description\":\"poet\",\"id\": \""+ UUID.randomUUID().toString() +"\"}", ObjectNode.class);
-        ObjectNode doc3 = om.readValue("{\"name\":\"Rabindranath Tagore\",\"description\":\"poet\",\"id\": \""+ UUID.randomUUID().toString() +"\"}", ObjectNode.class);
-        ObjectNode doc2 = om.readValue("{\"name\":\"عمر خیّام\",\"description\":\"mathematician\",\"id\": \""+ UUID.randomUUID().toString() +"\"}", ObjectNode.class);
+        ObjectNode doc1 = om.readValue("{\"name\":\"عمر خیّام\",\"description\":\"poet\",\"id\": \""+ UUID.randomUUID() +"\"}", ObjectNode.class);
+        ObjectNode doc3 = om.readValue("{\"name\":\"Rabindranath Tagore\",\"description\":\"poet\",\"id\": \""+ UUID.randomUUID() +"\"}", ObjectNode.class);
+        ObjectNode doc2 = om.readValue("{\"name\":\"عمر خیّام\",\"description\":\"mathematician\",\"id\": \""+ UUID.randomUUID() +"\"}", ObjectNode.class);
 
         InternalObjectNode doc1Inserted =
             BridgeInternal.getProperties(collection.createItem(doc1, new CosmosItemRequestOptions()).block());
@@ -163,8 +164,8 @@ public class UniqueIndexTest extends TestSuiteBase {
 
         CosmosContainerProperties collectionDefinition = new CosmosContainerProperties(UUID.randomUUID().toString(), partitionKeyDef);
         UniqueKeyPolicy uniqueKeyPolicy = new UniqueKeyPolicy();
-        UniqueKey uniqueKey = new UniqueKey(Utils.immutableList("/name"));
-        UniqueKey uniqueKey1 = new UniqueKey(Utils.immutableList("/description"));
+        UniqueKey uniqueKey = new UniqueKey(CollectionUtils.immutableList("/name"));
+        UniqueKey uniqueKey1 = new UniqueKey(CollectionUtils.immutableList("/description"));
         uniqueKeyPolicy.setUniqueKeys(Arrays.asList(uniqueKey, uniqueKey1));
         collectionDefinition.setUniqueKeyPolicy(uniqueKeyPolicy);
 
@@ -176,7 +177,7 @@ public class UniqueIndexTest extends TestSuiteBase {
         IncludedPath includedPath1 = new IncludedPath("/name/?");
 
         IncludedPath includedPath2 = new IncludedPath("/description/?");
-        indexingPolicy.setIncludedPaths(Utils.immutableList(includedPath1, includedPath2));
+        indexingPolicy.setIncludedPaths(CollectionUtils.immutableList(includedPath1, includedPath2));
 
         collectionDefinition.setIndexingPolicy(indexingPolicy);
 

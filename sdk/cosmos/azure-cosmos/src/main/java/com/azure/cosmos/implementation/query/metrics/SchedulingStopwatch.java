@@ -2,13 +2,12 @@
 // Licensed under the MIT License.
 package com.azure.cosmos.implementation.query.metrics;
 
-
-import com.azure.cosmos.implementation.apachecommons.lang.time.StopWatch;
+import com.azure.cosmos.implementation.StopWatch;
 
 public class SchedulingStopwatch {
-    private StopWatch turnaroundTimeStopwatch;
-    private StopWatch responseTimeStopwatch;
-    private StopWatch runTimeStopwatch;
+    private final StopWatch turnaroundTimeStopwatch;
+    private final StopWatch responseTimeStopwatch;
+    private final StopWatch runTimeStopwatch;
     private long numPreemptions;
     private boolean responded;
 
@@ -19,9 +18,10 @@ public class SchedulingStopwatch {
     }
 
     public SchedulingTimeSpan getElapsedTime() {
-        return new SchedulingTimeSpan(this.turnaroundTimeStopwatch.getTime(), this.responseTimeStopwatch.getTime(),
-                this.runTimeStopwatch.getTime(),
-                this.turnaroundTimeStopwatch.getTime() - this.runTimeStopwatch.getTime(), this.numPreemptions);
+        return new SchedulingTimeSpan(this.turnaroundTimeStopwatch.getElapsedMillis(),
+            this.responseTimeStopwatch.getElapsedMillis(), this.runTimeStopwatch.getElapsedMillis(),
+            this.turnaroundTimeStopwatch.getElapsedMillis() - this.runTimeStopwatch.getElapsedMillis(),
+            this.numPreemptions);
     }
 
     /**
@@ -35,7 +35,7 @@ public class SchedulingStopwatch {
 
     public void start() {
         synchronized (this.runTimeStopwatch) {
-            if (this.runTimeStopwatch.isStarted()) {
+            if (this.runTimeStopwatch.getState() == StopWatch.State.STARTED) {
                 return;
             }
             if (!this.responded) {
@@ -50,7 +50,7 @@ public class SchedulingStopwatch {
 
     public void stop() {
         synchronized (this.runTimeStopwatch) {
-            if (!this.runTimeStopwatch.isStarted()) {
+            if (this.runTimeStopwatch.getState() != StopWatch.State.STARTED) {
                 return;
             }
             this.runTimeStopwatch.stop();
@@ -65,7 +65,7 @@ public class SchedulingStopwatch {
 
     private void startStopWatch(StopWatch stopwatch) {
         synchronized (stopwatch) {
-            if (stopwatch.isStarted()) {
+            if (stopwatch.getState() == StopWatch.State.STARTED) {
                 return; // idempotent start
             }
             stopwatch.start();
@@ -74,7 +74,7 @@ public class SchedulingStopwatch {
 
     private void stopStopWatch(StopWatch stopwatch) {
         synchronized (stopwatch) {
-            if (!stopwatch.isStarted()) {
+            if (stopwatch.getState() != StopWatch.State.STARTED) {
                 return; // idempotent stop
             }
             stopwatch.stop();

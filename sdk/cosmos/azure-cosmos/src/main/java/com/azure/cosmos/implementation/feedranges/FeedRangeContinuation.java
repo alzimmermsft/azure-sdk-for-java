@@ -21,7 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Queue;
 
-import static com.azure.cosmos.implementation.guava25.base.Preconditions.checkNotNull;
+import static com.azure.cosmos.implementation.Utils.checkNotNull;
 
 @JsonDeserialize(using = FeedRangeContinuationDeserializer.class)
 public abstract class FeedRangeContinuation extends JsonSerializable {

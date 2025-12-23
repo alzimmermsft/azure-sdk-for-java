@@ -4,7 +4,6 @@
 package com.azure.cosmos.implementation;
 
 import com.azure.cosmos.BridgeInternal;
-import com.azure.cosmos.implementation.guava25.collect.ImmutableMap;
 import org.mockito.Mockito;
 import org.mockito.stubbing.Answer;
 import org.testng.annotations.AfterClass;
@@ -54,7 +53,7 @@ public class RetryCreateDocumentTest extends TestSuiteBase {
 
             int currentAttempt = count.getAndIncrement();
             if (currentAttempt == 0) {
-                Map<String, String> header = ImmutableMap.of(
+                Map<String, String> header = CollectionUtils.immutableMap(
                         HttpConstants.HttpHeaders.SUB_STATUS,
                         Integer.toString(HttpConstants.SubStatusCodes.PARTITION_KEY_MISMATCH));
 
@@ -85,7 +84,7 @@ public class RetryCreateDocumentTest extends TestSuiteBase {
             if (currentAttempt == 0) {
                 return client.getOrigGatewayStoreModel().processMessage(req);
             } else {
-                Map<String, String> header = ImmutableMap.of(
+                Map<String, String> header = CollectionUtils.immutableMap(
                         HttpConstants.HttpHeaders.SUB_STATUS,
                         Integer.toString(2));
 
@@ -120,7 +119,7 @@ public class RetryCreateDocumentTest extends TestSuiteBase {
             }
             int currentAttempt = count.getAndIncrement();
             if (currentAttempt == 0) {
-                Map<String, String> header = ImmutableMap.of(
+                Map<String, String> header = CollectionUtils.immutableMap(
                         HttpConstants.HttpHeaders.SUB_STATUS,
                         Integer.toString(2));
 

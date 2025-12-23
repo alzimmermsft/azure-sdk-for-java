@@ -6,7 +6,7 @@ package com.azure.cosmos.implementation.directconnectivity.rntbd;
 import io.netty.buffer.ByteBuf;
 import io.netty.handler.codec.CorruptedFrameException;
 
-import static com.azure.cosmos.implementation.guava25.base.Preconditions.checkNotNull;
+import static com.azure.cosmos.implementation.Utils.checkNotNull;
 
 public final class RntbdFramer {
 

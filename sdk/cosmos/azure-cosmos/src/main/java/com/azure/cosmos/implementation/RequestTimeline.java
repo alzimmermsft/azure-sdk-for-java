@@ -10,14 +10,15 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
-import com.azure.cosmos.implementation.guava25.collect.ImmutableList;
 
 import java.time.Duration;
 import java.time.Instant;
+import java.util.Collections;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Optional;
 
-import static com.azure.cosmos.implementation.guava25.base.Preconditions.checkNotNull;
+import static com.azure.cosmos.implementation.Utils.checkNotNull;
 
 /**
  * Represents the startTimeUTC and duration of important events in the lifetime of a request.
@@ -44,13 +45,13 @@ import static com.azure.cosmos.implementation.guava25.base.Preconditions.checkNo
 public final class RequestTimeline implements Iterable<RequestTimeline.Event> {
 
     private static final RequestTimeline EMPTY = new RequestTimeline();
-    private final ImmutableList<Event> events;
+    private final List<Event> events;
 
     private RequestTimeline() {
-        this.events = ImmutableList.of();
+        this.events = Collections.emptyList();
     }
 
-    private RequestTimeline(final ImmutableList<Event> events) {
+    private RequestTimeline(final List<Event> events) {
         checkNotNull(events, "expected non-null events");
         this.events = events;
     }
@@ -93,7 +94,7 @@ public final class RequestTimeline implements Iterable<RequestTimeline.Event> {
      * @return a new {@link RequestTimeline} with a single event.
      */
     public static RequestTimeline of(final Event event) {
-        return new RequestTimeline(ImmutableList.of(event));
+        return new RequestTimeline(CollectionUtils.immutableList(event));
     }
 
     /**
@@ -102,7 +103,7 @@ public final class RequestTimeline implements Iterable<RequestTimeline.Event> {
      * @return a new {@link RequestTimeline} with a pair of events.
      */
     public static RequestTimeline of(final Event e1, final Event e2) {
-        return new RequestTimeline(ImmutableList.of(e1, e2));
+        return new RequestTimeline(CollectionUtils.immutableList(e1, e2));
     }
 
     /**
@@ -111,7 +112,7 @@ public final class RequestTimeline implements Iterable<RequestTimeline.Event> {
      * @return a new {@link RequestTimeline} with three events.
      */
     public static RequestTimeline of(final Event e1, final Event e2, final Event e3) {
-        return new RequestTimeline(ImmutableList.of(e1, e2, e3));
+        return new RequestTimeline(CollectionUtils.immutableList(e1, e2, e3));
     }
 
     /**
@@ -120,7 +121,7 @@ public final class RequestTimeline implements Iterable<RequestTimeline.Event> {
      * @return a new {@link RequestTimeline} with four events.
      */
     public static RequestTimeline of(final Event e1, final Event e2, final Event e3, final Event e4) {
-        return new RequestTimeline(ImmutableList.of(e1, e2, e3, e4));
+        return new RequestTimeline(CollectionUtils.immutableList(e1, e2, e3, e4));
     }
 
     /**
@@ -129,7 +130,7 @@ public final class RequestTimeline implements Iterable<RequestTimeline.Event> {
      * @return a new {@link RequestTimeline} with five events.
      */
     public static RequestTimeline of(final Event e1, final Event e2, final Event e3, final Event e4, final Event e5) {
-        return new RequestTimeline(ImmutableList.of(e1, e2, e3, e4, e5));
+        return new RequestTimeline(CollectionUtils.immutableList(e1, e2, e3, e4, e5));
     }
 
     /**
@@ -138,7 +139,7 @@ public final class RequestTimeline implements Iterable<RequestTimeline.Event> {
      * @return a new {@link RequestTimeline} with an arbitrary number of events.
      */
     public static RequestTimeline of(final Event... events) {
-        return new RequestTimeline(ImmutableList.copyOf(events));
+        return new RequestTimeline(CollectionUtils.immutableList(events));
     }
 
     /**

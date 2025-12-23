@@ -11,7 +11,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.azure.cosmos.implementation.guava25.base.Preconditions.checkArgument;
+import static com.azure.cosmos.implementation.Utils.checkArgument;
 
 /**
  * A builder to build {@link CosmosContainerProactiveInitConfig}
@@ -61,7 +61,7 @@ public final class CosmosContainerProactiveInitConfigBuilder {
             numProactiveConnectionRegions > 0 &&
 
                 numProactiveConnectionRegions <= MAX_NO_OF_PROACTIVE_CONNECTION_REGIONS,
-                    "The no. of regions to proactively connect to cannot be less than 1 or more than {}.",
+                    "The no. of regions to proactively connect to cannot be less than 1 or more than %d.",
                     MAX_NO_OF_PROACTIVE_CONNECTION_REGIONS);
         this.numProactiveConnectionRegions = numProactiveConnectionRegions;
         return this;
@@ -97,7 +97,7 @@ public final class CosmosContainerProactiveInitConfigBuilder {
      * */
     CosmosContainerProactiveInitConfigBuilder setMinConnectionPoolSizePerEndpointForContainer(CosmosContainerIdentity cosmosContainerIdentity, int minConnectionsPerEndpoint) {
         checkArgument(minConnectionsPerEndpoint >= 0 && minConnectionsPerEndpoint <= MAX_MIN_CONNECTION_POOL_SIZE_PER_ENDPOINT,
-                "minConnectionsPerEndpoint cannot be negative or greater than {}", MAX_MIN_CONNECTION_POOL_SIZE_PER_ENDPOINT);
+                "minConnectionsPerEndpoint cannot be negative or greater than %d", MAX_MIN_CONNECTION_POOL_SIZE_PER_ENDPOINT);
 
         ContainerDirectConnectionMetadata containerDirectConnectionMetadata = this.containerDirectConnectionMetadataMap.get(cosmosContainerIdentity);
         containerDirectConnectionMetadata.setMinConnectionPoolSizePerEndpointForContainer(minConnectionsPerEndpoint);
@@ -114,7 +114,7 @@ public final class CosmosContainerProactiveInitConfigBuilder {
         checkArgument(
             numProactiveConnectionRegions >= 0 &&
                 numProactiveConnectionRegions <= MAX_NO_OF_PROACTIVE_CONNECTION_REGIONS,
-                "The no. of regions to proactively connect to cannot be less than 0 or more than {}.",
+                "The no. of regions to proactively connect to cannot be less than 0 or more than %d.",
                     MAX_NO_OF_PROACTIVE_CONNECTION_REGIONS);
         return new CosmosContainerProactiveInitConfig(
                 this.numProactiveConnectionRegions,

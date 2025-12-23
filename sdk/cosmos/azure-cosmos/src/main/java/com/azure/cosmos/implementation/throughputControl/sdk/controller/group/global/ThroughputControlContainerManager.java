@@ -24,7 +24,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.azure.cosmos.implementation.guava25.base.Preconditions.checkNotNull;
+import static com.azure.cosmos.implementation.Utils.checkNotNull;
 
 /**
  * In Throughput global control mode, in order to coordinate with other clients and share the throughput defined in the group,

@@ -3,8 +3,8 @@
 package com.azure.cosmos.implementation.caches;
 
 import com.azure.cosmos.implementation.DocumentCollection;
+import com.azure.cosmos.implementation.CollectionUtils;
 import com.azure.cosmos.implementation.directconnectivity.ReflectionUtils;
-import com.azure.cosmos.implementation.guava25.collect.ImmutableList;
 import com.azure.cosmos.models.IndexingPolicy;
 import com.azure.cosmos.models.PartitionKeyDefinition;
 import com.azure.cosmos.models.PartitionKeyDefinitionVersion;
@@ -104,7 +104,7 @@ public class SerializableAsyncCacheTest {
         DocumentCollection collection = new DocumentCollection();
         collection.setId(UUID.randomUUID().toString());
         PartitionKeyDefinition partitionKeyDefinition = new PartitionKeyDefinition();
-        partitionKeyDefinition.setPaths(ImmutableList.of("/" + RandomStringUtils.randomAlphabetic(3)));
+        partitionKeyDefinition.setPaths(CollectionUtils.immutableList("/" + RandomStringUtils.randomAlphabetic(3)));
         partitionKeyDefinition.setVersion(PartitionKeyDefinitionVersion.V2);
         collection.setPartitionKey(partitionKeyDefinition);
         SpatialSpec spatialSpec = new SpatialSpec();

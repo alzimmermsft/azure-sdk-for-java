@@ -5,7 +5,7 @@ package com.azure.cosmos;
 import java.time.Duration;
 import java.time.Instant;
 
-import static com.azure.cosmos.implementation.guava25.base.Preconditions.checkNotNull;
+import static com.azure.cosmos.implementation.Utils.checkNotNull;
 
 /**
  * This class represents diagnostic information for different steps in the request pipeline when

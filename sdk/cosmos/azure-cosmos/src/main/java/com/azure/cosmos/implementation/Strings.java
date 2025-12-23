@@ -7,6 +7,8 @@ import com.azure.core.util.CoreUtils;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.ThreadLocalRandom;
@@ -293,5 +295,60 @@ public class Strings {
         }
 
         return buf.toString();
+    }
+
+    /**
+     * Splits the {@code toSplit} string on a fixed {@code length}.
+     * <p>
+     * If the length of the {@code toSplit} string isn't a multiple of {@code length} the last string will be smaller
+     * than {@code length}.
+     *
+     * @param toSplit The string to split.
+     * @param length The length of the split.
+     * @return A list of substrings.
+     * @throws NullPointerException If {@code toSplit} is null.
+     * @throws IllegalArgumentException If {@code length} is less than or equal to zero.
+     */
+    public static List<String> splitFixedLength(String toSplit, int length) {
+        Utils.checkNotNull(toSplit, "'toSplit' cannot be null.");
+        Utils.checkArgument(length > 0, "'length' must be greater than zero (> 0).");
+
+        int toSplitLength = toSplit.length();
+        if (toSplitLength == 0) {
+            // Special case where the to split string is empty.
+            return Collections.singletonList("");
+        }
+
+        List<String> splitList = new ArrayList<>((int) Math.ceil(toSplitLength / (double) length));
+        for (int i = 0; i < toSplitLength; i += length) {
+            splitList.add(toSplit.substring(i, Math.min(length, toSplitLength - i)));
+        }
+
+        return Collections.unmodifiableList(splitList);
+    }
+
+    /**
+     * Pads the start of {@code toPad} string with {@code padChar} if its length is less than {@code minLength}.
+     * <p>
+     * If {@code toPad} is longer than {@code minLength} this method is effectively a no-op.
+     *
+     * @param toPad The string to pad the start of.
+     * @param minLength The minimum length of the returned string.
+     * @param padChar The character to pad with.
+     * @return A string where its start is padded with {@code padChar} until {@code minLength} is reached, or the string
+     * as-is if it is already longer than {@code minLength}.
+     * @throws NullPointerException If {@code toPad} is null.
+     */
+    public static String padStart(String toPad, int minLength, char padChar) {
+        Utils.checkNotNull(toPad, "'toPad' cannot be null.");
+        if (toPad.length() >= minLength) {
+            return toPad;
+        }
+
+        StringBuilder builder = new StringBuilder(minLength);
+        for (int i = 0; i < minLength - toPad.length(); i++) {
+            builder.append(padChar);
+        }
+        return builder.append(toPad).toString();
     }
 }

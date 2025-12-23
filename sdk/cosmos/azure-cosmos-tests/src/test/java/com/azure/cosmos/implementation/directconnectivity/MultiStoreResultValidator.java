@@ -5,7 +5,6 @@ package com.azure.cosmos.implementation.directconnectivity;
 
 import com.azure.cosmos.CosmosException;
 import com.azure.cosmos.implementation.FailureValidator;
-import com.azure.cosmos.implementation.guava25.base.Predicates;
 import org.apache.commons.lang3.mutable.MutableObject;
 import org.assertj.core.api.Assertions;
 import org.assertj.core.description.Description;
@@ -107,7 +106,7 @@ public interface MultiStoreResultValidator {
         public Builder withTotalRequestCharge(double totalExpectedRC) {
             this.withAggregate((srr, v) -> srr.requestCharge + v.doubleValue(),
                                0d,
-                               Predicates.equalTo(totalExpectedRC),
+                               aDouble -> aDouble == totalExpectedRC,
                                new TextDescription("total request charge is expected to be %f", totalExpectedRC));
             return this;
         }

@@ -4,7 +4,6 @@
 package com.azure.cosmos;
 
 import com.azure.cosmos.implementation.DocumentCollection;
-import com.azure.cosmos.implementation.guava25.collect.ImmutableList;
 import com.azure.cosmos.models.IndexingPolicy;
 import com.azure.cosmos.models.PartitionKeyDefinition;
 import com.azure.cosmos.models.PartitionKeyDefinitionVersion;
@@ -16,6 +15,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
@@ -28,7 +28,7 @@ public class SerializableDocumentCollectionTests {
     public void serialize_Deserialize() throws Exception {
         DocumentCollection collection = new DocumentCollection();
         PartitionKeyDefinition partitionKeyDefinition = new PartitionKeyDefinition();
-        partitionKeyDefinition.setPaths(ImmutableList.of("/mypk"));
+        partitionKeyDefinition.setPaths(Collections.singletonList("/mypk"));
         partitionKeyDefinition.setVersion(PartitionKeyDefinitionVersion.V2);
         collection.setPartitionKey(partitionKeyDefinition);
         SpatialSpec spatialSpec = new SpatialSpec();

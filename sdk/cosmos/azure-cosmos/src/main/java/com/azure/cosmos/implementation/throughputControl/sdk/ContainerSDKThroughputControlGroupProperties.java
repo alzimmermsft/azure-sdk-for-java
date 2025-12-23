@@ -18,8 +18,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
-import static com.azure.cosmos.implementation.guava25.base.Preconditions.checkArgument;
-import static com.azure.cosmos.implementation.guava25.base.Preconditions.checkNotNull;
+import static com.azure.cosmos.implementation.Utils.checkArgument;
+import static com.azure.cosmos.implementation.Utils.checkNotNull;
 
 public class ContainerSDKThroughputControlGroupProperties {
     private static Logger logger  = LoggerFactory.getLogger(ContainerSDKThroughputControlGroupProperties.class);

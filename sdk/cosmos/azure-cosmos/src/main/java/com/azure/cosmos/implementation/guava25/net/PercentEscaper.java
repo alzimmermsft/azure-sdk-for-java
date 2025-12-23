@@ -18,9 +18,7 @@
 
 package com.azure.cosmos.implementation.guava25.net;
 
-import static com.azure.cosmos.implementation.guava25.base.Preconditions.checkNotNull;
-
-
+import com.azure.cosmos.implementation.guava25.base.Preconditions;
 import com.azure.cosmos.implementation.guava25.escape.UnicodeEscaper;
 
 /**
@@ -28,9 +26,9 @@ import com.azure.cosmos.implementation.guava25.escape.UnicodeEscaper;
  * encoding scheme. The set of safe characters (those which remain unescaped) can be specified on
  * construction.
  *
- * <p>This class is primarily used for creating URI escapers in {@link UrlEscapers} but can be used
- * directly if required. While URI escapers impose specific semantics on which characters are
- * considered 'safe', this class has a minimal set of restrictions.
+ * <p>This class is primarily used for creating URI escapers but can be used directly if required.
+ * While URI escapers impose specific semantics on which characters are considered 'safe', this
+ * class has a minimal set of restrictions.
  *
  * <p>When escaping a String, the following rules apply:
  *
@@ -87,7 +85,7 @@ public final class PercentEscaper extends UnicodeEscaper {
   public PercentEscaper(String safeChars, boolean plusForSpace) {
     // TODO(user): Switch to static factory methods for creation now that class is final.
     // TODO(user): Support escapers where alphanumeric chars are not safe.
-    checkNotNull(safeChars); // eager for GWT.
+    Preconditions.checkNotNull(safeChars); // eager for GWT.
     // Avoid any misunderstandings about the behavior of this escaper
     if (safeChars.matches(".*[0-9A-Za-z].*")) {
       throw new IllegalArgumentException(
@@ -128,7 +126,7 @@ public final class PercentEscaper extends UnicodeEscaper {
    */
   @Override
   protected int nextEscapeIndex(CharSequence csq, int index, int end) {
-    checkNotNull(csq);
+    Preconditions.checkNotNull(csq);
     for (; index < end; index++) {
       char c = csq.charAt(index);
       if (c >= safeOctets.length || !safeOctets[c]) {
@@ -144,7 +142,7 @@ public final class PercentEscaper extends UnicodeEscaper {
    */
   @Override
   public String escape(String s) {
-    checkNotNull(s);
+    Preconditions.checkNotNull(s);
     int slen = s.length();
     for (int index = 0; index < slen; index++) {
       char c = s.charAt(index);

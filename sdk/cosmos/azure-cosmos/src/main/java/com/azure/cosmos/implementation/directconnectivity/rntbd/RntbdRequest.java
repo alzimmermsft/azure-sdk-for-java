@@ -10,8 +10,8 @@ import io.netty.buffer.ByteBuf;
 import java.util.UUID;
 
 import static com.azure.cosmos.implementation.directconnectivity.rntbd.RntbdConstants.RntbdRequestHeader;
-import static com.azure.cosmos.implementation.guava25.base.Preconditions.checkNotNull;
-import static com.azure.cosmos.implementation.guava25.base.Preconditions.checkState;
+import static com.azure.cosmos.implementation.Utils.checkNotNull;
+import static com.azure.cosmos.implementation.Utils.checkState;
 
 public final class RntbdRequest {
     private static final byte[] EMPTY_BYTE_ARRAY = {};

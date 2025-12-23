@@ -26,7 +26,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import static com.azure.cosmos.implementation.guava25.base.Preconditions.checkArgument;
+import static com.azure.cosmos.implementation.Utils.checkArgument;
 
 public final class CosmosChangeFeedRequestOptionsImpl implements OverridableRequestOptions {
     private static final int DEFAULT_MAX_ITEM_COUNT = 100;

@@ -18,80 +18,14 @@
 
 package com.azure.cosmos.implementation.guava25.hash;
 
-import com.azure.cosmos.implementation.guava25.annotations.Beta;
-import com.azure.cosmos.implementation.guava25.base.Preconditions;
-
-import java.io.Serializable;
-import java.nio.charset.Charset;
-
 /**
  * Funnels for common types. All implementations are serializable.
  *
  * @author Dimitris Andreou
  * @since 11.0
  */
-@Beta
 public final class Funnels {
     private Funnels() {}
-
-    /**
-     * Returns a funnel that encodes the characters of a {@code CharSequence} with the specified
-     * {@code Charset}.
-     *
-     * @since 15.0
-     */
-    public static Funnel<CharSequence> stringFunnel(Charset charset) {
-        return new StringCharsetFunnel(charset);
-    }
-
-    private static class StringCharsetFunnel implements Funnel<CharSequence>, Serializable {
-        private final Charset charset;
-
-        StringCharsetFunnel(Charset charset) {
-            this.charset = Preconditions.checkNotNull(charset);
-        }
-
-        public void funnel(CharSequence from, PrimitiveSink into) {
-            into.putString(from, charset);
-        }
-
-        @Override
-        public String toString() {
-            return "Funnels.stringFunnel(" + charset.name() + ")";
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (o instanceof StringCharsetFunnel) {
-                StringCharsetFunnel funnel = (StringCharsetFunnel) o;
-                return this.charset.equals(funnel.charset);
-            }
-            return false;
-        }
-
-        @Override
-        public int hashCode() {
-            return StringCharsetFunnel.class.hashCode() ^ charset.hashCode();
-        }
-
-        Object writeReplace() {
-            return new SerializedForm(charset);
-        }
-
-        private static class SerializedForm implements Serializable {
-            private final String charsetCanonicalName;
-
-            SerializedForm(Charset charset) {
-                this.charsetCanonicalName = charset.name();
-            }
-
-            private Object readResolve() {
-                return stringFunnel(Charset.forName(charsetCanonicalName));
-            }
-
-            private static final long serialVersionUID = 0;
-        }
-    }
 
     /**
      * Returns a funnel for integers.

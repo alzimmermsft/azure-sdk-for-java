@@ -22,7 +22,6 @@ import com.azure.cosmos.implementation.Utils;
 import com.azure.cosmos.implementation.caches.AsyncCache;
 import com.azure.cosmos.implementation.caches.RxCollectionCache;
 import com.azure.cosmos.implementation.caches.RxPartitionKeyRangeCache;
-import com.azure.cosmos.implementation.guava25.base.Objects;
 import com.azure.cosmos.implementation.throughputControl.IThroughputContainerController;
 import com.azure.cosmos.implementation.throughputControl.sdk.LinkedCancellationToken;
 import com.azure.cosmos.implementation.throughputControl.sdk.LinkedCancellationTokenSource;
@@ -43,11 +42,12 @@ import reactor.util.retry.RetrySpec;
 
 import java.time.Duration;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicReference;
 
-import static com.azure.cosmos.implementation.guava25.base.Preconditions.checkArgument;
-import static com.azure.cosmos.implementation.guava25.base.Preconditions.checkNotNull;
+import static com.azure.cosmos.implementation.Utils.checkArgument;
+import static com.azure.cosmos.implementation.Utils.checkNotNull;
 
 /**
  * Three main purpose of container controller:
@@ -330,7 +330,7 @@ public class SDKThroughputContainerController implements IThroughputContainerCon
     public boolean canHandleRequest(RxDocumentServiceRequest request) {
         checkNotNull(request, "Request can not be null");
 
-        return Objects.equal(this.targetContainerRid, request.requestContext.resolvedCollectionRid);
+        return Objects.equals(this.targetContainerRid, request.requestContext.resolvedCollectionRid);
     }
 
     private Mono<SDKThroughputContainerController> createAndInitializeGroupControllers() {

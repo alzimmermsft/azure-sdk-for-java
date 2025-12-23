@@ -17,7 +17,7 @@ import reactor.core.publisher.Flux;
 import java.time.Duration;
 import java.util.Map;
 
-import static com.azure.cosmos.implementation.guava25.base.Preconditions.checkNotNull;
+import static com.azure.cosmos.implementation.Utils.checkNotNull;
 
 /**
  * Response of a {@link CosmosItemOperation} request when processed using Bulk by calling

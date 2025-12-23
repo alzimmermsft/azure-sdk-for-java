@@ -9,7 +9,7 @@ import com.azure.cosmos.implementation.interceptor.ITransportClientInterceptor;
 
 import java.util.function.BiFunction;
 
-import static com.azure.cosmos.implementation.guava25.base.Preconditions.checkNotNull;
+import static com.azure.cosmos.implementation.Utils.checkNotNull;
 
 public class CosmosTransportClientInterceptor implements ITransportClientInterceptor {
 

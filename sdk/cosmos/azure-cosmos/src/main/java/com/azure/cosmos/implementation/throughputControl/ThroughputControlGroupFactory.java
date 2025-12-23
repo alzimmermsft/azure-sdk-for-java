@@ -11,7 +11,7 @@ import com.azure.cosmos.implementation.throughputControl.sdk.config.GlobalThroug
 import com.azure.cosmos.implementation.throughputControl.sdk.config.LocalThroughputControlGroup;
 import com.azure.cosmos.implementation.throughputControl.server.config.ServerThroughputControlGroup;
 
-import static com.azure.cosmos.implementation.guava25.base.Preconditions.checkNotNull;
+import static com.azure.cosmos.implementation.Utils.checkNotNull;
 
 public class ThroughputControlGroupFactory {
 

@@ -19,7 +19,6 @@ import com.azure.cosmos.implementation.directconnectivity.RntbdTransportClient;
 import com.azure.cosmos.implementation.directconnectivity.TransportException;
 import com.azure.cosmos.implementation.directconnectivity.Uri;
 import com.azure.cosmos.implementation.faultinjection.RntbdServerErrorInjector;
-import com.azure.cosmos.implementation.guava25.collect.ImmutableMap;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
@@ -29,7 +28,6 @@ import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.AdaptiveRecvByteBufAllocator;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelOption;
-import io.netty.channel.ConnectTimeoutException;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.epoll.EpollChannelOption;
 import io.netty.handler.logging.LogLevel;
@@ -47,6 +45,7 @@ import java.net.URI;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
@@ -58,8 +57,8 @@ import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Stream;
 
 import static com.azure.cosmos.implementation.HttpConstants.HttpHeaders;
+import static com.azure.cosmos.implementation.Utils.checkNotNull;
 import static com.azure.cosmos.implementation.directconnectivity.RntbdTransportClient.Options;
-import static com.azure.cosmos.implementation.guava25.base.Preconditions.checkNotNull;
 import static java.util.concurrent.TimeUnit.NANOSECONDS;
 
 @JsonSerialize(using = RntbdServiceEndpoint.JsonSerializer.class)
@@ -603,7 +602,7 @@ public final class RntbdServiceEndpoint implements RntbdEndpoint {
             final GoneException goneException = new GoneException(
                 String.format("failed to establish connection to %s due to %s", this.remoteAddress, reason),
                 cause instanceof Exception ? (Exception) cause : new IOException(reason, cause),
-                ImmutableMap.of(HttpHeaders.ACTIVITY_ID, activityId.toString()),
+                Collections.singletonMap(HttpHeaders.ACTIVITY_ID, activityId.toString()),
                 requestArgs.replicaPath(),
                 HttpConstants.SubStatusCodes.TRANSPORT_GENERATED_410
             );

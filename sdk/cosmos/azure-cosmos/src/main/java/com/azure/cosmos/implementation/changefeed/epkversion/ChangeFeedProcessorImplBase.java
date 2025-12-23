@@ -51,7 +51,7 @@ import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 import static com.azure.cosmos.CosmosBridgeInternal.getContextClient;
-import static com.azure.cosmos.implementation.guava25.base.Preconditions.checkNotNull;
+import static com.azure.cosmos.implementation.Utils.checkNotNull;
 
 public abstract class ChangeFeedProcessorImplBase<T> implements ChangeFeedProcessor, AutoCloseable{
     private final Logger logger = LoggerFactory.getLogger(ChangeFeedProcessorImplBase.class);

@@ -3,12 +3,13 @@
 
 package com.azure.cosmos.models;
 
-import com.azure.cosmos.implementation.guava25.base.Preconditions;
 import com.azure.cosmos.util.Beta;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.Objects;
+
+import static com.azure.cosmos.implementation.Utils.checkNotNull;
 
 /**
  * Metadata that can be used to wrap/unwrap a Data Encryption Key using a Customer Managed Key.
@@ -43,9 +44,9 @@ public final class EncryptionKeyWrapMetadata {
     @Beta(value = Beta.SinceVersion.V4_16_0, warningText = Beta.PREVIEW_SUBJECT_TO_CHANGE_WARNING)
     @Deprecated
     public EncryptionKeyWrapMetadata(String type, String name, String value) {
-        Preconditions.checkNotNull(type, "type is null");
-        Preconditions.checkNotNull(value, "value is null");
-        Preconditions.checkNotNull(name, "name is null");
+        checkNotNull(type, "type is null");
+        checkNotNull(value, "value is null");
+        checkNotNull(name, "name is null");
         this.type = type;
         this.name = name;
         this.value = value;
@@ -60,10 +61,10 @@ public final class EncryptionKeyWrapMetadata {
      * @param algorithm Algorithm of the metadata.
      */
     public EncryptionKeyWrapMetadata(String type, String name, String value, String algorithm) {
-        Preconditions.checkNotNull(type, "type is null");
-        Preconditions.checkNotNull(value, "value is null");
-        Preconditions.checkNotNull(name, "name is null");
-        Preconditions.checkNotNull(algorithm, "algorithm is null");
+        checkNotNull(type, "type is null");
+        checkNotNull(value, "value is null");
+        checkNotNull(name, "name is null");
+        checkNotNull(algorithm, "algorithm is null");
         this.type = type;
         this.name = name;
         this.value = value;

@@ -18,9 +18,6 @@
 
 package com.azure.cosmos.implementation.guava25.hash;
 
-import com.azure.cosmos.implementation.guava25.annotations.Beta;
-import com.azure.cosmos.implementation.guava25.errorprone.annotations.CanIgnoreReturnValue;
-
 import java.nio.charset.Charset;
 
 /**
@@ -56,8 +53,6 @@ import java.nio.charset.Charset;
  * @author Kevin Bourrillion
  * @since 11.0
  */
-@Beta
-@CanIgnoreReturnValue
 public interface Hasher extends PrimitiveSink {
     @Override
     Hasher putByte(byte b);

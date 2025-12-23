@@ -6,25 +6,25 @@ package com.azure.cosmos.encryption;
 import com.azure.cosmos.CosmosClient;
 import com.azure.cosmos.CosmosClientBuilder;
 import com.azure.cosmos.encryption.models.SqlQuerySpecWithEncryption;
+import com.azure.cosmos.implementation.CollectionUtils;
 import com.azure.cosmos.models.CosmosBatch;
 import com.azure.cosmos.models.CosmosBatchItemRequestOptions;
+import com.azure.cosmos.models.CosmosBatchRequestOptions;
 import com.azure.cosmos.models.CosmosBatchResponse;
+import com.azure.cosmos.models.CosmosBulkExecutionOptions;
+import com.azure.cosmos.models.CosmosBulkItemResponse;
+import com.azure.cosmos.models.CosmosBulkOperationResponse;
+import com.azure.cosmos.models.CosmosBulkOperations;
+import com.azure.cosmos.models.CosmosItemOperation;
 import com.azure.cosmos.models.CosmosItemRequestOptions;
 import com.azure.cosmos.models.CosmosItemResponse;
+import com.azure.cosmos.models.CosmosPatchItemRequestOptions;
+import com.azure.cosmos.models.CosmosPatchOperations;
 import com.azure.cosmos.models.CosmosQueryRequestOptions;
 import com.azure.cosmos.models.FeedResponse;
 import com.azure.cosmos.models.PartitionKey;
 import com.azure.cosmos.models.SqlParameter;
 import com.azure.cosmos.models.SqlQuerySpec;
-import com.azure.cosmos.implementation.guava25.collect.Lists;
-import com.azure.cosmos.models.CosmosBulkItemResponse;
-import com.azure.cosmos.models.CosmosBulkOperationResponse;
-import com.azure.cosmos.models.CosmosBulkOperations;
-import com.azure.cosmos.models.CosmosBulkExecutionOptions;
-import com.azure.cosmos.models.CosmosBatchRequestOptions;
-import com.azure.cosmos.models.CosmosItemOperation;
-import com.azure.cosmos.models.CosmosPatchItemRequestOptions;
-import com.azure.cosmos.models.CosmosPatchOperations;
 import com.azure.cosmos.util.CosmosPagedIterable;
 import io.netty.handler.codec.http.HttpResponseStatus;
 import org.testng.annotations.AfterClass;
@@ -33,12 +33,12 @@ import org.testng.annotations.Factory;
 import org.testng.annotations.Test;
 
 import java.util.ArrayList;
-import java.util.Map;
 import java.util.HashMap;
-import java.util.Random;
-import java.util.Set;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Random;
+import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -479,7 +479,7 @@ public class EncryptionSyncApiCrudTest extends TestSuiteBase {
             cosmosItemOperationsList.add(CosmosBulkOperations.getCreateItemOperation(createPojo, new PartitionKey(createPojo.getMypk())));
         }
 
-        List<CosmosBulkOperationResponse<EncryptionAsyncApiCrudTest>> bulkResponse = Lists.newArrayList(this.cosmosEncryptionContainer.
+        List<CosmosBulkOperationResponse<EncryptionAsyncApiCrudTest>> bulkResponse = CollectionUtils.iterableToList(this.cosmosEncryptionContainer.
             executeBulkOperations(cosmosItemOperationsList));
 
         AtomicInteger processedDoc = new AtomicInteger(0);
@@ -521,7 +521,7 @@ public class EncryptionSyncApiCrudTest extends TestSuiteBase {
             cosmosItemOperationsList.add(CosmosBulkOperations.getUpsertItemOperation(createPojo, new PartitionKey(createPojo.getMypk())));
         }
 
-        List<CosmosBulkOperationResponse<EncryptionAsyncApiCrudTest>> bulkResponse = Lists.newArrayList(this.cosmosEncryptionContainer.
+        List<CosmosBulkOperationResponse<EncryptionAsyncApiCrudTest>> bulkResponse = CollectionUtils.iterableToList(this.cosmosEncryptionContainer.
             executeBulkOperations(cosmosItemOperationsList, new CosmosBulkExecutionOptions()));
 
         AtomicInteger processedDoc = new AtomicInteger(0);
@@ -570,7 +570,7 @@ public class EncryptionSyncApiCrudTest extends TestSuiteBase {
             deleteCosmosItemOperations.add(CosmosBulkOperations.getDeleteItemOperation(encryptionPojo.getId(), cosmosItemOperation.getPartitionKeyValue()));
         }
 
-        List<CosmosBulkOperationResponse<EncryptionAsyncApiCrudTest>> bulkResponse = Lists.newArrayList(this.cosmosEncryptionContainer
+        List<CosmosBulkOperationResponse<EncryptionAsyncApiCrudTest>> bulkResponse = CollectionUtils.iterableToList(this.cosmosEncryptionContainer
             .executeBulkOperations(deleteCosmosItemOperations));
 
         AtomicInteger processedDoc = new AtomicInteger(0);
@@ -620,7 +620,7 @@ public class EncryptionSyncApiCrudTest extends TestSuiteBase {
             readCosmosItemOperations.add(CosmosBulkOperations.getReadItemOperation(encryptionPojo.getId(), cosmosItemOperation.getPartitionKeyValue()));
         }
 
-        List<CosmosBulkOperationResponse<EncryptionAsyncApiCrudTest>> bulkResponse = Lists.newArrayList(this.cosmosEncryptionContainer
+        List<CosmosBulkOperationResponse<EncryptionAsyncApiCrudTest>> bulkResponse = CollectionUtils.iterableToList(this.cosmosEncryptionContainer
             .executeBulkOperations(readCosmosItemOperations));
 
 
@@ -653,7 +653,7 @@ public class EncryptionSyncApiCrudTest extends TestSuiteBase {
 
     private void createItemsAndVerify(List<CosmosItemOperation> cosmosItemOperations) {
 
-        List<CosmosBulkOperationResponse<EncryptionAsyncApiCrudTest>> createResponseFlux = Lists.newArrayList(this.cosmosEncryptionContainer.
+        List<CosmosBulkOperationResponse<EncryptionAsyncApiCrudTest>> createResponseFlux = CollectionUtils.iterableToList(this.cosmosEncryptionContainer.
             executeBulkOperations(cosmosItemOperations));
 
         Set<String> distinctIndex = new HashSet<>();

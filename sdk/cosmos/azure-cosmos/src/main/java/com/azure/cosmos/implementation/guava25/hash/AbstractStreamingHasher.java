@@ -18,12 +18,10 @@
 
 package com.azure.cosmos.implementation.guava25.hash;
 
-import com.azure.cosmos.implementation.guava25.errorprone.annotations.CanIgnoreReturnValue;
+import com.azure.cosmos.implementation.guava25.base.Preconditions;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
-
-import static com.azure.cosmos.implementation.guava25.base.Preconditions.checkArgument;
 
 /**
  * A convenience base class for implementors of {@code Hasher}; handles accumulating data until an
@@ -33,7 +31,6 @@ import static com.azure.cosmos.implementation.guava25.base.Preconditions.checkAr
  * @author Dimitris Andreou
  */
 // TODO(kevinb): this class still needs some design-and-document-for-inheritance love
-@CanIgnoreReturnValue
 abstract class AbstractStreamingHasher extends AbstractHasher {
     /** Buffer via which we pass data to the hash algorithm (the implementor) */
     private final ByteBuffer buffer;
@@ -66,7 +63,7 @@ abstract class AbstractStreamingHasher extends AbstractHasher {
      */
     protected AbstractStreamingHasher(int chunkSize, int bufferSize) {
         // TODO(kevinb): check more preconditions (as bufferSize >= chunkSize) if this is ever public
-        checkArgument(bufferSize % chunkSize == 0);
+        Preconditions.checkArgument(bufferSize % chunkSize == 0);
 
         // TODO(user): benchmark performance difference with longer buffer
         // always space for a single primitive

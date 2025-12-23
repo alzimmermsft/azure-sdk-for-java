@@ -7,7 +7,6 @@ import com.azure.cosmos.CosmosAsyncContainer;
 import com.azure.cosmos.implementation.ImplementationBridgeHelpers;
 import com.azure.cosmos.implementation.Pair;
 import com.azure.cosmos.implementation.Utils;
-import com.azure.cosmos.implementation.guava25.base.Stopwatch;
 import com.azure.cosmos.kafka.connect.implementation.CosmosClientCache;
 import com.azure.cosmos.kafka.connect.implementation.CosmosClientCacheItem;
 import com.azure.cosmos.kafka.connect.implementation.CosmosThroughputControlHelper;
@@ -36,7 +35,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 
-import static com.azure.cosmos.implementation.guava25.base.Preconditions.checkNotNull;
+import static com.azure.cosmos.implementation.Utils.checkNotNull;
 
 public class CosmosSourceTask extends SourceTask {
     private static final Logger LOGGER = LoggerFactory.getLogger(CosmosSourceTask.class);
@@ -180,8 +179,6 @@ public class CosmosSourceTask extends SourceTask {
                     "Return {} metadata records, databaseName {}", results.size(), ((MetadataTaskUnit) taskUnit).getDatabaseName());
 
             } else {
-                Stopwatch stopwatch = Stopwatch.createStarted();
-
                 LOGGER.trace("Polling for task {}", taskUnit);
                 Pair<List<SourceRecord>, Boolean> feedRangeTaskResults = executeFeedRangeTask((FeedRangeTaskUnit) taskUnit);
                 results.addAll(feedRangeTaskResults.getLeft());
@@ -191,8 +188,6 @@ public class CosmosSourceTask extends SourceTask {
                     LOGGER.trace("Adding task {} back to queue", taskUnit);
                     this.taskUnitsQueue.add(taskUnit);
                 }
-
-                stopwatch.stop();
 
                 // Update count for this feed range
                 String feedRangeKey = ((FeedRangeTaskUnit) taskUnit).getFeedRange().toString();

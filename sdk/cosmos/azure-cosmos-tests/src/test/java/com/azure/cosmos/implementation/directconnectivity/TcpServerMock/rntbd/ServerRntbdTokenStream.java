@@ -3,16 +3,16 @@
 
 package com.azure.cosmos.implementation.directconnectivity.TcpServerMock.rntbd;
 
-import com.azure.cosmos.implementation.guava25.collect.ImmutableMap;
-import com.azure.cosmos.implementation.guava25.collect.ImmutableSet;
-import com.azure.cosmos.implementation.guava25.collect.Maps;
 import io.netty.buffer.ByteBuf;
 import io.netty.handler.codec.CorruptedFrameException;
 import io.netty.util.ReferenceCounted;
 
-import java.util.stream.Collector;
+import java.util.Collections;
+import java.util.EnumMap;
+import java.util.Map;
+import java.util.Set;
 
-import static com.azure.cosmos.implementation.guava25.base.Preconditions.checkNotNull;
+import static com.azure.cosmos.implementation.Utils.checkNotNull;
 
 /**
  * Methods included in this class are copied from com.azure.cosmos.implementation.directconnectivity.rntbd.RntbdTokenStream.
@@ -20,18 +20,20 @@ import static com.azure.cosmos.implementation.guava25.base.Preconditions.checkNo
  */
 abstract class ServerRntbdTokenStream <T extends Enum<T> & ServerRntbdConstants.RntbdHeader> implements ReferenceCounted {
     final ByteBuf in;
-    final ImmutableMap<Short, T> headers;
-    final ImmutableMap<T, ServerRntbdToken> tokens;
+    final Map<Short, T> headers;
+    final Map<T, ServerRntbdToken> tokens;
 
-    ServerRntbdTokenStream(final ImmutableSet<T> headers, final ImmutableMap<Short, T> ids, final ByteBuf in) {
-
+    ServerRntbdTokenStream(final Set<T> headers, final Map<Short, T> ids, final ByteBuf in, Class<T> enumType) {
         checkNotNull(headers, "expected non-null headers");
         checkNotNull(ids, "expected non-null ids");
         checkNotNull(in, "expected non-null in");
 
-        final Collector<T, ?, ImmutableMap<T, ServerRntbdToken>> collector = Maps.toImmutableEnumMap(h -> h, ServerRntbdToken::create);
-        this.tokens = headers.stream().collect(collector);
-        this.headers = ids;
+        EnumMap<T, ServerRntbdToken> tokens = new EnumMap<>(enumType);
+        for (T header : headers) {
+            tokens.put(header, ServerRntbdToken.create(header));
+        }
+        this.tokens = Collections.unmodifiableMap(tokens);
+        this.headers = Collections.unmodifiableMap(ids);
         this.in = in;
     }
 

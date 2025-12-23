@@ -3,7 +3,6 @@
 
 package com.azure.cosmos.implementation;
 
-import com.azure.cosmos.implementation.apachecommons.lang.time.StopWatch;
 import com.azure.cosmos.implementation.directconnectivity.WebExceptionUtility;
 import com.azure.cosmos.implementation.http.HttpTimeoutPolicy;
 import com.azure.cosmos.implementation.http.HttpTimeoutPolicyDefault;
@@ -15,12 +14,10 @@ import reactor.core.publisher.Mono;
 import java.net.URI;
 import java.time.Duration;
 
-import static com.azure.cosmos.implementation.guava25.base.Preconditions.checkArgument;
-
 public class WebExceptionRetryPolicy implements IRetryPolicy {
     private final static Logger logger = LoggerFactory.getLogger(WebExceptionRetryPolicy.class);
 
-    private StopWatch durationTimer = new StopWatch();
+    private final StopWatch durationTimer = new StopWatch();
     private RetryContext retryContext;
     private RxDocumentServiceRequest request;
     private HttpTimeoutPolicy timeoutPolicy;

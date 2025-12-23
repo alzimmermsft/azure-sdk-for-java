@@ -16,6 +16,7 @@ import com.azure.cosmos.implementation.DocumentCollection;
 import com.azure.cosmos.implementation.HttpClientUnderTestWrapper;
 import com.azure.cosmos.implementation.HttpConstants;
 import com.azure.cosmos.implementation.IAuthorizationTokenProvider;
+import com.azure.cosmos.implementation.CollectionUtils;
 import com.azure.cosmos.implementation.OperationType;
 import com.azure.cosmos.implementation.RequestOptions;
 import com.azure.cosmos.implementation.ResourceType;
@@ -26,8 +27,6 @@ import com.azure.cosmos.implementation.TestSuiteBase;
 import com.azure.cosmos.implementation.Utils;
 import com.azure.cosmos.implementation.directconnectivity.rntbd.OpenConnectionTask;
 import com.azure.cosmos.implementation.directconnectivity.rntbd.ProactiveOpenConnectionsProcessor;
-import com.azure.cosmos.implementation.guava25.collect.ImmutableList;
-import com.azure.cosmos.implementation.guava25.collect.Lists;
 import com.azure.cosmos.implementation.http.HttpClient;
 import com.azure.cosmos.implementation.http.HttpClientConfig;
 import com.azure.cosmos.implementation.routing.PartitionKeyRangeIdentity;
@@ -85,15 +84,15 @@ public class GatewayAddressCacheTest extends TestSuiteBase {
     public Object[][] partitionsKeyRangeListAndCollectionLinkParams() {
         return new Object[][] {
                 // target partition key range ids, collection link
-                { ImmutableList.of("0"), getNameBasedCollectionLink(), Protocol.TCP},
-                { ImmutableList.of("0"), getNameBasedCollectionLink(), Protocol.HTTPS},
+                { CollectionUtils.immutableList("0"), getNameBasedCollectionLink(), Protocol.TCP},
+                { CollectionUtils.immutableList("0"), getNameBasedCollectionLink(), Protocol.HTTPS},
 
-                { ImmutableList.of("1"), getNameBasedCollectionLink(), Protocol.HTTPS},
-                { ImmutableList.of("1"), getCollectionSelfLink(), Protocol.HTTPS},
-                { ImmutableList.of("3"), getNameBasedCollectionLink(), Protocol.HTTPS},
+                { CollectionUtils.immutableList("1"), getNameBasedCollectionLink(), Protocol.HTTPS},
+                { CollectionUtils.immutableList("1"), getCollectionSelfLink(), Protocol.HTTPS},
+                { CollectionUtils.immutableList("3"), getNameBasedCollectionLink(), Protocol.HTTPS},
 
-                { ImmutableList.of("0", "1"), getNameBasedCollectionLink(), Protocol.HTTPS},
-                { ImmutableList.of("1", "3"), getNameBasedCollectionLink(), Protocol.HTTPS},
+                { CollectionUtils.immutableList("0", "1"), getNameBasedCollectionLink(), Protocol.HTTPS},
+                { CollectionUtils.immutableList("1", "3"), getNameBasedCollectionLink(), Protocol.HTTPS},
         };
     }
 
@@ -251,11 +250,11 @@ public class GatewayAddressCacheTest extends TestSuiteBase {
         boolean forceRefreshPartitionAddresses = false;
         Mono<Utils.ValueHolder<AddressInformation[]>> addressesInfosFromCacheObs = cache.tryGetAddresses(req, partitionKeyRangeIdentity, forceRefreshPartitionAddresses);
 
-        ArrayList<AddressInformation> addressInfosFromCache =
-            Lists.newArrayList(getSuccessResult(addressesInfosFromCacheObs, TIMEOUT).v);
+        List<AddressInformation> addressInfosFromCache =
+            Arrays.asList(getSuccessResult(addressesInfosFromCacheObs, TIMEOUT).v);
 
         Mono<List<Address>> masterAddressFromGatewayObs = cache.getServerAddressesViaGatewayAsync(req,
-                collectionRid, ImmutableList.of(partitionKeyRangeId), false);
+                collectionRid, CollectionUtils.immutableList(partitionKeyRangeId), false);
         List<Address> expectedAddresses = getSuccessResult(masterAddressFromGatewayObs, TIMEOUT);
 
         assertSameAs(addressInfosFromCache, expectedAddresses);
@@ -265,9 +264,9 @@ public class GatewayAddressCacheTest extends TestSuiteBase {
     public Object[][] openAsyncTargetAndPartitionsKeyRangeTargetAndCollectionLinkParams() {
         return new Object[][] {
                 // openAsync target partition key range ids, target partition key range id, collection link, is collection under warm up flow
-                { ImmutableList.of("0", "1"), "0", getNameBasedCollectionLink(), true },
-                { ImmutableList.of("0", "1"), "1", getNameBasedCollectionLink(), true },
-                { ImmutableList.of("0", "1"), "1", getCollectionSelfLink(), false },
+                { CollectionUtils.immutableList("0", "1"), "0", getNameBasedCollectionLink(), true },
+                { CollectionUtils.immutableList("0", "1"), "1", getNameBasedCollectionLink(), true },
+                { CollectionUtils.immutableList("0", "1"), "1", getCollectionSelfLink(), false },
         };
     }
 
@@ -320,7 +319,7 @@ public class GatewayAddressCacheTest extends TestSuiteBase {
         PartitionKeyRangeIdentity partitionKeyRangeIdentity = new PartitionKeyRangeIdentity(collectionRid, partitionKeyRangeId);
         boolean forceRefreshPartitionAddresses = false;
         Mono<Utils.ValueHolder<AddressInformation[]>> addressesInfosFromCacheObs = cache.tryGetAddresses(req, partitionKeyRangeIdentity, forceRefreshPartitionAddresses);
-        ArrayList<AddressInformation> addressInfosFromCache = Lists.newArrayList(getSuccessResult(addressesInfosFromCacheObs, TIMEOUT).v);
+        List<AddressInformation> addressInfosFromCache = Arrays.asList(getSuccessResult(addressesInfosFromCacheObs, TIMEOUT).v);
 
         // no new request is made
         assertThat(httpClientWrapper.capturedRequests)
@@ -328,7 +327,7 @@ public class GatewayAddressCacheTest extends TestSuiteBase {
                 .asList().hasSize(0);
 
         Mono<List<Address>> masterAddressFromGatewayObs = cache.getServerAddressesViaGatewayAsync(req,
-                collectionRid, ImmutableList.of(partitionKeyRangeId), false);
+                collectionRid, CollectionUtils.immutableList(partitionKeyRangeId), false);
         List<Address> expectedAddresses = getSuccessResult(masterAddressFromGatewayObs, TIMEOUT);
 
         assertThat(httpClientWrapper.capturedRequests)
@@ -398,7 +397,7 @@ public class GatewayAddressCacheTest extends TestSuiteBase {
 
         PartitionKeyRangeIdentity partitionKeyRangeIdentity = new PartitionKeyRangeIdentity(collectionRid, partitionKeyRangeId);
         Mono<Utils.ValueHolder<AddressInformation[]>> addressesInfosFromCacheObs = cache.tryGetAddresses(req, partitionKeyRangeIdentity, true);
-        ArrayList<AddressInformation> addressInfosFromCache = Lists.newArrayList(getSuccessResult(addressesInfosFromCacheObs, TIMEOUT).v);
+        List<AddressInformation> addressInfosFromCache = Arrays.asList(getSuccessResult(addressesInfosFromCacheObs, TIMEOUT).v);
 
         // isCollectionRidUnderOpenConnectionsFlow is called 6 times
         // 1. as forceRefreshPartitionAddresses = true, this invokes isCollectionRidUnderOpenConnectionsFlow eventually
@@ -431,7 +430,7 @@ public class GatewayAddressCacheTest extends TestSuiteBase {
                 .asList().hasSize(1);
 
         Mono<List<Address>> masterAddressFromGatewayObs = cache.getServerAddressesViaGatewayAsync(req,
-                collectionRid, ImmutableList.of(partitionKeyRangeId), false);
+                collectionRid, CollectionUtils.immutableList(partitionKeyRangeId), false);
         List<Address> expectedAddresses = getSuccessResult(masterAddressFromGatewayObs, TIMEOUT);
 
         assertThat(httpClientWrapper.capturedRequests)
@@ -504,7 +503,7 @@ public class GatewayAddressCacheTest extends TestSuiteBase {
 
         PartitionKeyRangeIdentity partitionKeyRangeIdentity = new PartitionKeyRangeIdentity(collectionRid, partitionKeyRangeId);
         Mono<Utils.ValueHolder<AddressInformation[]>> addressesInfosFromCacheObs = origCache.tryGetAddresses(req, partitionKeyRangeIdentity, true);
-        ArrayList<AddressInformation> addressInfosFromCache = Lists.newArrayList(getSuccessResult(addressesInfosFromCacheObs, TIMEOUT).v);
+        List<AddressInformation> addressInfosFromCache = Arrays.asList(getSuccessResult(addressesInfosFromCacheObs, TIMEOUT).v);
 
         // isCollectionRidUnderOpenConnectionsFlow called 6 times
         // 1. as forceRefreshPartitionAddresses = true, this invokes isCollectionRidUnderOpenConnectionsFlow eventually
@@ -625,7 +624,7 @@ public class GatewayAddressCacheTest extends TestSuiteBase {
         boolean forceRefreshPartitionAddresses = false;
         Mono<Utils.ValueHolder<AddressInformation[]>> addressesInfosFromCacheObs = cache.tryGetAddresses(req, partitionKeyRangeIdentity, forceRefreshPartitionAddresses);
 
-        ArrayList<AddressInformation> addressInfosFromCache = Lists.newArrayList(getSuccessResult(addressesInfosFromCacheObs, TIMEOUT).v);
+        List<AddressInformation> addressInfosFromCache = Arrays.asList(getSuccessResult(addressesInfosFromCacheObs, TIMEOUT).v);
 
         Mono<List<Address>> masterAddressFromGatewayObs = cache.getMasterAddressesViaGatewayAsync(req, ResourceType.Database,
                 null, "/dbs/", false, false, null);
@@ -957,7 +956,7 @@ public class GatewayAddressCacheTest extends TestSuiteBase {
         List<Address> fetchedAddresses = origCache.getMasterAddressesViaGatewayAsync(req, ResourceType.Database,
                 null, "/dbs/", false, false, null).block();
 
-        assertSameAs(ImmutableList.copyOf(actualAddresses),  fetchedAddresses);
+        assertSameAs(CollectionUtils.immutableList(actualAddresses), fetchedAddresses);
     }
 
     @SuppressWarnings("unchecked")
@@ -1020,8 +1019,8 @@ public class GatewayAddressCacheTest extends TestSuiteBase {
         Mono<Utils.ValueHolder<AddressInformation[]>> addressesInfosFromCacheObs =
                 cache.tryGetAddresses(req, partitionKeyRangeIdentity, forceRefreshPartitionAddresses);
 
-        ArrayList<AddressInformation> addressInfosFromCache =
-                Lists.newArrayList(getSuccessResult(addressesInfosFromCacheObs, TIMEOUT).v);
+        List<AddressInformation> addressInfosFromCache =
+                Arrays.asList(getSuccessResult(addressesInfosFromCacheObs, TIMEOUT).v);
 
         assertThat(httpClientWrapper.capturedRequests)
                 .describedAs("getAddress will read addresses from gateway")
@@ -1091,8 +1090,8 @@ public class GatewayAddressCacheTest extends TestSuiteBase {
             }
         }
 
-        ArrayList<AddressInformation> refreshedAddresses =
-                Lists.newArrayList(getSuccessResult(cache.tryGetAddresses(req, partitionKeyRangeIdentity, true), TIMEOUT).v);
+        List<AddressInformation> refreshedAddresses =
+                Arrays.asList(getSuccessResult(cache.tryGetAddresses(req, partitionKeyRangeIdentity, true), TIMEOUT).v);
         assertThat(httpClientWrapper.capturedRequests)
                 .describedAs("getAddress will read addresses from gateway")
                 .asList().hasSize(1);
@@ -1169,8 +1168,8 @@ public class GatewayAddressCacheTest extends TestSuiteBase {
         Mono<Utils.ValueHolder<AddressInformation[]>> addressesInfosFromCacheObs =
                 cache.tryGetAddresses(req, partitionKeyRangeIdentity, forceRefreshPartitionAddresses);
 
-        ArrayList<AddressInformation> addressInfosFromCache =
-                Lists.newArrayList(getSuccessResult(addressesInfosFromCacheObs, TIMEOUT).v);
+        List<AddressInformation> addressInfosFromCache =
+            Arrays.asList(getSuccessResult(addressesInfosFromCacheObs, TIMEOUT).v);
 
         assertThat(httpClientWrapper.capturedRequests)
                 .describedAs("getAddress will read addresses from gateway")
@@ -1186,8 +1185,8 @@ public class GatewayAddressCacheTest extends TestSuiteBase {
 
         req.requestContext.getFailedEndpoints().add(addressInfosFromCache.get(0).getPhysicalUri());
 
-        ArrayList<AddressInformation> refreshedAddresses =
-                Lists.newArrayList(getSuccessResult(cache.tryGetAddresses(req, partitionKeyRangeIdentity, false), TIMEOUT).v);
+        List<AddressInformation> refreshedAddresses =
+            Arrays.asList(getSuccessResult(cache.tryGetAddresses(req, partitionKeyRangeIdentity, false), TIMEOUT).v);
         assertThat(httpClientWrapper.capturedRequests)
                 .describedAs("getAddress will read from cache")
                 .asList().hasSize(0);
@@ -1231,8 +1230,8 @@ public class GatewayAddressCacheTest extends TestSuiteBase {
         Mono<Utils.ValueHolder<AddressInformation[]>> addressesInfosFromCacheObs =
                 cache.tryGetAddresses(req, partitionKeyRangeIdentity, forceRefreshPartitionAddresses);
 
-        ArrayList<AddressInformation> addressInfosFromCache =
-                Lists.newArrayList(getSuccessResult(addressesInfosFromCacheObs, TIMEOUT).v);
+        List<AddressInformation> addressInfosFromCache =
+            Arrays.asList(getSuccessResult(addressesInfosFromCacheObs, TIMEOUT).v);
 
         // isCollectionRidUnderOpenConnectionsFlow is not called since forceRefreshPartitionAddresses=false
         // and replicaValidationScope just has 'Unhealthy'
@@ -1259,8 +1258,8 @@ public class GatewayAddressCacheTest extends TestSuiteBase {
         // using forceRefresh false
         // but as there is one address has been stuck in unhealthy status for more than 1 min,
         // so after getting the addresses, it will refresh the cache
-        ArrayList<AddressInformation> cachedAddresses =
-                Lists.newArrayList(getSuccessResult(cache.tryGetAddresses(req, partitionKeyRangeIdentity, false), TIMEOUT).v);
+        List<AddressInformation> cachedAddresses =
+            Arrays.asList(getSuccessResult(cache.tryGetAddresses(req, partitionKeyRangeIdentity, false), TIMEOUT).v);
 
         // since the refresh will happen asynchronously in the background, wait here some time for it to happen
         Thread.sleep(500);
@@ -1321,8 +1320,8 @@ public class GatewayAddressCacheTest extends TestSuiteBase {
         Mono<Utils.ValueHolder<AddressInformation[]>> addressesInfosFromCacheObs =
             cache.tryGetAddresses(req, partitionKeyRangeIdentity, forceRefreshPartitionAddresses);
 
-        ArrayList<AddressInformation> addressInfosFromCache =
-            Lists.newArrayList(getSuccessResult(addressesInfosFromCacheObs, TIMEOUT).v);
+        List<AddressInformation> addressInfosFromCache =
+            Arrays.asList(getSuccessResult(addressesInfosFromCacheObs, TIMEOUT).v);
 
         // isCollectionRidUnderOpenConnectionsFlow is not called since forceRefreshPartitionAddresses=false
         // and replicaValidationScope just has 'Unhealthy'
@@ -1348,8 +1347,8 @@ public class GatewayAddressCacheTest extends TestSuiteBase {
         // using forceRefresh false
         // but as there is one address has been stuck in unhealthy status for more than 1 min,
         // so after getting the addresses, it will refresh the cache
-        ArrayList<AddressInformation> cachedAddresses =
-            Lists.newArrayList(getSuccessResult(cache.tryGetAddresses(req, partitionKeyRangeIdentity, false), TIMEOUT).v);
+        List<AddressInformation> cachedAddresses =
+            Arrays.asList(getSuccessResult(cache.tryGetAddresses(req, partitionKeyRangeIdentity, false), TIMEOUT).v);
 
         // since the refresh will happen asynchronously in the background, wait here some time for it to happen
         Thread.sleep(500);

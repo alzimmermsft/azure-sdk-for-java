@@ -11,7 +11,7 @@ import reactor.core.publisher.Flux;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import static com.azure.cosmos.implementation.guava25.base.Preconditions.checkNotNull;
+import static com.azure.cosmos.implementation.Utils.checkNotNull;
 
 public class FeedRangeGoneMergeHandler implements FeedRangeGoneHandler {
     private static final Logger logger = LoggerFactory.getLogger(FeedRangeGoneMergeHandler.class);

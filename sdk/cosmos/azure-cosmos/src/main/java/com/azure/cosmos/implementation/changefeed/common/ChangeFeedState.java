@@ -26,8 +26,8 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import static com.azure.cosmos.implementation.guava25.base.Preconditions.checkArgument;
-import static com.azure.cosmos.implementation.guava25.base.Preconditions.checkNotNull;
+import static com.azure.cosmos.implementation.Utils.checkArgument;
+import static com.azure.cosmos.implementation.Utils.checkNotNull;
 
 @JsonDeserialize(using = ChangeFeedStateDeserializer.class)
 public abstract class ChangeFeedState extends JsonSerializable {

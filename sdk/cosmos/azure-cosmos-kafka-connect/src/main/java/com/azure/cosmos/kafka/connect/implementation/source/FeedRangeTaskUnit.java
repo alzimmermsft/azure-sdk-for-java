@@ -18,8 +18,8 @@ import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
 import java.io.IOException;
 import java.util.Objects;
 
-import static com.azure.cosmos.implementation.guava25.base.Preconditions.checkArgument;
-import static com.azure.cosmos.implementation.guava25.base.Preconditions.checkNotNull;
+import static com.azure.cosmos.implementation.Utils.checkArgument;
+import static com.azure.cosmos.implementation.Utils.checkNotNull;
 
 @JsonSerialize(using = FeedRangeTaskUnit.FeedRangeTaskUnitSerializer.class)
 @JsonDeserialize(using = FeedRangeTaskUnit.FeedRangeTaskUnitDeserializer.class)

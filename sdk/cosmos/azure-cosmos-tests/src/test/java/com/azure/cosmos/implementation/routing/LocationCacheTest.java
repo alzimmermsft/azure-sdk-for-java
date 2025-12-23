@@ -12,13 +12,12 @@ import com.azure.cosmos.implementation.DatabaseAccountLocation;
 import com.azure.cosmos.implementation.DatabaseAccountManagerInternal;
 import com.azure.cosmos.implementation.GlobalEndpointManager;
 import com.azure.cosmos.implementation.LifeCycleUtils;
+import com.azure.cosmos.implementation.CollectionUtils;
 import com.azure.cosmos.implementation.OperationType;
 import com.azure.cosmos.implementation.ResourceType;
 import com.azure.cosmos.implementation.RxDocumentServiceRequest;
 import com.azure.cosmos.implementation.Utils;
 import com.azure.cosmos.implementation.directconnectivity.ReflectionUtils;
-import com.azure.cosmos.implementation.guava25.collect.ImmutableList;
-import com.azure.cosmos.implementation.guava25.collect.Iterables;
 import com.azure.cosmos.models.ModelBridgeUtils;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.DataProvider;
@@ -550,20 +549,20 @@ public class LocationCacheTest {
 
     private static DatabaseAccount createDatabaseAccount(boolean useMultipleWriteLocations) {
         DatabaseAccount databaseAccount = ModelBridgeUtils.createDatabaseAccount(
-                // read endpoints
-                ImmutableList.of(
-                        createDatabaseAccountLocation("location1", LocationCacheTest.Location1Endpoint.toString()),
-                        createDatabaseAccountLocation("location2", LocationCacheTest.Location2Endpoint.toString()),
-                        createDatabaseAccountLocation("location3", LocationCacheTest.Location3Endpoint.toString()),
-                        createDatabaseAccountLocation("location4", LocationCacheTest.Location4Endpoint.toString())),
+            // read endpoints
+            CollectionUtils.immutableList(
+                createDatabaseAccountLocation("location1", LocationCacheTest.Location1Endpoint.toString()),
+                createDatabaseAccountLocation("location2", LocationCacheTest.Location2Endpoint.toString()),
+                createDatabaseAccountLocation("location3", LocationCacheTest.Location3Endpoint.toString()),
+                createDatabaseAccountLocation("location4", LocationCacheTest.Location4Endpoint.toString())),
 
-                // write endpoints
-                ImmutableList.of(
-                        createDatabaseAccountLocation("location1", LocationCacheTest.Location1Endpoint.toString()),
-                        createDatabaseAccountLocation("location2", LocationCacheTest.Location2Endpoint.toString()),
-                        createDatabaseAccountLocation("location3", LocationCacheTest.Location3Endpoint.toString())),
-                // if the account supports multi master multi muster
-                useMultipleWriteLocations);
+            // write endpoints
+            CollectionUtils.immutableList(
+                createDatabaseAccountLocation("location1", LocationCacheTest.Location1Endpoint.toString()),
+                createDatabaseAccountLocation("location2", LocationCacheTest.Location2Endpoint.toString()),
+                createDatabaseAccountLocation("location3", LocationCacheTest.Location3Endpoint.toString())),
+            // if the account supports multi master multi muster
+            useMultipleWriteLocations);
 
         return databaseAccount;
     }
@@ -588,9 +587,9 @@ public class LocationCacheTest {
         this.mockedClient = new DatabaseAccountManagerInternalMock();
         this.databaseAccount = LocationCacheTest.createDatabaseAccount(useMultipleWriteLocations);
 
-        this.preferredLocations = isPreferredLocationsListEmpty ?
-            Collections.emptyList() :
-            ImmutableList.of("location1", "location2", "location3");
+        this.preferredLocations = isPreferredLocationsListEmpty
+            ? Collections.emptyList()
+            : CollectionUtils.immutableList("location1", "location2", "location3");
 
         connectionPolicy.setPreferredRegions(this.preferredLocations);
 
@@ -669,12 +668,16 @@ public class LocationCacheTest {
                 List<RegionalRoutingContext> currentWriteEndpoints = this.cache.getWriteEndpoints();
                 List<RegionalRoutingContext> currentReadEndpoints = this.cache.getReadEndpoints();
                 for (int i = 0; i < readLocationIndex; i++) {
-                    this.cache.markEndpointUnavailableForRead(createUrl(Iterables.get(this.databaseAccount.getReadableLocations(), i).getEndpoint()));
-                    this.endpointManager.markEndpointUnavailableForRead(createUrl(Iterables.get(this.databaseAccount.getReadableLocations(), i).getEndpoint()));;
+                    this.cache.markEndpointUnavailableForRead(createUrl(
+                        CollectionUtils.getIterableIndex(this.databaseAccount.getReadableLocations(), i).getEndpoint()));
+                    this.endpointManager.markEndpointUnavailableForRead(createUrl(
+                        CollectionUtils.getIterableIndex(this.databaseAccount.getReadableLocations(), i).getEndpoint()));;
                 }
                 for (int i = 0; i < writeLocationIndex; i++) {
-                    this.cache.markEndpointUnavailableForWrite(createUrl(Iterables.get(this.databaseAccount.getWritableLocations(), i).getEndpoint()));
-                    this.endpointManager.markEndpointUnavailableForWrite(createUrl(Iterables.get(this.databaseAccount.getWritableLocations(), i).getEndpoint()));
+                    this.cache.markEndpointUnavailableForWrite(createUrl(
+                        CollectionUtils.getIterableIndex(this.databaseAccount.getWritableLocations(), i).getEndpoint()));
+                    this.endpointManager.markEndpointUnavailableForWrite(createUrl(
+                        CollectionUtils.getIterableIndex(this.databaseAccount.getWritableLocations(), i).getEndpoint()));
                 }
 
                 Map<String, URI> writeEndpointByLocation = toStream(this.databaseAccount.getWritableLocations())
@@ -860,8 +863,9 @@ public class LocationCacheTest {
             firstAvailableWriteEndpoint = LocationCacheTest.DefaultEndpoint;
             secondAvailableWriteEndpoint = LocationCacheTest.DefaultEndpoint;
         } else if (!useMultipleWriteLocations) {
-            firstAvailableWriteEndpoint = createUrl(Iterables.get(this.databaseAccount.getWritableLocations(), 0).getEndpoint());
-            secondAvailableWriteEndpoint = createUrl(Iterables.get(this.databaseAccount.getWritableLocations(), 1).getEndpoint());
+            firstAvailableWriteEndpoint = createUrl(CollectionUtils.getIterableIndex(this.databaseAccount.getWritableLocations(), 0).getEndpoint());
+            secondAvailableWriteEndpoint = createUrl(
+                CollectionUtils.getIterableIndex(this.databaseAccount.getWritableLocations(), 1).getEndpoint());
         } else if (availableWriteEndpoints.length > 1) {
             firstAvailableWriteEndpoint = availableWriteEndpoints[0];
             secondAvailableWriteEndpoint = availableWriteEndpoints[1];
@@ -889,11 +893,11 @@ public class LocationCacheTest {
 
         URI firstWriteEnpoint = !endpointDiscoveryEnabled ?
                 LocationCacheTest.DefaultEndpoint :
-                    createUrl(Iterables.get(this.databaseAccount.getWritableLocations(), 0).getEndpoint());
+                    createUrl(CollectionUtils.getIterableIndex(this.databaseAccount.getWritableLocations(), 0).getEndpoint());
 
         URI secondWriteEnpoint = !endpointDiscoveryEnabled ?
                 LocationCacheTest.DefaultEndpoint :
-                    createUrl(Iterables.get(this.databaseAccount.getWritableLocations(), 1).getEndpoint());
+                    createUrl(CollectionUtils.getIterableIndex(this.databaseAccount.getWritableLocations(), 1).getEndpoint());
 
         // If current write endpoint is unavailable, write endpoints order doesn't change
         // ALL write requests flip-flop between current write and alternate write endpoint

@@ -18,8 +18,6 @@
 
 package com.azure.cosmos.implementation.guava25.hash;
 
-import com.azure.cosmos.implementation.guava25.annotations.Beta;
-
 import java.io.Serializable;
 
 /**
@@ -45,7 +43,6 @@ import java.io.Serializable;
  * @author Dimitris Andreou
  * @since 11.0
  */
-@Beta
 public interface Funnel<T> extends Serializable {
 
     /**

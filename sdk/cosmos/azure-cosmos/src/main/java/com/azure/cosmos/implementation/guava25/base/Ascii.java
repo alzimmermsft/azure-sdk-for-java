@@ -22,13 +22,6 @@ package com.azure.cosmos.implementation.guava25.base;
  * Static methods pertaining to ASCII characters (those in the range of values {@code 0x00} through
  * {@code 0x7F}), and to strings containing such characters.
  *
- * <p>ASCII utilities also exist in other classes of this package:
- *
- * <ul>
- *   <!-- TODO(kevinb): how can we make this not produce a warning when building gwt javadoc? -->
- *   <li>{@link Charsets#US_ASCII} specifies the {@code Charset} of ASCII characters.
- * </ul>
- *
  * @author Catherine Berry
  * @author Gregory Kick
  * @since 7.0
@@ -36,34 +29,6 @@ package com.azure.cosmos.implementation.guava25.base;
 public final class Ascii {
 
   private Ascii() {}
-
-  /* The ASCII control characters, per RFC 20. */
-
-  /**
-   * Form Feed ('\f'): A format effector which controls the movement of the printing position to the
-   * first pre-determined printing line on the next form or page. (Applicable also to display
-   * devices.)
-   *
-   * @since 8.0
-   */
-  public static final byte FF = 12;
-
-  /**
-   * Unit Separator: These four information separators may be used within data in optional fashion,
-   * except that their hierarchical relationship shall be: FS is the most inclusive, then GS, then
-   * RS, and US is least inclusive. (The content and length of a File, Group, Record, or Unit are
-   * not specified.)
-   *
-   * @since 8.0
-   */
-  public static final byte US = 31;
-
-    /**
-   * The maximum value of an ASCII character.
-   *
-   * @since 9.0 (was type {@code int} before 12.0)
-   */
-  public static final char MAX = 127;
 
   /** A bit mask which selects the bit encoding ASCII character case. */
   private static final char CASE_MASK = 0x20;

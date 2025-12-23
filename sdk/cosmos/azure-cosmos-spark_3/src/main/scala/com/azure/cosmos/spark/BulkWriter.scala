@@ -4,7 +4,7 @@ package com.azure.cosmos.spark
 
 // scalastyle:off underscore.import
 import com.azure.cosmos.implementation.batch.{BatchRequestResponseConstants, BulkExecutorDiagnosticsTracker, ItemBulkOperation}
-import com.azure.cosmos.implementation.{CosmosDaemonThreadFactory, Strings, UUIDs}
+import com.azure.cosmos.implementation.{CosmosDaemonThreadFactory, Strings, UUIDs, Utils}
 import com.azure.cosmos.models._
 import com.azure.cosmos.spark.BulkWriter._
 import com.azure.cosmos.spark.diagnostics.DefaultDiagnostics
@@ -22,7 +22,6 @@ import scala.collection.mutable
 import scala.concurrent.duration.Duration
 // scalastyle:on underscore.import
 import com.azure.cosmos.implementation.ImplementationBridgeHelpers
-import com.azure.cosmos.implementation.guava25.base.Preconditions
 import com.azure.cosmos.implementation.spark.{OperationContextAndListenerTuple, OperationListener}
 import com.azure.cosmos.models.PartitionKey
 import com.azure.cosmos.spark.BulkWriter.{DefaultMaxPendingOperationPerCore, emitFailureHandler}
@@ -645,7 +644,7 @@ private class BulkWriter
   }
 
   override def scheduleWrite(partitionKeyValue: PartitionKey, objectNode: ObjectNode): Unit = {
-    Preconditions.checkState(!closed.get())
+    Utils.checkState(!closed.get())
     throwIfCapturedExceptionExists()
 
     val activeTasksSemaphoreTimeout = 10

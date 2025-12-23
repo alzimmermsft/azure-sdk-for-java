@@ -15,8 +15,6 @@ import com.azure.cosmos.implementation.changefeed.common.ChangeFeedState;
 import com.azure.cosmos.implementation.changefeed.common.ChangeFeedStateV1;
 import com.azure.cosmos.implementation.feedranges.FeedRangeEpkImpl;
 import com.azure.cosmos.implementation.feedranges.FeedRangeInternal;
-import com.azure.cosmos.implementation.guava25.collect.ArrayListMultimap;
-import com.azure.cosmos.implementation.guava25.collect.Multimap;
 import com.azure.cosmos.implementation.query.CompositeContinuationToken;
 import com.azure.cosmos.implementation.routing.Range;
 import com.azure.cosmos.models.ChangeFeedPolicy;
@@ -89,7 +87,7 @@ public class CosmosContainerChangeFeedTest extends TestSuiteBase {
     private CosmosAsyncDatabase createdAsyncDatabase;
     private CosmosContainer createdContainer;
     private CosmosDatabase createdDatabase;
-    private final Multimap<String, ObjectNode> partitionKeyToDocuments = ArrayListMultimap.create();
+    private final Map<String, List<ObjectNode>> partitionKeyToDocuments = new HashMap<>();
     private final String preExistingDatabaseId = CosmosDatabaseForTest.generateId();
 
     @DataProvider(name = "changeFeedQueryCompleteAfterAvailableNowDataProvider")
@@ -1136,9 +1134,13 @@ public class CosmosContainerChangeFeedTest extends TestSuiteBase {
                 .map(CosmosItemResponse::getItem).collectList().block();
 
         for (ObjectNode doc : insertedDocs) {
-            partitionKeyToDocuments.put(
-                    doc.get(PARTITION_KEY_FIELD_NAME).textValue(),
-                    doc);
+            partitionKeyToDocuments.compute(doc.get(PARTITION_KEY_FIELD_NAME).textValue(), (ignored, value) -> {
+                if (value == null) {
+                    value = new ArrayList<>();
+                }
+                value.add(doc);
+                return value;
+            });
         }
         logger.info("FINISHED INSERT");
         return partitionKeys;
@@ -1172,9 +1174,13 @@ public class CosmosContainerChangeFeedTest extends TestSuiteBase {
                 .map(CosmosItemResponse::getItem).collectList().block();
 
         for (ObjectNode doc : insertedDocs) {
-            partitionKeyToDocuments.put(
-                    doc.get(PARTITION_KEY_FIELD_NAME).textValue(),
-                    doc);
+            partitionKeyToDocuments.compute(doc.get(PARTITION_KEY_FIELD_NAME).textValue(), (ignored, value) -> {
+                if (value == null) {
+                    value = new ArrayList<>();
+                }
+                value.add(doc);
+                return value;
+            });
         }
         logger.info("FINISHED INSERT");
         return partitionKeys;

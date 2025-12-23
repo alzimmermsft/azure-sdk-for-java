@@ -40,7 +40,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.azure.cosmos.CosmosBridgeInternal.getContextClient;
-import static com.azure.cosmos.implementation.guava25.base.Preconditions.checkNotNull;
+import static com.azure.cosmos.implementation.Utils.checkNotNull;
 
 /**
  * Implementation for ChangeFeedDocumentClient.

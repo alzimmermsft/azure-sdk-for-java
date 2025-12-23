@@ -15,12 +15,12 @@ import com.azure.cosmos.implementation.Strings;
 import com.azure.cosmos.implementation.UUIDs;
 import com.azure.cosmos.implementation.Utils;
 import com.azure.cosmos.implementation.directconnectivity.StoreResponse;
-import com.azure.cosmos.implementation.guava25.base.Objects;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import reactor.core.Exceptions;
 import reactor.core.publisher.Mono;
 
+import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
@@ -179,7 +179,7 @@ public class ThroughputRequestThrottler {
             }
 
             // If the response comes back in a different cycle, discard it.
-            if (Objects.equal(this.cycleId, request.requestContext.throughputControlRequestContext.getThroughputControlCycleId())) {
+            if (Objects.equals(this.cycleId, request.requestContext.throughputControlRequestContext.getThroughputControlCycleId())) {
                 this.availableThroughput.getAndAccumulate(requestCharge, (available, consumed) -> available - consumed);
             } else {
                 if (trackingUnit != null) {

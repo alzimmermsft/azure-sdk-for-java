@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-import static com.azure.cosmos.implementation.guava25.base.Preconditions.checkNotNull;
+import static com.azure.cosmos.implementation.Utils.checkNotNull;
 import static java.lang.String.format;
 import static org.apache.kafka.connect.data.Values.convertToByte;
 import static org.apache.kafka.connect.data.Values.convertToDouble;

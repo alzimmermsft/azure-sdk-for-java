@@ -24,7 +24,7 @@ import java.io.ObjectOutputStream;
 import java.util.Collection;
 import java.util.Collections;
 
-import static com.azure.cosmos.implementation.guava25.base.Preconditions.checkNotNull;
+import static com.azure.cosmos.implementation.Utils.checkNotNull;
 
 /**
  * Represents a document collection in the Azure Cosmos DB database service. A collection is a named logical container

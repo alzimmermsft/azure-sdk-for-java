@@ -6,7 +6,6 @@ package com.azure.cosmos.kafka.connect.implementation.sink;
 import com.azure.cosmos.CosmosAsyncContainer;
 import com.azure.cosmos.implementation.ImplementationBridgeHelpers;
 import com.azure.cosmos.implementation.Strings;
-import com.azure.cosmos.implementation.guava25.base.Function;
 import com.azure.cosmos.kafka.connect.implementation.CosmosThroughputControlConfig;
 import com.azure.cosmos.kafka.connect.implementation.CosmosThroughputControlHelper;
 import com.azure.cosmos.kafka.connect.implementation.KafkaCosmosExceptionsHelper;
@@ -22,8 +21,9 @@ import org.slf4j.LoggerFactory;
 import reactor.core.publisher.Mono;
 
 import java.util.List;
+import java.util.function.Function;
 
-import static com.azure.cosmos.implementation.guava25.base.Preconditions.checkNotNull;
+import static com.azure.cosmos.implementation.Utils.checkNotNull;
 
 public class CosmosPointWriter extends CosmosWriterBase {
     private static final Logger LOGGER = LoggerFactory.getLogger(CosmosPointWriter.class);

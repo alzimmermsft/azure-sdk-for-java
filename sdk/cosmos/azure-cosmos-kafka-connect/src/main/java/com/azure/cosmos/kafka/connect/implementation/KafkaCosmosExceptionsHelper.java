@@ -10,7 +10,7 @@ import org.apache.kafka.connect.errors.ConnectException;
 import org.apache.kafka.connect.errors.RetriableException;
 import reactor.core.Exceptions;
 
-import static com.azure.cosmos.implementation.guava25.base.Preconditions.checkNotNull;
+import static com.azure.cosmos.implementation.Utils.checkNotNull;
 
 public class KafkaCosmosExceptionsHelper {
     public static boolean isTransientFailure(int statusCode, int substatusCode) {

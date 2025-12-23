@@ -3,16 +3,16 @@
 
 package com.azure.cosmos;
 
-import com.azure.cosmos.implementation.guava25.collect.ImmutableSet;
+import com.azure.cosmos.implementation.CollectionUtils;
 
-import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Locale;
 import java.util.Set;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import static com.azure.cosmos.implementation.guava25.base.Preconditions.checkArgument;
+import static com.azure.cosmos.implementation.Utils.checkArgument;
 
 /**
  * A class which encapsulates a set of excluded regions.
@@ -32,7 +32,7 @@ public final class CosmosExcludedRegions {
 
         checkArgument(excludedRegions != null, "excludedRegions cannot be set to null");
 
-        this.excludedRegions = ImmutableSet.copyOf(excludedRegions);
+        this.excludedRegions = Collections.unmodifiableSet(new HashSet<>(CollectionUtils.immutableCopyOf(excludedRegions)));
         this.excludedRegionsAsString = stringifyExcludedRegions(this.excludedRegions);
     }
 

@@ -18,8 +18,6 @@
 
 package com.azure.cosmos.implementation.guava25.hash;
 
-import com.azure.cosmos.implementation.guava25.annotations.Beta;
-
 /**
  * A hash function is a collision-averse pure function that maps an arbitrary block of data to a
  * number called a <i>hash code</i>.
@@ -34,10 +32,8 @@ import com.azure.cosmos.implementation.guava25.annotations.Beta;
  *       {@link Hasher}), but this is merely a convenience; these are always translated into raw
  *       byte sequences under the covers.
  *   <li><b>hash code:</b> each hash function always yields hash codes of the same fixed bit length
- *       (given by {@link #bits}). For example, {@link Hashing#sha1} produces a 160-bit number,
- *       while {@link Hashing#murmur3_32()} yields only 32 bits. Because a {@code long} value is
- *       clearly insufficient to hold all hash code values, this API represents a hash code as an
- *       instance of {@link HashCode}.
+ *       (given by {@link #bits}). Because a {@code long} value is clearly insufficient to hold all
+ *       hash code values, this API represents a hash code as an instance of {@link HashCode}.
  *   <li><b>pure function:</b> the value produced must depend only on the input bytes, in the order
  *       they appear. Input data is never modified. {@link HashFunction} instances should always be
  *       stateless, and therefore thread-safe.
@@ -67,13 +63,12 @@ import com.azure.cosmos.implementation.guava25.annotations.Beta;
  *       in the hash code should be as evenly "spread out" through the hash code's bits as possible.
  *       The result is that, for example, when choosing a bucket in a hash table of size 2^8,
  *       <i>any</i> eight bits could be consistently used.
- *   <li><b>cryptographic:</b> certain hash functions such as {@link Hashing#sha512} are designed to
- *       make it as infeasible as possible to reverse-engineer the input that produced a given hash
- *       code, or even to discover <i>any</i> two distinct inputs that yield the same result. These
- *       are called <i>cryptographic hash functions</i>. But, whenever it is learned that either of
- *       these feats has become computationally feasible, the function is deemed "broken" and should
- *       no longer be used for secure purposes. (This is the likely eventual fate of <i>all</i>
- *       cryptographic hashes.)
+ *   <li><b>cryptographic:</b> certain hash functions are designed to make it as infeasible as possible
+ *       to reverse-engineer the input that produced a given hash code, or even to discover <i>any</i>
+ *       two distinct inputs that yield the same result. These are called
+ *       <i>cryptographic hash functions</i>. But, whenever it is learned that either of these feats
+ *       has become computationally feasible, the function is deemed "broken" and should no longer be
+ *       used for secure purposes. (This is the likely eventual fate of <i>all</i> cryptographic hashes.)
  *   <li><b>fast:</b> perhaps self-explanatory, but often the most important consideration. We have
  *       published <a href="#noWeHaventYet">microbenchmark results</a> for many common hash
  *       functions.
@@ -97,7 +92,7 @@ import com.azure.cosmos.implementation.guava25.annotations.Beta;
  * <p><b>Compatibility note:</b> Throughout this API, multibyte values are always interpreted in
  * <i>little-endian</i> order. That is, hashing the byte array {@code {0x01, 0x02, 0x03, 0x04}} is
  * equivalent to hashing the {@code int} value {@code 0x04030201}. If this isn't what you need,
- * methods such as {@link Integer#reverseBytes} and {@link Ints#toByteArray} will help.
+ * methods such as {@link Integer#reverseBytes} will help.
  *
  * <h3>Relationship to {@link Object#hashCode}</h3>
  *
@@ -117,7 +112,6 @@ import com.azure.cosmos.implementation.guava25.annotations.Beta;
  * @author Kevin Bourrillion
  * @since 11.0
  */
-@Beta
 public interface HashFunction {
     /**
      * Begins a new hash code computation by returning an initialized, stateful {@code Hasher}

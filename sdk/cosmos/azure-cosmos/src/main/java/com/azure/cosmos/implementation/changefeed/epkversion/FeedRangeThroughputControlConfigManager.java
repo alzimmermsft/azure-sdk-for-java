@@ -22,7 +22,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
-import static com.azure.cosmos.implementation.guava25.base.Preconditions.checkNotNull;
+import static com.azure.cosmos.implementation.Utils.checkNotNull;
 
 // Only used in CFP when customer configure throughput control config
 // The main purpose of this class is to monitor the lease feedRange -> partitionKeyRange mapping changes, and create corresponding throughput control group

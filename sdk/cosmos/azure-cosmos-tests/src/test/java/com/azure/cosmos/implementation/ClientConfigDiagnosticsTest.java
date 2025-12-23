@@ -13,7 +13,6 @@ import com.azure.cosmos.SessionRetryOptions;
 import com.azure.cosmos.SessionRetryOptionsBuilder;
 import com.azure.cosmos.implementation.perPartitionCircuitBreaker.PartitionLevelCircuitBreakerConfig;
 import com.azure.cosmos.implementation.directconnectivity.RntbdTransportClient;
-import com.azure.cosmos.implementation.guava25.collect.ImmutableList;
 import com.azure.cosmos.implementation.http.HttpClientConfig;
 import com.azure.cosmos.models.CosmosContainerIdentity;
 import com.fasterxml.jackson.core.JsonFactory;
@@ -271,7 +270,7 @@ public class ClientConfigDiagnosticsTest {
         httpConfig.withMaxIdleConnectionTimeout(Duration.ofSeconds(17));
         httpConfig.withNetworkRequestTimeout(Duration.ofSeconds(18));
         diagnosticsClientConfig.withGatewayHttpClientConfig(httpConfig.toDiagnosticsString());
-        diagnosticsClientConfig.withPreferredRegions(ImmutableList.of("west us 1", "west us 2"));
+        diagnosticsClientConfig.withPreferredRegions(CollectionUtils.immutableList("west us 1", "west us 2"));
         diagnosticsClientConfig.withConnectionPolicy(
             new ConnectionPolicy(DirectConnectionConfig.getDefaultConfig()).setExcludedRegionsSupplier(excludedRegionsSupplier));
         diagnosticsClientConfig.withConnectionSharingAcrossClientsEnabled(true);

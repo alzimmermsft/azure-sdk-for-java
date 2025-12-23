@@ -3,15 +3,15 @@
 
 package com.azure.cosmos.kafka.connect.implementation.sink.idstrategy;
 
-import com.azure.cosmos.implementation.guava25.collect.ImmutableMap;
 import org.apache.kafka.connect.data.Values;
 import org.apache.kafka.connect.sink.SinkRecord;
 
+import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 public class TemplateStrategy extends AbstractIdStrategy {
     private static final String KEY = "key";
@@ -27,15 +27,14 @@ public class TemplateStrategy extends AbstractIdStrategy {
     private static final Map<String, Function<SinkRecord, String>> METHODS_BY_VARIABLE;
 
     static {
-        ImmutableMap.Builder<String, Function<SinkRecord, String>> builder = ImmutableMap.builder();
+        Map<String, Function<SinkRecord, String>> builder = new LinkedHashMap<>();
         builder.put(KEY, (r) -> Values.convertToString(r.keySchema(), r.key()));
         builder.put(TOPIC, SinkRecord::topic);
         builder.put(PARTITION, (r) -> r.kafkaPartition().toString());
         builder.put(OFFSET, (r) -> Long.toString(r.kafkaOffset()));
-        METHODS_BY_VARIABLE = builder.build();
+        METHODS_BY_VARIABLE = Collections.unmodifiableMap(builder);
 
-        String pattern = String.format(PATTERN_TEMPLATE,
-            METHODS_BY_VARIABLE.keySet().stream().collect(Collectors.joining("|")));
+        String pattern = String.format(PATTERN_TEMPLATE, String.join("|", METHODS_BY_VARIABLE.keySet()));
         PATTERN = Pattern.compile(pattern);
     }
 

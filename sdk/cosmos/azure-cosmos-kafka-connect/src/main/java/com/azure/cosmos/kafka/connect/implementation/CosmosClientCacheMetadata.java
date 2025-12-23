@@ -8,7 +8,7 @@ import com.azure.cosmos.CosmosAsyncClient;
 import java.time.Instant;
 import java.util.concurrent.atomic.AtomicLong;
 
-import static com.azure.cosmos.implementation.guava25.base.Preconditions.checkNotNull;
+import static com.azure.cosmos.implementation.Utils.checkNotNull;
 
 /**
  * Metadata for cached Cosmos client instances.

@@ -3,7 +3,6 @@
 
 package com.azure.cosmos.changeFeedMetrics
 
-import com.azure.cosmos.implementation.guava25.collect.BiMap
 import com.azure.cosmos.spark.diagnostics.BasicLoggingTrait
 import com.azure.cosmos.spark.{CosmosConstants, NormalizedRange, SparkInternalsBridge}
 import org.apache.spark.scheduler.{SparkListener, SparkListenerTaskEnd}
@@ -12,7 +11,7 @@ import org.apache.spark.sql.execution.metric.SQLMetric
 import java.util.concurrent.ConcurrentHashMap
 
 private[cosmos] class ChangeFeedMetricsListener(
-     partitionIndexMap: BiMap[NormalizedRange, Long],
+     partitionIndexMap: ChangeFeedPartitionIndexMap,
      partitionMetricsMap: ConcurrentHashMap[NormalizedRange, ChangeFeedMetricsTracker]) extends SparkListener with BasicLoggingTrait{
 
  private val sparkInternalsBridge = new SparkInternalsBridge()
@@ -30,7 +29,7 @@ private[cosmos] class ChangeFeedMetricsListener(
    if (metrics.contains(CosmosConstants.MetricNames.ChangeFeedPartitionIndex)) {
     val index = metrics(CosmosConstants.MetricNames.ChangeFeedPartitionIndex).value
 
-    val normalizedRange = partitionIndexMap.inverse().get(index)
+    val normalizedRange = partitionIndexMap.getFeedRangeByIndex(index)
     if (normalizedRange != null) {
      partitionMetricsMap.putIfAbsent(normalizedRange, ChangeFeedMetricsTracker(index, normalizedRange))
      val metricsTracker = partitionMetricsMap.get(normalizedRange)

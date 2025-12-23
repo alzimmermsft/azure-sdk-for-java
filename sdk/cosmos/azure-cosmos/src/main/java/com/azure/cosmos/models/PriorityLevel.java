@@ -10,7 +10,7 @@ import java.util.Locale;
 import java.util.Objects;
 import java.util.StringJoiner;
 
-import static com.azure.cosmos.implementation.guava25.base.Preconditions.checkNotNull;
+import static com.azure.cosmos.implementation.Utils.checkNotNull;
 
 /**
  * Enumeration specifying Priority Level of requests

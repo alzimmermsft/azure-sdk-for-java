@@ -18,9 +18,6 @@
 
 package com.azure.cosmos.implementation.guava25.hash;
 
-import com.azure.cosmos.implementation.guava25.annotations.Beta;
-import com.azure.cosmos.implementation.guava25.errorprone.annotations.CanIgnoreReturnValue;
-
 import java.nio.charset.Charset;
 
 /**
@@ -29,8 +26,6 @@ import java.nio.charset.Charset;
  * @author Kevin Bourrillion
  * @since 12.0 (in 11.0 as {@code Sink})
  */
-@Beta
-@CanIgnoreReturnValue
 public interface PrimitiveSink {
     /**
      * Puts a byte into this sink.

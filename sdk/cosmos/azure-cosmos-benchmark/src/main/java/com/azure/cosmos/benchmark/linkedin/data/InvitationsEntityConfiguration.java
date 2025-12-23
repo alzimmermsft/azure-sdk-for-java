@@ -7,9 +7,9 @@ import com.azure.cosmos.benchmark.Configuration;
 import com.azure.cosmos.benchmark.linkedin.data.entity.InvitationDataGenerator;
 import com.azure.cosmos.benchmark.linkedin.data.entity.InvitationsCollectionAttributes;
 import com.azure.cosmos.benchmark.linkedin.data.entity.InvitationsKeyGenerator;
-import com.azure.cosmos.implementation.guava25.base.Preconditions;
 import java.util.function.Supplier;
 
+import static com.azure.cosmos.implementation.Utils.checkNotNull;
 
 /**
  * Entity configuration for the Invitations use-case
@@ -21,7 +21,7 @@ public class InvitationsEntityConfiguration implements EntityConfiguration {
     private final CollectionAttributes _collectionAttributes;
 
     public InvitationsEntityConfiguration(final Configuration configuration) {
-        Preconditions.checkNotNull(configuration, "The test configuration can not be null");
+        checkNotNull(configuration, "The test configuration can not be null");
         _keyGenerator = () -> new InvitationsKeyGenerator(configuration.getNumberOfPreCreatedDocuments());
         _dataGenerator = new InvitationDataGenerator(_keyGenerator.get());
         _collectionAttributes = new InvitationsCollectionAttributes();

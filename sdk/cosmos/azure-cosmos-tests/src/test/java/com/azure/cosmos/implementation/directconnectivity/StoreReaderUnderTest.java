@@ -4,8 +4,8 @@
 package com.azure.cosmos.implementation.directconnectivity;
 
 import com.azure.cosmos.implementation.ISessionContainer;
+import com.azure.cosmos.implementation.CollectionUtils;
 import com.azure.cosmos.implementation.RxDocumentServiceRequest;
-import com.azure.cosmos.implementation.guava25.collect.ImmutableList;
 import org.apache.commons.lang3.tuple.Pair;
 import reactor.core.publisher.Mono;
 
@@ -25,7 +25,7 @@ public class StoreReaderUnderTest extends StoreReader {
     @Override
     public Mono<List<StoreResult>> readMultipleReplicaAsync(RxDocumentServiceRequest entity, boolean includePrimary, int replicaCountToRead, boolean requiresValidLsn, boolean useSessionToken, ReadMode readMode) {
         Method method = new Object(){}.getClass().getEnclosingMethod();
-        ImmutableList<Object> list = ImmutableList.of(entity, includePrimary, replicaCountToRead, requiresValidLsn, useSessionToken, readMode);
+        List<Object> list = CollectionUtils.immutableList(entity, includePrimary, replicaCountToRead, requiresValidLsn, useSessionToken, readMode);
         invocations.add(Pair.of(method, list));
 
         return super.readMultipleReplicaAsync(entity, includePrimary, replicaCountToRead, requiresValidLsn, useSessionToken, readMode);
@@ -34,7 +34,7 @@ public class StoreReaderUnderTest extends StoreReader {
     @Override
     public Mono<List<StoreResult>> readMultipleReplicaAsync(RxDocumentServiceRequest entity, boolean includePrimary, int replicaCountToRead, boolean requiresValidLsn, boolean useSessionToken, ReadMode readMode, boolean checkMinLSN, boolean forceReadAll) {
         Method method = new Object(){}.getClass().getEnclosingMethod();
-        ImmutableList<Object> list = ImmutableList.of(entity, includePrimary, replicaCountToRead, requiresValidLsn, useSessionToken, readMode, checkMinLSN, forceReadAll);
+        List<Object> list = CollectionUtils.immutableList(entity, includePrimary, replicaCountToRead, requiresValidLsn, useSessionToken, readMode, checkMinLSN, forceReadAll);
         invocations.add(Pair.of(method, list));
         return super.readMultipleReplicaAsync(entity, includePrimary, replicaCountToRead, requiresValidLsn, useSessionToken, readMode, checkMinLSN, forceReadAll);
     }
@@ -42,7 +42,7 @@ public class StoreReaderUnderTest extends StoreReader {
     @Override
     public Mono<StoreResult> readPrimaryAsync(RxDocumentServiceRequest entity, boolean requiresValidLsn, boolean useSessionToken) {
         Method method = new Object(){}.getClass().getEnclosingMethod();
-        ImmutableList<Object> list = ImmutableList.of(entity, requiresValidLsn, useSessionToken);
+        List<Object> list = CollectionUtils.immutableList(entity, requiresValidLsn, useSessionToken);
         invocations.add(Pair.of(method, list));
         return super.readPrimaryAsync(entity, requiresValidLsn, useSessionToken);
     }

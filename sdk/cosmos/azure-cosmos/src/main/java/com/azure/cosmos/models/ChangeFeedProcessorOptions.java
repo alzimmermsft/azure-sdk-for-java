@@ -10,7 +10,7 @@ import reactor.core.scheduler.Schedulers;
 import java.time.Duration;
 import java.time.Instant;
 
-import static com.azure.cosmos.implementation.guava25.base.Preconditions.checkNotNull;
+import static com.azure.cosmos.implementation.Utils.checkNotNull;
 
 /**
  * Specifies the options associated with {@link ChangeFeedProcessor}.
@@ -386,7 +386,7 @@ public final class ChangeFeedProcessorOptions {
      * Please use this config with caution. By default, CFP will try to process the changes as fast as possible,
      * only use this config if you want to limit the RU that can be used for your change feed processing.
      * By using this config, it can slow down the process and cause the lag.
-     * 
+     *
      * For direct mode, please configure the throughput control group with the total RU you would allow for changeFeed processing.
      * For gateway mode, please configure the throughput control group with the total RU you would allow for changeFeed processing / total CFP Instances.
      *

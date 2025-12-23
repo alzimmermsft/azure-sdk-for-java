@@ -14,6 +14,7 @@ import com.azure.cosmos.implementation.HttpConstants;
 import com.azure.cosmos.implementation.ISessionContainer;
 import com.azure.cosmos.implementation.ISessionToken;
 import com.azure.cosmos.implementation.LeaseNotFoundException;
+import com.azure.cosmos.implementation.CollectionUtils;
 import com.azure.cosmos.implementation.NotFoundException;
 import com.azure.cosmos.implementation.OperationType;
 import com.azure.cosmos.implementation.PartitionIsMigratingException;
@@ -28,7 +29,6 @@ import com.azure.cosmos.implementation.SessionTokenHelper;
 import com.azure.cosmos.implementation.StoreResponseBuilder;
 import com.azure.cosmos.implementation.Utils;
 import com.azure.cosmos.implementation.VectorSessionToken;
-import com.azure.cosmos.implementation.guava25.collect.ImmutableList;
 import io.reactivex.subscribers.TestSubscriber;
 import org.assertj.core.api.AssertionsForClassTypes;
 import org.mockito.MockedStatic;
@@ -79,7 +79,7 @@ public class StoreReaderTest {
         DirectProcessor<List<Uri>> subject = DirectProcessor.create();
         CountDownLatch c = new CountDownLatch(1);
 
-        List<Uri> uris = ImmutableList.of(Uri.create("https://localhost:5050"), Uri.create("https://localhost:5051"),
+        List<Uri> uris = CollectionUtils.immutableList(Uri.create("https://localhost:5050"), Uri.create("https://localhost:5051"),
                                           Uri.create("https://localhost:50502"), Uri.create("https://localhost:5053"));
 
         Mockito.doAnswer(invocationOnMock -> subject.single().doOnSuccess(x -> c.countDown()).doAfterTerminate(() -> new Thread() {
@@ -170,7 +170,7 @@ public class StoreReaderTest {
 
         AddressSelectorWrapper addressSelectorWrapper = AddressSelectorWrapper.Builder.Simple.create()
                 .withPrimary(primaryUri)
-                .withSecondary(ImmutableList.of(secondaryUri1, secondaryUri2, secondaryUri3))
+                .withSecondary(CollectionUtils.immutableList(secondaryUri1, secondaryUri2, secondaryUri3))
                 .build();
         ISessionContainer sessionContainer = Mockito.mock(ISessionContainer.class);
         StoreReader storeReader = new StoreReader(transportClientWrapper.transportClient, addressSelectorWrapper.addressSelector, sessionContainer);
@@ -244,7 +244,7 @@ public class StoreReaderTest {
 
         AddressSelectorWrapper addressSelectorWrapper = AddressSelectorWrapper.Builder.Simple.create()
                 .withPrimary(primaryUri)
-                .withSecondary(ImmutableList.of(secondaryUri1, secondaryUri2, secondaryUri3))
+                .withSecondary(CollectionUtils.immutableList(secondaryUri1, secondaryUri2, secondaryUri3))
                 .build();
         ISessionContainer sessionContainer = Mockito.mock(ISessionContainer.class);
         StoreReader storeReader = new StoreReader(transportClientWrapper.transportClient, addressSelectorWrapper.addressSelector, sessionContainer);
@@ -321,7 +321,7 @@ public class StoreReaderTest {
 
         AddressSelectorWrapper addressSelectorWrapper = AddressSelectorWrapper.Builder.Simple.create()
                 .withPrimary(primaryUri)
-                .withSecondary(ImmutableList.of(secondaryUri1, secondaryUri2, secondaryUri3))
+                .withSecondary(CollectionUtils.immutableList(secondaryUri1, secondaryUri2, secondaryUri3))
                 .build();
         ISessionContainer sessionContainer = Mockito.mock(ISessionContainer.class);
         StoreReader storeReader = new StoreReader(transportClientWrapper.transportClient, addressSelectorWrapper.addressSelector, sessionContainer);
@@ -390,7 +390,7 @@ public class StoreReaderTest {
 
         AddressSelectorWrapper addressSelectorWrapper = AddressSelectorWrapper.Builder.Simple.create()
                 .withPrimary(primaryUri)
-                .withSecondary(ImmutableList.of(secondaryUri1, secondaryUri2, secondaryUri3))
+                .withSecondary(CollectionUtils.immutableList(secondaryUri1, secondaryUri2, secondaryUri3))
                 .build();
         ISessionContainer sessionContainer = Mockito.mock(ISessionContainer.class);
         StoreReader storeReader = new StoreReader(transportClientWrapper.transportClient, addressSelectorWrapper.addressSelector, sessionContainer);
@@ -452,7 +452,7 @@ public class StoreReaderTest {
 
         AddressSelectorWrapper addressSelectorWrapper = AddressSelectorWrapper.Builder.Simple.create()
                 .withPrimary(primaryUri)
-                .withSecondary(ImmutableList.of(secondaryUri1, secondaryUri2, secondaryUri3))
+                .withSecondary(CollectionUtils.immutableList(secondaryUri1, secondaryUri2, secondaryUri3))
                 .build();
         ISessionContainer sessionContainer = Mockito.mock(ISessionContainer.class);
         StoreReader storeReader = new StoreReader(transportClientWrapper.transportClient, addressSelectorWrapper.addressSelector, sessionContainer);
@@ -776,7 +776,7 @@ public class StoreReaderTest {
         // TODO: add some tests for readMultipleReplicasAsync which mock behaviour of failure of reading from a replica
         ISessionContainer sessionContainer = Mockito.mock(ISessionContainer.class);
         Uri primaryReplicaURI = Uri.create("primary");
-        ImmutableList<Uri> secondaryReplicaURIs = ImmutableList.of(Uri.create("secondary1"), Uri.create("secondary2"), Uri.create("secondary3"));
+        List<Uri> secondaryReplicaURIs = CollectionUtils.immutableList(Uri.create("secondary1"), Uri.create("secondary2"), Uri.create("secondary3"));
         AddressSelectorWrapper addressSelectorWrapper = AddressSelectorWrapper.Builder.Simple.create()
                 .withPrimary(primaryReplicaURI)
                 .withSecondary(secondaryReplicaURIs)
@@ -814,7 +814,7 @@ public class StoreReaderTest {
                 .withRequestCharge(requestChargePerRead)
                 .build();
 
-        List<StoreResponse> responseList = ImmutableList.of(primaryResponse, secondaryResponse1, secondaryResponse2, secondaryResponse3);
+        List<StoreResponse> responseList = CollectionUtils.immutableList(primaryResponse, secondaryResponse1, secondaryResponse2, secondaryResponse3);
 
         TransportClientWrapper transportClientWrapper = TransportClientWrapper.Builder.uriToResultBuilder()
                 .storeResponseOn(primaryReplicaURI, OperationType.Read, ResourceType.Document, primaryResponse, false)
@@ -886,7 +886,7 @@ public class StoreReaderTest {
 
         AddressSelectorWrapper addressSelectorWrapper = AddressSelectorWrapper.Builder.Simple.create()
             .withPrimary(primaryUri)
-            .withSecondary(ImmutableList.of(secondaryUri1, secondaryUri2, secondaryUri3))
+            .withSecondary(CollectionUtils.immutableList(secondaryUri1, secondaryUri2, secondaryUri3))
             .build();
         ISessionContainer sessionContainer = Mockito.mock(ISessionContainer.class);
         StoreReader storeReader = new StoreReader(transportClientWrapper.transportClient, addressSelectorWrapper.addressSelector, sessionContainer);

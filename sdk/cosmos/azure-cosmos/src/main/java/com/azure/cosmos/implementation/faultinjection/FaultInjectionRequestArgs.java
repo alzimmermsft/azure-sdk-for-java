@@ -8,7 +8,7 @@ import com.azure.cosmos.implementation.RxDocumentServiceRequest;
 import java.net.URI;
 import java.util.List;
 
-import static com.azure.cosmos.implementation.guava25.base.Preconditions.checkNotNull;
+import static com.azure.cosmos.implementation.Utils.checkNotNull;
 
 public abstract class FaultInjectionRequestArgs {
     private final long transportRequestId;

@@ -2,8 +2,8 @@
 // Licensed under the MIT License.
 package com.azure.cosmos.spark
 
-import com.azure.cosmos.implementation.guava25.base.MoreObjects.firstNonNull
-import com.azure.cosmos.implementation.guava25.base.Strings.emptyToNull
+import com.azure.cosmos.implementation.Strings.trimToNull
+import com.azure.cosmos.implementation.Utils.firstNonNull
 import com.azure.cosmos.spark.diagnostics.BasicLoggingTrait
 import org.apache.spark.TaskContext
 import org.apache.spark.executor.TaskMetrics
@@ -34,7 +34,7 @@ object SparkInternalsBridge extends BasicLoggingTrait {
     val allowedText = System.getProperty(
       SPARK_REFLECTION_ACCESS_ALLOWED_PROPERTY,
       firstNonNull(
-        emptyToNull(System.getenv.get(SPARK_REFLECTION_ACCESS_ALLOWED_VARIABLE)),
+        trimToNull(System.getenv.get(SPARK_REFLECTION_ACCESS_ALLOWED_VARIABLE)),
         String.valueOf(DEFAULT_SPARK_REFLECTION_ACCESS_ALLOWED)))
 
     try {

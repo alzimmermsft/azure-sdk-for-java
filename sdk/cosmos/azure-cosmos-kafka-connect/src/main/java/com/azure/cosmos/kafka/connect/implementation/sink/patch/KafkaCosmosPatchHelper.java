@@ -26,8 +26,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
-import static com.azure.cosmos.implementation.guava25.base.Preconditions.checkArgument;
-import static com.azure.cosmos.implementation.guava25.base.Preconditions.checkNotNull;
+import static com.azure.cosmos.implementation.Utils.checkArgument;
+import static com.azure.cosmos.implementation.Utils.checkNotNull;
 
 public class KafkaCosmosPatchHelper {
     private static final Logger LOGGER = LoggerFactory.getLogger(KafkaCosmosPatchHelper.class);

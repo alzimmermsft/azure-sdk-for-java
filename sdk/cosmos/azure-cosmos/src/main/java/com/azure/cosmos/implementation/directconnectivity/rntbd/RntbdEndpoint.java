@@ -21,7 +21,7 @@ import java.time.Instant;
 import java.util.stream.Stream;
 
 import static com.azure.cosmos.implementation.directconnectivity.RntbdTransportClient.Options;
-import static com.azure.cosmos.implementation.guava25.base.Preconditions.checkNotNull;
+import static com.azure.cosmos.implementation.Utils.checkNotNull;
 
 public interface RntbdEndpoint extends AutoCloseable {
 

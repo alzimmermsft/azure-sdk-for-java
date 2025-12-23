@@ -18,8 +18,8 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
-import static com.azure.cosmos.implementation.guava25.base.Preconditions.checkArgument;
-import static com.azure.cosmos.implementation.guava25.base.Preconditions.checkNotNull;
+import static com.azure.cosmos.implementation.Utils.checkArgument;
+import static com.azure.cosmos.implementation.Utils.checkNotNull;
 
 public class PkRangesThroughputRequestController implements IThroughputRequestController {
     private static final Logger logger = LoggerFactory.getLogger(PkRangesThroughputRequestController.class);

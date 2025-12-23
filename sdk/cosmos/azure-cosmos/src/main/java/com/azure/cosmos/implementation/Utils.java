@@ -39,7 +39,6 @@ import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Collection;
 import java.util.Collections;
@@ -51,10 +50,6 @@ import java.util.Objects;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 import java.util.regex.Pattern;
-
-import static com.azure.cosmos.implementation.guava25.base.MoreObjects.firstNonNull;
-import static com.azure.cosmos.implementation.guava25.base.Preconditions.checkArgument;
-import static com.azure.cosmos.implementation.guava25.base.Preconditions.checkNotNull;
 
 /**
  * While this class is public, but it is not part of our published public APIs.
@@ -836,6 +831,26 @@ public class Utils {
         return (value == null) ? defaultValue : value;
     }
 
+    /**
+     * Checks {@code first} then {@code second} for being non-null, returning the first one which isn't null.
+     * <p>
+     * If both {@code first} and {@code second} are null a {@link NullPointerException} is thrown.
+     *
+     * @param <T> The type of {@code first} and {@code second}.
+     * @param first The first value to check for non-null.
+     * @param second The second value to check for non-null.
+     * @return The first value that isn't null.
+     * @throws NullPointerException If {@code first} and {@code second} are null.
+     */
+    public static <T> T firstNonNull(T first, T second) {
+        if (first != null) {
+            return first;
+        } else if (second != null) {
+            return second;
+        }
+        throw new NullPointerException("Both first and second are null.");
+    }
+
     public static long parseLong(String str, long def) {
         if (Strings.isEmpty(str)) {
             return def;
@@ -856,41 +871,110 @@ public class Utils {
     }
 
     /**
-     * Creates an immutable list from {@code values}.
+     * Checks for the {@code obj} being null, and if it is throws a {@link NullPointerException}.
      *
-     * @param <T> The value type.
-     * @param values The values to turn into an immutable list.
-     * @return An immutable list using {@code values}.
-     * @throws NullPointerException If {@code values} is null or if any value in {@code values} is null.
+     * @param <T> The type of the value.
+     * @param obj The value to check for being null.
+     * @return The value if non-null.
+     * @throws NullPointerException If {@code obj} is null.
      */
-    @SafeVarargs
-    public static <T> List<T> immutableList(T... values) {
-        Objects.requireNonNull(values, "'values' cannot be null.");
-        List<T> list = new ArrayList<>(values.length);
-
-        for (int i = 0; i < values.length; i++) {
-            list.add(Objects.requireNonNull(values[i], "Null value found at index " + i));
-        }
-
-        return Collections.unmodifiableList(list);
+    public static <T> T checkNotNull(T obj) {
+        return Objects.requireNonNull(obj);
     }
 
     /**
-     * Creates an immutable list copy of {@code values}.
+     * Checks for the {@code obj} being null, and if it is throws a {@link NullPointerException} with the
+     * {@code message}.
      *
-     * @param <T> The value type.
-     * @param values The values to copy into a new immutable list.
-     * @return An immutable list using {@code values}.
-     * @throws NullPointerException If {@code values} is null or if any value in {@code values} is null.
+     * @param <T> The type of the value.
+     * @param obj The value to check for being null.
+     * @param message The error message if the value is null.
+     * @return The value if non-null.
+     * @throws NullPointerException If {@code obj} is null.
      */
-    public static <T> List<T> immutableCopyOf(List<T> values) {
-        Objects.requireNonNull(values, "'values' cannot be null.");
-        List<T> list = new ArrayList<>(values.size());
+    public static <T> T checkNotNull(T obj, String message) {
+        return Objects.requireNonNull(obj, message);
+    }
 
-        for (int i = 0; i < values.size(); i++) {
-            list.add(Objects.requireNonNull(values.get(i), "Null value found at index " + i));
+    /**
+     * Checks for the argument being {@code valid}, and if it is not throws an {@link IllegalArgumentException}.
+     *
+     * @param valid Whether the argument is valid.
+     * @throws IllegalArgumentException If the argument isn't {@code valid}.
+     */
+    public static void checkArgument(boolean valid) {
+        if (!valid) {
+            throw new IllegalArgumentException();
         }
+    }
 
-        return Collections.unmodifiableList(list);
+    /**
+     * Checks for the argument being {@code valid}, and if it is not throws an {@link IllegalArgumentException} with the
+     * {@code message}.
+     *
+     * @param valid Whether the argument is valid.
+     * @param message The error message if the argument isn't {@code valid}.
+     * @throws IllegalArgumentException If the argument isn't {@code valid}.
+     */
+    public static void checkArgument(boolean valid, String message) {
+        if (!valid) {
+            throw new IllegalArgumentException(message);
+        }
+    }
+
+    /**
+     * Checks for the argument being {@code valid}, and if it is not throws an {@link IllegalArgumentException} with the
+     * {@code template} formatted with the {@code args}.
+     *
+     * @param valid Whether the argument is valid.
+     * @param template The error message template if the argument isn't {@code valid}.
+     * @param args The arguments for the message template.
+     * @throws IllegalArgumentException If the argument isn't {@code valid}.
+     */
+    public static void checkArgument(boolean valid, String template, Object... args) {
+        if (!valid) {
+            throw new IllegalArgumentException(String.format(template, args));
+        }
+    }
+
+    /**
+     * Checks for the state for being {@code valid}, and if it is not throws an {@link IllegalStateException}.
+     *
+     * @param valid Whether the state is valid.
+     * @throws IllegalArgumentException If the state isn't {@code valid}.
+     */
+    public static void checkState(boolean valid) {
+        if (!valid) {
+            throw new IllegalStateException();
+        }
+    }
+
+    /**
+     * Checks for the state for being {@code valid}, and if it is not throws an {@link IllegalStateException} with the
+     * {@code message}.
+     *
+     * @param valid Whether the state is valid.
+     * @param message The error message if the state isn't {@code valid}.
+     * @throws IllegalArgumentException If the state isn't {@code valid}.
+     */
+    public static void checkState(boolean valid, String message) {
+        if (!valid) {
+            throw new IllegalStateException(message);
+        }
+    }
+
+    /**
+     * Checks for the state for being {@code valid}, and if it is not throws an {@link IllegalStateException} with the
+     * {@code template} formatted with the {@code args}.
+     *
+     * @param valid Whether the state is valid.
+     * @param template The error message template if the state isn't {@code valid}.
+     * @param args The arguments for the message template.
+     * @throws IllegalArgumentException If the state isn't {@code valid}.
+     */
+    public static void checkState(boolean valid, String template, Object... args) {
+        if (!valid) {
+            throw new IllegalStateException(String.format(template, args));
+        }
     }
 }

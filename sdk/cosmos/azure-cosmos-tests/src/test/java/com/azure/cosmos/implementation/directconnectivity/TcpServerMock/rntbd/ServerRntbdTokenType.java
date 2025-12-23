@@ -12,7 +12,7 @@ import io.netty.handler.codec.CorruptedFrameException;
 import java.nio.charset.StandardCharsets;
 import java.util.UUID;
 
-import static com.azure.cosmos.implementation.guava25.base.Preconditions.checkState;
+import static com.azure.cosmos.implementation.Utils.checkState;
 
 /**
  * Methods included in this class are copied from com.azure.cosmos.implementation.directconnectivity.rntbd.RntbdTokenType.

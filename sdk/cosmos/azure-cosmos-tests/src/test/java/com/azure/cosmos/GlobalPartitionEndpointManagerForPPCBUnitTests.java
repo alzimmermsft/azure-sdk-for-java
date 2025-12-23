@@ -7,6 +7,7 @@ import com.azure.cosmos.implementation.AvailabilityStrategyContext;
 import com.azure.cosmos.implementation.CrossRegionAvailabilityContextForRxDocumentServiceRequest;
 import com.azure.cosmos.implementation.GlobalEndpointManager;
 import com.azure.cosmos.implementation.HttpConstants;
+import com.azure.cosmos.implementation.CollectionUtils;
 import com.azure.cosmos.implementation.OperationType;
 import com.azure.cosmos.implementation.PartitionKeyRange;
 import com.azure.cosmos.implementation.PartitionKeyRangeWrapper;
@@ -14,7 +15,6 @@ import com.azure.cosmos.implementation.PointOperationContextForCircuitBreaker;
 import com.azure.cosmos.implementation.ResourceType;
 import com.azure.cosmos.implementation.RxDocumentServiceRequest;
 import com.azure.cosmos.implementation.SerializationDiagnosticsContext;
-import com.azure.cosmos.implementation.guava25.collect.ImmutableList;
 import com.azure.cosmos.implementation.perPartitionCircuitBreaker.GlobalPartitionEndpointManagerForPerPartitionCircuitBreaker;
 import com.azure.cosmos.implementation.perPartitionCircuitBreaker.LocationHealthStatus;
 import com.azure.cosmos.implementation.perPartitionCircuitBreaker.LocationSpecificHealthContext;
@@ -193,7 +193,7 @@ public class GlobalPartitionEndpointManagerForPPCBUnitTests {
             String maxExclusive = "BB";
             String collectionResourceId = "dbs/db1/colls/coll1";
 
-            List<RegionalRoutingContext> applicableReadWriteEndpoints = ImmutableList.of(
+            List<RegionalRoutingContext> applicableReadWriteEndpoints = CollectionUtils.immutableList(
                     LocationEastUs2EndpointToLocationPair,
                     LocationEastUsEndpointToLocationPair,
                     LocationCentralUsEndpointToLocationPair)
@@ -263,7 +263,7 @@ public class GlobalPartitionEndpointManagerForPPCBUnitTests {
             String maxExclusive = "BB";
             String collectionResourceId = "dbs/db1/colls/coll1";
 
-            List<RegionalRoutingContext> applicableReadWriteEndpoints = ImmutableList.of(
+            List<RegionalRoutingContext> applicableReadWriteEndpoints = CollectionUtils.immutableList(
                     LocationEastUs2EndpointToLocationPair,
                     LocationEastUsEndpointToLocationPair,
                     LocationCentralUsEndpointToLocationPair)
@@ -340,7 +340,7 @@ public class GlobalPartitionEndpointManagerForPPCBUnitTests {
             String maxExclusive = "BB";
             String collectionResourceId = "dbs/db1/colls/coll1";
 
-            List<RegionalRoutingContext> applicableReadWriteEndpoints = ImmutableList.of(
+            List<RegionalRoutingContext> applicableReadWriteEndpoints = CollectionUtils.immutableList(
                     LocationEastUs2EndpointToLocationPair,
                     LocationEastUsEndpointToLocationPair,
                     LocationCentralUsEndpointToLocationPair)
@@ -428,7 +428,7 @@ public class GlobalPartitionEndpointManagerForPPCBUnitTests {
             String maxExclusive = "BB";
             String collectionResourceId = "dbs/db1/colls/coll1";
 
-            List<RegionalRoutingContext> applicableReadWriteEndpoints = ImmutableList.of(
+            List<RegionalRoutingContext> applicableReadWriteEndpoints = CollectionUtils.immutableList(
                     LocationEastUs2EndpointToLocationPair,
                     LocationEastUsEndpointToLocationPair,
                     LocationCentralUsEndpointToLocationPair)
@@ -524,7 +524,7 @@ public class GlobalPartitionEndpointManagerForPPCBUnitTests {
             String maxExclusive = "BB";
             String collectionResourceId = "dbs/db1/colls/coll1";
 
-            List<RegionalRoutingContext> applicableReadWriteEndpoints = ImmutableList.of(
+            List<RegionalRoutingContext> applicableReadWriteEndpoints = CollectionUtils.immutableList(
                     LocationEastUs2EndpointToLocationPair,
                     LocationEastUsEndpointToLocationPair,
                     LocationCentralUsEndpointToLocationPair)
@@ -618,7 +618,7 @@ public class GlobalPartitionEndpointManagerForPPCBUnitTests {
             String maxExclusive = "BB";
             String collectionResourceId = "dbs/db1/colls/coll1";
 
-            List<RegionalRoutingContext> applicableReadWriteEndpoints = ImmutableList.of(
+            List<RegionalRoutingContext> applicableReadWriteEndpoints = CollectionUtils.immutableList(
                     LocationEastUs2EndpointToLocationPair,
                     LocationEastUsEndpointToLocationPair,
                     LocationCentralUsEndpointToLocationPair)
@@ -693,7 +693,7 @@ public class GlobalPartitionEndpointManagerForPPCBUnitTests {
             String collectionResourceId1 = "dbs/db1/colls/coll1";
             String collectionResourceId2 = "dbs/db1/colls/coll2";
 
-            List<RegionalRoutingContext> applicableReadWriteEndpoints = ImmutableList.of(
+            List<RegionalRoutingContext> applicableReadWriteEndpoints = CollectionUtils.immutableList(
                     LocationEastUs2EndpointToLocationPair,
                     LocationEastUsEndpointToLocationPair,
                     LocationCentralUsEndpointToLocationPair)
@@ -810,7 +810,7 @@ public class GlobalPartitionEndpointManagerForPPCBUnitTests {
             String collectionResourceId = "dbs/db1/colls/coll1";
             PartitionKeyRange partitionKeyRange = new PartitionKeyRange(pkRangeId, minInclusive, maxExclusive);
 
-            List<RegionalRoutingContext> applicableReadWriteEndpoints = ImmutableList.of(
+            List<RegionalRoutingContext> applicableReadWriteEndpoints = CollectionUtils.immutableList(
                     LocationEastUs2EndpointToLocationPair,
                     LocationEastUsEndpointToLocationPair,
                     LocationCentralUsEndpointToLocationPair)

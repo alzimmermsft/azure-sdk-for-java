@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import static com.azure.cosmos.implementation.guava25.base.Preconditions.checkArgument;
+import static com.azure.cosmos.implementation.Utils.checkArgument;
 
 public abstract class CosmosWriterBase implements IWriter {
     private static final Logger LOGGER = LoggerFactory.getLogger(CosmosWriterBase.class);

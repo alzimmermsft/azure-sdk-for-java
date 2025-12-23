@@ -140,8 +140,8 @@ import java.util.stream.Collectors;
 import static com.azure.cosmos.BridgeInternal.getAltLink;
 import static com.azure.cosmos.BridgeInternal.toResourceResponse;
 import static com.azure.cosmos.BridgeInternal.toStoredProcedureResponse;
-import static com.azure.cosmos.implementation.guava25.base.Preconditions.checkArgument;
-import static com.azure.cosmos.implementation.guava25.base.Preconditions.checkNotNull;
+import static com.azure.cosmos.implementation.Utils.checkArgument;
+import static com.azure.cosmos.implementation.Utils.checkNotNull;
 
 /**
  * While this class is public, it is not part of our published public APIs.
@@ -1836,7 +1836,7 @@ public class RxDocumentClientImpl implements AsyncDocumentClient, IAuthorization
             }
         }
 
-        return String.format("[%s]", Strings.join(stringArray, ","));
+        return String.format("[%s]", String.join(",", stringArray));
     }
 
     private static void validateResource(Resource resource) {
@@ -4415,7 +4415,7 @@ public class RxDocumentClientImpl implements AsyncDocumentClient, IAuthorization
                         .toRequestOptions(queryRequestOptions);
                     requestOptions.setPartitionKey(firstIdentity.getPartitionKey());
                     return this.readDocument((resourceLink + firstIdentity.getId()), requestOptions, diagnosticsFactory)
-                        .flatMap(resourceResponse -> Mono.just(Pair.of(resourceResponse, null)))
+                        .<Pair<ResourceResponse<Document>, CosmosException>>flatMap(resourceResponse -> Mono.just(Pair.of(resourceResponse, null)))
                         .onErrorResume(throwable -> {
                             Throwable unwrappedThrowable = Exceptions.unwrap(throwable);
 

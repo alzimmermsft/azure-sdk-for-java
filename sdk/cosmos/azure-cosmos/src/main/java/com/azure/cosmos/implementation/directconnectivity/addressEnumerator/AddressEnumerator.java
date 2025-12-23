@@ -12,7 +12,7 @@ import java.util.Set;
 
 import static com.azure.cosmos.implementation.directconnectivity.Uri.HealthStatus.Unhealthy;
 import static com.azure.cosmos.implementation.directconnectivity.Uri.HealthStatus.UnhealthyPending;
-import static com.azure.cosmos.implementation.guava25.base.Preconditions.checkNotNull;
+import static com.azure.cosmos.implementation.Utils.checkNotNull;
 
 public class AddressEnumerator {
 

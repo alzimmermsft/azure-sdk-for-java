@@ -18,8 +18,6 @@
 
 package com.azure.cosmos.implementation.guava25.hash;
 
-import com.azure.cosmos.implementation.guava25.annotations.Beta;
-
 /**
  * Static methods to obtain {@link HashFunction} instances, and other static hashing-related
  * utilities.
@@ -32,7 +30,6 @@ import com.azure.cosmos.implementation.guava25.annotations.Beta;
  * @author Kurt Alfred Kluever
  * @since 11.0
  */
-@Beta
 public final class Hashing {
     /**
      * Returns a hash function implementing the <a

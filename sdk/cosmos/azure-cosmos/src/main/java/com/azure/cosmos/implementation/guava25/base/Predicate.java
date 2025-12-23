@@ -34,8 +34,6 @@ package com.azure.cosmos.implementation.guava25.base;
  * Otherwise, at least reduce <i>explicit</i> dependencies on this type by using lambda expressions
  * or method references instead of classes, leaving your code easier to migrate in the future.
  *
- * <p>The {@link Predicates} class provides common predicates and related utilities.
- *
  * <p>See the Guava User Guide article on <a
  * href="https://github.com/google/guava/wiki/FunctionalExplained">the use of {@code Predicate}</a>.
  *
@@ -51,8 +49,8 @@ public interface Predicate<T> extends java.util.function.Predicate<T> {
    *
    * <ul>
    *   <li>Its execution does not cause any observable side effects.
-   *   <li>The computation is <i>consistent with equals</i>; that is, {@link Objects#equal
-   *       Objects.equal}{@code (a, b)} implies that {@code predicate.apply(a) ==
+   *   <li>The computation is <i>consistent with equals</i>; that is, {@link Object#equals
+   *       Object.equals}{@code (a, b)} implies that {@code predicate.apply(a) ==
    *       predicate.apply(b))}.
    * </ul>
    *

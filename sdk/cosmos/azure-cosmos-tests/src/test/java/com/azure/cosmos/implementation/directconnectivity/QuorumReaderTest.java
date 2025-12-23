@@ -3,6 +3,7 @@
 
 package com.azure.cosmos.implementation.directconnectivity;
 
+import com.azure.cosmos.implementation.CollectionUtils;
 import com.azure.cosmos.implementation.Configs;
 import com.azure.cosmos.implementation.DocumentServiceRequestContext;
 import com.azure.cosmos.implementation.DocumentServiceRequestContextValidator;
@@ -15,8 +16,6 @@ import com.azure.cosmos.implementation.RequestChargeTracker;
 import com.azure.cosmos.implementation.ResourceType;
 import com.azure.cosmos.implementation.RxDocumentServiceRequest;
 import com.azure.cosmos.implementation.StoreResponseBuilder;
-import com.azure.cosmos.implementation.guava25.base.Stopwatch;
-import com.azure.cosmos.implementation.guava25.collect.ImmutableList;
 import io.reactivex.subscribers.TestSubscriber;
 import org.mockito.Mockito;
 import org.testng.annotations.DataProvider;
@@ -77,7 +76,7 @@ public class QuorumReaderTest {
     public void basicReadStrong_AllReplicasSameLSN(int replicaCountToRead, ReadMode readMode, Long lsn, Long localLSN) {
         ISessionContainer sessionContainer = Mockito.mock(ISessionContainer.class);
         Uri primaryReplicaURI = Uri.create("primary");
-        ImmutableList<Uri> secondaryReplicaURIs = ImmutableList.of(Uri.create("secondary1"), Uri.create("secondary2"), Uri.create("secondary3"));
+        List<Uri> secondaryReplicaURIs = CollectionUtils.immutableList(Uri.create("secondary1"), Uri.create("secondary2"), Uri.create("secondary3"));
         AddressSelectorWrapper addressSelectorWrapper = AddressSelectorWrapper.Builder.Simple.create()
                 .withPrimary(primaryReplicaURI)
                 .withSecondary(secondaryReplicaURIs)
@@ -152,7 +151,7 @@ public class QuorumReaderTest {
 
         ISessionContainer sessionContainer = Mockito.mock(ISessionContainer.class);
         Uri primaryReplicaURI = Uri.create("primary");
-        ImmutableList<Uri> secondaryReplicaURIs = ImmutableList.of(Uri.create("secondary1"), Uri.create("secondary2"));
+        List<Uri> secondaryReplicaURIs = CollectionUtils.immutableList(Uri.create("secondary1"), Uri.create("secondary2"));
         AddressSelectorWrapper addressSelectorWrapper = AddressSelectorWrapper.Builder.Simple.create()
                 .withPrimary(primaryReplicaURI)
                 .withSecondary(secondaryReplicaURIs)
@@ -236,7 +235,7 @@ public class QuorumReaderTest {
         double expectedRequestCharge = requestChargePerRead.multiply(BigDecimal.valueOf(expectedNumberOfReads)).add(
                 requestChargePerHead.multiply(BigDecimal.valueOf(expectedNumberOfHeads))).setScale(4, RoundingMode.FLOOR).doubleValue();
 
-        Stopwatch stopwatch = Stopwatch.createStarted();
+        long startMillis = System.currentTimeMillis();
 
         Mono<StoreResponse> storeResponseSingle = quorumReader.readStrongAsync(mockDiagnosticsClientContext(), request, replicaCountToRead, readMode);
 
@@ -247,8 +246,8 @@ public class QuorumReaderTest {
 
         validateSuccess(storeResponseSingle, validator);
 
-        assertThat(stopwatch.elapsed().plus(timeResolution)).isGreaterThanOrEqualTo(Duration.ofMillis(
-                numberOfBarrierRequestTillCatchUp * configs.getDelayBetweenReadBarrierCallsInMs()));
+        assertThat(timeResolution.plusMillis(System.currentTimeMillis() - startMillis))
+            .isGreaterThanOrEqualTo(Duration.ofMillis(numberOfBarrierRequestTillCatchUp * configs.getDelayBetweenReadBarrierCallsInMs()));
 
         transportClientWrapper.validate()
                 .verifyNumberOfInvocations(expectedNumberOfReads + expectedNumberOfHeads);
@@ -299,7 +298,7 @@ public class QuorumReaderTest {
 
         ISessionContainer sessionContainer = Mockito.mock(ISessionContainer.class);
         Uri primaryReplicaURI = Uri.create("primary");
-        ImmutableList<Uri> secondaryReplicaURIs = ImmutableList.of(Uri.create("secondary1"), Uri.create("secondary2"));
+        List<Uri> secondaryReplicaURIs = CollectionUtils.immutableList(Uri.create("secondary1"), Uri.create("secondary2"));
         AddressSelectorWrapper addressSelectorWrapper = AddressSelectorWrapper.Builder.Simple.create()
                 .withPrimary(primaryReplicaURI)
                 .withSecondary(secondaryReplicaURIs)
@@ -389,7 +388,7 @@ public class QuorumReaderTest {
                 .add(requestChargePerHead.multiply(BigDecimal.valueOf(beforeSecondariesRetriesExhausted_expectedNumberOfHeads)))
                 .setScale(4, RoundingMode.FLOOR).doubleValue();
 
-        Stopwatch stopwatch = Stopwatch.createStarted();
+        long startMillis = System.currentTimeMillis();
 
         Mono<StoreResponse> storeResponseSingle = quorumReader.readStrongAsync(mockDiagnosticsClientContext(), request, replicaCountToRead, readMode);
 
@@ -400,8 +399,8 @@ public class QuorumReaderTest {
 
         validateSuccess(storeResponseSingle, validator);
 
-        assertThat(stopwatch.elapsed().plus(timeResolution)).isGreaterThanOrEqualTo(Duration.ofMillis(
-                numberOfBarrierRequestTillCatchUp * configs.getDelayBetweenReadBarrierCallsInMs()));
+        assertThat(timeResolution.plusMillis(System.currentTimeMillis() - startMillis))
+            .isGreaterThanOrEqualTo(Duration.ofMillis(numberOfBarrierRequestTillCatchUp * configs.getDelayBetweenReadBarrierCallsInMs()));
 
         transportClientWrapper.validate()
                 .verifyNumberOfInvocations(beforeSecondariesRetriesExhausted_expectedNumberOfReads
@@ -459,7 +458,7 @@ public class QuorumReaderTest {
 
         ISessionContainer sessionContainer = Mockito.mock(ISessionContainer.class);
         Uri primaryReplicaURI = Uri.create("primary");
-        ImmutableList<Uri> secondaryReplicaURIs = ImmutableList.of(Uri.create("secondary1"));
+        List<Uri> secondaryReplicaURIs = CollectionUtils.immutableList(Uri.create("secondary1"));
         AddressSelectorWrapper addressSelectorWrapper = AddressSelectorWrapper.Builder.Simple.create()
                 .withPrimary(primaryReplicaURI)
                 .withSecondary(secondaryReplicaURIs)

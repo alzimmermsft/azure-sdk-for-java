@@ -3,8 +3,7 @@
 
 package com.azure.cosmos.spark
 
-import com.azure.cosmos.changeFeedMetrics.{ChangeFeedMetricsListener, ChangeFeedMetricsTracker}
-import com.azure.cosmos.implementation.guava25.collect.{HashBiMap, Maps}
+import com.azure.cosmos.changeFeedMetrics.{ChangeFeedMetricsListener, ChangeFeedMetricsTracker, ChangeFeedPartitionIndexMap}
 import org.apache.spark.Success
 import org.apache.spark.executor.{ExecutorMetrics, TaskMetrics}
 import org.apache.spark.scheduler.{SparkListenerTaskEnd, TaskInfo}
@@ -40,8 +39,8 @@ class ChangeFeedMetricsListenerSpec extends UnitSpec {
     ArgumentMatchers.any[TaskMetrics]
    )).thenReturn(metrics)
 
-   val partitionIndexMap = Maps.synchronizedBiMap(HashBiMap.create[NormalizedRange, Long]())
-   partitionIndexMap.put(NormalizedRange("0", "FF"), 1)
+   val partitionIndexMap = new ChangeFeedPartitionIndexMap()
+   partitionIndexMap.getOrUpdateFeedRangeIndex(NormalizedRange("0", "FF"), 1)
 
    val partitionMetricsMap = new ConcurrentHashMap[NormalizedRange, ChangeFeedMetricsTracker]()
    val changeFeedMetricsListener = new ChangeFeedMetricsListener(partitionIndexMap, partitionMetricsMap)
@@ -82,8 +81,8 @@ class ChangeFeedMetricsListenerSpec extends UnitSpec {
    ArgumentMatchers.any[TaskMetrics]
   )).thenReturn(metrics)
 
-  val partitionIndexMap = Maps.synchronizedBiMap(HashBiMap.create[NormalizedRange, Long]())
-  partitionIndexMap.put(NormalizedRange("0", "FF"), 1)
+  val partitionIndexMap = new ChangeFeedPartitionIndexMap()
+  partitionIndexMap.getOrUpdateFeedRangeIndex(NormalizedRange("0", "FF"), 1)
 
   val partitionMetricsMap = new ConcurrentHashMap[NormalizedRange, ChangeFeedMetricsTracker]()
   val changeFeedMetricsListener = new ChangeFeedMetricsListener(partitionIndexMap, partitionMetricsMap)
@@ -120,8 +119,8 @@ class ChangeFeedMetricsListenerSpec extends UnitSpec {
    ArgumentMatchers.any[TaskMetrics]
   )).thenReturn(metrics)
 
-  val partitionIndexMap = Maps.synchronizedBiMap(HashBiMap.create[NormalizedRange, Long]())
-  partitionIndexMap.put(NormalizedRange("0", "FF"), 1)
+  val partitionIndexMap = new ChangeFeedPartitionIndexMap()
+  partitionIndexMap.getOrUpdateFeedRangeIndex(NormalizedRange("0", "FF"), 1)
 
   val partitionMetricsMap = new ConcurrentHashMap[NormalizedRange, ChangeFeedMetricsTracker]()
   val changeFeedMetricsListener = new ChangeFeedMetricsListener(partitionIndexMap, partitionMetricsMap)

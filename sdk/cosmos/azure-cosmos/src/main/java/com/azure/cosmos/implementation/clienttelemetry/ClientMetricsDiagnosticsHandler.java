@@ -11,7 +11,7 @@ import com.azure.cosmos.implementation.ImplementationBridgeHelpers;
 
 import java.lang.ref.WeakReference;
 
-import static com.azure.cosmos.implementation.guava25.base.Preconditions.checkNotNull;
+import static com.azure.cosmos.implementation.Utils.checkNotNull;
 
 public final class ClientMetricsDiagnosticsHandler implements CosmosDiagnosticsHandler {
     private static final ImplementationBridgeHelpers.CosmosClientTelemetryConfigHelper.CosmosClientTelemetryConfigAccessor clientTelemetryConfigAccessor =

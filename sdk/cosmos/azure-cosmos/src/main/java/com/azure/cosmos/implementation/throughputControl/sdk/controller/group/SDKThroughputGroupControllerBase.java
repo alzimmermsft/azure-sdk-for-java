@@ -11,7 +11,6 @@ import com.azure.cosmos.implementation.Strings;
 import com.azure.cosmos.implementation.Utils;
 import com.azure.cosmos.implementation.caches.AsyncCache;
 import com.azure.cosmos.implementation.caches.RxPartitionKeyRangeCache;
-import com.azure.cosmos.implementation.guava25.base.Objects;
 import com.azure.cosmos.implementation.throughputControl.IThroughputController;
 import com.azure.cosmos.implementation.throughputControl.ThroughputControlRequestContext;
 import com.azure.cosmos.implementation.throughputControl.sdk.LinkedCancellationToken;
@@ -28,13 +27,14 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.time.Duration;
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
 import static com.azure.cosmos.implementation.Exceptions.isPartitionCompletingSplittingException;
 import static com.azure.cosmos.implementation.Exceptions.isPartitionSplitOrMerge;
-import static com.azure.cosmos.implementation.guava25.base.Preconditions.checkArgument;
-import static com.azure.cosmos.implementation.guava25.base.Preconditions.checkNotNull;
+import static com.azure.cosmos.implementation.Utils.checkArgument;
+import static com.azure.cosmos.implementation.Utils.checkNotNull;
 
 /**
  * Throughput group controller. Two common tasks across all group controller implementations:
@@ -249,6 +249,6 @@ public abstract class SDKThroughputGroupControllerBase implements IThroughputCon
 
     @Override
     public boolean canHandleRequest(RxDocumentServiceRequest request) {
-        return this.isDefault() || Objects.equal(this.group.getGroupName(), request.getThroughputControlGroupName());
+        return this.isDefault() || Objects.equals(this.group.getGroupName(), request.getThroughputControlGroupName());
     }
 }

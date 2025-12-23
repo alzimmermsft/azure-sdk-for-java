@@ -12,7 +12,7 @@ import com.azure.cosmos.implementation.apachecommons.lang.StringUtils;
 
 import java.util.Objects;
 
-import static com.azure.cosmos.implementation.guava25.base.Preconditions.checkArgument;
+import static com.azure.cosmos.implementation.Utils.checkArgument;
 
 /**
  * Encapsulates the container link associated with the container.

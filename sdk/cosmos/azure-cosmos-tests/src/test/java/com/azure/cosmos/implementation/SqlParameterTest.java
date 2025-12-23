@@ -2,11 +2,11 @@
 // Licensed under the MIT License.
 package com.azure.cosmos.implementation;
 
-import com.azure.cosmos.implementation.guava25.collect.Lists;
 import com.azure.cosmos.models.SqlParameter;
 import org.testng.annotations.Test;
 
-import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -14,8 +14,7 @@ public class SqlParameterTest {
 
     @Test(groups = {"unit"})
     public void validateSqlParameterEquals() {
-        ArrayList<SqlParameter> sqlParameters = Lists.newArrayList(new SqlParameter("@param1", 3), new SqlParameter(
-            "@param2", 4));
+        List<SqlParameter> sqlParameters = Arrays.asList(new SqlParameter("@param1", 3), new SqlParameter("@param2", 4));
 
         assertThat(sqlParameters.contains(new SqlParameter("@param1", 3))).isTrue();
         assertThat(sqlParameters.contains(new SqlParameter("@param2", 4))).isTrue();

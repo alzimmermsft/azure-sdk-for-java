@@ -36,7 +36,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static com.azure.cosmos.implementation.guava25.base.Preconditions.checkNotNull;
+import static com.azure.cosmos.implementation.Utils.checkNotNull;
 
 public class CosmosBulkWriter extends CosmosWriterBase {
     private static final Logger LOGGER = LoggerFactory.getLogger(CosmosBulkWriter.class);

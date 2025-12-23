@@ -22,8 +22,6 @@ import java.io.Serializable;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 
-import static com.azure.cosmos.implementation.guava25.primitives.UnsignedBytes.toInt;
-
 /**
  * See MurmurHash3_x64_128 in <a href="http://smhasher.googlecode.com/svn/trunk/MurmurHash3.cpp">the
  * C++ implementation</a>.
@@ -197,6 +195,10 @@ final class Murmur3_128HashFunction extends AbstractHashFunction implements Seri
             k2 *= C1;
             return k2;
         }
+    }
+
+    private static int toInt(byte value) {
+        return value & 0xFF;
     }
 
     private static final long serialVersionUID = 0L;

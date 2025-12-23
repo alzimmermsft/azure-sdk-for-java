@@ -11,6 +11,7 @@ import com.azure.cosmos.CosmosClientBuilder;
 import com.azure.cosmos.CosmosDatabaseForTest;
 import com.azure.cosmos.CosmosException;
 import com.azure.cosmos.DirectConnectionConfig;
+import com.azure.cosmos.implementation.CollectionUtils;
 import com.azure.cosmos.implementation.TestConfigurations;
 import com.azure.cosmos.implementation.Utils;
 import com.azure.cosmos.models.CosmosContainerProperties;
@@ -18,13 +19,13 @@ import com.azure.cosmos.models.CosmosVectorDataType;
 import com.azure.cosmos.models.CosmosVectorDistanceFunction;
 import com.azure.cosmos.models.CosmosVectorEmbedding;
 import com.azure.cosmos.models.CosmosVectorEmbeddingPolicy;
+import com.azure.cosmos.models.CosmosVectorIndexSpec;
+import com.azure.cosmos.models.CosmosVectorIndexType;
 import com.azure.cosmos.models.ExcludedPath;
 import com.azure.cosmos.models.IncludedPath;
 import com.azure.cosmos.models.IndexingMode;
 import com.azure.cosmos.models.IndexingPolicy;
 import com.azure.cosmos.models.PartitionKeyDefinition;
-import com.azure.cosmos.models.CosmosVectorIndexSpec;
-import com.azure.cosmos.models.CosmosVectorIndexType;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
@@ -92,7 +93,7 @@ public class VectorIndexTest extends TestSuiteBase {
 
         IncludedPath includedPath1 = new IncludedPath("/name/?");
         IncludedPath includedPath2 = new IncludedPath("/description/?");
-        indexingPolicy.setIncludedPaths(Utils.immutableList(includedPath1, includedPath2));
+        indexingPolicy.setIncludedPaths(CollectionUtils.immutableList(includedPath1, includedPath2));
 
         indexingPolicy.setVectorIndexes(populateVectorIndexes());
 
@@ -124,12 +125,12 @@ public class VectorIndexTest extends TestSuiteBase {
 
         IncludedPath includedPath1 = new IncludedPath("/name/?");
         IncludedPath includedPath2 = new IncludedPath("/description/?");
-        indexingPolicy.setIncludedPaths(Utils.immutableList(includedPath1, includedPath2));
+        indexingPolicy.setIncludedPaths(CollectionUtils.immutableList(includedPath1, includedPath2));
 
         CosmosVectorIndexSpec cosmosVectorIndexSpec = new CosmosVectorIndexSpec();
         cosmosVectorIndexSpec.setPath("/vector1");
         cosmosVectorIndexSpec.setType(CosmosVectorIndexType.FLAT.toString());
-        indexingPolicy.setVectorIndexes(Utils.immutableList(cosmosVectorIndexSpec));
+        indexingPolicy.setVectorIndexes(CollectionUtils.immutableList(cosmosVectorIndexSpec));
 
         collectionDefinition.setIndexingPolicy(indexingPolicy);
 
@@ -158,7 +159,7 @@ public class VectorIndexTest extends TestSuiteBase {
 
         IncludedPath includedPath1 = new IncludedPath("/name/?");
         IncludedPath includedPath2 = new IncludedPath("/description/?");
-        indexingPolicy.setIncludedPaths(Utils.immutableList(includedPath1, includedPath2));
+        indexingPolicy.setIncludedPaths(CollectionUtils.immutableList(includedPath1, includedPath2));
 
         List<CosmosVectorIndexSpec> vectorIndexes = populateVectorIndexes();
         vectorIndexes.get(2).setPath("/vector2");
@@ -196,7 +197,7 @@ public class VectorIndexTest extends TestSuiteBase {
 
         IncludedPath includedPath1 = new IncludedPath("/name/?");
         IncludedPath includedPath2 = new IncludedPath("/description/?");
-        indexingPolicy.setIncludedPaths(Utils.immutableList(includedPath1, includedPath2));
+        indexingPolicy.setIncludedPaths(CollectionUtils.immutableList(includedPath1, includedPath2));
 
         List<CosmosVectorIndexSpec> vectorIndexes = populateVectorIndexes();
         indexingPolicy.setVectorIndexes(vectorIndexes);

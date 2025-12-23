@@ -8,7 +8,7 @@ import com.azure.cosmos.models.PriorityLevel;
 
 import java.time.Duration;
 
-import static com.azure.cosmos.implementation.guava25.base.Preconditions.checkNotNull;
+import static com.azure.cosmos.implementation.Utils.checkNotNull;
 
 public class GlobalThroughputControlGroup extends SDKThroughputControlGroupInternal {
     private static final Duration DEFAULT_CONTROL_ITEM_RENEW_INTERVAL = Duration.ofSeconds(5);

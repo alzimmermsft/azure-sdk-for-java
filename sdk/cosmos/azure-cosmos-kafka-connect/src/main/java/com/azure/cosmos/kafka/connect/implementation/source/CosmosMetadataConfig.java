@@ -5,7 +5,7 @@ package com.azure.cosmos.kafka.connect.implementation.source;
 
 import com.azure.cosmos.implementation.Strings;
 
-import static com.azure.cosmos.implementation.guava25.base.Preconditions.checkArgument;
+import static com.azure.cosmos.implementation.Utils.checkArgument;
 
 public class CosmosMetadataConfig {
     private final int metadataPollDelayInMs;

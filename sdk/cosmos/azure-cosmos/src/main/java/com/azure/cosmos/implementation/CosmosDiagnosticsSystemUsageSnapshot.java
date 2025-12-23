@@ -2,12 +2,11 @@
 // Licensed under the MIT License.
 package com.azure.cosmos.implementation;
 
-import com.azure.cosmos.implementation.guava25.collect.ImmutableMap;
-
-import java.util.HashMap;
+import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
-import static com.azure.cosmos.implementation.guava25.base.Preconditions.checkNotNull;
+import static com.azure.cosmos.implementation.Utils.checkNotNull;
 
 /**
  * This class represents a snapshot of the system usage when processing the operation. It can be useful to investigate
@@ -19,7 +18,7 @@ public final class CosmosDiagnosticsSystemUsageSnapshot {
     private final String systemCpuLoad;
     private final int availableProcessors;
 
-    private final ImmutableMap<String, Object> map;
+    private final Map<String, Object> map;
 
     public CosmosDiagnosticsSystemUsageSnapshot(
         String systemCpuLoad,
@@ -35,12 +34,12 @@ public final class CosmosDiagnosticsSystemUsageSnapshot {
         this.usedMemory = usedMemory;
         this.availableMemory = availableMemory;
         this.availableProcessors = availableProcessors;
-        ImmutableMap.Builder<String, Object> builder = ImmutableMap.builderWithExpectedSize(4);
+        Map<String, Object> builder = new LinkedHashMap<>(8);
         builder.put("CPU", systemCpuLoad);
         builder.put("Memory used", usedMemory);
         builder.put("Memory available", availableMemory);
         builder.put("Processor count", availableProcessors);
-        this.map = builder.build();
+        this.map = Collections.unmodifiableMap(builder);
     }
 
     /**

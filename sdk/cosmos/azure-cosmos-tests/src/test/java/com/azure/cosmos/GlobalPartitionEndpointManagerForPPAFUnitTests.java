@@ -7,6 +7,7 @@ import com.azure.cosmos.implementation.AvailabilityStrategyContext;
 import com.azure.cosmos.implementation.ConnectionPolicy;
 import com.azure.cosmos.implementation.CrossRegionAvailabilityContextForRxDocumentServiceRequest;
 import com.azure.cosmos.implementation.GlobalEndpointManager;
+import com.azure.cosmos.implementation.CollectionUtils;
 import com.azure.cosmos.implementation.OperationType;
 import com.azure.cosmos.implementation.PartitionKeyRange;
 import com.azure.cosmos.implementation.PartitionKeyRangeWrapper;
@@ -14,7 +15,6 @@ import com.azure.cosmos.implementation.PointOperationContextForCircuitBreaker;
 import com.azure.cosmos.implementation.ResourceType;
 import com.azure.cosmos.implementation.RxDocumentServiceRequest;
 import com.azure.cosmos.implementation.SerializationDiagnosticsContext;
-import com.azure.cosmos.implementation.guava25.collect.ImmutableList;
 import com.azure.cosmos.implementation.perPartitionAutomaticFailover.GlobalPartitionEndpointManagerForPerPartitionAutomaticFailover;
 import com.azure.cosmos.implementation.perPartitionAutomaticFailover.PartitionLevelFailoverInfo;
 import com.azure.cosmos.implementation.routing.RegionalRoutingContext;
@@ -224,7 +224,7 @@ public class GlobalPartitionEndpointManagerForPPAFUnitTests extends TestSuiteBas
             String collectionResourceId = "dbs/db1/colls/coll1";
             PartitionKeyRange partitionKeyRange = new PartitionKeyRange(pkRangeId, minInclusive, maxExclusive);
 
-            List<URI> applicableReadWriteEndpoints = ImmutableList.of(
+            List<URI> applicableReadWriteEndpoints = CollectionUtils.immutableList(
                     LocationEastUs2EndpointToLocationPair,
                     LocationEastUsEndpointToLocationPair,
                     LocationCentralUsEndpointToLocationPair)

@@ -8,7 +8,7 @@ import com.azure.cosmos.implementation.Strings;
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.azure.cosmos.implementation.guava25.base.Preconditions.checkArgument;
+import static com.azure.cosmos.implementation.Utils.checkArgument;
 
 public class FeedRangeContinuationTopicOffset {
     private static final String ITEM_LSN_KEY = "cosmos.source.feedRange.item.lsn";

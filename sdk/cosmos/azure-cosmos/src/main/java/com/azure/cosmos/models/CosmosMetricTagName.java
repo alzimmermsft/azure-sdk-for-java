@@ -11,7 +11,7 @@ import java.util.Locale;
 import java.util.Objects;
 import java.util.StringJoiner;
 
-import static com.azure.cosmos.implementation.guava25.base.Preconditions.checkNotNull;
+import static com.azure.cosmos.implementation.Utils.checkNotNull;
 
 /**
  * The tag names that can be used for Cosmos client-side meters. Not all tag names are applicable for all meters, but

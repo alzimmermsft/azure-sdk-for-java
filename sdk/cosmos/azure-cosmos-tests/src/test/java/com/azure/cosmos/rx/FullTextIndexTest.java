@@ -11,6 +11,7 @@ import com.azure.cosmos.CosmosClientBuilder;
 import com.azure.cosmos.CosmosDatabaseForTest;
 import com.azure.cosmos.CosmosException;
 import com.azure.cosmos.DirectConnectionConfig;
+import com.azure.cosmos.implementation.CollectionUtils;
 import com.azure.cosmos.implementation.TestConfigurations;
 import com.azure.cosmos.implementation.Utils;
 import com.azure.cosmos.models.CosmosContainerProperties;
@@ -198,7 +199,7 @@ public class FullTextIndexTest extends TestSuiteBase{
 
         IncludedPath includedPath1 = new IncludedPath("/name/?");
         IncludedPath includedPath2 = new IncludedPath("/description/?");
-        indexingPolicy.setIncludedPaths(Utils.immutableList(includedPath1, includedPath2));
+        indexingPolicy.setIncludedPaths(CollectionUtils.immutableList(includedPath1, includedPath2));
 
         CosmosFullTextIndex cosmosFullTextIndex = new CosmosFullTextIndex();
         cosmosFullTextIndex.setPath(path);

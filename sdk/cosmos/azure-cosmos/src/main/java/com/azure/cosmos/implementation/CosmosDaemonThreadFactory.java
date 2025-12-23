@@ -6,7 +6,7 @@ package com.azure.cosmos.implementation;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static com.azure.cosmos.implementation.guava25.base.Preconditions.checkNotNull;
+import static com.azure.cosmos.implementation.Utils.checkNotNull;
 
 public class CosmosDaemonThreadFactory implements ThreadFactory {
     private static final String NAME_TEMPLATE = "cosmos-daemon-%s[%s]";

@@ -36,11 +36,5 @@ final class Platform {
    * 1024 characters. If we grow past this we don't put it back in the threadlocal, we just keep
    * going and grow as needed.
    */
-  private static final ThreadLocal<char[]> DEST_TL =
-      new ThreadLocal<char[]>() {
-        @Override
-        protected char[] initialValue() {
-          return new char[1024];
-        }
-      };
+  private static final ThreadLocal<char[]> DEST_TL = ThreadLocal.withInitial(() -> new char[1024]);
 }

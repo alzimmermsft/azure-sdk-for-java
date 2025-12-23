@@ -25,7 +25,6 @@ import com.azure.cosmos.implementation.UnauthorizedException;
 import com.azure.cosmos.implementation.Utils;
 import com.azure.cosmos.implementation.http.HttpHeaders;
 import com.azure.cosmos.implementation.CosmosError;
-import com.azure.cosmos.implementation.guava25.collect.ImmutableMap;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
@@ -34,6 +33,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.time.Duration;
+import java.util.Collections;
 import java.util.Map;
 
 import static com.azure.cosmos.implementation.HttpConstants.StatusCodes.BADREQUEST;
@@ -118,7 +118,7 @@ public class CosmosExceptionTest {
 
     @Test(groups = { "unit" })
     public void headerNotNull7() {
-        ImmutableMap<String, String> respHeaders = ImmutableMap.of("key", "getValue");
+        Map<String, String> respHeaders = Collections.singletonMap("key", "getValue");
         CosmosException dce = BridgeInternal.createCosmosException((String) null, (Exception) null, respHeaders, 0, (String) null);
         assertThat(dce.getResponseHeaders()).isNotNull();
         assertThat(dce.getResponseHeaders()).contains(respHeaders.entrySet().iterator().next());

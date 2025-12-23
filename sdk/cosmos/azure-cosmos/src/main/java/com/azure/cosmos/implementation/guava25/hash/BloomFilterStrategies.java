@@ -18,15 +18,13 @@
 
 package com.azure.cosmos.implementation.guava25.hash;
 
+import com.azure.cosmos.implementation.guava25.base.Preconditions;
 import com.azure.cosmos.implementation.guava25.math.LongMath;
 import com.azure.cosmos.implementation.guava25.primitives.Ints;
 import com.azure.cosmos.implementation.guava25.primitives.Longs;
 
-import java.math.RoundingMode;
 import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicLongArray;
-
-import static com.azure.cosmos.implementation.guava25.base.Preconditions.checkArgument;
 
 /**
  * Collections of strategies of generating the k * log(M) bits required for an element to be mapped
@@ -108,12 +106,12 @@ enum BloomFilterStrategies implements BloomFilter.Strategy {
 //        private final LongAddable bitCount;
 
         LockFreeBitArray(long bits) {
-            this(new long[Ints.checkedCast(LongMath.divide(bits, 64, RoundingMode.CEILING))]);
+            this(new long[Ints.checkedCast(LongMath.divide(bits, 64))]);
         }
 
         // Used by serialization
         LockFreeBitArray(long[] data) {
-            checkArgument(data.length > 0, "data length is zero!");
+            Preconditions.checkArgument(data.length > 0, "data length is zero!");
             this.data = new AtomicLongArray(data);
 //            this.bitCount = LongAddables.create();
 //            long bitCount = 0;
@@ -170,22 +168,6 @@ enum BloomFilterStrategies implements BloomFilter.Strategy {
         }
 
         /**
-         * Number of set bits (1s).
-         *
-         * <p>Note that because of concurrent set calls and uses of atomics, this bitCount is a (very)
-         * close *estimate* of the actual number of bits set. It's not possible to do better than an
-         * estimate without locking. Note that the number, if not exactly accurate, is *always*
-         * underestimating, never overestimating.
-         */
-//        long bitCount() {
-//            return bitCount.sum();
-//        }
-
-        LockFreeBitArray copy() {
-            return new LockFreeBitArray(toPlainArray(data));
-        }
-
-        /**
          * Combines the two BitArrays using bitwise OR.
          *
          * <p>NOTE: Because of the use of atomics, if the other LockFreeBitArray is being mutated while
@@ -195,7 +177,7 @@ enum BloomFilterStrategies implements BloomFilter.Strategy {
          * of this method.
          */
         void putAll(LockFreeBitArray other) {
-            checkArgument(
+            Preconditions.checkArgument(
                 data.length() == other.data.length(),
                 "BitArrays must be of equal length (%s != %s)",
                 data.length(),
@@ -205,12 +187,10 @@ enum BloomFilterStrategies implements BloomFilter.Strategy {
 
                 long ourLongOld;
                 long ourLongNew;
-                boolean changedAnyBits = true;
                 do {
                     ourLongOld = data.get(i);
                     ourLongNew = ourLongOld | otherLong;
                     if (ourLongOld == ourLongNew) {
-                        changedAnyBits = false;
                         break;
                     }
                 } while (!data.compareAndSet(i, ourLongOld, ourLongNew));

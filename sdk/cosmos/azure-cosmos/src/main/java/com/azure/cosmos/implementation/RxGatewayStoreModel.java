@@ -54,7 +54,7 @@ import java.util.Objects;
 import java.util.concurrent.Callable;
 
 import static com.azure.cosmos.implementation.HttpConstants.HttpHeaders.INTENDED_COLLECTION_RID_HEADER;
-import static com.azure.cosmos.implementation.guava25.base.Preconditions.checkNotNull;
+import static com.azure.cosmos.implementation.Utils.checkNotNull;
 
 /**
  * While this class is public, but it is not part of our published public APIs.

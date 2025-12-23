@@ -11,6 +11,7 @@ import com.azure.cosmos.implementation.FailureValidator;
 import com.azure.cosmos.implementation.GoneException;
 import com.azure.cosmos.implementation.IAuthorizationTokenProvider;
 import com.azure.cosmos.implementation.ISessionContainer;
+import com.azure.cosmos.implementation.CollectionUtils;
 import com.azure.cosmos.implementation.PartitionIsMigratingException;
 import com.azure.cosmos.implementation.PartitionKeyRangeGoneException;
 import com.azure.cosmos.implementation.PartitionKeyRangeIsSplittingException;
@@ -20,7 +21,6 @@ import com.azure.cosmos.implementation.RxDocumentServiceRequest;
 import com.azure.cosmos.implementation.SessionTokenHelper;
 import com.azure.cosmos.implementation.StoreResponseBuilder;
 import com.azure.cosmos.implementation.Utils;
-import com.azure.cosmos.implementation.guava25.collect.ImmutableList;
 import io.reactivex.subscribers.TestSubscriber;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
@@ -91,7 +91,7 @@ public class ConsistencyWriterTest {
 
         AddressSelectorWrapper addressSelectorWrapper = AddressSelectorWrapper.Builder.Simple.create()
                 .withPrimary(primaryUri)
-                .withSecondary(ImmutableList.of(secondaryUri1, secondaryUri2, secondaryUri3))
+                .withSecondary(CollectionUtils.immutableList(secondaryUri1, secondaryUri2, secondaryUri3))
                 .build();
         sessionContainer = Mockito.mock(ISessionContainer.class);
         IAuthorizationTokenProvider authorizationTokenProvider = Mockito.mock(IAuthorizationTokenProvider.class);
@@ -139,7 +139,8 @@ public class ConsistencyWriterTest {
 
         AddressSelectorWrapper addressSelectorWrapper = AddressSelectorWrapper.Builder.Simple.create()
                                                                                              .withPrimary(primaryUri)
-                                                                                             .withSecondary(ImmutableList.of(secondaryUri1, secondaryUri2, secondaryUri3))
+                                                                                             .withSecondary(
+                                                                                                 CollectionUtils.immutableList(secondaryUri1, secondaryUri2, secondaryUri3))
                                                                                              .build();
         sessionContainer = Mockito.mock(ISessionContainer.class);
         IAuthorizationTokenProvider authorizationTokenProvider = Mockito.mock(IAuthorizationTokenProvider.class);
@@ -288,7 +289,7 @@ public class ConsistencyWriterTest {
 
         AddressSelectorWrapper addressSelectorWrapper = AddressSelectorWrapper.Builder.Simple.create()
             .withPrimary(primaryUri)
-            .withSecondary(ImmutableList.of(secondaryUri1, secondaryUri2, secondaryUri3))
+            .withSecondary(CollectionUtils.immutableList(secondaryUri1, secondaryUri2, secondaryUri3))
             .build();
         sessionContainer = Mockito.mock(ISessionContainer.class);
         IAuthorizationTokenProvider authorizationTokenProvider = Mockito.mock(IAuthorizationTokenProvider.class);

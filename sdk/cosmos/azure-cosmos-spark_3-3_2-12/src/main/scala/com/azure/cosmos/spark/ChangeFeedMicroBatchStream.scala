@@ -2,8 +2,7 @@
 // Licensed under the MIT License.
 package com.azure.cosmos.spark
 
-import com.azure.cosmos.changeFeedMetrics.{ChangeFeedMetricsListener, ChangeFeedMetricsTracker}
-import com.azure.cosmos.implementation.guava25.collect.{HashBiMap, Maps}
+import com.azure.cosmos.changeFeedMetrics.{ChangeFeedMetricsListener, ChangeFeedMetricsTracker, ChangeFeedPartitionIndexMap}
 import com.azure.cosmos.implementation.{SparkBridgeImplementationInternal, UUIDs}
 import com.azure.cosmos.spark.CosmosPredicates.{assertNotNull, assertNotNullOrEmpty, assertOnSparkDriver}
 import com.azure.cosmos.spark.diagnostics.{DiagnosticsContext, LoggerHelper}
@@ -18,7 +17,6 @@ import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.atomic.AtomicLong
 
 // scalastyle:off underscore.import
-import scala.collection.JavaConverters._
 // scalastyle:on underscore.import
 
 // scala style rule flaky - even complaining on partial log messages
@@ -65,7 +63,7 @@ private class ChangeFeedMicroBatchStream
   private var latestOffsetSnapshot: Option[ChangeFeedOffset] = None
 
   private val partitionIndex = new AtomicLong(0)
-  private val partitionIndexMap = Maps.synchronizedBiMap(HashBiMap.create[NormalizedRange, Long]())
+  private val partitionIndexMap = new ChangeFeedPartitionIndexMap()
   private val partitionMetricsMap = new ConcurrentHashMap[NormalizedRange, ChangeFeedMetricsTracker]()
 
   // Register metrics listener
@@ -120,7 +118,7 @@ private class ChangeFeedMicroBatchStream
       .inputPartitions
       .get
       .map(partition => {
-          val index = partitionIndexMap.asScala.getOrElseUpdate(partition.feedRange, partitionIndex.incrementAndGet())
+          val index = partitionIndexMap.getOrUpdateFeedRangeIndex(partition.feedRange, partitionIndex.incrementAndGet())
           partition
            .withContinuationState(
              SparkBridgeImplementationInternal

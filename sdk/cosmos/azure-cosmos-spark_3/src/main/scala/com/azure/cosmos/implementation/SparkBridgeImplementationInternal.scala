@@ -4,9 +4,9 @@
 package com.azure.cosmos.implementation
 
 import com.azure.cosmos.implementation.ImplementationBridgeHelpers.CosmosClientBuilderHelper
+import com.azure.cosmos.implementation.Strings.trimToNull
+import com.azure.cosmos.implementation.Utils.firstNonNull
 import com.azure.cosmos.implementation.changefeed.common.{ChangeFeedMode, ChangeFeedStartFromInternal, ChangeFeedState, ChangeFeedStateV1}
-import com.azure.cosmos.implementation.guava25.base.MoreObjects.firstNonNull
-import com.azure.cosmos.implementation.guava25.base.Strings.emptyToNull
 import com.azure.cosmos.implementation.query.CompositeContinuationToken
 import com.azure.cosmos.implementation.routing.Range
 import com.azure.cosmos.models.{FeedRange, PartitionKey, PartitionKeyBuilder, PartitionKeyDefinition, PartitionKind, SparkModelBridgeInternal}
@@ -450,7 +450,7 @@ private[cosmos] object SparkBridgeImplementationInternal extends BasicLoggingTra
     val maxConnectionsPerEndpointText = System.getProperty(
       SPARK_MAX_CONNECTIONS_PER_ENDPOINT_PROPERTY,
       firstNonNull(
-        emptyToNull(System.getenv.get(SPARK_MAX_CONNECTIONS_PER_ENDPOINT_VARIABLE)),
+        trimToNull(System.getenv.get(SPARK_MAX_CONNECTIONS_PER_ENDPOINT_VARIABLE)),
         String.valueOf(DEFAULT_SPARK_MAX_CONNECTIONS_PER_ENDPOINT)))
 
     try {
@@ -474,7 +474,7 @@ private[cosmos] object SparkBridgeImplementationInternal extends BasicLoggingTra
     val ioThreadCountPerCoreText = System.getProperty(
       SPARK_IO_THREAD_COUNT_FACTOR_PER_CORE_PROPERTY,
       firstNonNull(
-        emptyToNull(System.getenv.get(SPARK_IO_THREAD_COUNT_FACTOR_PER_CORE_VARIABLE)),
+        trimToNull(System.getenv.get(SPARK_IO_THREAD_COUNT_FACTOR_PER_CORE_VARIABLE)),
         String.valueOf(DEFAULT_SPARK_IO_THREAD_COUNT_FACTOR_PER_CORE)))
 
     try {

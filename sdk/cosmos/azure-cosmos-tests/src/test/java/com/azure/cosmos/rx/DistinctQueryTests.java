@@ -6,20 +6,19 @@ import com.azure.cosmos.CosmosAsyncClient;
 import com.azure.cosmos.CosmosAsyncContainer;
 import com.azure.cosmos.CosmosClientBuilder;
 import com.azure.cosmos.CosmosException;
+import com.azure.cosmos.implementation.City;
 import com.azure.cosmos.implementation.FailureValidator;
 import com.azure.cosmos.implementation.FeedResponseListValidator;
 import com.azure.cosmos.implementation.FeedResponseValidator;
 import com.azure.cosmos.implementation.InternalObjectNode;
+import com.azure.cosmos.implementation.Pair;
+import com.azure.cosmos.implementation.Person;
+import com.azure.cosmos.implementation.Pet;
 import com.azure.cosmos.implementation.Utils;
-import com.azure.cosmos.implementation.guava25.collect.ImmutableMap;
 import com.azure.cosmos.implementation.query.UnorderedDistinctMap;
 import com.azure.cosmos.implementation.routing.UInt128;
 import com.azure.cosmos.models.CosmosQueryRequestOptions;
 import com.azure.cosmos.models.FeedResponse;
-import com.azure.cosmos.models.ModelBridgeInternal;
-import com.azure.cosmos.implementation.City;
-import com.azure.cosmos.implementation.Person;
-import com.azure.cosmos.implementation.Pet;
 import com.azure.cosmos.util.CosmosPagedFlux;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -119,91 +118,90 @@ public class DistinctQueryTests extends TestSuiteBase {
     @Test(groups = {"query"}, timeOut = TIMEOUT_LONG)
     public void queryDistinctDocuments() {
 
-        Map<String, Boolean> queries = ImmutableMap.<String, Boolean>builder()
+        List<Pair<String, Boolean>> queries = new ArrayList<>();
              // basic distinct queries
-            .put("SELECT %s VALUE null", true)
-            .put("SELECT %s VALUE false", false)
-            .put("SELECT %s VALUE true", false)
-            .put("SELECT %s VALUE 1", false)
-            .put("SELECT %s VALUE 'a'", true)
-            .put("SELECT %s VALUE [null, true, false, 1, 'a']", false)
-            .put("SELECT %s false AS p", true)
-            .put("SELECT %s 1 AS p", false)
-            .put("SELECT %s 'a' AS p", false)
-            .put("SELECT %s VALUE null FROM c", false)
-            .put("SELECT %s VALUE false FROM c", false)
-            .put("SELECT %s VALUE 1 FROM c", false)
-            .put("SELECT %s VALUE 'a' FROM c", false)
-            .put("SELECT %s null AS p FROM c", false)
-            .put("SELECT %s false AS p FROM c", false)
-            .put("SELECT %s 1 AS p FROM c", false)
-            .put("SELECT %s 'a' AS p FROM c", false)
+        queries.add(Pair.of("SELECT %s VALUE null", true));
+        queries.add(Pair.of("SELECT %s VALUE false", false));
+        queries.add(Pair.of("SELECT %s VALUE true", false));
+        queries.add(Pair.of("SELECT %s VALUE 1", false));
+        queries.add(Pair.of("SELECT %s VALUE 'a'", true));
+        queries.add(Pair.of("SELECT %s VALUE [null, true, false, 1, 'a']", false));
+        queries.add(Pair.of("SELECT %s false AS p", true));
+        queries.add(Pair.of("SELECT %s 1 AS p", false));
+        queries.add(Pair.of("SELECT %s 'a' AS p", false));
+        queries.add(Pair.of("SELECT %s VALUE null FROM c", false));
+        queries.add(Pair.of("SELECT %s VALUE false FROM c", false));
+        queries.add(Pair.of("SELECT %s VALUE 1 FROM c", false));
+        queries.add(Pair.of("SELECT %s VALUE 'a' FROM c", false));
+        queries.add(Pair.of("SELECT %s null AS p FROM c", false));
+        queries.add(Pair.of("SELECT %s false AS p FROM c", false));
+        queries.add(Pair.of("SELECT %s 1 AS p FROM c", false));
+        queries.add(Pair.of("SELECT %s 'a' AS p FROM c", false));
 
-            // number value distinct queries
-            .put("SELECT %s VALUE c.income from c", true)
-            .put("SELECT %s VALUE c.age from c", false)
-            .put("SELECT %s c.income, c.income AS income2 from c",  false)
-            .put("SELECT %s c.income, c.age from c", false)
+        // number value distinct queries
+        queries.add(Pair.of("SELECT %s VALUE c.income from c", true));
+        queries.add(Pair.of("SELECT %s VALUE c.age from c", false));
+        queries.add(Pair.of("SELECT %s c.income, c.income AS income2 from c",  false));
+        queries.add(Pair.of("SELECT %s c.income, c.age from c", false));
 
-            // string value distinct queries
-            .put("SELECT %s  c.name from c", true)
-            .put("SELECT %s VALUE c.city from c", false)
-            .put("SELECT %s c.name, c.name AS name2 from c", false)
-            .put("SELECT %s c.name, c.city from c", false)
+        // string value distinct queries
+        queries.add(Pair.of("SELECT %s  c.name from c", true));
+        queries.add(Pair.of("SELECT %s VALUE c.city from c", false));
+        queries.add(Pair.of("SELECT %s c.name, c.name AS name2 from c", false));
+        queries.add(Pair.of("SELECT %s c.name, c.city from c", false));
 
-            // array distinct queries
-            .put("SELECT %s c.children from c", true)
-            .put("SELECT %s c.children, c.children AS children2 from c", false)
+        // array distinct queries
+        queries.add(Pair.of("SELECT %s c.children from c", true));
+        queries.add(Pair.of("SELECT %s c.children, c.children AS children2 from c", false));
 
-            // object value distinct queries
-            .put("SELECT %s VALUE c.pet from c", true)
-            .put("SELECT %s c.pet, c.pet AS pet2 from c", false)
+        // object value distinct queries
+        queries.add(Pair.of("SELECT %s VALUE c.pet from c", true));
+        queries.add(Pair.of("SELECT %s c.pet, c.pet AS pet2 from c", false));
 
-            // scalar expressions distinct query
-            .put("SELECT %s VALUE ABS(c.age) FROM c", true)
-            .put("SELECT %s VALUE LEFT(c.name, 1) FROM c", false)
-            .put("SELECT %s VALUE c.name || ', ' || (c.city ?? '') FROM c", false)
-            .put("SELECT %s VALUE ARRAY_LENGTH(c.children) FROM c", false)
-            .put("SELECT %s VALUE IS_DEFINED(c.city) FROM c", false)
-            .put("SELECT %s VALUE (c.children[0].age ?? 0) + (c.children[1].age ?? 0) FROM c", false)
+        // scalar expressions distinct query
+        queries.add(Pair.of("SELECT %s VALUE ABS(c.age) FROM c", true));
+        queries.add(Pair.of("SELECT %s VALUE LEFT(c.name, 1) FROM c", false));
+        queries.add(Pair.of("SELECT %s VALUE c.name || ', ' || (c.city ?? '') FROM c", false));
+        queries.add(Pair.of("SELECT %s VALUE ARRAY_LENGTH(c.children) FROM c", false));
+        queries.add(Pair.of("SELECT %s VALUE IS_DEFINED(c.city) FROM c", false));
+        queries.add(Pair.of("SELECT %s VALUE (c.children[0].age ?? 0) + (c.children[1].age ?? 0) FROM c", false));
 
-            // distinct queries with order by
-            .put("SELECT %s  c.name FROM c ORDER BY c.name ASC", false)
-            .put("SELECT %s  c.age FROM c ORDER BY c.age", false)
-            .put("SELECT %s  c.city FROM c ORDER BY c.city", false)
-            .put("SELECT %s  c.city FROM c ORDER BY c.age", false)
-            .put("SELECT %s  LEFT(c.name, 1) FROM c ORDER BY c.name", false)
+        // distinct queries with order by
+        queries.add(Pair.of("SELECT %s  c.name FROM c ORDER BY c.name ASC", false));
+        queries.add(Pair.of("SELECT %s  c.age FROM c ORDER BY c.age", false));
+        queries.add(Pair.of("SELECT %s  c.city FROM c ORDER BY c.city", false));
+        queries.add(Pair.of("SELECT %s  c.city FROM c ORDER BY c.age", false));
+        queries.add(Pair.of("SELECT %s  LEFT(c.name, 1) FROM c ORDER BY c.name", false));
 
-            // distinct queries with top and no matching order by
-            .put("SELECT %s TOP 2147483647 VALUE c.age FROM c", false)
+        // distinct queries with top and no matching order by
+        queries.add(Pair.of("SELECT %s TOP 2147483647 VALUE c.age FROM c", false));
 
-            // distinct queries with top and  matching order by
-            .put("SELECT %s TOP 2147483647  c.age FROM c ORDER BY c.age", false)
+        // distinct queries with top and  matching order by
+        queries.add(Pair.of("SELECT %s TOP 2147483647  c.age FROM c ORDER BY c.age", false));
 
-            // distinct queries with aggregates
-            .put("SELECT %s VALUE MAX(c.age) FROM c", false)
+        // distinct queries with aggregates
+        queries.add(Pair.of("SELECT %s VALUE MAX(c.age) FROM c", false));
 
-            // distinct queries with joins
-            .put("SELECT %s VALUE c.age FROM p JOIN c IN p.children", true)
-            .put("SELECT %s p.age AS ParentAge, c.age ChildAge FROM p JOIN c IN p.children", false)
-            .put("SELECT %s VALUE c.name FROM p JOIN c IN p.children", false)
-            .put("SELECT %s p.name AS ParentName, c.name ChildName FROM p JOIN c IN p.children", false)
+        // distinct queries with joins
+        queries.add(Pair.of("SELECT %s VALUE c.age FROM p JOIN c IN p.children", true));
+        queries.add(Pair.of("SELECT %s p.age AS ParentAge, c.age ChildAge FROM p JOIN c IN p.children", false));
+        queries.add(Pair.of("SELECT %s VALUE c.name FROM p JOIN c IN p.children", false));
+        queries.add(Pair.of("SELECT %s p.name AS ParentName, c.name ChildName FROM p JOIN c IN p.children", false));
 
-            // distinct queries in subqueries
-            .put("SELECT %s r.age, s FROM r JOIN (SELECT DISTINCT VALUE c FROM (SELECT 1 a) c) s WHERE r.age > 25", false)
-            .put("SELECT %s p.name, p.age FROM (SELECT DISTINCT * FROM r) p WHERE p.age > 25", false)
+        // distinct queries in subqueries
+        queries.add(Pair.of("SELECT %s r.age, s FROM r JOIN (SELECT DISTINCT VALUE c FROM (SELECT 1 a) c) s WHERE r.age > 25", false));
+        queries.add(Pair.of("SELECT %s p.name, p.age FROM (SELECT DISTINCT * FROM r) p WHERE p.age > 25", false));
 
-            // distinct queries in scalar subqeries
-            .put("SELECT %s p.name, (SELECT DISTINCT VALUE p.age) AS Age FROM p", true)
-            .put("SELECT %s p.name, p.age FROM p WHERE (SELECT DISTINCT VALUE LEFT(p.name, 1)) > 'A' AND (SELECT " +
-                "DISTINCT VALUE p.age) > 21", false)
-            .put("SELECT %s p.name, (SELECT DISTINCT VALUE p.age) AS Age FROM p WHERE (SELECT DISTINCT VALUE p.name) >" +
-                " 'A' OR (SELECT DISTINCT VALUE p.age) > 21", false)
+        // distinct queries in scalar subqeries
+        queries.add(Pair.of("SELECT %s p.name, (SELECT DISTINCT VALUE p.age) AS Age FROM p", true));
+        queries.add(Pair.of("SELECT %s p.name, p.age FROM p WHERE (SELECT DISTINCT VALUE LEFT(p.name, 1)) > 'A' AND (SELECT " +
+            "DISTINCT VALUE p.age) > 21", false));
+        queries.add(Pair.of("SELECT %s p.name, (SELECT DISTINCT VALUE p.age) AS Age FROM p WHERE (SELECT DISTINCT VALUE p.name) >" +
+            " 'A' OR (SELECT DISTINCT VALUE p.age) > 21", false));
 
-            //   select *
-            .put("SELECT %s * FROM c", true)
-            .build();
-        for (Map.Entry<String, Boolean> entry :  queries.entrySet()) {
+        //   select *
+        queries.add(Pair.of("SELECT %s * FROM c", true));
+        for (Map.Entry<String, Boolean> entry :  queries) {
             logger.info("Current distinct query: " + entry.getKey());
             CosmosQueryRequestOptions options = new CosmosQueryRequestOptions();
             options.setMaxDegreeOfParallelism(2);

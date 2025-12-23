@@ -7,7 +7,7 @@ import com.azure.cosmos.implementation.Strings;
 
 import java.util.Objects;
 
-import static com.azure.cosmos.implementation.guava25.base.Preconditions.checkArgument;
+import static com.azure.cosmos.implementation.Utils.checkArgument;
 
 public class CosmosMasterKeyAuthConfig implements CosmosAuthConfig {
     private final String masterKey;

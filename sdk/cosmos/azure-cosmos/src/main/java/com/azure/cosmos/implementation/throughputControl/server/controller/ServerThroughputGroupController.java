@@ -9,7 +9,7 @@ import com.azure.cosmos.implementation.throughputControl.ThroughputControlReques
 import com.azure.cosmos.implementation.throughputControl.server.config.ServerThroughputControlGroup;
 import reactor.core.publisher.Mono;
 
-import static com.azure.cosmos.implementation.guava25.base.Preconditions.checkNotNull;
+import static com.azure.cosmos.implementation.Utils.checkNotNull;
 
 public class ServerThroughputGroupController implements IThroughputController {
     private final ServerThroughputControlGroup serverThroughputControlGroup;

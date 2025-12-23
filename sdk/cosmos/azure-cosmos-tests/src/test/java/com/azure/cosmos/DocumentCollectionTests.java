@@ -8,11 +8,11 @@ import com.azure.cosmos.models.IndexingPolicy;
 import com.azure.cosmos.models.PartitionKeyDefinition;
 import com.azure.cosmos.models.PartitionKeyDefinitionVersion;
 import com.azure.cosmos.models.SpatialSpec;
-import com.azure.cosmos.implementation.guava25.collect.ImmutableList;
 import org.assertj.core.api.Assertions;
 import org.testng.annotations.Test;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -23,7 +23,7 @@ public class DocumentCollectionTests {
     public void getPartitionKey()  {
         DocumentCollection collection = new DocumentCollection();
         PartitionKeyDefinition partitionKeyDefinition = new PartitionKeyDefinition();
-        partitionKeyDefinition.setPaths(ImmutableList.of("/mypk"));
+        partitionKeyDefinition.setPaths(Collections.singletonList("/mypk"));
         collection.setPartitionKey(partitionKeyDefinition);
         assertThat(collection.getPartitionKey()).isEqualTo(partitionKeyDefinition);
     }
@@ -32,7 +32,7 @@ public class DocumentCollectionTests {
     public void getPartitionKey_serializeAndDeserialize()  {
         DocumentCollection collection = new DocumentCollection();
         PartitionKeyDefinition partitionKeyDefinition = new PartitionKeyDefinition();
-        partitionKeyDefinition.setPaths(ImmutableList.of("/mypk"));
+        partitionKeyDefinition.setPaths(Collections.singletonList("/mypk"));
         partitionKeyDefinition.setVersion(PartitionKeyDefinitionVersion.V2);
         collection.setPartitionKey(partitionKeyDefinition);
 

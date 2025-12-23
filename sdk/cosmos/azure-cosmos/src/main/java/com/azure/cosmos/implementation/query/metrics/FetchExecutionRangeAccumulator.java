@@ -2,13 +2,12 @@
 // Licensed under the MIT License.
 package com.azure.cosmos.implementation.query.metrics;
 
-import com.azure.cosmos.implementation.apachecommons.lang.time.StopWatch;
+import com.azure.cosmos.implementation.StopWatch;
 
 import java.time.Duration;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 /**
  * Accumlator that acts as a builder of FetchExecutionRanges
@@ -28,7 +27,7 @@ public class FetchExecutionRangeAccumulator {
         // This stopwatch is always running and is only used to calculate deltas that are synchronized with the construction time.
         this.stopwatch = new StopWatch();
         stopwatch.start();
-        this.fetchExecutionRanges = new ArrayList<FetchExecutionRange>();
+        this.fetchExecutionRanges = new ArrayList<>();
     }
 
     /**
@@ -48,7 +47,7 @@ public class FetchExecutionRangeAccumulator {
     public void beginFetchRange() {
         if (!this.isFetching) {
             // Calculating the start time as the construction time and the stopwatch as a delta.
-            this.startTime = this.constructionTime.plus(Duration.ofMillis(this.stopwatch.getTime(TimeUnit.MILLISECONDS)));
+            this.startTime = this.constructionTime.plus(Duration.ofMillis(this.stopwatch.getElapsedMillis()));
             this.isFetching = true;
         }
     }
@@ -62,7 +61,7 @@ public class FetchExecutionRangeAccumulator {
     public void endFetchRange(String activityId, long numberOfDocuments, long retryCount) {
         if (this.isFetching) {
             // Calculating the end time as the construction time and the stopwatch as a delta.
-            this.endTime = this.constructionTime.plus(Duration.ofMillis(this.stopwatch.getTime(TimeUnit.MILLISECONDS)));
+            this.endTime = this.constructionTime.plus(Duration.ofMillis(this.stopwatch.getElapsedMillis()));
             FetchExecutionRange fetchExecutionRange = new FetchExecutionRange(
                     activityId,
                     this.startTime,

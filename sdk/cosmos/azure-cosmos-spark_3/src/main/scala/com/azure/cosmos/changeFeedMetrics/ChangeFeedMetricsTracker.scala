@@ -3,7 +3,7 @@
 
 package com.azure.cosmos.changeFeedMetrics
 
-import com.azure.cosmos.implementation.guava25.collect.EvictingQueue
+import com.azure.cosmos.implementation.EvictingQueue
 import com.azure.cosmos.spark.diagnostics.BasicLoggingTrait
 import com.azure.cosmos.spark.{CosmosConstants, NormalizedRange}
 

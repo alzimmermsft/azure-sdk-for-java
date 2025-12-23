@@ -3,13 +3,12 @@
 
 package com.azure.cosmos.implementation.routing;
 
-import com.azure.cosmos.implementation.guava25.collect.ImmutableList;
+import com.azure.cosmos.implementation.CollectionUtils;
 
 public class PartitionKeyInternalUtils {
 
     public static PartitionKeyInternal createPartitionKeyInternal(String str) {
-        return new PartitionKeyInternal(ImmutableList.of(
-                new StringPartitionKeyComponent(str)));
+        return new PartitionKeyInternal(CollectionUtils.immutableList(new StringPartitionKeyComponent(str)));
 
     }
 }

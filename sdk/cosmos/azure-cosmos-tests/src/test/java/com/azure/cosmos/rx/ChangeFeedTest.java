@@ -21,8 +21,6 @@ import com.azure.cosmos.implementation.Utils;
 import com.azure.cosmos.implementation.feedranges.FeedRangeEpkImpl;
 import com.azure.cosmos.implementation.feedranges.FeedRangePartitionKeyImpl;
 import com.azure.cosmos.implementation.feedranges.FeedRangePartitionKeyRangeImpl;
-import com.azure.cosmos.implementation.guava25.collect.ArrayListMultimap;
-import com.azure.cosmos.implementation.guava25.collect.Multimap;
 import com.azure.cosmos.implementation.routing.Range;
 import com.azure.cosmos.models.ChangeFeedPolicy;
 import com.azure.cosmos.models.CosmosChangeFeedRequestOptions;
@@ -50,11 +48,13 @@ import java.time.Duration;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import static com.azure.cosmos.implementation.guava25.base.Preconditions.checkNotNull;
+import static com.azure.cosmos.implementation.Utils.checkNotNull;
 import static java.lang.annotation.ElementType.METHOD;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -66,7 +66,7 @@ public class ChangeFeedTest extends TestSuiteBase {
     private static final String PartitionKeyFieldName = "mypk";
     private Database createdDatabase;
     private DocumentCollection createdCollection;
-    private Multimap<String, Document> partitionKeyToDocuments = ArrayListMultimap.create();
+    private Map<String, List<Document>> partitionKeyToDocuments = new HashMap<>();
 
     private AsyncDocumentClient client;
 
@@ -176,7 +176,7 @@ public class ChangeFeedTest extends TestSuiteBase {
         }
         assertThat(changeFeedResultList.size()).as("has at least one page").isGreaterThanOrEqualTo(1);
         assertThat(count).as("the number of changes").isGreaterThan(0);
-        assertThat(count).as("the number of changes").isLessThan(partitionKeyToDocuments.size());
+        assertThat(count).as("the number of changes").isLessThan(partitionKeyToDocuments.values().stream().mapToInt(List::size).sum());
     }
 
     @Test(groups = { "query" }, timeOut = TIMEOUT)
@@ -494,7 +494,13 @@ public class ChangeFeedTest extends TestSuiteBase {
                 .createDocument(getCollectionLink(), docDefinition, null, false)
                 .block()
                 .getResource();
-        partitionKeyToDocuments.put(partitionKey, createdDocument);
+        partitionKeyToDocuments.compute(partitionKey, (ignored, value) -> {
+            if (value == null) {
+                value = new ArrayList<>();
+            }
+            value.add(createdDocument);
+            return value;
+        });
     }
 
     public Document updateDocument(AsyncDocumentClient client, Document originalDocument) {
@@ -567,7 +573,13 @@ public class ChangeFeedTest extends TestSuiteBase {
 
         List<Document> insertedDocs = bulkInsert(client, docs);
         for(Document doc: insertedDocs) {
-            partitionKeyToDocuments.put(doc.getString(PartitionKeyFieldName), doc);
+            partitionKeyToDocuments.compute(doc.getString(PartitionKeyFieldName), (ignored, value) -> {
+                if (value == null) {
+                    value = new ArrayList<>();
+                }
+                value.add(doc);
+                return value;
+            });
         }
     }
 

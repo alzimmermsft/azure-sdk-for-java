@@ -4,9 +4,9 @@
 package com.azure.cosmos.implementation.directconnectivity.rntbd;
 
 import com.azure.cosmos.implementation.RxDocumentServiceRequest;
+import com.azure.cosmos.implementation.StopWatch;
 import com.azure.cosmos.implementation.Strings;
 import com.azure.cosmos.implementation.directconnectivity.Uri;
-import com.azure.cosmos.implementation.guava25.base.Stopwatch;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
@@ -21,7 +21,7 @@ import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static com.azure.cosmos.implementation.guava25.base.Preconditions.checkNotNull;
+import static com.azure.cosmos.implementation.Utils.checkNotNull;
 import static io.micrometer.core.instrument.Timer.Sample;
 
 @JsonPropertyOrder({
@@ -38,7 +38,7 @@ public final class RntbdRequestArgs {
     private final UUID activityId;
     private final Instant timeCreated;
     private final long nanoTimeCreated;
-    private final Stopwatch lifetime;
+    private final StopWatch lifetime;
     private final String origin;
     private final Uri physicalAddressUri;
     private final String replicaPath;
@@ -50,7 +50,8 @@ public final class RntbdRequestArgs {
         this.activityId = serviceRequest.getActivityId();
         this.timeCreated = Instant.now();
         this.nanoTimeCreated = System.nanoTime();
-        this.lifetime = Stopwatch.createStarted();
+        this.lifetime = new StopWatch();
+        this.lifetime.start();
         this.origin = physicalAddressUri.getURI().getScheme() + "://" + physicalAddressUri.getURI().getAuthority();
         this.physicalAddressUri = physicalAddressUri;
         if (emptyUri.equals(physicalAddressUri)) {
@@ -75,7 +76,7 @@ public final class RntbdRequestArgs {
 
     @JsonProperty
     public Duration lifetime() {
-        return this.lifetime.elapsed();
+        return Duration.ofMillis(this.lifetime.getElapsedMillis());
     }
 
     @JsonIgnore
@@ -144,7 +145,7 @@ public final class RntbdRequestArgs {
         checkNotNull(logger, "expected non-null logger");
 
         if (logger.isDebugEnabled()) {
-            logger.debug("{},{},\"{}({})\",\"{}\",\"{}\"", this.timeCreated, this.lifetime.elapsed(), operationName,
+            logger.debug("{},{},\"{}({})\",\"{}\",\"{}\"", this.timeCreated, lifetime(), operationName,
                 Stream.of(args)
                     .map(arg -> arg == null ? "null" : arg.toString())
                     .collect(Collectors.joining(",")),

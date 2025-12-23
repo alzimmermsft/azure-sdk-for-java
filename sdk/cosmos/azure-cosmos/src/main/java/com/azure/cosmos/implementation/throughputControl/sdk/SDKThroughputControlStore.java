@@ -14,7 +14,6 @@ import com.azure.cosmos.implementation.Utils;
 import com.azure.cosmos.implementation.caches.AsyncCache;
 import com.azure.cosmos.implementation.caches.RxClientCollectionCache;
 import com.azure.cosmos.implementation.caches.RxPartitionKeyRangeCache;
-import com.azure.cosmos.implementation.guava25.base.Objects;
 import com.azure.cosmos.implementation.throughputControl.EmptyThroughputContainerController;
 import com.azure.cosmos.implementation.throughputControl.IThroughputContainerController;
 import com.azure.cosmos.implementation.throughputControl.IThroughputController;
@@ -26,12 +25,13 @@ import org.slf4j.LoggerFactory;
 import reactor.core.Exceptions;
 import reactor.core.publisher.Mono;
 
+import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static com.azure.cosmos.implementation.Exceptions.isNameCacheStale;
 import static com.azure.cosmos.implementation.Exceptions.isPartitionKeyMismatchException;
-import static com.azure.cosmos.implementation.guava25.base.Preconditions.checkArgument;
-import static com.azure.cosmos.implementation.guava25.base.Preconditions.checkNotNull;
+import static com.azure.cosmos.implementation.Utils.checkArgument;
+import static com.azure.cosmos.implementation.Utils.checkNotNull;
 
 /**
  * This is the entrance class for the whole throughput control work flow pipeline.
@@ -268,7 +268,7 @@ public class SDKThroughputControlStore {
         // TODO: populate diagnostics
         return this.collectionCache.resolveByNameAsync(null, containerLink, null)
             .flatMap(documentCollection ->
-                Mono.just(Objects.equal(documentCollection.getResourceId(), request.requestContext.resolvedCollectionRid)));
+                Mono.just(Objects.equals(documentCollection.getResourceId(), request.requestContext.resolvedCollectionRid)));
     }
 
     private void handleException(String containerNameLink, RxDocumentServiceRequest request, Throwable throwable) {

@@ -35,8 +35,8 @@ import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static com.azure.cosmos.implementation.guava25.base.Preconditions.checkNotNull;
-import static com.azure.cosmos.implementation.guava25.base.Preconditions.checkState;
+import static com.azure.cosmos.implementation.Utils.checkNotNull;
+import static com.azure.cosmos.implementation.Utils.checkState;
 
 /**
  * This class provides metadata for an operation in the Cosmos DB SDK that can be used

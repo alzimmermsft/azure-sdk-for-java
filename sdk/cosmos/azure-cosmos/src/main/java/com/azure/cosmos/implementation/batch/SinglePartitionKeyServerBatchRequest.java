@@ -8,7 +8,7 @@ import com.azure.cosmos.models.CosmosItemOperation;
 import com.azure.cosmos.models.PartitionKey;
 import java.util.List;
 
-import static com.azure.cosmos.implementation.guava25.base.Preconditions.checkNotNull;
+import static com.azure.cosmos.implementation.Utils.checkNotNull;
 
 public final class SinglePartitionKeyServerBatchRequest extends ServerBatchRequest {
 

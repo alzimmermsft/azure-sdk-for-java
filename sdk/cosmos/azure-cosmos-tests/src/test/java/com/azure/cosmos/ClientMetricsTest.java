@@ -12,6 +12,7 @@ import com.azure.cosmos.implementation.DiagnosticsProvider;
 import com.azure.cosmos.implementation.GlobalEndpointManager;
 import com.azure.cosmos.implementation.ImplementationBridgeHelpers;
 import com.azure.cosmos.implementation.InternalObjectNode;
+import com.azure.cosmos.implementation.CollectionUtils;
 import com.azure.cosmos.implementation.OperationType;
 import com.azure.cosmos.implementation.RxDocumentClientImpl;
 import com.azure.cosmos.implementation.clienttelemetry.MetricCategory;
@@ -24,7 +25,6 @@ import com.azure.cosmos.implementation.directconnectivity.rntbd.ProactiveOpenCon
 import com.azure.cosmos.implementation.directconnectivity.rntbd.RntbdDurableEndpointMetrics;
 import com.azure.cosmos.implementation.directconnectivity.rntbd.RntbdEndpoint;
 import com.azure.cosmos.implementation.directconnectivity.rntbd.RntbdServiceEndpoint;
-import com.azure.cosmos.implementation.guava25.collect.Lists;
 import com.azure.cosmos.implementation.routing.LocationCache;
 import com.azure.cosmos.models.CosmosBatch;
 import com.azure.cosmos.models.CosmosBatchResponse;
@@ -874,7 +874,7 @@ public class ClientMetricsTest extends BatchTestBase {
             CosmosBulkExecutionOptions cosmosBulkExecutionOptions = new CosmosBulkExecutionOptions();
 
             List<com.azure.cosmos.models.CosmosBulkOperationResponse<CosmosBulkAsyncTest>> bulkResponse =
-                Lists.newArrayList(
+                CollectionUtils.iterableToList(
                     state.container
                         .executeBulkOperations(cosmosItemOperations, cosmosBulkExecutionOptions));
 

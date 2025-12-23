@@ -21,7 +21,7 @@ import com.azure.cosmos.models.CosmosBatchOperationResult;
 import com.azure.cosmos.models.CosmosItemOperationType;
 import reactor.core.publisher.Mono;
 
-import static com.azure.cosmos.implementation.guava25.base.Preconditions.checkNotNull;
+import static com.azure.cosmos.implementation.Utils.checkNotNull;
 
 /**
  * A container to keep retry policies and functions for bulk.

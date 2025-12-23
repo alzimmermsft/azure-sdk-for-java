@@ -23,7 +23,6 @@ import com.azure.cosmos.implementation.clienttelemetry.AttributeNamesV1;
 import com.azure.cosmos.implementation.clienttelemetry.AttributeNamingScheme;
 import com.azure.cosmos.implementation.directconnectivity.StoreResponseDiagnostics;
 import com.azure.cosmos.implementation.directconnectivity.StoreResultDiagnostics;
-import com.azure.cosmos.implementation.guava25.base.Splitter;
 import com.azure.cosmos.implementation.query.QueryInfo;
 import com.azure.cosmos.models.CosmosBatchResponse;
 import com.azure.cosmos.models.CosmosClientTelemetryConfig;
@@ -70,8 +69,8 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 
 import static com.azure.cosmos.implementation.RequestTimeline.EventName.CREATED;
-import static com.azure.cosmos.implementation.guava25.base.Preconditions.checkArgument;
-import static com.azure.cosmos.implementation.guava25.base.Preconditions.checkNotNull;
+import static com.azure.cosmos.implementation.Utils.checkArgument;
+import static com.azure.cosmos.implementation.Utils.checkNotNull;
 
 public final class DiagnosticsProvider {
     private static final ImplementationBridgeHelpers.CosmosClientTelemetryConfigHelper.CosmosClientTelemetryConfigAccessor clientTelemetryConfigAccessor =
@@ -1368,7 +1367,7 @@ public final class DiagnosticsProvider {
     private static void emitDiagnosticsEvents(Tracer tracer, CosmosDiagnosticsContext cosmosCtx, String trigger, Context context) {
         Map<String, Object> attributes = new HashMap<>();
         String message = trigger + " - CTX: " + cosmosCtx.toJson();
-        List<String> messageFragments = Splitter.fixedLength(Configs.getMaxTraceMessageLength()).splitToList(message);
+        List<String> messageFragments = Strings.splitFixedLength(message, Configs.getMaxTraceMessageLength());
 
         attributes.put("Trigger", trigger);
         for (int i = 0; i < messageFragments.size(); i++) {

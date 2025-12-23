@@ -3,15 +3,16 @@
 
 package com.azure.cosmos.implementation.directconnectivity;
 
+import com.azure.cosmos.implementation.CollectionUtils;
 import com.azure.cosmos.implementation.OperationType;
 import com.azure.cosmos.implementation.RxDocumentServiceRequest;
 import com.azure.cosmos.implementation.StoreResponseBuilder;
-import com.azure.cosmos.implementation.guava25.collect.ImmutableList;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 abstract public class EndpointMock {
 
@@ -92,7 +93,9 @@ abstract public class EndpointMock {
             public EndpointMock build() {
                 TransportClientWrapper.Builder.ReplicaResponseBuilder transportClientWrapperBuilder = TransportClientWrapper.Builder.replicaResponseBuilder();
 
-                ImmutableList<Uri> replicas = ImmutableList.<Uri>builder().add(primary).addAll(secondaries).build();
+                List<Uri> replicas = new ArrayList<>();
+                replicas.add(Objects.requireNonNull(primary));
+                replicas.addAll(CollectionUtils.immutableCopyOf(secondaries));
 
                 for(Uri replica: replicas) {
                     transportClientWrapperBuilder.addReplica(replica, (i, request) -> {
@@ -169,7 +172,8 @@ abstract public class EndpointMock {
 
                 TransportClientWrapper.Builder.ReplicaResponseBuilder transportClientWrapperBuilder = TransportClientWrapper.Builder.replicaResponseBuilder();
 
-                ImmutableList<Uri> replicas = ImmutableList.<Uri>builder().add(primary).build();
+                List<Uri> replicas = new ArrayList<>();
+                replicas.add(Objects.requireNonNull(primary));
 
                 for(Uri replica: replicas) {
                     transportClientWrapperBuilder.addReplica(replica, (i, request) -> {
@@ -187,7 +191,7 @@ abstract public class EndpointMock {
                 }
 
                 AddressSelectorWrapper addressSelectorWrapper = AddressSelectorWrapper.Builder.Simple.create().withPrimary(primary)
-                        .withSecondary(ImmutableList.of()).build();
+                        .withSecondary(CollectionUtils.immutableList()).build();
 
                 return new EndpointMock(addressSelectorWrapper, transportClientWrapperBuilder.build()) {};
             }
@@ -197,7 +201,7 @@ abstract public class EndpointMock {
             private long LOCAL_LSN = 19;
             private long LSN = 52;
             private Uri primary = Uri.create("primary");
-            private ImmutableList<Uri> secondaryReplicas = ImmutableList.of(Uri.create("secondary1"), Uri.create("secondary2"));
+            private List<Uri> secondaryReplicas = CollectionUtils.immutableList(Uri.create("secondary1"), Uri.create("secondary2"));
             private StoreResponse primaryDefaultResponse = StoreResponseBuilder.create()
                     .withLSN(LSN)
                     .withLocalLSN(LOCAL_LSN)
@@ -247,7 +251,7 @@ abstract public class EndpointMock {
                 });
 
                 AddressSelectorWrapper addressSelectorWrapper = AddressSelectorWrapper.Builder.Simple.create().withPrimary(primary)
-                        .withSecondary(ImmutableList.of()).build();
+                        .withSecondary(CollectionUtils.immutableList()).build();
 
                 return new EndpointMock(addressSelectorWrapper, transportClientWrapperBuilder.build()){};
             }

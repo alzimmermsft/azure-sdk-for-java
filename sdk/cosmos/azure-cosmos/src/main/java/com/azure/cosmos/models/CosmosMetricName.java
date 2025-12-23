@@ -12,7 +12,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.StringJoiner;
 
-import static com.azure.cosmos.implementation.guava25.base.Preconditions.checkNotNull;
+import static com.azure.cosmos.implementation.Utils.checkNotNull;
 
 /**
  * Names of Cosmos DB client-side meters

@@ -3,8 +3,7 @@
 
 package com.azure.cosmos.implementation.cpu;
 
-import com.azure.cosmos.implementation.guava25.collect.ImmutableList;
-import org.testng.annotations.DataProvider;
+import com.azure.cosmos.implementation.CollectionUtils;
 import org.testng.annotations.Test;
 
 import java.time.Duration;
@@ -12,7 +11,6 @@ import java.time.Instant;
 import java.util.ArrayList;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.in;
 
 public class CpuLoadHistoryTest {
     @Test(groups = "unit", expectedExceptions = NullPointerException.class)
@@ -28,7 +26,7 @@ public class CpuLoadHistoryTest {
 
     @Test(groups = "unit")
     public void one() throws Exception {
-        CpuLoadHistory history = new CpuLoadHistory(ImmutableList.of(
+        CpuLoadHistory history = new CpuLoadHistory(CollectionUtils.immutableList(
             getCpuLoad("2020-09-09T00:34:19.863174Z", 30)), Duration.ofSeconds(1));
         assertThat(history.toString()).isEqualTo("(2020-09-09T00:34:19.863174Z 30.0%)");
     }
@@ -36,7 +34,7 @@ public class CpuLoadHistoryTest {
     @Test(groups = "unit")
     public void multiple() throws Exception {
         CpuLoadHistory history = new CpuLoadHistory(
-            ImmutableList.of(getCpuLoad("2020-09-09T00:34:19.863174Z", 30),
+            CollectionUtils.immutableList(getCpuLoad("2020-09-09T00:34:19.863174Z", 30),
                 getCpuLoad("2020-09-09T00:40:19.863174Z", 20)), Duration.ofSeconds(1));
         assertThat(history.toString())
             .isEqualTo("(2020-09-09T00:34:19.863174Z 30.0%), (2020-09-09T00:40:19.863174Z 20.0%)");

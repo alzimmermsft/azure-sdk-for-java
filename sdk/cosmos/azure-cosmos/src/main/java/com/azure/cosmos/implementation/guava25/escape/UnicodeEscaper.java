@@ -18,12 +18,10 @@
 
 package com.azure.cosmos.implementation.guava25.escape;
 
-import static com.azure.cosmos.implementation.guava25.base.Preconditions.checkNotNull;
-
-
+import com.azure.cosmos.implementation.guava25.base.Preconditions;
 
 /**
- * An {@link Escaper} that converts literal text into a format safe for inclusion in a particular
+ * An Escaper that converts literal text into a format safe for inclusion in a particular
  * context (such as an XML document). Typically (but not always), the inverse process of
  * "unescaping" the text is performed automatically by the relevant parser.
  *
@@ -32,12 +30,6 @@ import static com.azure.cosmos.implementation.guava25.base.Preconditions.checkNo
  * resulting XML document is parsed, the parser API will return this text as the original literal
  * string {@code "Foo<Bar>"}.
  *
- * <p><b>Note:</b> This class is similar to {@link CharEscaper} but with one very important
- * difference. A CharEscaper can only process Java <a
- * href="http://en.wikipedia.org/wiki/UTF-16">UTF16</a> characters in isolation and may not cope
- * when it encounters surrogate pairs. This class facilitates the correct escaping of all Unicode
- * characters.
- *
  * <p>As there are important reasons, including potential security issues, to handle Unicode
  * correctly if you are considering implementing a new escaper you should favor using UnicodeEscaper
  * wherever possible.
@@ -45,15 +37,13 @@ import static com.azure.cosmos.implementation.guava25.base.Preconditions.checkNo
  * <p>A {@code UnicodeEscaper} instance is required to be stateless, and safe when used concurrently
  * by multiple threads.
  *
- * <p>Popular escapers are defined as constants in classes like {@link
- * com.azure.cosmos.html.HtmlEscapers} and {@link com.azure.cosmos.xml.XmlEscapers}. To create
- * your own escapers extend this class and implement the {@link #escape(int)} method.
+ * <p>To create your own escapers extend this class and implement the {@link #escape(int)} method.
  *
  * @author David Beaumont
  * @since 15.0
  */
 
-public abstract class UnicodeEscaper extends Escaper {
+public abstract class UnicodeEscaper {
   /** The amount of padding (chars) to use when growing the escape buffer. */
   private static final int DEST_PAD = 32;
 
@@ -92,16 +82,15 @@ public abstract class UnicodeEscaper extends Escaper {
    * <p><b>Note:</b> When implementing an escaper it is a good idea to override this method for
    * efficiency by inlining the implementation of {@link #nextEscapeIndex(CharSequence, int, int)}
    * directly. Doing this for {@link com.azure.cosmos.implementation.guava25.net.PercentEscaper} more than doubled the
-   * performance for unescaped strings (as measured by {@link CharEscapersBenchmark}).
+   * performance for unescaped strings.
    *
    * @param string the literal string to be escaped
    * @return the escaped form of {@code string}
    * @throws NullPointerException if {@code string} is null
    * @throws IllegalArgumentException if invalid surrogate characters are encountered
    */
-  @Override
   public String escape(String string) {
-    checkNotNull(string);
+    Preconditions.checkNotNull(string);
     int end = string.length();
     int index = nextEscapeIndex(string, 0, end);
     return index == end ? string : escapeSlow(string, index);
@@ -145,7 +134,7 @@ public abstract class UnicodeEscaper extends Escaper {
    * Returns the escaped form of a given literal string, starting at the given index. This method is
    * called by the {@link #escape(String)} method when it discovers that escaping is required. It is
    * protected to allow subclasses to override the fastpath escaping function to inline their
-   * escaping test. See {@link CharEscaperBuilder} for an example usage.
+   * escaping test.
    *
    * <p>This method is not reentrant and may only be invoked by the top level {@link
    * #escape(String)} method.
@@ -245,7 +234,7 @@ public abstract class UnicodeEscaper extends Escaper {
    *     surrogate character at the end of the sequence
    */
   protected static int codePointAt(CharSequence seq, int index, int end) {
-    checkNotNull(seq);
+    Preconditions.checkNotNull(seq);
     if (index < end) {
       char c1 = seq.charAt(index++);
       if (c1 < Character.MIN_HIGH_SURROGATE || c1 > Character.MAX_LOW_SURROGATE) {

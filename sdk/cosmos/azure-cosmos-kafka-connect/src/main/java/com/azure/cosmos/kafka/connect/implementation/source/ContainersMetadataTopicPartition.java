@@ -8,7 +8,7 @@ import com.azure.cosmos.implementation.Strings;
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.azure.cosmos.implementation.guava25.base.Preconditions.checkArgument;
+import static com.azure.cosmos.implementation.Utils.checkArgument;
 
 public class ContainersMetadataTopicPartition {
     public static final String DATABASE_NAME_KEY = "database";

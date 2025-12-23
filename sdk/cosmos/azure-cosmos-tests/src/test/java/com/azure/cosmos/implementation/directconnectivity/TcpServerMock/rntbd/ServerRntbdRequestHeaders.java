@@ -15,7 +15,8 @@ final class ServerRntbdRequestHeaders extends ServerRntbdTokenStream<ServerRntbd
     // region Constructors
 
     private ServerRntbdRequestHeaders(ByteBuf in) {
-        super(ServerRntbdConstants.RntbdRequestHeader.set, ServerRntbdConstants.RntbdRequestHeader.map, in);
+        super(ServerRntbdConstants.RntbdRequestHeader.set, ServerRntbdConstants.RntbdRequestHeader.map, in,
+            ServerRntbdConstants.RntbdRequestHeader.class);
     }
 
     // endregion

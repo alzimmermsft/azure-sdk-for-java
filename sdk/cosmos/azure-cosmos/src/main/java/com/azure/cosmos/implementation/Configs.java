@@ -19,7 +19,7 @@ import java.time.Duration;
 import java.util.EnumSet;
 import java.util.Locale;
 
-import static com.azure.cosmos.implementation.guava25.base.MoreObjects.firstNonNull;
+import static com.azure.cosmos.implementation.Utils.firstNonNull;
 
 public class Configs {
     private static final Logger logger = LoggerFactory.getLogger(Configs.class);

@@ -7,7 +7,7 @@ import com.azure.cosmos.CosmosAsyncClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static com.azure.cosmos.implementation.guava25.base.Preconditions.checkNotNull;
+import static com.azure.cosmos.implementation.Utils.checkNotNull;
 
 public class CosmosClientCacheItem implements AutoCloseable {
     private static final Logger LOGGER = LoggerFactory.getLogger(CosmosClientCacheItem.class);

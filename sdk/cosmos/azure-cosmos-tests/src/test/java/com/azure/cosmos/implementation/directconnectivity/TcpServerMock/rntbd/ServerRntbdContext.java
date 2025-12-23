@@ -2,24 +2,25 @@
 // Licensed under the MIT License.
 
 package com.azure.cosmos.implementation.directconnectivity.TcpServerMock.rntbd;
-import com.azure.cosmos.implementation.directconnectivity.ServerProperties;
 
+import com.azure.cosmos.implementation.directconnectivity.ServerProperties;
 import com.azure.cosmos.implementation.directconnectivity.rntbd.RntbdContext;
 import com.azure.cosmos.implementation.directconnectivity.rntbd.RntbdObjectMapper;
-import com.azure.cosmos.implementation.guava25.collect.ImmutableMap;
-import com.azure.cosmos.implementation.guava25.collect.ImmutableSet;
-import com.azure.cosmos.implementation.guava25.collect.Sets;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.handler.codec.http.HttpResponseStatus;
 
+import java.util.Collections;
 import java.util.EnumSet;
+import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
-import java.util.stream.Collector;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
-import static com.azure.cosmos.implementation.guava25.base.Preconditions.checkState;
+import static com.azure.cosmos.implementation.Utils.checkState;
 
 /**
  * Except the constructor method, other methods are copied frm {@link RntbdContext}
@@ -139,7 +140,7 @@ public final class ServerRntbdContext {
         }
 
         Headers(final ByteBuf in) {
-            super(RntbdContextHeader.set, RntbdContextHeader.map, in);
+            super(RntbdContextHeader.set, RntbdContextHeader.map, in, RntbdContextHeader.class);
             this.clientVersion = this.get(RntbdContextHeader.ClientVersion);
             this.idleTimeoutInSeconds = this.get(RntbdContextHeader.IdleTimeoutInSeconds);
             this.protocolVersion = this.get(RntbdContextHeader.ProtocolVersion);
@@ -164,13 +165,10 @@ public final class ServerRntbdContext {
         IdleTimeoutInSeconds((short) 0x0004, ServerRntbdTokenType.ULong, false),
         UnauthenticatedTimeoutInSeconds((short) 0x0005, ServerRntbdTokenType.ULong, false);
 
-        public static final ImmutableMap<Short, RntbdContextHeader> map;
-        public static final ImmutableSet<RntbdContextHeader> set = Sets.immutableEnumSet(EnumSet.allOf(RntbdContextHeader.class));
-
-        static {
-            final Collector<RntbdContextHeader, ?, ImmutableMap<Short, RntbdContextHeader>> collector = ImmutableMap.toImmutableMap(RntbdContextHeader::id, h -> h);
-            map = set.stream().collect(collector);
-        }
+        public static final Set<RntbdContextHeader> set
+            = Collections.unmodifiableSet(EnumSet.allOf(RntbdContextHeader.class));
+        public static final Map<Short, RntbdContextHeader> map
+            = Collections.unmodifiableMap(set.stream().collect(Collectors.toMap(RntbdContextHeader::id, Function.identity())));
 
         private final short id;
         private final boolean isRequired;

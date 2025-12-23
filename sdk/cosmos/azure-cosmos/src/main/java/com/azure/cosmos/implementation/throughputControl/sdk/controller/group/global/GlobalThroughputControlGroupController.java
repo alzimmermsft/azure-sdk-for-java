@@ -5,8 +5,8 @@ package com.azure.cosmos.implementation.throughputControl.sdk.controller.group.g
 
 import com.azure.cosmos.ConnectionMode;
 import com.azure.cosmos.implementation.CosmosSchedulers;
+import com.azure.cosmos.implementation.EvictingQueue;
 import com.azure.cosmos.implementation.caches.RxPartitionKeyRangeCache;
-import com.azure.cosmos.implementation.guava25.collect.EvictingQueue;
 import com.azure.cosmos.implementation.throughputControl.sdk.LinkedCancellationToken;
 import com.azure.cosmos.implementation.throughputControl.sdk.config.GlobalThroughputControlGroup;
 import com.azure.cosmos.implementation.throughputControl.sdk.controller.group.SDKThroughputGroupControllerBase;

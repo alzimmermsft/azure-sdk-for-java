@@ -18,15 +18,14 @@
 
 package com.azure.cosmos.implementation.guava25.base;
 
-import static com.azure.cosmos.implementation.guava25.base.Preconditions.checkPositionIndexes;
 import static java.lang.Character.MAX_SURROGATE;
 import static java.lang.Character.MIN_SURROGATE;
 
 
 
 /**
- * Low-level, high-performance utility methods related to the {@linkplain Charsets#UTF_8 UTF-8}
- * character encoding. UTF-8 is defined in section D92 of <a
+ * Low-level, high-performance utility methods related to the UTF-8 character encoding.
+ * UTF-8 is defined in section D92 of <a
  * href="http://www.unicode.org/versions/Unicode6.2.0/ch03.pdf">The Unicode Standard Core
  * Specification, Chapter 3</a>.
  *
@@ -126,7 +125,7 @@ public final class Utf8 {
    */
   public static boolean isWellFormed(byte[] bytes, int off, int len) {
     int end = off + len;
-    checkPositionIndexes(off, end, bytes.length);
+    Preconditions.checkPositionIndexes(off, end, bytes.length);
     // Look for the first non-ASCII character.
     for (int i = off; i < end; i++) {
       if (bytes[i] < 0) {

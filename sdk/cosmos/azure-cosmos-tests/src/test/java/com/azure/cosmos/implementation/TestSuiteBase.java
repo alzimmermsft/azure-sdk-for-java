@@ -15,7 +15,6 @@ import com.azure.cosmos.implementation.AsyncDocumentClient.Builder;
 import com.azure.cosmos.implementation.clienttelemetry.ClientTelemetry;
 import com.azure.cosmos.implementation.directconnectivity.Protocol;
 import com.azure.cosmos.implementation.guava25.base.CaseFormat;
-import com.azure.cosmos.implementation.guava25.collect.ImmutableList;
 import com.azure.cosmos.models.CompositePath;
 import com.azure.cosmos.models.CompositePathSortOrder;
 import com.azure.cosmos.models.CosmosClientTelemetryConfig;
@@ -36,7 +35,6 @@ import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.mockito.Mockito;
 import org.mockito.stubbing.Answer;
-import org.testng.ITestContext;
 import org.testng.annotations.AfterSuite;
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.DataProvider;
@@ -69,9 +67,9 @@ public abstract class TestSuiteBase extends DocumentClientTest {
     protected static final int WAIT_REPLICA_CATCH_UP_IN_MILLIS = 4000;
 
     protected final static ConsistencyLevel accountConsistency;
-    protected static final ImmutableList<String> preferredLocations;
-    private static final ImmutableList<ConsistencyLevel> desiredConsistencies;
-    private static final ImmutableList<Protocol> protocols;
+    protected static final List<String> preferredLocations;
+    private static final List<ConsistencyLevel> desiredConsistencies;
+    private static final List<Protocol> protocols;
 
     protected int subscriberValidationTimeout = TIMEOUT;
     protected static Database SHARED_DATABASE;
@@ -79,8 +77,8 @@ public abstract class TestSuiteBase extends DocumentClientTest {
     protected static DocumentCollection SHARED_SINGLE_PARTITION_COLLECTION;
     protected static DocumentCollection SHARED_MULTI_PARTITION_COLLECTION_WITH_COMPOSITE_AND_SPATIAL_INDEXES;
 
-    private static <T> ImmutableList<T> immutableListOrNull(List<T> list) {
-        return list != null ? ImmutableList.copyOf(list) : null;
+    private static <T> List<T> immutableListOrNull(List<T> list) {
+        return list != null ? CollectionUtils.immutableCopyOf(list) : null;
     }
 
     static {
@@ -91,7 +89,7 @@ public abstract class TestSuiteBase extends DocumentClientTest {
                                           allEqualOrLowerConsistencies(accountConsistency)));
         preferredLocations = immutableListOrNull(parsePreferredLocation(TestConfigurations.PREFERRED_LOCATIONS));
         protocols = ObjectUtils.defaultIfNull(immutableListOrNull(parseProtocols(TestConfigurations.PROTOCOLS)),
-                                              ImmutableList.of(Protocol.TCP));
+            CollectionUtils.immutableList(Protocol.TCP));
         //  Object mapper configuration
         objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         objectMapper.configure(JsonParser.Feature.ALLOW_SINGLE_QUOTES, true);
@@ -898,7 +896,7 @@ public abstract class TestSuiteBase extends DocumentClientTest {
 
     private static Object[][] simpleClientBuildersWithDirect(boolean contentResponseOnWriteEnabled, Protocol... protocols) {
         logger.info("Max test consistency to use is [{}]", accountConsistency);
-        List<ConsistencyLevel> testConsistencies = ImmutableList.of(ConsistencyLevel.EVENTUAL);
+        List<ConsistencyLevel> testConsistencies = CollectionUtils.immutableList(ConsistencyLevel.EVENTUAL);
 
         boolean isMultiMasterEnabled = preferredLocations != null && accountConsistency == ConsistencyLevel.SESSION;
 

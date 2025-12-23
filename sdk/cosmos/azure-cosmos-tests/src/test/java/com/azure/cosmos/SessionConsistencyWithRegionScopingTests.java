@@ -11,14 +11,12 @@ import com.azure.cosmos.implementation.HttpConstants;
 import com.azure.cosmos.implementation.ISessionContainer;
 import com.azure.cosmos.implementation.ImplementationBridgeHelpers;
 import com.azure.cosmos.implementation.InternalObjectNode;
+import com.azure.cosmos.implementation.CollectionUtils;
 import com.azure.cosmos.implementation.PartitionKeyBasedBloomFilter;
 import com.azure.cosmos.implementation.RegionScopedSessionContainer;
 import com.azure.cosmos.implementation.RxDocumentClientImpl;
 import com.azure.cosmos.implementation.SessionContainer;
 import com.azure.cosmos.implementation.directconnectivity.ReflectionUtils;
-import com.azure.cosmos.implementation.guava25.base.Charsets;
-import com.azure.cosmos.implementation.guava25.collect.ImmutableList;
-import com.azure.cosmos.implementation.guava25.collect.ImmutableSet;
 import com.azure.cosmos.implementation.guava25.hash.BloomFilter;
 import com.azure.cosmos.implementation.guava25.hash.Funnel;
 import com.azure.cosmos.implementation.guava25.hash.Funnels;
@@ -60,6 +58,7 @@ import org.testng.annotations.Test;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -114,7 +113,7 @@ public class SessionConsistencyWithRegionScopingTests extends TestSuiteBase {
             assertThat(testObjectFromRead).isNotNull();
             validateTestObjectEquality(testObjectToBeCreated, testObjectFromRead.getItem());
 
-            return ImmutableSet.of(pk);
+            return CollectionUtils.immutableSet(pk);
         };
 
         BiFunction<CosmosAsyncContainer, Boolean, Set<String>> pointReadAfterPartitionSplitAndPointCreate_BothFromFirstPreferredRegionFunc = (container, shouldInjectPreferredRegions) -> {
@@ -150,7 +149,7 @@ public class SessionConsistencyWithRegionScopingTests extends TestSuiteBase {
             assertThat(testObjectFromRead).isNotNull();
             validateTestObjectEquality(testObjectToBeCreated, testObjectFromRead.getItem());
 
-            return ImmutableSet.of(pk);
+            return CollectionUtils.immutableSet(pk);
         };
 
         BiFunction<CosmosAsyncContainer, Boolean, Set<String>> pointReadYourLatestUpsert_UpsertsFromPreferredRegionReadFromPreferredRegionFunc = (container, shouldInjectPreferredRegions) -> {
@@ -172,7 +171,7 @@ public class SessionConsistencyWithRegionScopingTests extends TestSuiteBase {
             assertThat(testObjectFromRead).isNotNull();
             validateTestObjectEquality(testObjectModified, testObjectFromRead.getItem());
 
-            return ImmutableSet.of(pk);
+            return CollectionUtils.immutableSet(pk);
         };
 
         BiFunction<CosmosAsyncContainer, Boolean, Set<String>> queryTargetedToLogicalPartitionFollowingCreates_queryFromFirstPreferredRegionCreateInFirstPreferredRegionFunc = (container, shouldInjectPreferredRegions) -> {
@@ -206,7 +205,7 @@ public class SessionConsistencyWithRegionScopingTests extends TestSuiteBase {
                 validateTestObjectEquality(idToTestObjectsFromQuery.get(idOfObjectCreated), idToTestObjectsCreated.get(idOfObjectCreated));
             }
 
-            return ImmutableSet.of(pk);
+            return CollectionUtils.immutableSet(pk);
         };
 
         BiFunction<CosmosAsyncContainer, Boolean, Set<String>> crossPartitionedQueryFollowingCreates_queryFromFirstPreferredRegionCreatesInFirstPreferredRegionFunc = (container, shouldInjectPreferredRegions) -> {
@@ -244,7 +243,7 @@ public class SessionConsistencyWithRegionScopingTests extends TestSuiteBase {
                 validateTestObjectEquality(idToTestObjectsFromQuery.get(idOfObjectCreated), idToTestObjectsCreated.get(idOfObjectCreated));
             }
 
-            return ImmutableSet.of(testObjectToBeCreated1.getMypk(), testObjectToBeCreated2.getMypk());
+            return CollectionUtils.immutableSet(testObjectToBeCreated1.getMypk(), testObjectToBeCreated2.getMypk());
         };
 
         BiFunction<CosmosAsyncContainer, Boolean, Set<String>> deleteYourLatestUpsert_deleteAndUpsertInFirstPreferredRegionFunc = (container, shouldInjectPreferredRegions) -> {
@@ -260,7 +259,7 @@ public class SessionConsistencyWithRegionScopingTests extends TestSuiteBase {
             assertThat(deleteOperationResponse).isNotNull();
             assertThat(deleteOperationResponse.getStatusCode()).isEqualTo(HttpConstants.StatusCodes.NO_CONTENT);
 
-            return ImmutableSet.of(pk);
+            return CollectionUtils.immutableSet(pk);
         };
 
         BiFunction<CosmosAsyncContainer, Boolean, Set<String>> replaceYourLatestUpsert_replaceAndUpsertInFirstPreferredRegionFunc = (container, shouldInjectPreferredRegions) -> {
@@ -279,7 +278,7 @@ public class SessionConsistencyWithRegionScopingTests extends TestSuiteBase {
             assertThat(replaceOperationResponse).isNotNull();
             assertThat(replaceOperationResponse.getStatusCode()).isEqualTo(HttpConstants.StatusCodes.OK);
 
-            return ImmutableSet.of(pk);
+            return CollectionUtils.immutableSet(pk);
         };
 
         BiFunction<CosmosAsyncContainer, Boolean, Set<String>> readYourPatchYourCreateFunc = (container, shouldInjectPreferredRegions) -> {
@@ -311,7 +310,7 @@ public class SessionConsistencyWithRegionScopingTests extends TestSuiteBase {
             assertThat(itemReadAsJsonNode.get("newProperty").asText()).isNotNull();
             assertThat(itemReadAsJsonNode.get("newProperty").asText()).isEqualTo("newVal");
 
-            return ImmutableSet.of(pk);
+            return CollectionUtils.immutableSet(pk);
         };
 
         BiFunction<CosmosAsyncContainer, Boolean, Set<String>> bulkReadYourBulkCreateFunc = (container, shouldInjectPreferredRegions) -> {
@@ -435,7 +434,7 @@ public class SessionConsistencyWithRegionScopingTests extends TestSuiteBase {
             assertThat(batchResponseResults.get(0).getStatusCode()).isEqualTo(HttpConstants.StatusCodes.CREATED);
             assertThat(batchResponseResults.get(1).getStatusCode()).isEqualTo(HttpConstants.StatusCodes.OK);
 
-            return ImmutableSet.of(documentId);
+            return CollectionUtils.immutableSet(documentId);
         };
 
         BiFunction<CosmosAsyncContainer, Boolean, Set<String>> changeFeed_fromBeginning_forLogicalPartition_withSessionGuaranteeFunc = (container, shouldInjectPreferredRegions) -> {
@@ -907,7 +906,7 @@ public class SessionConsistencyWithRegionScopingTests extends TestSuiteBase {
                     FeedResponse<InternalObjectNode> readManyResult = container
                         .readMany(
                             cosmosItemIdentities,
-                            new CosmosReadManyRequestOptions().setExcludedRegions(ImmutableList.of(this.writeRegions.get(0))),
+                            new CosmosReadManyRequestOptions().setExcludedRegions(CollectionUtils.immutableList(this.writeRegions.get(0))),
                             InternalObjectNode.class)
                         .block();
 
@@ -952,7 +951,7 @@ public class SessionConsistencyWithRegionScopingTests extends TestSuiteBase {
             FeedResponse<InternalObjectNode> readManyResult = container
                 .readMany(
                     cosmosItemIdentities,
-                    new CosmosReadManyRequestOptions().setExcludedRegions(ImmutableList.of(this.writeRegions.get(0))),
+                    new CosmosReadManyRequestOptions().setExcludedRegions(CollectionUtils.immutableList(this.writeRegions.get(0))),
                     InternalObjectNode.class)
                 .block();
 
@@ -1014,12 +1013,13 @@ public class SessionConsistencyWithRegionScopingTests extends TestSuiteBase {
                 throw new RuntimeException(e);
             }
 
-            CosmosItemResponse<TestObject> testObjectFromRead = container.readItem(id, new PartitionKey(pk), new CosmosItemRequestOptions().setExcludedRegions(ImmutableList.of(this.writeRegions.get(0))), TestObject.class).block();
+            CosmosItemResponse<TestObject> testObjectFromRead = container.readItem(id, new PartitionKey(pk), new CosmosItemRequestOptions().setExcludedRegions(
+                CollectionUtils.immutableList(this.writeRegions.get(0))), TestObject.class).block();
 
             assertThat(testObjectFromRead).isNotNull();
             validateTestObjectEquality(testObjectToBeCreated, testObjectFromRead.getItem());
 
-            return ImmutableSet.of(pk);
+            return CollectionUtils.immutableSet(pk);
         };
 
         BiFunction<CosmosAsyncContainer, Boolean, Set<String>> pointReadAfterPartitionSplitAndPointCreate_CreateFromFirstPreferredRegionReadFromSecondPreferredRegionFunc = (container, shouldUsePreferredRegions) -> {
@@ -1049,12 +1049,13 @@ public class SessionConsistencyWithRegionScopingTests extends TestSuiteBase {
             }
 
             logger.info("Split complete!");
-            CosmosItemResponse<TestObject> testObjectFromRead = container.readItem(id, new PartitionKey(pk), new CosmosItemRequestOptions().setExcludedRegions(ImmutableList.of(this.writeRegions.get(0))), TestObject.class).block();
+            CosmosItemResponse<TestObject> testObjectFromRead = container.readItem(id, new PartitionKey(pk), new CosmosItemRequestOptions().setExcludedRegions(
+                CollectionUtils.immutableList(this.writeRegions.get(0))), TestObject.class).block();
 
             assertThat(testObjectFromRead).isNotNull();
             validateTestObjectEquality(testObjectToBeCreated, testObjectFromRead.getItem());
 
-            return ImmutableSet.of(pk);
+            return CollectionUtils.immutableSet(pk);
         };
 
         BiFunction<CosmosAsyncContainer, Boolean, Set<String>> deleteYourLatestUpsert_deleteInSecondPreferredRegionAndUpsertInFirstPreferredRegionFunc = (container, shouldUsePreferredRegions) -> {
@@ -1065,12 +1066,13 @@ public class SessionConsistencyWithRegionScopingTests extends TestSuiteBase {
 
             container.createItem(testObjectToBeCreated).block();
 
-            CosmosItemResponse<Object> deleteOperationResponse = container.deleteItem(id, new PartitionKey(pk), new CosmosItemRequestOptions().setExcludedRegions(ImmutableList.of(this.writeRegions.get(0)))).block();
+            CosmosItemResponse<Object> deleteOperationResponse = container.deleteItem(id, new PartitionKey(pk), new CosmosItemRequestOptions().setExcludedRegions(
+                CollectionUtils.immutableList(this.writeRegions.get(0)))).block();
 
             assertThat(deleteOperationResponse).isNotNull();
             assertThat(deleteOperationResponse.getStatusCode()).isEqualTo(HttpConstants.StatusCodes.NO_CONTENT);
 
-            return ImmutableSet.of(pk);
+            return CollectionUtils.immutableSet(pk);
         };
 
         BiFunction<CosmosAsyncContainer, Boolean, Set<String>> replaceYourLatestUpsert_replaceInSecondPreferredRegionAndUpsertInFirstPreferredRegionFunc = (container, shouldUsePreferredRegions) -> {
@@ -1088,13 +1090,13 @@ public class SessionConsistencyWithRegionScopingTests extends TestSuiteBase {
                     testObjectReplacement,
                     id,
                     new PartitionKey(pk),
-                    new CosmosItemRequestOptions().setExcludedRegions(ImmutableList.of(this.writeRegions.get(0))))
+                    new CosmosItemRequestOptions().setExcludedRegions(CollectionUtils.immutableList(this.writeRegions.get(0))))
                 .block();
 
             assertThat(replaceOperationResponse).isNotNull();
             assertThat(replaceOperationResponse.getStatusCode()).isEqualTo(HttpConstants.StatusCodes.OK);
 
-            return ImmutableSet.of(pk);
+            return CollectionUtils.immutableSet(pk);
         };
 
         BiFunction<CosmosAsyncContainer, Boolean, Set<String>> readYourPatchYourCreate_createInFirstPreferredRegion_readAndPatchInSecondPreferredRegionFunc = (container, shouldUsePreferredRegions) -> {
@@ -1114,7 +1116,7 @@ public class SessionConsistencyWithRegionScopingTests extends TestSuiteBase {
                     new PartitionKey(pk),
                     patchOperations,
                     (CosmosPatchItemRequestOptions) new CosmosPatchItemRequestOptions()
-                        .setExcludedRegions(ImmutableList.of(this.writeRegions.get(0))),
+                        .setExcludedRegions(CollectionUtils.immutableList(this.writeRegions.get(0))),
                     TestObject.class)
                 .block();
 
@@ -1124,7 +1126,7 @@ public class SessionConsistencyWithRegionScopingTests extends TestSuiteBase {
             CosmosItemResponse<JsonNode> readOperationResponse = container.readItem(
                     id,
                     new PartitionKey(pk),
-                    new CosmosItemRequestOptions().setExcludedRegions(ImmutableList.of(this.writeRegions.get(0))),
+                    new CosmosItemRequestOptions().setExcludedRegions(CollectionUtils.immutableList(this.writeRegions.get(0))),
                     JsonNode.class)
                 .block();
 
@@ -1138,7 +1140,7 @@ public class SessionConsistencyWithRegionScopingTests extends TestSuiteBase {
             assertThat(itemReadAsJsonNode.get("newProperty").asText()).isNotNull();
             assertThat(itemReadAsJsonNode.get("newProperty").asText()).isEqualTo("newVal");
 
-            return ImmutableSet.of(pk);
+            return CollectionUtils.immutableSet(pk);
         };
 
         BiFunction<CosmosAsyncContainer, Boolean, Set<String>> readYourCreate_readBatchInSecondPreferredRegion_createBatchInFirstPreferredRegionFunc = (container, shouldUsePreferredRegions) -> {
@@ -1166,7 +1168,7 @@ public class SessionConsistencyWithRegionScopingTests extends TestSuiteBase {
             CosmosBatchResponse batchReadResponse = container.executeCosmosBatch(
                     batchForRead,
                     new CosmosBatchRequestOptions()
-                        .setExcludedRegions(ImmutableList.of(this.writeRegions.get(0))))
+                        .setExcludedRegions(CollectionUtils.immutableList(this.writeRegions.get(0))))
                 .block();
 
             assertThat(batchReadResponse).isNotNull();
@@ -1177,7 +1179,7 @@ public class SessionConsistencyWithRegionScopingTests extends TestSuiteBase {
             assertThat(batchReadResponseResults.size()).isEqualTo(1);
             assertThat(batchReadResponseResults.get(0).getStatusCode()).isEqualTo(HttpConstants.StatusCodes.OK);
 
-            return ImmutableSet.of(documentId);
+            return CollectionUtils.immutableSet(documentId);
         };
 
         BiFunction<CosmosAsyncContainer, Boolean, Set<String>> bulkReadFromSecondPreferredRegionYourBulkCreateInFirstPreferredRegionFunc = (container, shouldUsePreferredRegions) -> {
@@ -1218,7 +1220,7 @@ public class SessionConsistencyWithRegionScopingTests extends TestSuiteBase {
 
             List<CosmosBulkOperationResponse<Object>> bulkReadResponses = container.executeBulkOperations(
                     readOperationsFlux,
-                    new CosmosBulkExecutionOptions().setExcludedRegions(ImmutableList.of(this.writeRegions.get(0))))
+                    new CosmosBulkExecutionOptions().setExcludedRegions(CollectionUtils.immutableList(this.writeRegions.get(0))))
                 .collectList()
                 .block();
 
@@ -1265,7 +1267,7 @@ public class SessionConsistencyWithRegionScopingTests extends TestSuiteBase {
 
                 CosmosChangeFeedRequestOptions changeFeedRequestOptions = CosmosChangeFeedRequestOptions
                     .createForProcessingFromBeginning(FeedRange.forFullRange())
-                    .setExcludedRegions(ImmutableList.of(this.writeRegions.get(0)));
+                    .setExcludedRegions(CollectionUtils.immutableList(this.writeRegions.get(0)));
 
                 Iterator<FeedResponse<JsonNode>> responseIterator = helperContainer
                     .queryChangeFeed(changeFeedRequestOptions, JsonNode.class)
@@ -1335,7 +1337,7 @@ public class SessionConsistencyWithRegionScopingTests extends TestSuiteBase {
 
                 CosmosChangeFeedRequestOptions changeFeedRequestOptions = CosmosChangeFeedRequestOptions
                     .createForProcessingFromBeginning(FeedRange.forLogicalPartition(new PartitionKey(idToObserveUsingChangeFeed)))
-                    .setExcludedRegions(ImmutableList.of(this.writeRegions.get(0)));
+                    .setExcludedRegions(CollectionUtils.immutableList(this.writeRegions.get(0)));
 
                 Iterator<FeedResponse<JsonNode>> responseIterator = container
                     .queryChangeFeed(changeFeedRequestOptions, JsonNode.class)
@@ -1404,12 +1406,13 @@ public class SessionConsistencyWithRegionScopingTests extends TestSuiteBase {
                 assertThat(feedResponse.getResults()).isNotEmpty();
             }
 
-            CosmosItemResponse<TestObject> testObjectFromRead = container.readItem(id, new PartitionKey(pk), new CosmosItemRequestOptions().setExcludedRegions(ImmutableList.of(this.writeRegions.get(0))), TestObject.class).block();
+            CosmosItemResponse<TestObject> testObjectFromRead = container.readItem(id, new PartitionKey(pk), new CosmosItemRequestOptions().setExcludedRegions(
+                CollectionUtils.immutableList(this.writeRegions.get(0))), TestObject.class).block();
 
             assertThat(testObjectFromRead).isNotNull();
             validateTestObjectEquality(testObjectToBeCreated, testObjectFromRead.getItem());
 
-            return ImmutableSet.of(pk);
+            return CollectionUtils.immutableSet(pk);
         };
 
         BiFunction<CosmosAsyncContainer, Boolean, Set<String>> pointReadFollowsQueryOnDifferentPartitionAsPointReadFollowsPointCreate_createInFirstPreferredRegion_pointReadAndQueryInSecondPreferredRegion_Func = (container, shouldUsePreferredRegions) -> {
@@ -1457,7 +1460,7 @@ public class SessionConsistencyWithRegionScopingTests extends TestSuiteBase {
                     "SELECT * FROM C",
                         new CosmosQueryRequestOptions()
                             .setFeedRange(feedRangeTwo)
-                            .setExcludedRegions(ImmutableList.of(this.writeRegions.get(0))),
+                            .setExcludedRegions(CollectionUtils.immutableList(this.writeRegions.get(0))),
                         TestObject.class)
                     .collectList()
                     .block();
@@ -1468,7 +1471,7 @@ public class SessionConsistencyWithRegionScopingTests extends TestSuiteBase {
                 CosmosItemResponse<TestObject> readItemResponse = container.readItem(
                         objectsFromFirstFeedRange.get(0).getId(),
                         new PartitionKey(objectsFromFirstFeedRange.get(0).getMypk()),
-                        new CosmosItemRequestOptions().setExcludedRegions(ImmutableList.of(this.writeRegions.get(0))),
+                        new CosmosItemRequestOptions().setExcludedRegions(CollectionUtils.immutableList(this.writeRegions.get(0))),
                         TestObject.class)
                     .block();
 
@@ -1479,7 +1482,7 @@ public class SessionConsistencyWithRegionScopingTests extends TestSuiteBase {
                 assertThat(testObjectFromRead).isNotNull();
                 validateTestObjectEquality(objectsFromFirstFeedRange.get(0), testObjectFromRead);
 
-                return ImmutableSet.of(testObjectFromRead.getMypk());
+                return CollectionUtils.immutableSet(testObjectFromRead.getMypk());
             } catch (Exception ex) {
                 logger.error("Exception occurred : ", ex);
                 fail("Reads, queries and creates should have succeeded!");
@@ -1981,8 +1984,8 @@ public class SessionConsistencyWithRegionScopingTests extends TestSuiteBase {
             public void funnel(PartitionKeyBasedBloomFilter.PartitionKeyBasedBloomFilterType from, PrimitiveSink into) {
                 into
                     .putLong(from.getCollectionRid())
-                    .putString(from.getEffectivePartitionKeyString(), Charsets.UTF_8)
-                    .putString(from.getRegion(), Charsets.UTF_8);
+                    .putString(from.getEffectivePartitionKeyString(), StandardCharsets.UTF_8)
+                    .putString(from.getRegion(), StandardCharsets.UTF_8);
             }
         };
 

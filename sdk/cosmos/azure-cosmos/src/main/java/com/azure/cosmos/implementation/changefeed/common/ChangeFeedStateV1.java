@@ -4,19 +4,17 @@ package com.azure.cosmos.implementation.changefeed.common;
 
 import com.azure.cosmos.implementation.Constants;
 import com.azure.cosmos.implementation.HttpConstants;
-import com.azure.cosmos.implementation.OperationType;
 import com.azure.cosmos.implementation.RxDocumentServiceRequest;
 import com.azure.cosmos.implementation.feedranges.FeedRangeContinuation;
 import com.azure.cosmos.implementation.feedranges.FeedRangeEpkImpl;
 import com.azure.cosmos.implementation.feedranges.FeedRangeInternal;
-import com.azure.cosmos.implementation.guava25.base.Strings;
 import com.azure.cosmos.implementation.query.CompositeContinuationToken;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import static com.azure.cosmos.implementation.guava25.base.Preconditions.checkNotNull;
+import static com.azure.cosmos.implementation.Utils.checkNotNull;
 
 public class ChangeFeedStateV1 extends ChangeFeedState {
     private final String containerRid;

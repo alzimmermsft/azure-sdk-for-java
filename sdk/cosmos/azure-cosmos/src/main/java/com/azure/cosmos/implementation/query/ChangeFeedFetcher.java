@@ -34,7 +34,7 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-import static com.azure.cosmos.implementation.guava25.base.Preconditions.checkNotNull;
+import static com.azure.cosmos.implementation.Utils.checkNotNull;
 
 class ChangeFeedFetcher<T> extends Fetcher<T> {
     private final static ImplementationBridgeHelpers.FeedResponseHelper.FeedResponseAccessor  feedResponseAccessor =

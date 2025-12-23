@@ -4,9 +4,9 @@
 package com.azure.cosmos.implementation.routing;
 
 import com.azure.cosmos.implementation.InCompleteRoutingMapException;
+import com.azure.cosmos.implementation.CollectionUtils;
 import com.azure.cosmos.implementation.Pair;
 import com.azure.cosmos.implementation.PartitionKeyRange;
-import com.azure.cosmos.implementation.guava25.collect.ImmutableList;
 import org.apache.commons.lang3.StringUtils;
 import org.testng.annotations.Test;
 
@@ -130,9 +130,9 @@ public class InMemoryCollectionRoutingMapTest {
     @SuppressWarnings({"unchecked", "rawtypes"})
     public void goneRanges() {
         CollectionRoutingMap routingMap = InMemoryCollectionRoutingMap.tryCreateCompleteRoutingMap(
-            ImmutableList.of(
-                Pair.of(new PartitionKeyRange("2", "", "0000000030", ImmutableList.of("1", "0")), null),
-                Pair.of(new PartitionKeyRange("3", "0000000030", "0000000032", ImmutableList.of("5")), null),
+            CollectionUtils.immutableList(
+                Pair.of(new PartitionKeyRange("2", "", "0000000030", CollectionUtils.immutableList("1", "0")), null),
+                Pair.of(new PartitionKeyRange("3", "0000000030", "0000000032", CollectionUtils.immutableList("5")), null),
                 Pair.of(new PartitionKeyRange("4", "0000000032", "FF"), null)),
             StringUtils.EMPTY,
             "2");
@@ -150,7 +150,7 @@ public class InMemoryCollectionRoutingMapTest {
     @Test(groups = {"unit"})
     public void tryCombineRanges() {
         CollectionRoutingMap routingMap = InMemoryCollectionRoutingMap.tryCreateCompleteRoutingMap(
-            ImmutableList.of(
+            CollectionUtils.immutableList(
                 Pair.of(new PartitionKeyRange("2", "0000000050", "0000000070"), null),
                 Pair.of(new PartitionKeyRange("0", "", "0000000030"), null),
                 Pair.of(new PartitionKeyRange("1", "0000000030", "0000000050"), null),
@@ -160,27 +160,27 @@ public class InMemoryCollectionRoutingMapTest {
             "2");
 
         CollectionRoutingMap newRoutingMap = routingMap.tryCombine(
-            ImmutableList.of(
-                Pair.of(new PartitionKeyRange("4", "", "0000000010", ImmutableList.of("0")), null),
-                Pair.of(new PartitionKeyRange("5", "0000000010", "0000000030", ImmutableList.of("0")), null)
+            CollectionUtils.immutableList(
+                Pair.of(new PartitionKeyRange("4", "", "0000000010", CollectionUtils.immutableList("0")), null),
+                Pair.of(new PartitionKeyRange("5", "0000000010", "0000000030", CollectionUtils.immutableList("0")), null)
             ), null, "test");
 
         assertThat(newRoutingMap).isNotNull();
 
         newRoutingMap = routingMap.tryCombine(
-            ImmutableList.of(
-                Pair.of(new PartitionKeyRange("6", "", "0000000005", ImmutableList.of("0", "4")), null),
-                Pair.of(new PartitionKeyRange("7", "0000000005", "0000000010", ImmutableList.of("0", "4")), null),
-                Pair.of(new PartitionKeyRange("8", "0000000010", "0000000015", ImmutableList.of("0", "5")), null),
-                Pair.of(new PartitionKeyRange("9", "0000000015", "0000000030", ImmutableList.of("0", "5")), null)
+            CollectionUtils.immutableList(
+                Pair.of(new PartitionKeyRange("6", "", "0000000005", CollectionUtils.immutableList("0", "4")), null),
+                Pair.of(new PartitionKeyRange("7", "0000000005", "0000000010", CollectionUtils.immutableList("0", "4")), null),
+                Pair.of(new PartitionKeyRange("8", "0000000010", "0000000015", CollectionUtils.immutableList("0", "5")), null),
+                Pair.of(new PartitionKeyRange("9", "0000000015", "0000000030", CollectionUtils.immutableList("0", "5")), null)
             ), null, "test");
 
         assertThat(newRoutingMap).isNotNull();
 
         try {
             routingMap.tryCombine(
-                ImmutableList.of(
-                    Pair.of(new PartitionKeyRange("10", "", "0000000002", ImmutableList.of("0", "4", "6")), null)
+                CollectionUtils.immutableList(
+                    Pair.of(new PartitionKeyRange("10", "", "0000000002", CollectionUtils.immutableList("0", "4", "6")), null)
                 ), "2", "test");
 
             fail("Should have failed with InCompleteRoutingMapException");

@@ -14,7 +14,7 @@ import io.micrometer.core.instrument.Metrics;
 import java.util.EnumSet;
 import java.util.concurrent.ConcurrentHashMap;
 
-import static com.azure.cosmos.implementation.guava25.base.Preconditions.checkNotNull;
+import static com.azure.cosmos.implementation.Utils.checkNotNull;
 
 /**
  * Micrometer-specific Azure Cosmos DB SDK metrics options

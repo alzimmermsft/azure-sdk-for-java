@@ -21,7 +21,7 @@ import org.slf4j.LoggerFactory;
 import java.net.URI;
 import java.util.concurrent.TimeUnit;
 
-import static com.azure.cosmos.implementation.guava25.base.Preconditions.checkNotNull;
+import static com.azure.cosmos.implementation.Utils.checkNotNull;
 
 public class RntbdClientChannelHandler extends ChannelInitializer<Channel> implements ChannelPoolHandler {
 

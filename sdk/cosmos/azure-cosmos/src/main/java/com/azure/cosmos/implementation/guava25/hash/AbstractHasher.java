@@ -19,7 +19,6 @@
 package com.azure.cosmos.implementation.guava25.hash;
 
 import com.azure.cosmos.implementation.guava25.base.Preconditions;
-import com.azure.cosmos.implementation.guava25.errorprone.annotations.CanIgnoreReturnValue;
 
 import java.nio.charset.Charset;
 
@@ -29,7 +28,6 @@ import java.nio.charset.Charset;
  *
  * @author Dimitris Andreou
  */
-@CanIgnoreReturnValue
 abstract class AbstractHasher implements Hasher {
 
     @Override

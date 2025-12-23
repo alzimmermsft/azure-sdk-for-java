@@ -7,7 +7,7 @@ import com.azure.cosmos.implementation.Strings;
 
 import java.util.concurrent.atomic.AtomicReference;
 
-import static com.azure.cosmos.implementation.guava25.base.Preconditions.checkArgument;
+import static com.azure.cosmos.implementation.Utils.checkArgument;
 
 public class ThroughputControlRequestContext {
     private final String configString;

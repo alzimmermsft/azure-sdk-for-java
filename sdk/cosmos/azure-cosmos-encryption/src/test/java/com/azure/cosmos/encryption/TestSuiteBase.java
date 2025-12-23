@@ -25,12 +25,12 @@ import com.azure.cosmos.encryption.models.CosmosEncryptionType;
 import com.azure.cosmos.implementation.Configs;
 import com.azure.cosmos.implementation.ConnectionPolicy;
 import com.azure.cosmos.implementation.InternalObjectNode;
+import com.azure.cosmos.implementation.CollectionUtils;
 import com.azure.cosmos.implementation.PathParser;
 import com.azure.cosmos.implementation.TestConfigurations;
 import com.azure.cosmos.implementation.Utils;
 import com.azure.cosmos.implementation.directconnectivity.Protocol;
 import com.azure.cosmos.implementation.guava25.base.CaseFormat;
-import com.azure.cosmos.implementation.guava25.collect.ImmutableList;
 import com.azure.cosmos.models.ClientEncryptionIncludedPath;
 import com.azure.cosmos.models.ClientEncryptionPolicy;
 import com.azure.cosmos.models.CompositePath;
@@ -189,8 +189,8 @@ public abstract class TestSuiteBase extends CosmosEncryptionAsyncClientTest {
         logger.debug("Initializing {} ...", this.getClass().getSimpleName());
     }
 
-    private static <T> ImmutableList<T> immutableListOrNull(List<T> list) {
-        return list != null ? ImmutableList.copyOf(list) : null;
+    private static <T> List<T> immutableListOrNull(List<T> list) {
+        return list != null ? CollectionUtils.immutableCopyOf(list) : null;
     }
 
     private static class DatabaseManagerImpl implements CosmosEncryptionDatabaseForTest.DatabaseManager {

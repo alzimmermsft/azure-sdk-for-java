@@ -7,7 +7,7 @@ import com.azure.cosmos.implementation.directconnectivity.rntbd.RntbdRequest;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.netty.buffer.ByteBuf;
 
-import static com.azure.cosmos.implementation.guava25.base.Preconditions.checkNotNull;
+import static com.azure.cosmos.implementation.Utils.checkNotNull;
 
 /**
  * Methods included in this class are copied from {@link RntbdRequest}.

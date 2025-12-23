@@ -3,23 +3,23 @@
 
 package com.azure.cosmos.implementation.directconnectivity;
 
+import com.azure.cosmos.implementation.CollectionUtils;
+import com.azure.cosmos.implementation.RMResources;
+import com.azure.cosmos.implementation.Undefined;
 import com.azure.cosmos.implementation.Utils;
 import com.azure.cosmos.implementation.routing.HexConvert;
+import com.azure.cosmos.implementation.routing.PartitionKeyInternal;
+import com.azure.cosmos.implementation.routing.PartitionKeyInternalHelper;
+import com.azure.cosmos.implementation.routing.PartitionKeyInternalUtils;
 import com.azure.cosmos.models.PartitionKey;
 import com.azure.cosmos.models.PartitionKeyDefinition;
 import com.azure.cosmos.models.PartitionKeyDefinitionVersion;
 import com.azure.cosmos.models.PartitionKind;
-import com.azure.cosmos.implementation.RMResources;
-import com.azure.cosmos.implementation.Undefined;
-import com.azure.cosmos.implementation.routing.PartitionKeyInternal;
-import com.azure.cosmos.implementation.routing.PartitionKeyInternalHelper;
-import com.azure.cosmos.implementation.routing.PartitionKeyInternalUtils;
-import com.azure.cosmos.implementation.guava25.collect.ImmutableList;
-import com.azure.cosmos.implementation.guava25.collect.Lists;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.function.BiFunction;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
@@ -46,8 +46,7 @@ public class PartitionKeyInternalTest {
         String json = "[\"aa\", null, true, false, {}, 5, 5.5]";
         PartitionKeyInternal partitionKey = PartitionKeyInternal.fromJsonString(json);
         assertThat(partitionKey).isEqualTo(
-                PartitionKeyInternal.fromObjectArray(
-                        Lists.newArrayList(new Object[]{"aa", null, true, false, Undefined.value(), 5, 5.5}), true));
+            PartitionKeyInternal.fromObjectArray(Arrays.asList("aa", null, true, false, Undefined.value(), 5, 5.5), true));
 
         assertThat(partitionKey.toJson()).isEqualTo("[\"aa\",null,true,false,{},5.0,5.5]");
     }
@@ -246,8 +245,7 @@ public class PartitionKeyInternalTest {
      */
     @Test(groups = "unit", expectedExceptions = IllegalArgumentException.class)
     public void invalidPartitionKeyValue() {
-        PartitionKeyInternal.fromObjectArray(
-                Lists.newArrayList(new Object[]{2, true, new StringBuilder()}), true);
+        PartitionKeyInternal.fromObjectArray(Arrays.asList(new Object[]{2, true, new StringBuilder()}), true);
     }
 
     /**
@@ -302,7 +300,7 @@ public class PartitionKeyInternalTest {
 
 
         PartitionKeyDefinition partitionKeyDefinition = new PartitionKeyDefinition();
-        partitionKeyDefinition.setPaths(Lists.newArrayList("/A", "/B", "/C", "/E", "/F", "/G"));
+        partitionKeyDefinition.setPaths(Arrays.asList("/A", "/B", "/C", "/E", "/F", "/G"));
 
         PartitionKeyInternal partitionKey = PartitionKeyInternal.fromObjectArray(
                 new Object[]{2, true, false, null, Undefined.value(), "Привет!"}, true);
@@ -352,7 +350,8 @@ public class PartitionKeyInternalTest {
                 PartitionKeyInternal.fromJsonString("[\"по-русски\",null,true,false,{},5.5]");
 
         PartitionKeyDefinition pkDefinition = new PartitionKeyDefinition();
-        pkDefinition.setPaths(ImmutableList.of("/field1", "/field2", "/field3", "/field4", "/field5", "/field6"));
+        pkDefinition.setPaths(
+            CollectionUtils.immutableList("/field1", "/field2", "/field3", "/field4", "/field5", "/field6"));
 
         String effectivePartitionKey = PartitionKeyInternalHelper.getEffectivePartitionKeyString(partitionKey, pkDefinition);
         assertThat("05C1D39FA55F0408D1C0D1BF2ED281D284D282D282D1BBD1B9000103020005C016").isEqualTo(effectivePartitionKey);
@@ -465,7 +464,7 @@ public class PartitionKeyInternalTest {
 
     private static void verifyEffectivePartitionKeyEncoding(String buffer, int length, String expectedValue, boolean v2) {
         PartitionKeyDefinition pkDefinition = new PartitionKeyDefinition();
-        pkDefinition.setPaths(ImmutableList.of("/field1"));
+        pkDefinition.setPaths(CollectionUtils.immutableList("/field1"));
         if (v2) {
             pkDefinition.setVersion(PartitionKeyDefinitionVersion.V2);
         }

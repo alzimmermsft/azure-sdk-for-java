@@ -5,8 +5,6 @@ package com.azure.cosmos.implementation;
 
 import com.azure.cosmos.BridgeInternal;
 import com.azure.cosmos.GatewayTestUtils;
-import com.azure.cosmos.implementation.guava25.collect.ImmutableList;
-import com.azure.cosmos.implementation.guava25.collect.ImmutableMap;
 import com.azure.cosmos.implementation.routing.RegionalRoutingContext;
 import com.azure.cosmos.models.ModelBridgeInternal;
 import com.azure.cosmos.models.ModelBridgeUtils;
@@ -67,53 +65,53 @@ public class RegionScopedSessionContainerTest {
             // Case 1: Session token resolution for PK1 should not include progress from East US 2
             // to which PK2 saw cross-regional call on
             {
-                ImmutableList.of(
+                CollectionUtils.immutableList(
                     constructRequestInstance(
                         OperationType.Read,
                         ResourceType.Document,
                         new PartitionKey("pk1"),
-                        new PartitionKeyDefinition().setPaths(ImmutableList.of("/mypk")),
+                        new PartitionKeyDefinition().setPaths(CollectionUtils.immutableList("/mypk")),
                         "dbs/db1/colls/coll1",
                         LocationEastUsEndpointToLocationPair.getKey(),
-                        ImmutableMap.of(HttpConstants.HttpHeaders.SESSION_TOKEN, "range_0:1#9#2=11#3=9")
+                        CollectionUtils.immutableMap(HttpConstants.HttpHeaders.SESSION_TOKEN, "range_0:1#9#2=11#3=9")
                     ),
                     constructRequestInstance(
                         OperationType.Read,
                         ResourceType.Document,
                         new PartitionKey("pk2"),
-                        new PartitionKeyDefinition().setPaths(ImmutableList.of("/mypk")),
+                        new PartitionKeyDefinition().setPaths(CollectionUtils.immutableList("/mypk")),
                         "dbs/db1/colls/coll1",
                         LocationEastUs2EndpointToLocationPair.getKey(),
-                        ImmutableMap.of(HttpConstants.HttpHeaders.SESSION_TOKEN, "range_0:1#10#2=16#3=12")
+                        CollectionUtils.immutableMap(HttpConstants.HttpHeaders.SESSION_TOKEN, "range_0:1#10#2=16#3=12")
                     ),
                     constructRequestInstance(
                         OperationType.Read,
                         ResourceType.Document,
                         new PartitionKey("pk1"),
-                        new PartitionKeyDefinition().setPaths(ImmutableList.of("/mypk")),
+                        new PartitionKeyDefinition().setPaths(CollectionUtils.immutableList("/mypk")),
                         "dbs/db1/colls/coll1",
                         LocationEastUsEndpointToLocationPair.getKey(),
-                        ImmutableMap.of(HttpConstants.HttpHeaders.SESSION_TOKEN, "range_0:1#11#2=13#3=12")
+                        CollectionUtils.immutableMap(HttpConstants.HttpHeaders.SESSION_TOKEN, "range_0:1#11#2=13#3=12")
                     ),
                     constructRequestInstance(
                         OperationType.Read,
                         ResourceType.Document,
                         new PartitionKey("pk1"),
-                        new PartitionKeyDefinition().setPaths(ImmutableList.of("/mypk")),
+                        new PartitionKeyDefinition().setPaths(CollectionUtils.immutableList("/mypk")),
                         "dbs/db1/colls/coll1",
                         LocationEastUsEndpointToLocationPair.getKey(),
-                        ImmutableMap.of(HttpConstants.HttpHeaders.SESSION_TOKEN, "range_0:1#12#2=14#3=14")
+                        CollectionUtils.immutableMap(HttpConstants.HttpHeaders.SESSION_TOKEN, "range_0:1#12#2=14#3=14")
                     )
                 ),
-                ImmutableList.of(
+                CollectionUtils.immutableList(
                     LocationEastUsEndpointToLocationPair,
                     LocationEastUs2EndpointToLocationPair,
                     LocationCentralUsEndpointToLocationPair),
-                ImmutableList.of(
+                CollectionUtils.immutableList(
                     LocationEastUsEndpointToLocationPair,
                     LocationEastUs2EndpointToLocationPair,
                     LocationCentralUsEndpointToLocationPair),
-                ImmutableList.of(LocationEastUsEndpointToLocationPair.getLeft(), LocationEastUs2EndpointToLocationPair.getLeft(), LocationCentralUsEndpointToLocationPair.getLeft()),
+                CollectionUtils.immutableList(LocationEastUsEndpointToLocationPair.getLeft(), LocationEastUs2EndpointToLocationPair.getLeft(), LocationCentralUsEndpointToLocationPair.getLeft()),
                 true,
                 "range_0",
                 "pk1",
@@ -122,53 +120,53 @@ public class RegionScopedSessionContainerTest {
             // Case 2: PK1 itself saw a cross-regional calls (East US and East US 2) but it shouldn't include session
             // information of Central US where PK2 saw a call
             {
-                ImmutableList.of(
+                CollectionUtils.immutableList(
                     constructRequestInstance(
                         OperationType.Read,
                         ResourceType.Document,
                         new PartitionKey("pk1"),
-                        new PartitionKeyDefinition().setPaths(ImmutableList.of("/mypk")),
+                        new PartitionKeyDefinition().setPaths(CollectionUtils.immutableList("/mypk")),
                         "dbs/db1/colls/coll1",
                         LocationEastUsEndpointToLocationPair.getKey(),
-                        ImmutableMap.of(HttpConstants.HttpHeaders.SESSION_TOKEN, "range_0:1#9#2=10#3=2")
+                        CollectionUtils.immutableMap(HttpConstants.HttpHeaders.SESSION_TOKEN, "range_0:1#9#2=10#3=2")
                     ),
                     constructRequestInstance(
                         OperationType.Read,
                         ResourceType.Document,
                         new PartitionKey("pk2"),
-                        new PartitionKeyDefinition().setPaths(ImmutableList.of("/mypk")),
+                        new PartitionKeyDefinition().setPaths(CollectionUtils.immutableList("/mypk")),
                         "dbs/db1/colls/coll1",
                         LocationCentralUsEndpointToLocationPair.getKey(),
-                        ImmutableMap.of(HttpConstants.HttpHeaders.SESSION_TOKEN, "range_0:1#10#2=10#3=14")
+                        CollectionUtils.immutableMap(HttpConstants.HttpHeaders.SESSION_TOKEN, "range_0:1#10#2=10#3=14")
                     ),
                     constructRequestInstance(
                         OperationType.Read,
                         ResourceType.Document,
                         new PartitionKey("pk1"),
-                        new PartitionKeyDefinition().setPaths(ImmutableList.of("/mypk")),
+                        new PartitionKeyDefinition().setPaths(CollectionUtils.immutableList("/mypk")),
                         "dbs/db1/colls/coll1",
                         LocationEastUs2EndpointToLocationPair.getKey(),
-                        ImmutableMap.of(HttpConstants.HttpHeaders.SESSION_TOKEN, "range_0:1#12#2=10#3=11")
+                        CollectionUtils.immutableMap(HttpConstants.HttpHeaders.SESSION_TOKEN, "range_0:1#12#2=10#3=11")
                     ),
                     constructRequestInstance(
                         OperationType.Read,
                         ResourceType.Document,
                         new PartitionKey("pk1"),
-                        new PartitionKeyDefinition().setPaths(ImmutableList.of("/mypk")),
+                        new PartitionKeyDefinition().setPaths(CollectionUtils.immutableList("/mypk")),
                         "dbs/db1/colls/coll1",
                         LocationEastUsEndpointToLocationPair.getKey(),
-                        ImmutableMap.of(HttpConstants.HttpHeaders.SESSION_TOKEN, "range_0:1#11#2=11#3=11")
+                        CollectionUtils.immutableMap(HttpConstants.HttpHeaders.SESSION_TOKEN, "range_0:1#11#2=11#3=11")
                     )
                 ),
-                ImmutableList.of(
+                CollectionUtils.immutableList(
                     LocationEastUsEndpointToLocationPair,
                     LocationEastUs2EndpointToLocationPair,
                     LocationCentralUsEndpointToLocationPair),
-                ImmutableList.of(
+                CollectionUtils.immutableList(
                     LocationEastUsEndpointToLocationPair,
                     LocationEastUs2EndpointToLocationPair,
                     LocationCentralUsEndpointToLocationPair),
-                ImmutableList.of(LocationEastUsEndpointToLocationPair.getLeft(), LocationEastUs2EndpointToLocationPair.getLeft(), LocationCentralUsEndpointToLocationPair.getLeft()),
+                CollectionUtils.immutableList(LocationEastUsEndpointToLocationPair.getLeft(), LocationEastUs2EndpointToLocationPair.getLeft(), LocationCentralUsEndpointToLocationPair.getLeft()),
                 true,
                 "range_0",
                 "pk1",
@@ -177,53 +175,53 @@ public class RegionScopedSessionContainerTest {
             // Case 3: Session token resolution for a new logical partition - PK3 should use session information only from
             // the base region (East US)
             {
-                ImmutableList.of(
+                CollectionUtils.immutableList(
                     constructRequestInstance(
                         OperationType.Read,
                         ResourceType.Document,
                         new PartitionKey("pk1"),
-                        new PartitionKeyDefinition().setPaths(ImmutableList.of("/mypk")),
+                        new PartitionKeyDefinition().setPaths(CollectionUtils.immutableList("/mypk")),
                         "dbs/db1/colls/coll1",
                         LocationEastUsEndpointToLocationPair.getKey(),
-                        ImmutableMap.of(HttpConstants.HttpHeaders.SESSION_TOKEN, "range_0:1#13#2=14#3=15")
+                        CollectionUtils.immutableMap(HttpConstants.HttpHeaders.SESSION_TOKEN, "range_0:1#13#2=14#3=15")
                     ),
                     constructRequestInstance(
                         OperationType.Read,
                         ResourceType.Document,
                         new PartitionKey("pk2"),
-                        new PartitionKeyDefinition().setPaths(ImmutableList.of("/mypk")),
+                        new PartitionKeyDefinition().setPaths(CollectionUtils.immutableList("/mypk")),
                         "dbs/db1/colls/coll1",
                         LocationCentralUsEndpointToLocationPair.getKey(),
-                        ImmutableMap.of(HttpConstants.HttpHeaders.SESSION_TOKEN, "range_0:1#14#2=21#3=8")
+                        CollectionUtils.immutableMap(HttpConstants.HttpHeaders.SESSION_TOKEN, "range_0:1#14#2=21#3=8")
                     ),
                     constructRequestInstance(
                         OperationType.Read,
                         ResourceType.Document,
                         new PartitionKey("pk1"),
-                        new PartitionKeyDefinition().setPaths(ImmutableList.of("/mypk")),
+                        new PartitionKeyDefinition().setPaths(CollectionUtils.immutableList("/mypk")),
                         "dbs/db1/colls/coll1",
                         LocationEastUs2EndpointToLocationPair.getKey(),
-                        ImmutableMap.of(HttpConstants.HttpHeaders.SESSION_TOKEN, "range_0:1#11#2=14#3=11")
+                        CollectionUtils.immutableMap(HttpConstants.HttpHeaders.SESSION_TOKEN, "range_0:1#11#2=14#3=11")
                     ),
                     constructRequestInstance(
                         OperationType.Read,
                         ResourceType.Document,
                         new PartitionKey("pk1"),
-                        new PartitionKeyDefinition().setPaths(ImmutableList.of("/mypk")),
+                        new PartitionKeyDefinition().setPaths(CollectionUtils.immutableList("/mypk")),
                         "dbs/db1/colls/coll1",
                         LocationEastUsEndpointToLocationPair.getKey(),
-                        ImmutableMap.of(HttpConstants.HttpHeaders.SESSION_TOKEN, "range_0:1#12#2=13#3=13")
+                        CollectionUtils.immutableMap(HttpConstants.HttpHeaders.SESSION_TOKEN, "range_0:1#12#2=13#3=13")
                     )
                 ),
-                ImmutableList.of(
+                CollectionUtils.immutableList(
                     LocationEastUsEndpointToLocationPair,
                     LocationEastUs2EndpointToLocationPair,
                     LocationCentralUsEndpointToLocationPair),
-                ImmutableList.of(
+                CollectionUtils.immutableList(
                     LocationEastUsEndpointToLocationPair,
                     LocationEastUs2EndpointToLocationPair,
                     LocationCentralUsEndpointToLocationPair),
-                ImmutableList.of(LocationEastUsEndpointToLocationPair.getLeft(), LocationEastUs2EndpointToLocationPair.getLeft()),
+                CollectionUtils.immutableList(LocationEastUsEndpointToLocationPair.getLeft(), LocationEastUs2EndpointToLocationPair.getLeft()),
                 true,
                 "range_0",
                 "pk3",
@@ -235,64 +233,64 @@ public class RegionScopedSessionContainerTest {
             // 2. When a subsequent request comes in for PK3 - session information should combine that of East US (base / first preferred region)
             // and that of West US along with version information maxed.
             {
-                ImmutableList.of(
+                CollectionUtils.immutableList(
                     constructRequestInstance(
                         OperationType.Read,
                         ResourceType.Document,
                         new PartitionKey("pk1"),
-                        new PartitionKeyDefinition().setPaths(ImmutableList.of("/mypk")),
+                        new PartitionKeyDefinition().setPaths(CollectionUtils.immutableList("/mypk")),
                         "dbs/db1/colls/coll1",
                         LocationEastUsEndpointToLocationPair.getKey(),
-                        ImmutableMap.of(HttpConstants.HttpHeaders.SESSION_TOKEN, "range_0:1#13#2=14#3=15")
+                        CollectionUtils.immutableMap(HttpConstants.HttpHeaders.SESSION_TOKEN, "range_0:1#13#2=14#3=15")
                     ),
                     constructRequestInstance(
                         OperationType.Read,
                         ResourceType.Document,
                         new PartitionKey("pk2"),
-                        new PartitionKeyDefinition().setPaths(ImmutableList.of("/mypk")),
+                        new PartitionKeyDefinition().setPaths(CollectionUtils.immutableList("/mypk")),
                         "dbs/db1/colls/coll1",
                         LocationCentralUsEndpointToLocationPair.getKey(),
-                        ImmutableMap.of(HttpConstants.HttpHeaders.SESSION_TOKEN, "range_0:1#14#2=21#3=8")
+                        CollectionUtils.immutableMap(HttpConstants.HttpHeaders.SESSION_TOKEN, "range_0:1#14#2=21#3=8")
                     ),
                     constructRequestInstance(
                         OperationType.Read,
                         ResourceType.Document,
                         new PartitionKey("pk1"),
-                        new PartitionKeyDefinition().setPaths(ImmutableList.of("/mypk")),
+                        new PartitionKeyDefinition().setPaths(CollectionUtils.immutableList("/mypk")),
                         "dbs/db1/colls/coll1",
                         LocationEastUs2EndpointToLocationPair.getKey(),
-                        ImmutableMap.of(HttpConstants.HttpHeaders.SESSION_TOKEN, "range_0:1#11#2=14#3=11")
+                        CollectionUtils.immutableMap(HttpConstants.HttpHeaders.SESSION_TOKEN, "range_0:1#11#2=14#3=11")
                     ),
                     constructRequestInstance(
                         OperationType.Read,
                         ResourceType.Document,
                         new PartitionKey("pk1"),
-                        new PartitionKeyDefinition().setPaths(ImmutableList.of("/mypk")),
+                        new PartitionKeyDefinition().setPaths(CollectionUtils.immutableList("/mypk")),
                         "dbs/db1/colls/coll1",
                         LocationEastUsEndpointToLocationPair.getKey(),
-                        ImmutableMap.of(HttpConstants.HttpHeaders.SESSION_TOKEN, "range_0:1#12#2=13#3=13")
+                        CollectionUtils.immutableMap(HttpConstants.HttpHeaders.SESSION_TOKEN, "range_0:1#12#2=13#3=13")
                     ),
                     constructRequestInstance(
                         OperationType.Read,
                         ResourceType.Document,
                         new PartitionKey("pk3"),
-                        new PartitionKeyDefinition().setPaths(ImmutableList.of("/mypk")),
+                        new PartitionKeyDefinition().setPaths(CollectionUtils.immutableList("/mypk")),
                         "dbs/db1/colls/coll1",
                         LocationWestUsEndpointToLocationPair.getKey(),
-                        ImmutableMap.of(HttpConstants.HttpHeaders.SESSION_TOKEN, "range_0:2#13#2=13#3=13#7=1")
+                        CollectionUtils.immutableMap(HttpConstants.HttpHeaders.SESSION_TOKEN, "range_0:2#13#2=13#3=13#7=1")
                     )
                 ),
-                ImmutableList.of(
+                CollectionUtils.immutableList(
                     LocationEastUsEndpointToLocationPair,
                     LocationEastUs2EndpointToLocationPair,
                     LocationCentralUsEndpointToLocationPair,
                     LocationWestUsEndpointToLocationPair),
-                ImmutableList.of(
+                CollectionUtils.immutableList(
                     LocationEastUsEndpointToLocationPair,
                     LocationEastUs2EndpointToLocationPair,
                     LocationCentralUsEndpointToLocationPair,
                     LocationWestUsEndpointToLocationPair),
-                ImmutableList.of(LocationEastUsEndpointToLocationPair.getLeft(), LocationEastUs2EndpointToLocationPair.getLeft(), LocationCentralUsEndpointToLocationPair.getLeft(), LocationWestUsEndpointToLocationPair.getLeft()),
+                CollectionUtils.immutableList(LocationEastUsEndpointToLocationPair.getLeft(), LocationEastUs2EndpointToLocationPair.getLeft(), LocationCentralUsEndpointToLocationPair.getLeft(), LocationWestUsEndpointToLocationPair.getLeft()),
                 true,
                 "range_0",
                 "pk3",
@@ -302,64 +300,64 @@ public class RegionScopedSessionContainerTest {
             // Session token resolution for a request not targeted to a logical partition should simply use combined session information
             // from all regions
             {
-                ImmutableList.of(
+                CollectionUtils.immutableList(
                     constructRequestInstance(
                         OperationType.Read,
                         ResourceType.Document,
                         new PartitionKey("pk1"),
-                        new PartitionKeyDefinition().setPaths(ImmutableList.of("/mypk")),
+                        new PartitionKeyDefinition().setPaths(CollectionUtils.immutableList("/mypk")),
                         "dbs/db1/colls/coll1",
                         LocationEastUsEndpointToLocationPair.getKey(),
-                        ImmutableMap.of(HttpConstants.HttpHeaders.SESSION_TOKEN, "range_0:1#13#2=14#3=15")
+                        CollectionUtils.immutableMap(HttpConstants.HttpHeaders.SESSION_TOKEN, "range_0:1#13#2=14#3=15")
                     ),
                     constructRequestInstance(
                         OperationType.Read,
                         ResourceType.Document,
                         new PartitionKey("pk2"),
-                        new PartitionKeyDefinition().setPaths(ImmutableList.of("/mypk")),
+                        new PartitionKeyDefinition().setPaths(CollectionUtils.immutableList("/mypk")),
                         "dbs/db1/colls/coll1",
                         LocationCentralUsEndpointToLocationPair.getKey(),
-                        ImmutableMap.of(HttpConstants.HttpHeaders.SESSION_TOKEN, "range_0:1#14#2=21#3=8")
+                        CollectionUtils.immutableMap(HttpConstants.HttpHeaders.SESSION_TOKEN, "range_0:1#14#2=21#3=8")
                     ),
                     constructRequestInstance(
                         OperationType.Read,
                         ResourceType.Document,
                         new PartitionKey("pk1"),
-                        new PartitionKeyDefinition().setPaths(ImmutableList.of("/mypk")),
+                        new PartitionKeyDefinition().setPaths(CollectionUtils.immutableList("/mypk")),
                         "dbs/db1/colls/coll1",
                         LocationEastUs2EndpointToLocationPair.getKey(),
-                        ImmutableMap.of(HttpConstants.HttpHeaders.SESSION_TOKEN, "range_0:1#11#2=14#3=11")
+                        CollectionUtils.immutableMap(HttpConstants.HttpHeaders.SESSION_TOKEN, "range_0:1#11#2=14#3=11")
                     ),
                     constructRequestInstance(
                         OperationType.Read,
                         ResourceType.Document,
                         new PartitionKey("pk1"),
-                        new PartitionKeyDefinition().setPaths(ImmutableList.of("/mypk")),
+                        new PartitionKeyDefinition().setPaths(CollectionUtils.immutableList("/mypk")),
                         "dbs/db1/colls/coll1",
                         LocationEastUsEndpointToLocationPair.getKey(),
-                        ImmutableMap.of(HttpConstants.HttpHeaders.SESSION_TOKEN, "range_0:1#12#2=13#3=13")
+                        CollectionUtils.immutableMap(HttpConstants.HttpHeaders.SESSION_TOKEN, "range_0:1#12#2=13#3=13")
                     ),
                     constructRequestInstance(
                         OperationType.Read,
                         ResourceType.Document,
                         new PartitionKey("pk3"),
-                        new PartitionKeyDefinition().setPaths(ImmutableList.of("/mypk")),
+                        new PartitionKeyDefinition().setPaths(CollectionUtils.immutableList("/mypk")),
                         "dbs/db1/colls/coll1",
                         LocationWestUsEndpointToLocationPair.getKey(),
-                        ImmutableMap.of(HttpConstants.HttpHeaders.SESSION_TOKEN, "range_0:2#13#2=13#3=13#7=1")
+                        CollectionUtils.immutableMap(HttpConstants.HttpHeaders.SESSION_TOKEN, "range_0:2#13#2=13#3=13#7=1")
                     )
                 ),
-                ImmutableList.of(
+                CollectionUtils.immutableList(
                     LocationEastUsEndpointToLocationPair,
                     LocationEastUs2EndpointToLocationPair,
                     LocationCentralUsEndpointToLocationPair,
                     LocationWestUsEndpointToLocationPair),
-                ImmutableList.of(
+                CollectionUtils.immutableList(
                     LocationEastUsEndpointToLocationPair,
                     LocationEastUs2EndpointToLocationPair,
                     LocationCentralUsEndpointToLocationPair,
                     LocationWestUsEndpointToLocationPair),
-                ImmutableList.of(LocationEastUsEndpointToLocationPair.getLeft(), LocationEastUs2EndpointToLocationPair.getLeft(), LocationCentralUsEndpointToLocationPair.getLeft(), LocationWestUsEndpointToLocationPair.getLeft()),
+                CollectionUtils.immutableList(LocationEastUsEndpointToLocationPair.getLeft(), LocationEastUs2EndpointToLocationPair.getLeft(), LocationCentralUsEndpointToLocationPair.getLeft(), LocationWestUsEndpointToLocationPair.getLeft()),
                 true,
                 "range_0",
                 null,
@@ -377,7 +375,7 @@ public class RegionScopedSessionContainerTest {
         int numPartitionKeyRangeIds = 5;
         String regionContacted = LocationEastUsEndpointToLocationPair.getRight();
 
-        List<RegionalRoutingContext> endpoints = ImmutableList.of(
+        List<RegionalRoutingContext> endpoints = CollectionUtils.immutableList(
             new RegionalRoutingContext(LocationEastUsEndpointToLocationPair.getLeft()),
             new RegionalRoutingContext(LocationEastUs2EndpointToLocationPair.getLeft()),
             new RegionalRoutingContext(LocationCentralUsEndpointToLocationPair.getLeft()));
@@ -403,7 +401,7 @@ public class RegionScopedSessionContainerTest {
                     request,
                     collectionResourceId,
                     collectionFullName,
-                    ImmutableMap.of(HttpConstants.HttpHeaders.SESSION_TOKEN, resultantSessionToken));
+                    CollectionUtils.immutableMap(HttpConstants.HttpHeaders.SESSION_TOKEN, resultantSessionToken));
             }
         }
 
@@ -418,7 +416,7 @@ public class RegionScopedSessionContainerTest {
         DocumentServiceRequestContext dsrContext = new DocumentServiceRequestContext();
         PartitionKeyRange resolvedPKRange = new PartitionKeyRange();
         resolvedPKRange.setId("range_" + (numPartitionKeyRangeIds + 10));
-        GatewayTestUtils.setParent(resolvedPKRange, ImmutableList.of("range_2", "range_x"));
+        GatewayTestUtils.setParent(resolvedPKRange, CollectionUtils.immutableList("range_2", "range_x"));
         dsrContext.resolvedPartitionKeyRange = resolvedPKRange;
         request.requestContext = dsrContext;
         request.requestContext.regionalRoutingContextToRoute = new RegionalRoutingContext(LocationEastUsEndpointToLocationPair.getLeft());
@@ -440,7 +438,7 @@ public class RegionScopedSessionContainerTest {
         GlobalEndpointManager globalEndpointManagerMock = Mockito.mock(GlobalEndpointManager.class);
         ISessionContainer sessionContainer = new RegionScopedSessionContainer("127.0.0.1", false, globalEndpointManagerMock);
 
-        List<RegionalRoutingContext> endpoints = ImmutableList.of(
+        List<RegionalRoutingContext> endpoints = CollectionUtils.immutableList(
             new RegionalRoutingContext(LocationEastUsEndpointToLocationPair.getLeft()),
             new RegionalRoutingContext(LocationEastUs2EndpointToLocationPair.getLeft()),
             new RegionalRoutingContext(LocationCentralUsEndpointToLocationPair.getLeft()));
@@ -506,7 +504,7 @@ public class RegionScopedSessionContainerTest {
         GlobalEndpointManager globalEndpointManagerMock = Mockito.mock(GlobalEndpointManager.class);
         RegionScopedSessionContainer sessionContainer = new RegionScopedSessionContainer("127.0.0.1", false, globalEndpointManagerMock);
 
-        List<RegionalRoutingContext> endpoints = ImmutableList.of(
+        List<RegionalRoutingContext> endpoints = CollectionUtils.immutableList(
             new RegionalRoutingContext(LocationEastUsEndpointToLocationPair.getLeft()),
             new RegionalRoutingContext(LocationEastUs2EndpointToLocationPair.getLeft()),
             new RegionalRoutingContext(LocationCentralUsEndpointToLocationPair.getLeft()));
@@ -566,7 +564,7 @@ public class RegionScopedSessionContainerTest {
         GlobalEndpointManager globalEndpointManagerMock = Mockito.mock(GlobalEndpointManager.class);
         RegionScopedSessionContainer sessionContainer = new RegionScopedSessionContainer("127.0.0.1", false, globalEndpointManagerMock);
 
-        List<RegionalRoutingContext> endpoints = ImmutableList.of(
+        List<RegionalRoutingContext> endpoints = CollectionUtils.immutableList(
             new RegionalRoutingContext(LocationEastUsEndpointToLocationPair.getLeft()),
             new RegionalRoutingContext(LocationEastUs2EndpointToLocationPair.getLeft()),
             new RegionalRoutingContext(LocationCentralUsEndpointToLocationPair.getLeft()));
@@ -579,7 +577,7 @@ public class RegionScopedSessionContainerTest {
         collectionCreateRequest.requestContext.regionalRoutingContextToRoute = new RegionalRoutingContext(locationEndpointContacted);
 
         sessionContainer.setSessionToken(collectionCreateRequest, documentCollectionId, "dbs/db1/colls1/collName",
-            ImmutableMap.of(HttpConstants.HttpHeaders.SESSION_TOKEN, partitionKeyRangeId + ":" + initialSessionToken));
+            CollectionUtils.immutableMap(HttpConstants.HttpHeaders.SESSION_TOKEN, partitionKeyRangeId + ":" + initialSessionToken));
         RxDocumentServiceRequest request = RxDocumentServiceRequest.create(mockDiagnosticsClientContext(),OperationType.Read, ResourceType.Document,
             "dbs/db1/colls1/collName2/docs/doc1", new HashMap<>());
         request.requestContext.regionalRoutingContextToRoute = new RegionalRoutingContext(locationEndpointContacted);
@@ -597,7 +595,7 @@ public class RegionScopedSessionContainerTest {
         String regionContacted = LocationEastUsEndpointToLocationPair.getRight();
         URI locationEndpointContacted = LocationEastUsEndpointToLocationPair.getLeft();
 
-        List<RegionalRoutingContext> endpoints = ImmutableList.of(
+        List<RegionalRoutingContext> endpoints = CollectionUtils.immutableList(
             new RegionalRoutingContext(LocationEastUsEndpointToLocationPair.getLeft()),
             new RegionalRoutingContext(LocationEastUs2EndpointToLocationPair.getLeft()),
             new RegionalRoutingContext(LocationCentralUsEndpointToLocationPair.getLeft()));
@@ -611,7 +609,7 @@ public class RegionScopedSessionContainerTest {
         String sessionTokenForRequest1 = "range_0:1#100#1=20#2=5#3=30";
 
         sessionContainer.setSessionToken(request1, documentCollectionId, collectionFullName,
-            ImmutableMap.of(HttpConstants.HttpHeaders.SESSION_TOKEN, sessionTokenForRequest1));
+            CollectionUtils.immutableMap(HttpConstants.HttpHeaders.SESSION_TOKEN, sessionTokenForRequest1));
 
         RxDocumentServiceRequest request2 = RxDocumentServiceRequest.create(mockDiagnosticsClientContext(), OperationType.Read, ResourceType.Document);
         request2.requestContext.regionalRoutingContextToRoute = new RegionalRoutingContext(locationEndpointContacted);
@@ -619,7 +617,7 @@ public class RegionScopedSessionContainerTest {
         String sessionTokenForRequest2 = "range_1:1#101#1=20#2=5#3=30";
 
         sessionContainer.setSessionToken(request2, documentCollectionId, collectionFullName,
-            ImmutableMap.of(HttpConstants.HttpHeaders.SESSION_TOKEN, sessionTokenForRequest2));
+            CollectionUtils.immutableMap(HttpConstants.HttpHeaders.SESSION_TOKEN, sessionTokenForRequest2));
 
         RxDocumentServiceRequest request = RxDocumentServiceRequest.createFromName(mockDiagnosticsClientContext(),OperationType.Read,
             collectionFullName + "/docs/doc1", ResourceType.Document);
@@ -642,7 +640,7 @@ public class RegionScopedSessionContainerTest {
         String regionContacted = LocationEastUsEndpointToLocationPair.getRight();
         URI locationEndpointContacted = LocationEastUsEndpointToLocationPair.getLeft();
 
-        List<RegionalRoutingContext> endpoints = ImmutableList.of(
+        List<RegionalRoutingContext> endpoints = CollectionUtils.immutableList(
             new RegionalRoutingContext(LocationEastUsEndpointToLocationPair.getLeft()),
             new RegionalRoutingContext(LocationEastUs2EndpointToLocationPair.getLeft()),
             new RegionalRoutingContext(LocationCentralUsEndpointToLocationPair.getLeft()));
@@ -656,7 +654,7 @@ public class RegionScopedSessionContainerTest {
         String sessionTokenForRequest1 = "range_0:1#100#1=20#2=5#3=30";
 
         sessionContainer.setSessionToken(request1, documentCollectionId, collectionFullName,
-            ImmutableMap.of(HttpConstants.HttpHeaders.SESSION_TOKEN, sessionTokenForRequest1));
+            CollectionUtils.immutableMap(HttpConstants.HttpHeaders.SESSION_TOKEN, sessionTokenForRequest1));
 
         RxDocumentServiceRequest request2 = RxDocumentServiceRequest.create(mockDiagnosticsClientContext(), OperationType.Read, ResourceType.Document);
         request2.requestContext.regionalRoutingContextToRoute = new RegionalRoutingContext(locationEndpointContacted);
@@ -664,7 +662,7 @@ public class RegionScopedSessionContainerTest {
         String sessionTokenForRequest2 = "range_1:1#101#1=20#2=5#3=30";
 
         sessionContainer.setSessionToken(request2, documentCollectionId, collectionFullName,
-            ImmutableMap.of(HttpConstants.HttpHeaders.SESSION_TOKEN, sessionTokenForRequest2));
+            CollectionUtils.immutableMap(HttpConstants.HttpHeaders.SESSION_TOKEN, sessionTokenForRequest2));
 
         RxDocumentServiceRequest request = RxDocumentServiceRequest.create(mockDiagnosticsClientContext(),OperationType.Read,
             documentCollectionId, ResourceType.Document, new HashMap<>());
@@ -689,7 +687,7 @@ public class RegionScopedSessionContainerTest {
         String regionContacted = LocationEastUsEndpointToLocationPair.getRight();
         URI locationEndpointContacted = LocationEastUsEndpointToLocationPair.getLeft();
 
-        List<RegionalRoutingContext> endpoints = ImmutableList.of(
+        List<RegionalRoutingContext> endpoints = CollectionUtils.immutableList(
             new RegionalRoutingContext(LocationEastUsEndpointToLocationPair.getLeft()),
             new RegionalRoutingContext(LocationEastUs2EndpointToLocationPair.getLeft()),
             new RegionalRoutingContext(LocationCentralUsEndpointToLocationPair.getLeft()));
@@ -703,7 +701,7 @@ public class RegionScopedSessionContainerTest {
         String sessionTokenForRequest1 = "range_0:1#100#1=20#2=5#3=30";
 
         sessionContainer.setSessionToken(request1, documentCollectionId, collectionFullName,
-            ImmutableMap.of(HttpConstants.HttpHeaders.SESSION_TOKEN, sessionTokenForRequest1));
+            CollectionUtils.immutableMap(HttpConstants.HttpHeaders.SESSION_TOKEN, sessionTokenForRequest1));
 
         RxDocumentServiceRequest request2 = RxDocumentServiceRequest.create(mockDiagnosticsClientContext(), OperationType.Read, ResourceType.Document);
         request2.requestContext.regionalRoutingContextToRoute = new RegionalRoutingContext(locationEndpointContacted);
@@ -711,7 +709,7 @@ public class RegionScopedSessionContainerTest {
         String sessionTokenForRequest2 = "range_1:1#101#1=20#2=5#3=30";
 
         sessionContainer.setSessionToken(request2, documentCollectionId, collectionFullName,
-            ImmutableMap.of(HttpConstants.HttpHeaders.SESSION_TOKEN, sessionTokenForRequest2));
+            CollectionUtils.immutableMap(HttpConstants.HttpHeaders.SESSION_TOKEN, sessionTokenForRequest2));
 
         RxDocumentServiceRequest request = RxDocumentServiceRequest.createFromName(mockDiagnosticsClientContext(),OperationType.Read,
             collectionFullName + "/docs/doc1", ResourceType.Document);
@@ -732,7 +730,7 @@ public class RegionScopedSessionContainerTest {
         String regionContacted = LocationEastUsEndpointToLocationPair.getRight();
         URI locationEndpointContacted = LocationEastUsEndpointToLocationPair.getLeft();
 
-        List<RegionalRoutingContext> endpoints = ImmutableList.of(
+        List<RegionalRoutingContext> endpoints = CollectionUtils.immutableList(
             new RegionalRoutingContext(LocationEastUsEndpointToLocationPair.getLeft()),
             new RegionalRoutingContext(LocationEastUs2EndpointToLocationPair.getLeft()),
             new RegionalRoutingContext(LocationCentralUsEndpointToLocationPair.getLeft()));
@@ -746,7 +744,7 @@ public class RegionScopedSessionContainerTest {
         String sessionTokenWithPkRangeIdForRequest1 = "range_0:1#100#1=20#2=5#3=30";
 
         sessionContainer.setSessionToken(request1, documentCollectionId, collectionFullName,
-            ImmutableMap.of(HttpConstants.HttpHeaders.SESSION_TOKEN, sessionTokenWithPkRangeIdForRequest1));
+            CollectionUtils.immutableMap(HttpConstants.HttpHeaders.SESSION_TOKEN, sessionTokenWithPkRangeIdForRequest1));
 
         RxDocumentServiceRequest request2 = RxDocumentServiceRequest.create(mockDiagnosticsClientContext(), OperationType.Read, ResourceType.Document);
         request2.requestContext.regionalRoutingContextToRoute = new RegionalRoutingContext(locationEndpointContacted);
@@ -754,7 +752,7 @@ public class RegionScopedSessionContainerTest {
         String sessionTokenWithPkRangeIdForRequest2 = "range_1:1#101#1=20#2=5#3=30";
 
         sessionContainer.setSessionToken(request2, documentCollectionId, collectionFullName,
-            ImmutableMap.of(HttpConstants.HttpHeaders.SESSION_TOKEN, sessionTokenWithPkRangeIdForRequest2));
+            CollectionUtils.immutableMap(HttpConstants.HttpHeaders.SESSION_TOKEN, sessionTokenWithPkRangeIdForRequest2));
 
         RxDocumentServiceRequest request = RxDocumentServiceRequest.create(mockDiagnosticsClientContext(),OperationType.Read,
             documentCollectionId, ResourceType.Document, new HashMap<>());
@@ -780,7 +778,7 @@ public class RegionScopedSessionContainerTest {
         String regionContacted = LocationEastUsEndpointToLocationPair.getRight();
         URI locationEndpointContacted = LocationEastUsEndpointToLocationPair.getLeft();
 
-        List<RegionalRoutingContext> endpoints = ImmutableList.of(
+        List<RegionalRoutingContext> endpoints = CollectionUtils.immutableList(
             new RegionalRoutingContext(LocationEastUsEndpointToLocationPair.getLeft()),
             new RegionalRoutingContext(LocationEastUs2EndpointToLocationPair.getLeft()),
             new RegionalRoutingContext(LocationCentralUsEndpointToLocationPair.getLeft()));
@@ -794,7 +792,7 @@ public class RegionScopedSessionContainerTest {
         String sessionTokenWithPkRangeIdForRequest1 = "range_0:1#100#1=20#2=5#3=30";
 
         sessionContainer.setSessionToken(request1, documentCollectionId, collectionFullName,
-            ImmutableMap.of(HttpConstants.HttpHeaders.SESSION_TOKEN, sessionTokenWithPkRangeIdForRequest1));
+            CollectionUtils.immutableMap(HttpConstants.HttpHeaders.SESSION_TOKEN, sessionTokenWithPkRangeIdForRequest1));
 
         RxDocumentServiceRequest request2 = RxDocumentServiceRequest.create(mockDiagnosticsClientContext(), OperationType.Read, ResourceType.Document);
         request2.requestContext.regionalRoutingContextToRoute = new RegionalRoutingContext(locationEndpointContacted);
@@ -802,7 +800,7 @@ public class RegionScopedSessionContainerTest {
         String sessionTokenWithPkRangeIdForRequest2 = "range_1:1#101#1=20#2=5#3=30";
 
         sessionContainer.setSessionToken(request2, documentCollectionId, collectionFullName,
-            ImmutableMap.of(HttpConstants.HttpHeaders.SESSION_TOKEN, sessionTokenWithPkRangeIdForRequest2));
+            CollectionUtils.immutableMap(HttpConstants.HttpHeaders.SESSION_TOKEN, sessionTokenWithPkRangeIdForRequest2));
 
         RxDocumentServiceRequest requestToResultInPkRangeIdBasedMiss = RxDocumentServiceRequest.create(mockDiagnosticsClientContext(),OperationType.Read,
             documentCollectionId, ResourceType.Document, new HashMap<>());
@@ -824,7 +822,7 @@ public class RegionScopedSessionContainerTest {
         String regionContacted = LocationEastUsEndpointToLocationPair.getRight();
         URI locationEndpointContacted = LocationEastUsEndpointToLocationPair.getLeft();
 
-        List<RegionalRoutingContext> endpoints = ImmutableList.of(
+        List<RegionalRoutingContext> endpoints = CollectionUtils.immutableList(
             new RegionalRoutingContext(LocationEastUsEndpointToLocationPair.getLeft()),
             new RegionalRoutingContext(LocationEastUs2EndpointToLocationPair.getLeft()),
             new RegionalRoutingContext(LocationCentralUsEndpointToLocationPair.getLeft()));
@@ -838,7 +836,7 @@ public class RegionScopedSessionContainerTest {
         String sessionTokenWithPkRangeIdForRequest1 = "range_0:1#100#1=20#2=5#3=30";
 
         sessionContainer.setSessionToken(request1, documentCollectionId, collectionFullName,
-            ImmutableMap.of(HttpConstants.HttpHeaders.SESSION_TOKEN, sessionTokenWithPkRangeIdForRequest1));
+            CollectionUtils.immutableMap(HttpConstants.HttpHeaders.SESSION_TOKEN, sessionTokenWithPkRangeIdForRequest1));
 
         RxDocumentServiceRequest request2 = RxDocumentServiceRequest.create(mockDiagnosticsClientContext(), OperationType.Read, ResourceType.Document);
         request2.requestContext.regionalRoutingContextToRoute = new RegionalRoutingContext(locationEndpointContacted);
@@ -846,7 +844,7 @@ public class RegionScopedSessionContainerTest {
         String sessionTokenWithPkRangeIdForRequest2 = "range_1:1#101#1=20#2=5#3=30";
 
         sessionContainer.setSessionToken(request2, documentCollectionId, collectionFullName,
-            ImmutableMap.of(HttpConstants.HttpHeaders.SESSION_TOKEN, sessionTokenWithPkRangeIdForRequest2));
+            CollectionUtils.immutableMap(HttpConstants.HttpHeaders.SESSION_TOKEN, sessionTokenWithPkRangeIdForRequest2));
 
         RxDocumentServiceRequest requestToResultInCollectionBasedMiss = RxDocumentServiceRequest.create(mockDiagnosticsClientContext(),OperationType.Read,
             ResourceId.newDocumentCollectionId(getRandomDbId(), randomCollectionId - 1).getDocumentCollectionId().toString(),
@@ -866,7 +864,7 @@ public class RegionScopedSessionContainerTest {
         String regionContacted = LocationEastUsEndpointToLocationPair.getRight();
         URI locationEndpointContacted = LocationEastUsEndpointToLocationPair.getLeft();
 
-        List<RegionalRoutingContext> endpoints = ImmutableList.of(
+        List<RegionalRoutingContext> endpoints = CollectionUtils.immutableList(
             new RegionalRoutingContext(LocationEastUsEndpointToLocationPair.getLeft()),
             new RegionalRoutingContext(LocationEastUs2EndpointToLocationPair.getLeft()),
             new RegionalRoutingContext(LocationCentralUsEndpointToLocationPair.getLeft()));
@@ -880,7 +878,7 @@ public class RegionScopedSessionContainerTest {
         String sessionTokenWithPkRangeIdForRequest1 = "range_0:1#100#1=20#2=5#3=30";
 
         sessionContainer.setSessionToken(request1, documentCollectionId, collectionFullName,
-            ImmutableMap.of(HttpConstants.HttpHeaders.SESSION_TOKEN, sessionTokenWithPkRangeIdForRequest1));
+            CollectionUtils.immutableMap(HttpConstants.HttpHeaders.SESSION_TOKEN, sessionTokenWithPkRangeIdForRequest1));
 
         RxDocumentServiceRequest request2 = RxDocumentServiceRequest.create(mockDiagnosticsClientContext(), OperationType.Read, ResourceType.Document);
         request2.requestContext.regionalRoutingContextToRoute = new RegionalRoutingContext(locationEndpointContacted);
@@ -888,13 +886,13 @@ public class RegionScopedSessionContainerTest {
         String sessionTokenWithPkRangeIdForRequest2 = "range_1:1#101#1=20#2=5#3=30";
 
         sessionContainer.setSessionToken(request2, documentCollectionId, collectionFullName,
-            ImmutableMap.of(HttpConstants.HttpHeaders.SESSION_TOKEN, sessionTokenWithPkRangeIdForRequest2));
+            CollectionUtils.immutableMap(HttpConstants.HttpHeaders.SESSION_TOKEN, sessionTokenWithPkRangeIdForRequest2));
 
         RxDocumentServiceRequest request = RxDocumentServiceRequest.create(mockDiagnosticsClientContext(),OperationType.Read,
             documentCollectionId, ResourceType.Document, new HashMap<>());
 
         request.requestContext.resolvedPartitionKeyRange = new PartitionKeyRange();
-        GatewayTestUtils.setParent(request.requestContext.resolvedPartitionKeyRange, ImmutableList.of("range_1"));
+        GatewayTestUtils.setParent(request.requestContext.resolvedPartitionKeyRange, CollectionUtils.immutableList("range_1"));
         ISessionToken sessionToken = sessionContainer.resolvePartitionLocalSessionToken(request, "range_2");
         assertThat(sessionToken.getLSN()).isEqualTo(101);
     }
@@ -911,7 +909,7 @@ public class RegionScopedSessionContainerTest {
         URI locationEndpointContacted = LocationEastUsEndpointToLocationPair.getLeft();
         String unparsedSessionToken = "range_0:1#100#1=20#2=5#3=30";
 
-        List<RegionalRoutingContext> endpoints = ImmutableList.of(
+        List<RegionalRoutingContext> endpoints = CollectionUtils.immutableList(
             new RegionalRoutingContext(LocationEastUsEndpointToLocationPair.getLeft()),
             new RegionalRoutingContext(LocationEastUs2EndpointToLocationPair.getLeft()),
             new RegionalRoutingContext(LocationCentralUsEndpointToLocationPair.getLeft()));
@@ -923,7 +921,7 @@ public class RegionScopedSessionContainerTest {
         documentCollectionCreateRequest.requestContext.regionalRoutingContextToRoute = new RegionalRoutingContext(locationEndpointContacted);
 
         sessionContainer.setSessionToken(documentCollectionCreateRequest, documentCollectionId, collectionFullName,
-            ImmutableMap.of(HttpConstants.HttpHeaders.SESSION_TOKEN, unparsedSessionToken));
+            CollectionUtils.immutableMap(HttpConstants.HttpHeaders.SESSION_TOKEN, unparsedSessionToken));
 
         //  Test getResourceId based
         RxDocumentServiceRequest request = RxDocumentServiceRequest.create(mockDiagnosticsClientContext(),OperationType.Read,
@@ -973,7 +971,7 @@ public class RegionScopedSessionContainerTest {
 
         String unparsedSessionToken = "range_0:1#100#1=20#2=5#3=30";
 
-        List<RegionalRoutingContext> endpoints = ImmutableList.of(
+        List<RegionalRoutingContext> endpoints = CollectionUtils.immutableList(
             new RegionalRoutingContext(LocationEastUsEndpointToLocationPair.getLeft()),
             new RegionalRoutingContext(LocationEastUs2EndpointToLocationPair.getLeft()),
             new RegionalRoutingContext(LocationCentralUsEndpointToLocationPair.getLeft()));
@@ -985,7 +983,7 @@ public class RegionScopedSessionContainerTest {
         documentCollectionCreateRequest.requestContext.regionalRoutingContextToRoute = new RegionalRoutingContext(locationEndpointContacted);
 
         sessionContainer.setSessionToken(documentCollectionCreateRequest, documentCollectionId, collectionFullName,
-            ImmutableMap.of(HttpConstants.HttpHeaders.SESSION_TOKEN, unparsedSessionToken));
+            CollectionUtils.immutableMap(HttpConstants.HttpHeaders.SESSION_TOKEN, unparsedSessionToken));
 
         //  Test resourceId based
         RxDocumentServiceRequest request = RxDocumentServiceRequest.create(mockDiagnosticsClientContext(),OperationType.Read,
@@ -1036,7 +1034,7 @@ public class RegionScopedSessionContainerTest {
         URI locationEndpointContacted = LocationEastUsEndpointToLocationPair.getLeft();
         String unparsedSessionToken = "range_0:1#100#1=20#2=5#3=30";
 
-        List<RegionalRoutingContext> endpoints = ImmutableList.of(
+        List<RegionalRoutingContext> endpoints = CollectionUtils.immutableList(
             new RegionalRoutingContext(LocationEastUsEndpointToLocationPair.getLeft()),
             new RegionalRoutingContext(LocationEastUs2EndpointToLocationPair.getLeft()),
             new RegionalRoutingContext(LocationCentralUsEndpointToLocationPair.getLeft()));
@@ -1048,7 +1046,7 @@ public class RegionScopedSessionContainerTest {
         documentCollectionCreateRequest.requestContext.regionalRoutingContextToRoute = new RegionalRoutingContext(locationEndpointContacted);
 
         sessionContainer.setSessionToken(documentCollectionCreateRequest, documentCollectionId1, collectionFullName1,
-            ImmutableMap.of(HttpConstants.HttpHeaders.SESSION_TOKEN, unparsedSessionToken));
+            CollectionUtils.immutableMap(HttpConstants.HttpHeaders.SESSION_TOKEN, unparsedSessionToken));
 
         //  Test resourceId based
         RxDocumentServiceRequest request1 = RxDocumentServiceRequest.create(mockDiagnosticsClientContext(),OperationType.Read,
@@ -1064,7 +1062,7 @@ public class RegionScopedSessionContainerTest {
         request2.requestContext.regionalRoutingContextToRoute = new RegionalRoutingContext(locationEndpointContacted);
 
         sessionContainer.setSessionToken(request2, documentCollectionId2, collectionFullName2,
-            ImmutableMap.of(HttpConstants.HttpHeaders.SESSION_TOKEN, unparsedSessionToken));
+            CollectionUtils.immutableMap(HttpConstants.HttpHeaders.SESSION_TOKEN, unparsedSessionToken));
 
         ISessionToken sessionToken = sessionContainer.resolvePartitionLocalSessionToken(request1, "range_0");
         assertThat(sessionToken.getLSN()).isEqualTo(100);
@@ -1094,7 +1092,7 @@ public class RegionScopedSessionContainerTest {
         String regionContacted = LocationEastUsEndpointToLocationPair.getRight();
         URI locationEndpointContacted = LocationEastUsEndpointToLocationPair.getLeft();
 
-        List<RegionalRoutingContext> endpoints = ImmutableList.of(
+        List<RegionalRoutingContext> endpoints = CollectionUtils.immutableList(
             new RegionalRoutingContext(LocationEastUsEndpointToLocationPair.getLeft()),
             new RegionalRoutingContext(LocationEastUs2EndpointToLocationPair.getLeft()),
             new RegionalRoutingContext(LocationCentralUsEndpointToLocationPair.getLeft()));
@@ -1110,7 +1108,7 @@ public class RegionScopedSessionContainerTest {
         request.setResourceId(documentCollectionId);
 
         assertThat(request.getIsNameBased()).isFalse();
-        sessionContainer.setSessionToken(request, ImmutableMap.of(HttpConstants.HttpHeaders.SESSION_TOKEN, sessionTokenWithPkRangeIdForRequest));
+        sessionContainer.setSessionToken(request, CollectionUtils.immutableMap(HttpConstants.HttpHeaders.SESSION_TOKEN, sessionTokenWithPkRangeIdForRequest));
         request = RxDocumentServiceRequest.create(mockDiagnosticsClientContext(),OperationType.Read, documentCollectionId, ResourceType.Document, new HashMap<>());
         request.requestContext.regionalRoutingContextToRoute = new RegionalRoutingContext(locationEndpointContacted);
 
@@ -1135,7 +1133,7 @@ public class RegionScopedSessionContainerTest {
         String regionContacted = LocationEastUsEndpointToLocationPair.getRight();
         URI locationEndpointContacted = LocationEastUsEndpointToLocationPair.getLeft();
 
-        List<RegionalRoutingContext> endpoints = ImmutableList.of(
+        List<RegionalRoutingContext> endpoints = CollectionUtils.immutableList(
             new RegionalRoutingContext(LocationEastUsEndpointToLocationPair.getLeft()),
             new RegionalRoutingContext(LocationEastUs2EndpointToLocationPair.getLeft()),
             new RegionalRoutingContext(LocationCentralUsEndpointToLocationPair.getLeft()));
@@ -1151,7 +1149,7 @@ public class RegionScopedSessionContainerTest {
         request.setResourceId(documentCollectionId);
 
         sessionContainer.setSessionToken(request,
-            ImmutableMap.of(HttpConstants.HttpHeaders.SESSION_TOKEN, sessionTokenWithPkRangeIdForRequest,
+            CollectionUtils.immutableMap(HttpConstants.HttpHeaders.SESSION_TOKEN, sessionTokenWithPkRangeIdForRequest,
                 HttpConstants.HttpHeaders.OWNER_FULL_NAME, collectionFullName2));
 
         request = RxDocumentServiceRequest.createFromName(mockDiagnosticsClientContext(),OperationType.Read, collectionFullName1 + "/docs/doc1", ResourceType.Document);
@@ -1181,7 +1179,7 @@ public class RegionScopedSessionContainerTest {
         String regionContacted = LocationEastUsEndpointToLocationPair.getRight();
         URI locationEndpointContacted = LocationEastUsEndpointToLocationPair.getLeft();
 
-        List<RegionalRoutingContext> endpoints = ImmutableList.of(
+        List<RegionalRoutingContext> endpoints = CollectionUtils.immutableList(
             new RegionalRoutingContext(LocationEastUsEndpointToLocationPair.getLeft()),
             new RegionalRoutingContext(LocationEastUs2EndpointToLocationPair.getLeft()),
             new RegionalRoutingContext(LocationCentralUsEndpointToLocationPair.getLeft()));
@@ -1200,7 +1198,7 @@ public class RegionScopedSessionContainerTest {
         assertThat(request.getIsNameBased()).isFalse();
 
         sessionContainer.setSessionToken(request,
-            ImmutableMap.of(HttpConstants.HttpHeaders.SESSION_TOKEN, sessionTokenWithPkRangeIdForRequest,
+            CollectionUtils.immutableMap(HttpConstants.HttpHeaders.SESSION_TOKEN, sessionTokenWithPkRangeIdForRequest,
                 HttpConstants.HttpHeaders.OWNER_ID, documentCollectionId2));
 
         request = RxDocumentServiceRequest.create(mockDiagnosticsClientContext(),OperationType.Read,
@@ -1234,7 +1232,7 @@ public class RegionScopedSessionContainerTest {
         String regionContacted = LocationEastUsEndpointToLocationPair.getRight();
         URI locationEndpointContacted = LocationEastUsEndpointToLocationPair.getLeft();
 
-        List<RegionalRoutingContext> endpoints = ImmutableList.of(
+        List<RegionalRoutingContext> endpoints = CollectionUtils.immutableList(
             new RegionalRoutingContext(LocationEastUsEndpointToLocationPair.getLeft()),
             new RegionalRoutingContext(LocationEastUs2EndpointToLocationPair.getLeft()),
             new RegionalRoutingContext(LocationCentralUsEndpointToLocationPair.getLeft()));
@@ -1252,7 +1250,7 @@ public class RegionScopedSessionContainerTest {
         assertThat(request.getIsNameBased()).isTrue();
 
         sessionContainer.setSessionToken(request,
-            ImmutableMap.of(HttpConstants.HttpHeaders.SESSION_TOKEN, sessionTokenWithPkRangeIdForRequest,
+            CollectionUtils.immutableMap(HttpConstants.HttpHeaders.SESSION_TOKEN, sessionTokenWithPkRangeIdForRequest,
                 HttpConstants.HttpHeaders.OWNER_ID, documentCollectionId2));
 
         request = RxDocumentServiceRequest.create(mockDiagnosticsClientContext(),OperationType.Read,
@@ -1279,7 +1277,7 @@ public class RegionScopedSessionContainerTest {
         RxDocumentServiceRequest request = RxDocumentServiceRequest.create(mockDiagnosticsClientContext(),OperationType.ReadFeed,
             collectionFullName + "/docs/doc1", ResourceType.DocumentCollection, new HashMap<>());
         request.setResourceId(documentCollectionId);
-        sessionContainer.setSessionToken(request, ImmutableMap.of(HttpConstants.HttpHeaders.SESSION_TOKEN, "range_0:1"));
+        sessionContainer.setSessionToken(request, CollectionUtils.immutableMap(HttpConstants.HttpHeaders.SESSION_TOKEN, "range_0:1"));
 
         request = RxDocumentServiceRequest.create(mockDiagnosticsClientContext(),OperationType.Read,
             documentCollectionId, ResourceType.Document, new HashMap<>());
@@ -1301,7 +1299,7 @@ public class RegionScopedSessionContainerTest {
         String regionContacted = LocationEastUsEndpointToLocationPair.getRight();
         URI locationEndpointContacted = LocationEastUsEndpointToLocationPair.getLeft();
 
-        List<RegionalRoutingContext> endpoints = ImmutableList.of(
+        List<RegionalRoutingContext> endpoints = CollectionUtils.immutableList(
             new RegionalRoutingContext(LocationEastUsEndpointToLocationPair.getLeft()),
             new RegionalRoutingContext(LocationEastUs2EndpointToLocationPair.getLeft()),
             new RegionalRoutingContext(LocationCentralUsEndpointToLocationPair.getLeft()));
@@ -1317,7 +1315,7 @@ public class RegionScopedSessionContainerTest {
 
         request.setResourceId(documentCollectionId);
 
-        sessionContainer.setSessionToken(request, ImmutableMap.of(HttpConstants.HttpHeaders.SESSION_TOKEN, sessionTokenWithPkRangeIdForRequest));
+        sessionContainer.setSessionToken(request, CollectionUtils.immutableMap(HttpConstants.HttpHeaders.SESSION_TOKEN, sessionTokenWithPkRangeIdForRequest));
 
         request = RxDocumentServiceRequest.create(mockDiagnosticsClientContext(),OperationType.Read,
             collectionFullName + "/docs/doc1", ResourceType.Document, new HashMap<>());
@@ -1326,7 +1324,7 @@ public class RegionScopedSessionContainerTest {
         String sessionTokenWithPkRangeIdToBeOverwritten = "range_0:1#105#4=90#5=1";
 
         request.setResourceId(documentCollectionId);
-        sessionContainer.setSessionToken(request, ImmutableMap.of(HttpConstants.HttpHeaders.SESSION_TOKEN, sessionTokenWithPkRangeIdToBeOverwritten));
+        sessionContainer.setSessionToken(request, CollectionUtils.immutableMap(HttpConstants.HttpHeaders.SESSION_TOKEN, sessionTokenWithPkRangeIdToBeOverwritten));
 
         request = RxDocumentServiceRequest.create(mockDiagnosticsClientContext(),OperationType.Read,
             documentCollectionId, ResourceType.Document, new HashMap<>());
@@ -1348,7 +1346,7 @@ public class RegionScopedSessionContainerTest {
         String regionContacted = LocationEastUsEndpointToLocationPair.getRight();
         URI locationEndpointContacted = LocationEastUsEndpointToLocationPair.getLeft();
 
-        List<RegionalRoutingContext> endpoints = ImmutableList.of(
+        List<RegionalRoutingContext> endpoints = CollectionUtils.immutableList(
             new RegionalRoutingContext(LocationEastUsEndpointToLocationPair.getLeft()),
             new RegionalRoutingContext(LocationEastUs2EndpointToLocationPair.getLeft()),
             new RegionalRoutingContext(LocationCentralUsEndpointToLocationPair.getLeft()));
@@ -1363,7 +1361,7 @@ public class RegionScopedSessionContainerTest {
         String sessionTokenWithPkRangeIdForRequest = "range_0:1#105#4=90#5=1";
         request.setResourceId(documentCollectionId);
 
-        sessionContainer.setSessionToken(request, ImmutableMap.of(HttpConstants.HttpHeaders.SESSION_TOKEN, sessionTokenWithPkRangeIdForRequest));
+        sessionContainer.setSessionToken(request, CollectionUtils.immutableMap(HttpConstants.HttpHeaders.SESSION_TOKEN, sessionTokenWithPkRangeIdForRequest));
 
         request = RxDocumentServiceRequest.create(mockDiagnosticsClientContext(),OperationType.Read,
             collectionFullName + "/docs/doc1", ResourceType.Document, new HashMap<>());
@@ -1373,7 +1371,7 @@ public class RegionScopedSessionContainerTest {
 
         request.setResourceId(documentCollectionId);
 
-        sessionContainer.setSessionToken(request, ImmutableMap.of(HttpConstants.HttpHeaders.SESSION_TOKEN, sessionTokenWithPkRangeIdToBeOverwritten));
+        sessionContainer.setSessionToken(request, CollectionUtils.immutableMap(HttpConstants.HttpHeaders.SESSION_TOKEN, sessionTokenWithPkRangeIdToBeOverwritten));
 
         request = RxDocumentServiceRequest.create(mockDiagnosticsClientContext(),OperationType.Read,
             documentCollectionId, ResourceType.Document, new HashMap<>());
@@ -1394,7 +1392,7 @@ public class RegionScopedSessionContainerTest {
         String regionContacted = LocationEastUsEndpointToLocationPair.getRight();
         URI locationEndpointContacted = LocationEastUsEndpointToLocationPair.getLeft();
 
-        List<RegionalRoutingContext> endpoints = ImmutableList.of(
+        List<RegionalRoutingContext> endpoints = CollectionUtils.immutableList(
             new RegionalRoutingContext(LocationEastUsEndpointToLocationPair.getLeft()),
             new RegionalRoutingContext(LocationEastUs2EndpointToLocationPair.getLeft()),
             new RegionalRoutingContext(LocationCentralUsEndpointToLocationPair.getLeft()));
@@ -1408,7 +1406,7 @@ public class RegionScopedSessionContainerTest {
         String sessionTokenWithPkRangeIdForDocReadRequest1 = "range_0:1#100#4=90#5=1";
 
         sessionContainer.setSessionToken(docReadRequest1, documentCollectionId, collectionFullName + "/docs/doc1",
-            ImmutableMap.of(HttpConstants.HttpHeaders.SESSION_TOKEN, sessionTokenWithPkRangeIdForDocReadRequest1));
+            CollectionUtils.immutableMap(HttpConstants.HttpHeaders.SESSION_TOKEN, sessionTokenWithPkRangeIdForDocReadRequest1));
         RxDocumentServiceRequest request = RxDocumentServiceRequest.create(mockDiagnosticsClientContext(),OperationType.Read,
             documentCollectionId, ResourceType.Document, new HashMap<>());
         request.requestContext.regionalRoutingContextToRoute = new RegionalRoutingContext(locationEndpointContacted);
@@ -1457,7 +1455,7 @@ public class RegionScopedSessionContainerTest {
                     documentReadRequest,
                     collectionResourceId,
                     collectionFullName,
-                    ImmutableMap.of(HttpConstants.HttpHeaders.SESSION_TOKEN, partitionKeyRangeId + ":" + lsn));
+                    CollectionUtils.immutableMap(HttpConstants.HttpHeaders.SESSION_TOKEN, partitionKeyRangeId + ":" + lsn));
             }
         }
 
@@ -1470,7 +1468,7 @@ public class RegionScopedSessionContainerTest {
         DocumentServiceRequestContext dsrContext = new DocumentServiceRequestContext();
         PartitionKeyRange resolvedPKRange = new PartitionKeyRange();
         resolvedPKRange.setId("range_" + (numPartitionKeyRangeIds + 10));
-        GatewayTestUtils.setParent(resolvedPKRange, ImmutableList.of("range_2", "range_x"));
+        GatewayTestUtils.setParent(resolvedPKRange, CollectionUtils.immutableList("range_2", "range_x"));
         dsrContext.resolvedPartitionKeyRange = resolvedPKRange;
         request.requestContext = dsrContext;
 
@@ -1489,7 +1487,7 @@ public class RegionScopedSessionContainerTest {
         String regionContacted = LocationEastUsEndpointToLocationPair.getRight();
         URI locationEndpointContacted = LocationEastUsEndpointToLocationPair.getLeft();
 
-        List<RegionalRoutingContext> endpoints = ImmutableList.of(
+        List<RegionalRoutingContext> endpoints = CollectionUtils.immutableList(
             new RegionalRoutingContext(LocationEastUsEndpointToLocationPair.getLeft()),
             new RegionalRoutingContext(LocationEastUs2EndpointToLocationPair.getLeft()),
             new RegionalRoutingContext(LocationCentralUsEndpointToLocationPair.getLeft()));
@@ -1509,7 +1507,7 @@ public class RegionScopedSessionContainerTest {
             request1,
             documentCollectionId1,
             collectionFullName,
-            ImmutableMap.of(HttpConstants.HttpHeaders.SESSION_TOKEN, resultantParentSessionToken));
+            CollectionUtils.immutableMap(HttpConstants.HttpHeaders.SESSION_TOKEN, resultantParentSessionToken));
 
         // send requests for children
         String childPKRangeId = "1";
@@ -1540,7 +1538,7 @@ public class RegionScopedSessionContainerTest {
         String regionContacted = LocationEastUsEndpointToLocationPair.getRight();
         URI locationEndpointContacted = LocationEastUsEndpointToLocationPair.getLeft();
 
-        List<RegionalRoutingContext> endpoints = ImmutableList.of(
+        List<RegionalRoutingContext> endpoints = CollectionUtils.immutableList(
             new RegionalRoutingContext(LocationEastUsEndpointToLocationPair.getLeft()),
             new RegionalRoutingContext(LocationEastUs2EndpointToLocationPair.getLeft()),
             new RegionalRoutingContext(LocationCentralUsEndpointToLocationPair.getLeft()));
@@ -1574,7 +1572,7 @@ public class RegionScopedSessionContainerTest {
             request1,
             documentCollectionId1,
             collectionFullName,
-            ImmutableMap.of(HttpConstants.HttpHeaders.SESSION_TOKEN, parent1SessionToken));
+            CollectionUtils.immutableMap(HttpConstants.HttpHeaders.SESSION_TOKEN, parent1SessionToken));
 
         String parent2PKRangeId = "1";
         String parent2Session = String.format(
@@ -1592,7 +1590,7 @@ public class RegionScopedSessionContainerTest {
             request2,
             documentCollectionId1,
             collectionFullName,
-            ImmutableMap.of(HttpConstants.HttpHeaders.SESSION_TOKEN, parent2SessionToken));
+            CollectionUtils.immutableMap(HttpConstants.HttpHeaders.SESSION_TOKEN, parent2SessionToken));
 
         // send requests for children
         String childPKRangeId = "2";
@@ -1696,7 +1694,7 @@ public class RegionScopedSessionContainerTest {
                 request.setPartitionKeyInternal(ModelBridgeInternal.getPartitionKeyInternal(new PartitionKey(pkToBeUsedForSessionTokenResolution)));
             }
 
-            request.setPartitionKeyDefinition(new PartitionKeyDefinition().setPaths(ImmutableList.of("/mypk")));
+            request.setPartitionKeyDefinition(new PartitionKeyDefinition().setPaths(CollectionUtils.immutableList("/mypk")));
 
             if (!Strings.isNullOrEmpty(pkRangeIdToBeUsedForSessionTokenResolution)) {
                 ISessionToken resolvedSessionToken = sessionContainer.resolvePartitionLocalSessionToken(request, pkRangeIdToBeUsedForSessionTokenResolution);

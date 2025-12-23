@@ -5,7 +5,7 @@ package com.azure.cosmos.implementation.throughputControl.sdk.exceptions;
 
 import com.azure.cosmos.implementation.throughputControl.ThroughputControlStore;
 
-import static com.azure.cosmos.implementation.guava25.base.Preconditions.checkNotNull;
+import static com.azure.cosmos.implementation.Utils.checkNotNull;
 
 /**
  * This exception is mainly used to indicate the exception happens during throughput control initialization.

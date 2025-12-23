@@ -4,7 +4,6 @@
 package com.azure.cosmos.implementation;
 
 import com.azure.cosmos.GatewayTestUtils;
-import com.azure.cosmos.implementation.guava25.collect.ImmutableList;
 import com.azure.cosmos.implementation.routing.RegionalRoutingContext;
 import com.azure.cosmos.models.ModelBridgeInternal;
 import com.azure.cosmos.models.PartitionKey;
@@ -249,11 +248,11 @@ public class RegionScopedSessionContainerConcurrencyTest {
             new RegionScopedSessionContainer("127.0.0.1", false, globalEndpointManagerMock);
 
         // Build endpoints per ordering
-        ImmutableList.Builder<RegionalRoutingContext> endpointBuilder = ImmutableList.builder();
+        List<RegionalRoutingContext> endpointBuilder = new ArrayList<>();
         for (URI u : orderedReadEndpoints) {
             endpointBuilder.add(new RegionalRoutingContext(u));
         }
-        List<RegionalRoutingContext> endpoints = Collections.unmodifiableList(endpointBuilder.build());
+        List<RegionalRoutingContext> endpoints = Collections.unmodifiableList(endpointBuilder);
 
         Mockito.when(globalEndpointManagerMock.getReadEndpoints()).thenReturn(endpoints);
         Mockito.when(globalEndpointManagerMock.getRegionName(Mockito.eq(EAST_US), Mockito.any()))
@@ -278,7 +277,7 @@ public class RegionScopedSessionContainerConcurrencyTest {
         AtomicLong[] maxObservedLocalLsnSatelliteTwo = new AtomicLong[NUM_PK_RANGES];
         boolean[] firstWritten = new boolean[NUM_PK_RANGES];
         OrderedApplier[] orderedAppliers = new OrderedApplier[NUM_PK_RANGES];
-        PartitionKeyDefinition partitionKeyDefinition = new PartitionKeyDefinition().setPaths(ImmutableList.of("/mypk"));
+        PartitionKeyDefinition partitionKeyDefinition = new PartitionKeyDefinition().setPaths(CollectionUtils.immutableList("/mypk"));
 
         // NEW: per-range sequence generators (only for successful resolves) and ordered appliers
         AtomicLong[] sequenceGenerators = new AtomicLong[NUM_PK_RANGES];
@@ -330,7 +329,7 @@ public class RegionScopedSessionContainerConcurrencyTest {
 
                         PartitionKeyRange pkRange = new PartitionKeyRange();
                         pkRange.setId(pkRangeId);
-                        GatewayTestUtils.setParent(pkRange, ImmutableList.of());
+                        GatewayTestUtils.setParent(pkRange, CollectionUtils.immutableList());
                         writeRequest.requestContext.resolvedPartitionKeyRange = pkRange;
 
                         // Consistency of mapping crucial PK should always map to same PK Range ID.
@@ -385,7 +384,7 @@ public class RegionScopedSessionContainerConcurrencyTest {
 
                             PartitionKeyRange pkRange = new PartitionKeyRange();
                             pkRange.setId(pkRangeId);
-                            GatewayTestUtils.setParent(pkRange, ImmutableList.of());
+                            GatewayTestUtils.setParent(pkRange, CollectionUtils.immutableList());
                             readRequest.requestContext.resolvedPartitionKeyRange = pkRange;
 
                             // Consistency of mapping crucial PK should always map to same PK Range ID.

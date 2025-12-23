@@ -7,7 +7,7 @@ import com.azure.cosmos.implementation.Strings;
 import com.azure.cosmos.models.PriorityLevel;
 import com.azure.cosmos.util.Beta;
 
-import static com.azure.cosmos.implementation.guava25.base.Preconditions.checkArgument;
+import static com.azure.cosmos.implementation.Utils.checkArgument;
 
 /**
  * The throughput control group config builder.

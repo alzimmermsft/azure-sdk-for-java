@@ -17,7 +17,7 @@ import com.azure.cosmos.implementation.HttpConstants;
 import com.azure.cosmos.implementation.Integers;
 import com.azure.cosmos.implementation.InternalServerErrorException;
 import com.azure.cosmos.implementation.InvalidPartitionException;
-import com.azure.cosmos.implementation.Lists;
+import com.azure.cosmos.implementation.CollectionUtils;
 import com.azure.cosmos.implementation.LockedException;
 import com.azure.cosmos.implementation.Longs;
 import com.azure.cosmos.implementation.MethodNotAllowedException;
@@ -58,6 +58,7 @@ import reactor.core.publisher.Mono;
 import java.net.URI;
 import java.time.Duration;
 import java.time.Instant;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -768,7 +769,7 @@ public class HttpTransportClient extends TransportClient {
                     List<String> lsnValues = null;
                     String[] headerValues = response.headers().values(WFConstants.BackendHeaders.LSN);
                     if (headerValues != null) {
-                        lsnValues = com.azure.cosmos.implementation.guava25.collect.Lists.newArrayList(headerValues);
+                        lsnValues = Arrays.asList(headerValues);
                     }
 
                     if (lsnValues != null) {
@@ -780,11 +781,10 @@ public class HttpTransportClient extends TransportClient {
                     List<String> partitionKeyRangeIdValues = null;
                     headerValues = response.headers().values(WFConstants.BackendHeaders.PARTITION_KEY_RANGE_ID);
                     if (headerValues != null) {
-                        partitionKeyRangeIdValues
-                            = com.azure.cosmos.implementation.guava25.collect.Lists.newArrayList(headerValues);
+                        partitionKeyRangeIdValues = Arrays.asList(headerValues);
                     }
                     if (partitionKeyRangeIdValues != null) {
-                        responsePartitionKeyRangeId = Lists.firstOrDefault(partitionKeyRangeIdValues, null);
+                        responsePartitionKeyRangeId = CollectionUtils.firstOrDefault(partitionKeyRangeIdValues, null);
                     }
 
                     CosmosException exception;
@@ -995,8 +995,7 @@ public class HttpTransportClient extends TransportClient {
                             List<String> values = null;
                             headerValues = response.headers().values(HttpConstants.HttpHeaders.RETRY_AFTER_IN_MILLISECONDS);
                             if (headerValues != null) {
-                                values
-                                    = com.azure.cosmos.implementation.guava25.collect.Lists.newArrayList(headerValues);
+                                values = Arrays.asList(headerValues);
                             }
                             if (values == null || values.isEmpty()) {
                                 logger.warn("RequestRateTooLargeException being thrown without RetryAfter.");

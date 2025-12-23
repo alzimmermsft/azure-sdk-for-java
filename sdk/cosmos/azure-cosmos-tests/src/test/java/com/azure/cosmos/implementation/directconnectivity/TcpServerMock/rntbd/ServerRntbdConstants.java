@@ -6,13 +6,14 @@ package com.azure.cosmos.implementation.directconnectivity.TcpServerMock.rntbd;
 import com.azure.cosmos.implementation.OperationType;
 import com.azure.cosmos.implementation.ResourceType;
 import com.azure.cosmos.implementation.directconnectivity.rntbd.RntbdConstants;
-import com.azure.cosmos.implementation.guava25.collect.ImmutableMap;
-import com.azure.cosmos.implementation.guava25.collect.ImmutableSet;
-import com.azure.cosmos.implementation.guava25.collect.Sets;
 import io.netty.handler.codec.DecoderException;
 
+import java.util.Collections;
 import java.util.EnumSet;
-import java.util.stream.Collector;
+import java.util.Map;
+import java.util.Set;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /**
  * Methods included in this class are copied from {@link RntbdConstants}.
@@ -415,13 +416,10 @@ public class ServerRntbdConstants {
         IsBatchOrdered((short) 0x0075, ServerRntbdTokenType.Byte, false),
         ReturnPreference((short) 0x0082, ServerRntbdTokenType.Byte, false);
 
-        public static final ImmutableMap<Short, RntbdRequestHeader> map;
-        public static final ImmutableSet<RntbdRequestHeader> set = Sets.immutableEnumSet(EnumSet.allOf(RntbdRequestHeader.class));
-
-        static {
-            final Collector<RntbdRequestHeader, ?, ImmutableMap<Short, RntbdRequestHeader>> collector = ImmutableMap.toImmutableMap(RntbdRequestHeader::id, h -> h);
-            map = set.stream().collect(collector);
-        }
+        public static final Set<RntbdRequestHeader> set
+            = Collections.unmodifiableSet(EnumSet.allOf(RntbdRequestHeader.class));
+        public static final Map<Short, RntbdRequestHeader> map
+            = Collections.unmodifiableMap(set.stream().collect(Collectors.toMap(RntbdRequestHeader::id, Function.identity())));
 
         private final short id;
         private final boolean isRequired;
@@ -687,13 +685,10 @@ public class ServerRntbdConstants {
         HasTentativeWrites((short) 0x003D, ServerRntbdTokenType.Byte, false),
         SessionToken((short) 0x003E, ServerRntbdTokenType.String, false);
 
-        public static final ImmutableMap<Short, RntbdConstants.RntbdResponseHeader> map;
-        public static final ImmutableSet<RntbdConstants.RntbdResponseHeader> set = Sets.immutableEnumSet(EnumSet.allOf(RntbdConstants.RntbdResponseHeader.class));
-
-        static {
-            final Collector<RntbdConstants.RntbdResponseHeader, ?, ImmutableMap<Short, RntbdConstants.RntbdResponseHeader>> collector = ImmutableMap.toImmutableMap(RntbdConstants.RntbdResponseHeader::id, header -> header);
-            map = set.stream().collect(collector);
-        }
+        public static final Set<RntbdResponseHeader> set
+            = Collections.unmodifiableSet(EnumSet.allOf(RntbdResponseHeader.class));
+        public static final Map<Short, RntbdResponseHeader> map
+            = Collections.unmodifiableMap(set.stream().collect(Collectors.toMap(RntbdResponseHeader::id, Function.identity())));
 
         private final short id;
         private final boolean isRequired;
@@ -724,13 +719,10 @@ public class ServerRntbdConstants {
         ClientVersion((short) 0x0001, ServerRntbdTokenType.SmallString, true),
         UserAgent((short) 0x0002, ServerRntbdTokenType.SmallString, true);
 
-        public static final ImmutableMap<Short, RntbdContextRequestHeader> map;
-        public static final ImmutableSet<RntbdContextRequestHeader> set = Sets.immutableEnumSet(EnumSet.allOf(RntbdContextRequestHeader.class));
-
-        static {
-            final Collector<RntbdContextRequestHeader, ?, ImmutableMap<Short, RntbdContextRequestHeader>> collector = ImmutableMap.toImmutableMap(h -> h.id(), h -> h);
-            map = set.stream().collect(collector);
-        }
+        public static final Set<RntbdContextRequestHeader> set
+            = Collections.unmodifiableSet(EnumSet.allOf(RntbdContextRequestHeader.class));
+        public static final Map<Short, RntbdContextRequestHeader> map
+            = Collections.unmodifiableMap(set.stream().collect(Collectors.toMap(RntbdContextRequestHeader::id, Function.identity())));
 
         private final short id;
         private final boolean isRequired;

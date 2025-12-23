@@ -9,7 +9,7 @@ import com.azure.cosmos.models.FeedRange;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import static com.azure.cosmos.implementation.guava25.base.Preconditions.checkNotNull;
+import static com.azure.cosmos.implementation.Utils.checkNotNull;
 
 // Only used in CFP when customer configure throughput control config
 // The main purpose of this class is to create corresponding throughput control group for each feed range

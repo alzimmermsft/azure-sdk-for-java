@@ -4,7 +4,7 @@
 package com.azure.cosmos.spark
 
 import com.azure.cosmos.implementation.ImplementationBridgeHelpers.CosmosItemRequestOptionsHelper
-import com.azure.cosmos.implementation.guava25.base.Preconditions.checkState
+import com.azure.cosmos.implementation.Utils.checkState
 import com.azure.cosmos.implementation.spark.{OperationContextAndListenerTuple, OperationListener}
 import com.azure.cosmos.implementation.{Strings, UUIDs}
 import com.azure.cosmos.models._

@@ -6,10 +6,10 @@ import com.azure.cosmos.implementation.ClientSideRequestStatistics;
 import com.azure.cosmos.implementation.DiagnosticsClientContext;
 import com.azure.cosmos.implementation.FeedResponseDiagnostics;
 import com.azure.cosmos.implementation.ImplementationBridgeHelpers;
+import com.azure.cosmos.implementation.CollectionUtils;
 import com.azure.cosmos.implementation.MetadataDiagnosticsContext;
 import com.azure.cosmos.implementation.RxDocumentServiceRequest;
 import com.azure.cosmos.implementation.SerializationDiagnosticsContext;
-import com.azure.cosmos.implementation.guava25.collect.ImmutableList;
 import com.azure.cosmos.implementation.routing.RegionalRoutingContext;
 import com.azure.cosmos.util.Beta;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -30,7 +30,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import static com.azure.cosmos.implementation.guava25.base.Preconditions.checkNotNull;
+import static com.azure.cosmos.implementation.Utils.checkNotNull;
 
 /**
  * This class represents response diagnostic statistics associated with a request to Azure Cosmos DB
@@ -257,7 +257,7 @@ public final class CosmosDiagnostics {
             return this.feedResponseDiagnostics.getClientSideRequestStatistics();
         }
 
-        return ImmutableList.of(this.clientSideRequestStatistics);
+        return CollectionUtils.immutableList(this.clientSideRequestStatistics);
     }
 
     Collection<ClientSideRequestStatistics> getClientSideRequestStatisticsForQueryPipelineAggregations() {

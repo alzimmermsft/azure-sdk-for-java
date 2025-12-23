@@ -7,8 +7,8 @@ import com.azure.cosmos.implementation.Strings;
 
 import java.util.List;
 
-import static com.azure.cosmos.implementation.guava25.base.Preconditions.checkArgument;
-import static com.azure.cosmos.implementation.guava25.base.Preconditions.checkNotNull;
+import static com.azure.cosmos.implementation.Utils.checkArgument;
+import static com.azure.cosmos.implementation.Utils.checkNotNull;
 
 public class CosmosAccountConfig {
     private final String endpoint;

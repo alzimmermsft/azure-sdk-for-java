@@ -3,8 +3,7 @@
 
 package com.azure.cosmos.implementation.directconnectivity.rntbd;
 
-import com.azure.cosmos.implementation.guava25.collect.ImmutableList;
-import com.azure.cosmos.implementation.guava25.collect.ImmutableMap;
+import com.azure.cosmos.implementation.Utils;
 import com.fasterxml.jackson.annotation.JsonFilter;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -16,17 +15,18 @@ import io.netty.handler.codec.CorruptedFrameException;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.AbstractMap;
-import java.util.List;
+import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.UUID;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 
 import static com.azure.cosmos.implementation.HttpConstants.HttpHeaders;
+import static com.azure.cosmos.implementation.Utils.checkNotNull;
 import static com.azure.cosmos.implementation.directconnectivity.WFConstants.BackendHeaders;
 import static com.azure.cosmos.implementation.directconnectivity.rntbd.RntbdConstants.RntbdIndexingDirective;
 import static com.azure.cosmos.implementation.directconnectivity.rntbd.RntbdConstants.RntbdResponseHeader;
-import static com.azure.cosmos.implementation.guava25.base.Preconditions.checkNotNull;
 
 @SuppressWarnings("UnstableApiUsage")
 @JsonFilter("RntbdToken")
@@ -211,32 +211,34 @@ public class RntbdResponseHeaders extends RntbdTokenStream<RntbdResponseHeader> 
         checkNotNull(serverVersion, "Argument 'serverVersion' must not be null.");
         checkNotNull(activityId, "Argument 'activityId' must not be null.");
 
-        final ImmutableMap.Builder<String, String> builder = ImmutableMap.builderWithExpectedSize(
-            this.computeCount(false) + 2);
-        builder.put(new Entry(HttpHeaders.SERVER_VERSION, serverVersion));
-        builder.put(new Entry(HttpHeaders.ACTIVITY_ID, activityId.toString()));
+        final LinkedHashMap<String, String> builder = new LinkedHashMap<>((int) Math.ceil((this.computeCount(false) + 2) / 0.75D));
+        builder.put(HttpHeaders.SERVER_VERSION, serverVersion);
+        builder.put(HttpHeaders.ACTIVITY_ID, activityId.toString());
 
         this.collectEntries((token, toEntry) -> {
             if (token.isPresent()) {
-                builder.put(toEntry.apply(token));
+                Map.Entry<String, String> entry = toEntry.apply(token);
+                builder.put(checkNotNull(entry.getKey(), "'key' cannot be null."),
+                    checkNotNull(entry.getValue(), "'value' cannot be null."));
             }
         });
 
-        return builder.build();
+        return Collections.unmodifiableMap(builder);
     }
 
     public Map<String, String> asMap(final UUID activityId) {
-
-        final ImmutableMap.Builder<String, String> builder = ImmutableMap.builderWithExpectedSize(this.computeCount(false) + 1);
-        builder.put(new Entry(HttpHeaders.ACTIVITY_ID, activityId.toString()));
+        final LinkedHashMap<String, String> builder = new LinkedHashMap<>((int) Math.ceil((this.computeCount(false) + 1) / 0.75D));
+        builder.put(HttpHeaders.ACTIVITY_ID, activityId.toString());
 
         this.collectEntries((token, toEntry) -> {
             if (token.isPresent()) {
-                builder.put(toEntry.apply(token));
+                Map.Entry<String, String> entry = toEntry.apply(token);
+                builder.put(Utils.checkNotNull(entry.getKey(), "'key' cannot be null."),
+                    Utils.checkNotNull(entry.getValue(), "'value' cannot be null."));
             }
         });
 
-        return builder.build();
+        return Collections.unmodifiableMap(builder);
     }
 
     static RntbdResponseHeaders decode(final ByteBuf in) {
@@ -258,7 +260,7 @@ public class RntbdResponseHeaders extends RntbdTokenStream<RntbdResponseHeader> 
 
         this.mapValue(this.LSN, BackendHeaders.LSN, Long::parseLong, headers);
         this.mapValue(this.collectionLazyIndexProgress, HttpHeaders.COLLECTION_LAZY_INDEXING_PROGRESS, Integer::parseInt, headers);
-        this.mapValue(this.collectionLazyIndexProgress, BackendHeaders.COLLECTION_PARTITION_INDEX, Integer::parseInt, headers);
+        this.mapValue(this.collectionPartitionIndex, BackendHeaders.COLLECTION_PARTITION_INDEX, Integer::parseInt, headers);
         this.mapValue(this.collectionSecurityIdentifier, BackendHeaders.COLLECTION_SECURITY_IDENTIFIER, String::toString, headers);
         this.mapValue(this.collectionServiceIndex, BackendHeaders.COLLECTION_SERVICE_INDEX, Integer::parseInt, headers);
         this.mapValue(this.collectionUpdateProgress, HttpHeaders.COLLECTION_INDEX_TRANSFORMATION_PROGRESS, Integer::parseInt, headers);

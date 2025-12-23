@@ -6,8 +6,6 @@ package com.azure.cosmos.implementation.directconnectivity;
 import com.azure.cosmos.ConsistencyLevel;
 import com.azure.cosmos.ReadConsistencyStrategy;
 import com.azure.cosmos.SessionRetryOptions;
-import com.azure.cosmos.implementation.NotFoundException;
-import com.azure.cosmos.implementation.RequestRateTooLargeException;
 import com.azure.cosmos.implementation.Configs;
 import com.azure.cosmos.implementation.DocumentServiceRequestContext;
 import com.azure.cosmos.implementation.FailureValidator;
@@ -15,15 +13,17 @@ import com.azure.cosmos.implementation.HttpConstants;
 import com.azure.cosmos.implementation.IAuthorizationTokenProvider;
 import com.azure.cosmos.implementation.ISessionContainer;
 import com.azure.cosmos.implementation.ISessionToken;
+import com.azure.cosmos.implementation.CollectionUtils;
+import com.azure.cosmos.implementation.NotFoundException;
 import com.azure.cosmos.implementation.OperationType;
 import com.azure.cosmos.implementation.PartitionKeyRange;
 import com.azure.cosmos.implementation.RequestChargeTracker;
+import com.azure.cosmos.implementation.RequestRateTooLargeException;
 import com.azure.cosmos.implementation.ResourceType;
 import com.azure.cosmos.implementation.RxDocumentServiceRequest;
 import com.azure.cosmos.implementation.StoreResponseBuilder;
 import com.azure.cosmos.implementation.Utils;
 import com.azure.cosmos.implementation.VectorSessionToken;
-import com.azure.cosmos.implementation.guava25.collect.ImmutableList;
 import io.reactivex.subscribers.TestSubscriber;
 import org.mockito.Mockito;
 import org.testng.annotations.DataProvider;
@@ -35,9 +35,9 @@ import java.math.RoundingMode;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import static com.azure.cosmos.implementation.TestUtils.mockDiagnosticsClientContext;
 import static com.azure.cosmos.implementation.Utils.ValueHolder;
 import static org.assertj.core.api.Assertions.assertThat;
-import static com.azure.cosmos.implementation.TestUtils.*;
 
 public class ConsistencyReaderTest {
     private final Configs configs = new Configs();
@@ -147,7 +147,7 @@ public class ConsistencyReaderTest {
 
     @Test(groups = "unit")
     public void readAny() {
-        List<Uri> secondaries = ImmutableList.of(Uri.create("secondary1"), Uri.create("secondary2"), Uri.create("secondary3"));
+        List<Uri> secondaries = CollectionUtils.immutableList(Uri.create("secondary1"), Uri.create("secondary2"), Uri.create("secondary3"));
         Uri primaryAddress = Uri.create("primary");
         AddressSelectorWrapper addressSelectorWrapper = AddressSelectorWrapper.Builder.Simple.create()
                 .withPrimary(primaryAddress)
@@ -236,7 +236,7 @@ public class ConsistencyReaderTest {
         String partitionKeyRangeId = "1";
         long fasterReplicaLSN = 651177;
 
-        List<Uri> secondaries = ImmutableList.of(Uri.create("secondary1"), Uri.create("secondary2"), Uri.create("secondary3"));
+        List<Uri> secondaries = CollectionUtils.immutableList(Uri.create("secondary1"), Uri.create("secondary2"), Uri.create("secondary3"));
         Uri primaryAddress = Uri.create("primary");
         AddressSelectorWrapper addressSelectorWrapper = AddressSelectorWrapper.Builder.Simple.create()
                 .withPrimary(primaryAddress)
@@ -394,7 +394,7 @@ public class ConsistencyReaderTest {
 
         AddressSelectorWrapper addressSelectorWrapper = AddressSelectorWrapper.Builder.Simple.create()
                 .withPrimary(primaryUri)
-                .withSecondary(ImmutableList.of(secondaryUri1, secondaryUri2, secondaryUri3))
+                .withSecondary(CollectionUtils.immutableList(secondaryUri1, secondaryUri2, secondaryUri3))
                 .build();
         ISessionContainer sessionContainer = Mockito.mock(ISessionContainer.class);
 
@@ -496,7 +496,7 @@ public class ConsistencyReaderTest {
         Uri secondaryUri1 = Uri.create("secondary1");
         Uri secondaryUri2 = Uri.create("secondary2");
         Uri secondaryUri3 = Uri.create("secondary3");
-        ImmutableList<Uri> secondaryUris = ImmutableList.of(secondaryUri1, secondaryUri2,
+        List<Uri> secondaryUris = CollectionUtils.immutableList(secondaryUri1, secondaryUri2,
             secondaryUri3);
 
         AddressSelectorWrapper addressSelectorWrapper =
@@ -586,7 +586,7 @@ public class ConsistencyReaderTest {
 
         AddressSelectorWrapper addressSelectorWrapper = AddressSelectorWrapper.Builder.Simple.create()
                 .withPrimary(primaryUri)
-                .withSecondary(ImmutableList.of(secondaryUri1, secondaryUri2, secondaryUri3))
+                .withSecondary(CollectionUtils.immutableList(secondaryUri1, secondaryUri2, secondaryUri3))
                 .build();
         ISessionContainer sessionContainer = Mockito.mock(ISessionContainer.class);
         TimeoutHelper timeoutHelper = Mockito.mock(TimeoutHelper.class);
@@ -656,7 +656,7 @@ public class ConsistencyReaderTest {
 
         AddressSelectorWrapper addressSelectorWrapper = AddressSelectorWrapper.Builder.Simple.create()
                 .withPrimary(primaryUri)
-                .withSecondary(ImmutableList.of(secondaryUri1, secondaryUri2, secondaryUri3))
+                .withSecondary(CollectionUtils.immutableList(secondaryUri1, secondaryUri2, secondaryUri3))
                 .build();
         ISessionContainer sessionContainer = Mockito.mock(ISessionContainer.class);
         TimeoutHelper timeoutHelper = Mockito.mock(TimeoutHelper.class);
@@ -724,7 +724,7 @@ public class ConsistencyReaderTest {
 
         AddressSelectorWrapper addressSelectorWrapper = AddressSelectorWrapper.Builder.Simple.create()
                 .withPrimary(primaryUri)
-                .withSecondary(ImmutableList.of(secondaryUri1, secondaryUri2, secondaryUri3))
+                .withSecondary(CollectionUtils.immutableList(secondaryUri1, secondaryUri2, secondaryUri3))
                 .build();
         ISessionContainer sessionContainer = Mockito.mock(ISessionContainer.class);
         TimeoutHelper timeoutHelper = Mockito.mock(TimeoutHelper.class);
@@ -779,7 +779,7 @@ public class ConsistencyReaderTest {
     public void basicReadStrong_AllReplicasSameLSN(int replicaCountToRead, ReadMode readMode) {
         ISessionContainer sessionContainer = Mockito.mock(ISessionContainer.class);
         Uri primaryReplicaURI = Uri.create("primary");
-        ImmutableList<Uri> secondaryReplicaURIs = ImmutableList.of(Uri.create("secondary1"), Uri.create("secondary2"), Uri.create("secondary3"));
+        List<Uri> secondaryReplicaURIs = CollectionUtils.immutableList(Uri.create("secondary1"), Uri.create("secondary2"), Uri.create("secondary3"));
         AddressSelectorWrapper addressSelectorWrapper = AddressSelectorWrapper.Builder.Simple.create()
                 .withPrimary(primaryReplicaURI)
                 .withSecondary(secondaryReplicaURIs)

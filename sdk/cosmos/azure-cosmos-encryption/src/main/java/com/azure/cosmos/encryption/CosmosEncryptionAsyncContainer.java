@@ -26,7 +26,6 @@ import com.azure.cosmos.implementation.Pair;
 import com.azure.cosmos.implementation.Strings;
 import com.azure.cosmos.implementation.batch.ItemBatchOperation;
 import com.azure.cosmos.implementation.batch.ItemBulkOperation;
-import com.azure.cosmos.implementation.guava25.base.Preconditions;
 import com.azure.cosmos.implementation.patch.PatchOperation;
 import com.azure.cosmos.implementation.patch.PatchOperationCore;
 import com.azure.cosmos.implementation.patch.PatchOperationType;
@@ -71,8 +70,9 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Function;
 
+import static com.azure.cosmos.implementation.Utils.checkArgument;
 import static com.azure.cosmos.implementation.Utils.getEffectiveCosmosChangeFeedRequestOptions;
-import static com.azure.cosmos.implementation.guava25.base.Preconditions.checkNotNull;
+import static com.azure.cosmos.implementation.Utils.checkNotNull;
 
 /**
  * CosmosAsyncContainer with encryption capabilities.
@@ -141,7 +141,7 @@ public final class CosmosEncryptionAsyncContainer {
     @SuppressWarnings("unchecked")
     public <T> Mono<CosmosItemResponse<T>> createItem(T item,
                                                       CosmosItemRequestOptions requestOptions) {
-        Preconditions.checkNotNull(item, "item");
+        checkNotNull(item, "item");
         if (requestOptions == null) {
             requestOptions = new CosmosItemRequestOptions();
         }
@@ -167,13 +167,12 @@ public final class CosmosEncryptionAsyncContainer {
     public <T> Mono<CosmosItemResponse<T>> createItem(T item,
                                                       PartitionKey partitionKey,
                                                       CosmosItemRequestOptions requestOptions) {
-        Preconditions.checkNotNull(item, "item");
+        checkNotNull(item, "item");
         if (requestOptions == null) {
             requestOptions = new CosmosItemRequestOptions();
         }
 
-        Preconditions.checkArgument(partitionKey != null, "partitionKey cannot be null for operations using "
-            + "EncryptionContainer.");
+        checkArgument(partitionKey != null, "partitionKey cannot be null for operations using EncryptionContainer.");
 
         byte[] streamPayload = cosmosSerializerToStream(item, getEffectiveItemSerializer(requestOptions));
 
@@ -369,7 +368,7 @@ public final class CosmosEncryptionAsyncContainer {
      */
     @SuppressWarnings("unchecked")
     public <T> Mono<CosmosItemResponse<T>> upsertItem(T item, CosmosItemRequestOptions requestOptions) {
-        Preconditions.checkNotNull(item, "item");
+        checkNotNull(item, "item");
         if (requestOptions == null) {
             requestOptions = new CosmosItemRequestOptions();
         }
@@ -395,13 +394,12 @@ public final class CosmosEncryptionAsyncContainer {
     public <T> Mono<CosmosItemResponse<T>> upsertItem(T item,
                                                       PartitionKey partitionKey,
                                                       CosmosItemRequestOptions requestOptions) {
-        Preconditions.checkNotNull(item, "item");
+        checkNotNull(item, "item");
         if (requestOptions == null) {
             requestOptions = new CosmosItemRequestOptions();
         }
 
-        Preconditions.checkArgument(partitionKey != null, "partitionKey cannot be null for operations using "
-            + "EncryptionContainer.");
+        checkArgument(partitionKey != null, "partitionKey cannot be null for operations using EncryptionContainer.");
 
 
         byte[] streamPayload = cosmosSerializerToStream(item, getEffectiveItemSerializer(requestOptions));
@@ -442,13 +440,12 @@ public final class CosmosEncryptionAsyncContainer {
                                                        String itemId,
                                                        PartitionKey partitionKey,
                                                        CosmosItemRequestOptions requestOptions) {
-        Preconditions.checkNotNull(item, "item");
+        checkNotNull(item, "item");
         if (requestOptions == null) {
             requestOptions = new CosmosItemRequestOptions();
         }
 
-        Preconditions.checkArgument(partitionKey != null, "partitionKey cannot be null for operations using "
-            + "EncryptionContainer.");
+        checkArgument(partitionKey != null, "partitionKey cannot be null for operations using EncryptionContainer.");
 
         byte[] streamPayload = cosmosSerializerToStream(item, getEffectiveItemSerializer(requestOptions));
         return replaceItemHelper(streamPayload, itemId, partitionKey, requestOptions, (Class<T>) item.getClass(), false);

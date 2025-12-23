@@ -3,13 +3,14 @@
 
 package com.azure.cosmos.implementation.cpu;
 
-import com.azure.cosmos.implementation.guava25.base.Preconditions;
-
 import java.time.Duration;
 import java.time.Instant;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
+
+import static com.azure.cosmos.implementation.Utils.checkArgument;
+import static com.azure.cosmos.implementation.Utils.checkNotNull;
 
 public class CpuLoadHistory {
     private static final String EMPTY = "empty";
@@ -19,9 +20,9 @@ public class CpuLoadHistory {
     private String cachedToString;
 
     public CpuLoadHistory(List<CpuLoad> cpuLoad, Duration monitoringInterval) {
-        Preconditions.checkNotNull(cpuLoad, "cpuLoad");
+        checkNotNull(cpuLoad, "cpuLoad");
         this.cpuLoad = cpuLoad;
-        Preconditions.checkArgument(!monitoringInterval.isZero(), "monitoringInterval is zero");
+        checkArgument(!monitoringInterval.isZero(), "monitoringInterval is zero");
 
         this.monitoringInterval = monitoringInterval;
     }

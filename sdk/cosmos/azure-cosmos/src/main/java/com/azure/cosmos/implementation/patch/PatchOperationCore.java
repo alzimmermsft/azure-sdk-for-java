@@ -5,7 +5,7 @@ package com.azure.cosmos.implementation.patch;
 
 import com.azure.cosmos.implementation.Strings;
 
-import static com.azure.cosmos.implementation.guava25.base.Preconditions.checkArgument;
+import static com.azure.cosmos.implementation.Utils.checkArgument;
 
 /**
  * @param <T> The type of value for this patch operation.

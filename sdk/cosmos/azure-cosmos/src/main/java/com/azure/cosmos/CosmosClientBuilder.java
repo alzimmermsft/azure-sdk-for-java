@@ -13,10 +13,9 @@ import com.azure.cosmos.implementation.Configs;
 import com.azure.cosmos.implementation.ConnectionPolicy;
 import com.azure.cosmos.implementation.CosmosClientMetadataCachesSnapshot;
 import com.azure.cosmos.implementation.DiagnosticsProvider;
+import com.azure.cosmos.implementation.StopWatch;
 import com.azure.cosmos.implementation.Strings;
 import com.azure.cosmos.implementation.WriteRetryPolicy;
-import com.azure.cosmos.implementation.apachecommons.lang.time.StopWatch;
-import com.azure.cosmos.implementation.guava25.base.Preconditions;
 import com.azure.cosmos.implementation.routing.LocationHelper;
 import com.azure.cosmos.models.CosmosAuthorizationTokenResolver;
 import com.azure.cosmos.models.CosmosClientTelemetryConfig;
@@ -40,7 +39,8 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 
 import static com.azure.cosmos.implementation.ImplementationBridgeHelpers.CosmosClientBuilderHelper;
-import static com.azure.cosmos.implementation.guava25.base.Preconditions.checkNotNull;
+import static com.azure.cosmos.implementation.Utils.checkArgument;
+import static com.azure.cosmos.implementation.Utils.checkNotNull;
 
 /**
  * Helper class to build {@link CosmosAsyncClient} and {@link CosmosClient}
@@ -1329,7 +1329,7 @@ public class CosmosClientBuilder implements
             URI finalUri = uri;
             preferredRegions.forEach(
                 preferredRegion -> {
-                    Preconditions.checkArgument(Strings.trimToNull(preferredRegion) != null, "preferredRegion can't be empty");
+                    checkArgument(Strings.trimToNull(preferredRegion) != null, "preferredRegion can't be empty");
                     String trimmedPreferredRegion = preferredRegion.toLowerCase(Locale.ROOT).replace(" ", "");
                     LocationHelper.getLocationEndpoint(finalUri, trimmedPreferredRegion);
                 }
@@ -1337,11 +1337,11 @@ public class CosmosClientBuilder implements
         }
 
         if (proactiveContainerInitConfig != null) {
-            Preconditions.checkArgument(preferredRegions != null, "preferredRegions cannot be null when proactiveContainerInitConfig has been set");
-            Preconditions.checkArgument(this.proactiveContainerInitConfig.getProactiveConnectionRegionsCount() <= this.preferredRegions.size(), "no. of regions to proactively connect to " +
+            checkArgument(preferredRegions != null, "preferredRegions cannot be null when proactiveContainerInitConfig has been set");
+            checkArgument(this.proactiveContainerInitConfig.getProactiveConnectionRegionsCount() <= this.preferredRegions.size(), "no. of regions to proactively connect to " +
                     "cannot be greater than the no.of preferred regions");
             if (this.proactiveContainerInitConfig.getProactiveConnectionRegionsCount() > 1) {
-                Preconditions.checkArgument(this.isEndpointDiscoveryEnabled(), "endpoint discovery should be enabled when no. " +
+                checkArgument(this.isEndpointDiscoveryEnabled(), "endpoint discovery should be enabled when no. " +
                         "of proactive regions is greater than 1");
             }
         }
@@ -1392,7 +1392,7 @@ public class CosmosClientBuilder implements
         stopwatch.stop();
 
         if (logger.isWarnEnabled()) {
-            long time = stopwatch.getTime();
+            long time = stopwatch.getElapsedMillis();
             String diagnosticsCfg = "";
             String tracingCfg = "";
             if (client.getClientTelemetryConfig() != null) {

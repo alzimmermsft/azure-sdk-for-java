@@ -13,8 +13,7 @@
  */
 
 /**
- * Interfaces, utilities, and simple implementations of escapers and encoders. The primary type is
- * {@link com.azure.cosmos.implementation.guava25.escape.Escaper}.
+ * Interfaces, utilities, and simple implementations of escapers and encoders.
  */
 /*
  * Portions Copyright (c) Microsoft Corporation

@@ -39,7 +39,7 @@ import static com.azure.cosmos.implementation.RequestTimeline.EventName.PIPELINE
 import static com.azure.cosmos.implementation.RequestTimeline.EventName.QUEUED;
 import static com.azure.cosmos.implementation.RequestTimeline.EventName.RECEIVED;
 import static com.azure.cosmos.implementation.RequestTimeline.EventName.TRANSIT_TIME;
-import static com.azure.cosmos.implementation.guava25.base.Preconditions.checkNotNull;
+import static com.azure.cosmos.implementation.Utils.checkNotNull;
 
 @JsonSerialize(using = RntbdRequestRecord.JsonSerializer.class)
 public abstract class RntbdRequestRecord extends CompletableFuture<StoreResponse> implements IRequestRecord {

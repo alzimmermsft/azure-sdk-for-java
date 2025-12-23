@@ -39,7 +39,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
-import static com.azure.cosmos.implementation.guava25.base.Preconditions.checkNotNull;
+import static com.azure.cosmos.implementation.Utils.checkNotNull;
 
 public class GlobalPartitionEndpointManagerForPerPartitionCircuitBreaker implements AutoCloseable {
 
@@ -117,7 +117,7 @@ public class GlobalPartitionEndpointManagerForPerPartitionCircuitBreaker impleme
             checkNotNull(request.requestContext.resolvedPartitionKeyRangeForCircuitBreaker, "Argument 'request.requestContext.resolvedPartitionKeyRangeForCircuitBreaker' cannot be null!");
 
             String collectionResourceId = request.getResourceId();
-            checkNotNull(request, collectionResourceId, "Argument 'collectionResourceId' cannot be null!");
+            checkNotNull(collectionResourceId, "Argument 'collectionResourceId' cannot be null!");
 
             PartitionKeyRangeWrapper partitionKeyRangeWrapper = new PartitionKeyRangeWrapper(resolvedPartitionKeyRangeForCircuitBreaker, collectionResourceId);
 

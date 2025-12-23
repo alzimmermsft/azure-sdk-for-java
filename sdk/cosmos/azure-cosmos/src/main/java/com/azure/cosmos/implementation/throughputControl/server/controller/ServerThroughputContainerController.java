@@ -16,8 +16,8 @@ import reactor.core.publisher.Mono;
 
 import java.util.Map;
 
-import static com.azure.cosmos.implementation.guava25.base.Preconditions.checkArgument;
-import static com.azure.cosmos.implementation.guava25.base.Preconditions.checkNotNull;
+import static com.azure.cosmos.implementation.Utils.checkArgument;
+import static com.azure.cosmos.implementation.Utils.checkNotNull;
 
 public class ServerThroughputContainerController implements IThroughputContainerController {
     private static final Logger logger = LoggerFactory.getLogger(ServerThroughputContainerController.class);

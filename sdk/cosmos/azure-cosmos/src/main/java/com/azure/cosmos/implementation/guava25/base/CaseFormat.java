@@ -18,8 +18,6 @@
 
 package com.azure.cosmos.implementation.guava25.base;
 
-import static com.azure.cosmos.implementation.guava25.base.Preconditions.checkNotNull;
-
 /**
  * Utility class for converting between various ASCII case formats. Behavior is undefined for
  * non-ASCII input.
@@ -28,52 +26,6 @@ import static com.azure.cosmos.implementation.guava25.base.Preconditions.checkNo
  * @since 1.0
  */
 public enum CaseFormat {
-  /** Hyphenated variable naming convention, e.g., "lower-hyphen". */
-  LOWER_HYPHEN(CharMatcher.is('-'), "-") {
-    @Override
-    String normalizeWord(String word) {
-      return Ascii.toLowerCase(word);
-    }
-
-    @Override
-    String convert(CaseFormat format, String s) {
-      if (format == LOWER_UNDERSCORE) {
-        return s.replace('-', '_');
-      }
-      if (format == UPPER_UNDERSCORE) {
-        return Ascii.toUpperCase(s.replace('-', '_'));
-      }
-      return super.convert(format, s);
-    }
-  },
-
-  /** C++ variable naming convention, e.g., "lower_underscore". */
-  LOWER_UNDERSCORE(CharMatcher.is('_'), "_") {
-    @Override
-    String normalizeWord(String word) {
-      return Ascii.toLowerCase(word);
-    }
-
-    @Override
-    String convert(CaseFormat format, String s) {
-      if (format == LOWER_HYPHEN) {
-        return s.replace('_', '-');
-      }
-      if (format == UPPER_UNDERSCORE) {
-        return Ascii.toUpperCase(s);
-      }
-      return super.convert(format, s);
-    }
-  },
-
-  /** Java variable naming convention, e.g., "lowerCamel". */
-  LOWER_CAMEL(CharMatcher.inRange('A', 'Z'), "") {
-    @Override
-    String normalizeWord(String word) {
-      return firstCharOnlyToUpper(word);
-    }
-  },
-
   /** Java and C++ class naming convention, e.g., "UpperCamel". */
   UPPER_CAMEL(CharMatcher.inRange('A', 'Z'), "") {
     @Override
@@ -91,12 +43,6 @@ public enum CaseFormat {
 
     @Override
     String convert(CaseFormat format, String s) {
-      if (format == LOWER_HYPHEN) {
-        return Ascii.toLowerCase(s.replace('_', '-'));
-      }
-      if (format == LOWER_UNDERSCORE) {
-        return Ascii.toLowerCase(s);
-      }
       return super.convert(format, s);
     }
   };
@@ -115,8 +61,8 @@ public enum CaseFormat {
    * the behavior of this method is undefined but we make a reasonable effort at converting anyway.
    */
   public final String to(CaseFormat format, String str) {
-    checkNotNull(format);
-    checkNotNull(str);
+    Preconditions.checkNotNull(format);
+    Preconditions.checkNotNull(str);
     return (format == this) ? str : convert(format, str);
   }
 
@@ -145,7 +91,7 @@ public enum CaseFormat {
     abstract String normalizeWord(String word);
 
   private String normalizeFirstWord(String word) {
-    return (this == LOWER_CAMEL) ? Ascii.toLowerCase(word) : normalizeWord(word);
+    return normalizeWord(word);
   }
 
   private static String firstCharOnlyToUpper(String word) {

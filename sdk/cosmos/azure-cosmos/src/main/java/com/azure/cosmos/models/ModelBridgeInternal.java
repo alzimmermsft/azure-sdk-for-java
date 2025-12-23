@@ -49,7 +49,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentMap;
 
 import static com.azure.cosmos.implementation.Warning.INTERNAL_USE_ONLY_WARNING;
-import static com.azure.cosmos.implementation.guava25.base.Preconditions.checkNotNull;
+import static com.azure.cosmos.implementation.Utils.checkNotNull;
 
 /**
  * DO NOT USE.

@@ -3,7 +3,6 @@
 package com.azure.cosmos.implementation;
 
 import com.azure.cosmos.CosmosException;
-import com.azure.cosmos.implementation.apachecommons.lang.time.StopWatch;
 import com.azure.cosmos.implementation.directconnectivity.AddressSelector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -176,10 +175,11 @@ public class RetryUtils {
             }
 
             stopStopWatch(stopwatch);
+            long elapsedMillis = stopwatch.getElapsedMillis();
             logger.info("Failed inBackoffAlternateCallback with {}, proceeding with retry. Time taken: {}ms",
-                    e.toString(), stopwatch.getTime());
-            Duration backoffTime = shouldRetryResult.backOffTime.toMillis() > stopwatch.getTime()
-                    ? Duration.ofMillis(shouldRetryResult.backOffTime.toMillis() - stopwatch.getTime())
+                    e, elapsedMillis);
+            Duration backoffTime = shouldRetryResult.backOffTime.toMillis() > elapsedMillis
+                    ? Duration.ofMillis(shouldRetryResult.backOffTime.toMillis() - elapsedMillis)
                     : Duration.ZERO;
             return recursiveFunc(callbackMethod, retryPolicy, inBackoffAlternateCallbackMethod, shouldRetryResult,
                     minBackoffForInBackoffCallback, rxDocumentServiceRequest, addressSelector)
