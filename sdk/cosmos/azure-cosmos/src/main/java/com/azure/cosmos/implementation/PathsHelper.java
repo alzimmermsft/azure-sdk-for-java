@@ -3,7 +3,6 @@
 
 package com.azure.cosmos.implementation;
 
-import com.azure.cosmos.implementation.apachecommons.lang.StringUtils;
 import com.azure.cosmos.implementation.apachecommons.text.StringEscapeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -299,14 +298,14 @@ public class PathsHelper {
     }
 
     public static PathInfo parsePathSegments(String resourceUrl) {
-        String[] segments = StringUtils.strip(resourceUrl, "/").split("/");
+        String[] segments = Strings.strip(resourceUrl, '/').split("/");
         if (segments == null || segments.length < 1) {
             return null;
         }
 
         int uriSegmentsCount = segments.length;
-        String segmentOne = StringUtils.strip(segments[uriSegmentsCount - 1], "/");
-        String segmentTwo = (uriSegmentsCount >= 2) ? StringUtils.strip(segments[uriSegmentsCount - 2], "/")
+        String segmentOne = Strings.strip(segments[uriSegmentsCount - 1], '/');
+        String segmentTwo = (uriSegmentsCount >= 2) ? Strings.strip(segments[uriSegmentsCount - 2], '/')
                 : Strings.EMPTY;
 
         // handle name based operation
@@ -353,7 +352,7 @@ public class PathsHelper {
         if (Strings.isEmpty(resourceUrl)) {
             return false;
         }
-        String trimmedStr = StringUtils.strip(resourceUrl, Constants.Properties.PATH_SEPARATOR);
+        String trimmedStr = Strings.strip(resourceUrl, Constants.Properties.PATH_SEPARATOR.charAt(0));
         String[] segments = trimmedStr.split(Constants.Properties.PATH_SEPARATOR);
         if (segments == null || segments.length < 1) {
             return false;
@@ -444,7 +443,10 @@ public class PathsHelper {
                 if (isResourceType(segments[segments.length - 1])) {
                     pathInfo.isFeed = true;
                     pathInfo.resourcePath = segments[segments.length - 1];
-                    String resourceIdOrFullName = resourceUrl.substring(0, StringUtils.removeEnd(resourceUrl,Paths.ROOT).lastIndexOf(Paths.ROOT));
+                    if (resourceUrl.endsWith(Paths.ROOT)) {
+                        resourceUrl = resourceUrl.substring(0, resourceUrl.length() - 1);
+                    }
+                    String resourceIdOrFullName = resourceUrl.substring(0, resourceUrl.lastIndexOf(Paths.ROOT));
                     pathInfo.resourceIdOrFullName = unescapeJavaAndTrim(resourceIdOrFullName);
                     return true;
                 }
@@ -503,7 +505,7 @@ public class PathsHelper {
         for (int startLoopIndex = startInclusiveIndex; startLoopIndex < endExclusiveIndex; startLoopIndex++) {
             if (resourceUrl.charAt(startLoopIndex)== Paths.ESCAPE_CHAR) {
                 // Found an escape character lets run the StringEscapeUtils.unescapeJava
-                return StringEscapeUtils.unescapeJava(StringUtils.strip(resourceUrl, Paths.ROOT));
+                return StringEscapeUtils.unescapeJava(Strings.strip(resourceUrl, Paths.ROOT.charAt(0)));
             }
         }
 

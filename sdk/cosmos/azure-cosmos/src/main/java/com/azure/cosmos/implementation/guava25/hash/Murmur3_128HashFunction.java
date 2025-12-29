@@ -29,7 +29,7 @@ import java.nio.ByteOrder;
  * @author Austin Appleby
  * @author Dimitris Andreou
  */
-final class Murmur3_128HashFunction extends AbstractHashFunction implements Serializable {
+final class Murmur3_128HashFunction implements HashFunction, Serializable {
     static final HashFunction MURMUR3_128 = new Murmur3_128HashFunction(0);
 
     // TODO(user): when the shortcuts are implemented, update BloomFilterStrategies
@@ -47,6 +47,11 @@ final class Murmur3_128HashFunction extends AbstractHashFunction implements Seri
     @Override
     public Hasher newHasher() {
         return new Murmur3_128Hasher(seed);
+    }
+
+    @Override
+    public <T> HashCode hashObject(T instance, Funnel<? super T> funnel) {
+        return newHasher().putObject(instance, funnel).hash();
     }
 
     @Override

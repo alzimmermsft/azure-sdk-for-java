@@ -9,6 +9,7 @@ import io.netty.buffer.ByteBufUtil;
 import io.netty.handler.codec.CorruptedFrameException;
 
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 import java.util.UUID;
 
 import static com.azure.cosmos.implementation.Utils.checkState;
@@ -46,9 +47,7 @@ enum RntbdTokenType {
     private static  RntbdTokenType[] getAllTokens() {
         final int maxByteValue = 0xFF + 1;
         final RntbdTokenType[] allPossibleTokens = new RntbdTokenType[maxByteValue]; // one byte RNTBD limit
-        for(int i = 0; i < maxByteValue; i++) {
-            allPossibleTokens[i] = Invalid;
-        }
+        Arrays.fill(allPossibleTokens, Invalid);
 
         // Override with valid entries
         for (final RntbdTokenType tokenType : RntbdTokenType.values()) {
@@ -60,8 +59,8 @@ enum RntbdTokenType {
         return allPossibleTokens;
     }
 
-    private Codec codec;
-    private byte id;
+    private final Codec codec;
+    private final byte id;
 
     RntbdTokenType(final byte id, final Codec codec) {
         this.codec = codec;

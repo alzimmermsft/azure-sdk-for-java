@@ -6,7 +6,6 @@ package com.azure.cosmos.models;
 import com.azure.cosmos.implementation.Constants;
 import com.azure.cosmos.implementation.JsonSerializable;
 import com.azure.cosmos.implementation.Strings;
-import com.azure.cosmos.implementation.apachecommons.lang.StringUtils;
 import com.azure.cosmos.implementation.routing.PartitionKeyInternal;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
@@ -91,7 +90,7 @@ public final class PartitionKeyDefinition {
                 this.versionOptional = Optional.empty();
             } else {
                 String versionStr = String.valueOf(versionObject);
-                if (StringUtils.isNumeric(versionStr)) {
+                if (Strings.isNumeric(versionStr)) {
                     this.versionOptional = Optional.of(PartitionKeyDefinitionVersion.valueOf(String.format("V%d",
                         Integer.parseInt(versionStr))));
                 } else {

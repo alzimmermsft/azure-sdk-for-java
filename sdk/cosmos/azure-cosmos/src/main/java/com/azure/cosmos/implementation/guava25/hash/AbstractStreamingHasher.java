@@ -92,36 +92,6 @@ abstract class AbstractStreamingHasher extends AbstractHasher {
         process(bb);
     }
 
-    @Override
-    public final Hasher putBytes(byte[] bytes, int off, int len) {
-        return putBytesInternal(ByteBuffer.wrap(bytes, off, len).order(ByteOrder.LITTLE_ENDIAN));
-    }
-
-    private Hasher putBytesInternal(ByteBuffer readBuffer) {
-        // If we have room for all of it, this is easy
-        if (readBuffer.remaining() <= buffer.remaining()) {
-            buffer.put(readBuffer);
-            munchIfFull();
-            return this;
-        }
-
-        // First add just enough to fill buffer size, and munch that
-        int bytesToCopy = bufferSize - buffer.position();
-        for (int i = 0; i < bytesToCopy; i++) {
-            buffer.put(readBuffer.get());
-        }
-        munch(); // buffer becomes empty here, since chunkSize divides bufferSize
-
-        // Now process directly from the rest of the input buffer
-        while (readBuffer.remaining() >= chunkSize) {
-            process(readBuffer);
-        }
-
-        // Finally stick the remainder back in our usual buffer
-        buffer.put(readBuffer);
-        return this;
-    }
-
     /*
      * Note: hashString(CharSequence, Charset) is intentionally not overridden.
      *
@@ -135,20 +105,6 @@ abstract class AbstractStreamingHasher extends AbstractHasher {
     @Override
     public final Hasher putByte(byte b) {
         buffer.put(b);
-        munchIfFull();
-        return this;
-    }
-
-    @Override
-    public final Hasher putChar(char c) {
-        buffer.putChar(c);
-        munchIfFull();
-        return this;
-    }
-
-    @Override
-    public final Hasher putInt(int i) {
-        buffer.putInt(i);
         munchIfFull();
         return this;
     }

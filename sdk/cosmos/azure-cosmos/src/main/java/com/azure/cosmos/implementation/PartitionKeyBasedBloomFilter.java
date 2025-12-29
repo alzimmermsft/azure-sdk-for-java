@@ -5,7 +5,6 @@ package com.azure.cosmos.implementation;
 
 import com.azure.cosmos.implementation.guava25.hash.BloomFilter;
 import com.azure.cosmos.implementation.guava25.hash.Funnel;
-import com.azure.cosmos.implementation.guava25.hash.PrimitiveSink;
 import com.azure.cosmos.implementation.routing.PartitionKeyInternal;
 import com.azure.cosmos.implementation.routing.PartitionKeyInternalHelper;
 import com.azure.cosmos.models.PartitionKeyDefinition;
@@ -37,23 +36,16 @@ public class PartitionKeyBasedBloomFilter {
 
     private static final long EXPECTED_INSERTIONS = Configs.getPkBasedBloomFilterExpectedInsertionCount();
     private static final double ALLOWED_FALSE_POSITIVE_RATE = Configs.getPkBasedBloomFilterExpectedFfpRate();
-    private BloomFilter<PartitionKeyBasedBloomFilterType> pkBasedBloomFilter;
+    private final BloomFilter<PartitionKeyBasedBloomFilterType> pkBasedBloomFilter;
     private final Set<String> recordedRegions;
     private final AtomicLong bloomFilterApproximateInsertionCount;
-    private final Funnel<PartitionKeyBasedBloomFilterType> funnel;
 
     public PartitionKeyBasedBloomFilter() {
         this.recordedRegions = ConcurrentHashMap.newKeySet();
-        this.funnel = new Funnel<PartitionKeyBasedBloomFilterType>() {
-            @Override
-            public void funnel(PartitionKeyBasedBloomFilterType from, PrimitiveSink into) {
-                into
-                    .putLong(from.collectionRid)
-                    .putString(from.effectivePartitionKeyString, StandardCharsets.UTF_8)
-                    .putString(from.region, StandardCharsets.UTF_8);
-            }
-        };
-        this.pkBasedBloomFilter = BloomFilter.create(this.funnel, EXPECTED_INSERTIONS, ALLOWED_FALSE_POSITIVE_RATE);
+        Funnel<PartitionKeyBasedBloomFilterType> funnel = (from, into) -> into.putLong(from.collectionRid)
+            .putString(from.effectivePartitionKeyString, StandardCharsets.UTF_8)
+            .putString(from.region, StandardCharsets.UTF_8);
+        this.pkBasedBloomFilter = BloomFilter.create(funnel, EXPECTED_INSERTIONS, ALLOWED_FALSE_POSITIVE_RATE);
         this.bloomFilterApproximateInsertionCount = new AtomicLong(0);
     }
 
@@ -81,7 +73,7 @@ public class PartitionKeyBasedBloomFilter {
             String effectivePartitionKeyString = request.getEffectivePartitionKey() != null ? request.getEffectivePartitionKey() : PartitionKeyInternalHelper
                 .getEffectivePartitionKeyString(partitionKeyInternal, partitionKeyDefinition);
 
-            String normalizedRegionRoutedTo = regionRoutedTo.toLowerCase(Locale.ROOT).replace(" ", "");;
+            String normalizedRegionRoutedTo = regionRoutedTo.toLowerCase(Locale.ROOT).replace(" ", "");
 
             // 1. record region information for EPK hash only if this EPK was resolved
             // to a different preferred region than the first preferred region

@@ -14,7 +14,6 @@ import com.azure.cosmos.ThrottlingRetryOptions;
 import com.azure.cosmos.implementation.AsyncDocumentClient.Builder;
 import com.azure.cosmos.implementation.clienttelemetry.ClientTelemetry;
 import com.azure.cosmos.implementation.directconnectivity.Protocol;
-import com.azure.cosmos.implementation.guava25.base.CaseFormat;
 import com.azure.cosmos.models.CompositePath;
 import com.azure.cosmos.models.CompositePathSortOrder;
 import com.azure.cosmos.models.CosmosClientTelemetryConfig;
@@ -844,7 +843,7 @@ public abstract class TestSuiteBase extends DocumentClientTest {
 
     private static ConsistencyLevel parseConsistency(String consistency) {
         if (consistency != null) {
-            consistency = CaseFormat.UPPER_CAMEL.to(CaseFormat.UPPER_UNDERSCORE, consistency).trim();
+            consistency = Strings.asciiUpperCamelToUpperUnderscore(consistency).trim();
             return ConsistencyLevel.valueOf(consistency);
         }
 
@@ -875,7 +874,7 @@ public abstract class TestSuiteBase extends DocumentClientTest {
             List<String> protocolStrings = objectMapper.readValue(protocols, new TypeReference<List<String>>() {
             });
             for(String protocol : protocolStrings) {
-                protocolList.add(Protocol.valueOf(CaseFormat.UPPER_CAMEL.to(CaseFormat.UPPER_UNDERSCORE, protocol)));
+                protocolList.add(Protocol.valueOf(Strings.asciiUpperCamelToUpperUnderscore(protocol)));
             }
             return protocolList;
         } catch (Exception e) {
@@ -957,7 +956,7 @@ public abstract class TestSuiteBase extends DocumentClientTest {
         try {
             List<String> consistencyStrings = objectMapper.readValue(consistencies, new TypeReference<List<String>>() {});
             for(String consistency : consistencyStrings) {
-                consistencyLevels.add(ConsistencyLevel.valueOf(CaseFormat.UPPER_CAMEL.to(CaseFormat.UPPER_UNDERSCORE, consistency)));
+                consistencyLevels.add(ConsistencyLevel.valueOf(Strings.asciiUpperCamelToUpperUnderscore(consistency)));
             }
             return consistencyLevels;
         } catch (Exception e) {

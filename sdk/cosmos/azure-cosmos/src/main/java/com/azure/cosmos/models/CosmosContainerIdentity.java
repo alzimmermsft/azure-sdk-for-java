@@ -8,7 +8,6 @@ import com.azure.cosmos.implementation.ImplementationBridgeHelpers;
 import com.azure.cosmos.implementation.Paths;
 import com.azure.cosmos.implementation.Strings;
 import com.azure.cosmos.implementation.Utils;
-import com.azure.cosmos.implementation.apachecommons.lang.StringUtils;
 
 import java.util.Objects;
 
@@ -37,9 +36,9 @@ public final class CosmosContainerIdentity {
         this.databaseName = databaseName;
         this.containerName = containerName;
         String databaseLink = Utils.joinPath(Paths.DATABASES_ROOT, databaseName);
-        this.containerLink = StringUtils.strip(
+        this.containerLink = Strings.strip(
                 Utils.joinPath(databaseLink, Paths.COLLECTIONS_PATH_SEGMENT) + containerName,
-                Constants.Properties.PATH_SEPARATOR);
+                Constants.Properties.PATH_SEPARATOR.charAt(0));
     }
 
     @Override

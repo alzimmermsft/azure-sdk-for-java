@@ -23,7 +23,6 @@ import com.azure.cosmos.Http2ConnectionConfig;
 import com.azure.cosmos.ReadConsistencyStrategy;
 import com.azure.cosmos.SessionRetryOptions;
 import com.azure.cosmos.ThresholdBasedAvailabilityStrategy;
-import com.azure.cosmos.implementation.apachecommons.lang.StringUtils;
 import com.azure.cosmos.implementation.batch.BatchResponseParser;
 import com.azure.cosmos.implementation.batch.PartitionKeyRangeServerBatchRequest;
 import com.azure.cosmos.implementation.batch.ServerBatchRequest;
@@ -4331,7 +4330,7 @@ public class RxDocumentClientImpl implements AsyncDocumentClient, IAuthorization
         return partitionKeyDefinition.getPaths()
             .stream()
             .map(Strings::stripFirstCharacter) // skip starting /
-            .map(pathPart -> StringUtils.replace(pathPart, "\"", "\\")) // escape quote
+            .map(pathPart -> pathPart.replace("\"", "\\")) // escape quote
             .map(part -> "[\"" + part + "\"]")
             .collect(Collectors.toList());
     }

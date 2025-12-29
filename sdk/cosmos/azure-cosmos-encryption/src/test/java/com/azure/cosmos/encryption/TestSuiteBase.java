@@ -22,15 +22,15 @@ import com.azure.cosmos.GatewayConnectionConfig;
 import com.azure.cosmos.ThrottlingRetryOptions;
 import com.azure.cosmos.encryption.models.CosmosEncryptionAlgorithm;
 import com.azure.cosmos.encryption.models.CosmosEncryptionType;
+import com.azure.cosmos.implementation.CollectionUtils;
 import com.azure.cosmos.implementation.Configs;
 import com.azure.cosmos.implementation.ConnectionPolicy;
 import com.azure.cosmos.implementation.InternalObjectNode;
-import com.azure.cosmos.implementation.CollectionUtils;
 import com.azure.cosmos.implementation.PathParser;
+import com.azure.cosmos.implementation.Strings;
 import com.azure.cosmos.implementation.TestConfigurations;
 import com.azure.cosmos.implementation.Utils;
 import com.azure.cosmos.implementation.directconnectivity.Protocol;
-import com.azure.cosmos.implementation.guava25.base.CaseFormat;
 import com.azure.cosmos.models.ClientEncryptionIncludedPath;
 import com.azure.cosmos.models.ClientEncryptionPolicy;
 import com.azure.cosmos.models.CompositePath;
@@ -931,7 +931,7 @@ public abstract class TestSuiteBase extends CosmosEncryptionAsyncClientTest {
 
     static ConsistencyLevel parseConsistency(String consistency) {
         if (consistency != null) {
-            consistency = CaseFormat.UPPER_CAMEL.to(CaseFormat.UPPER_UNDERSCORE, consistency).trim();
+            consistency = Strings.asciiUpperCamelToUpperUnderscore(consistency).trim();
             return ConsistencyLevel.valueOf(consistency);
         }
 
@@ -962,7 +962,7 @@ public abstract class TestSuiteBase extends CosmosEncryptionAsyncClientTest {
             List<String> protocolStrings = objectMapper.readValue(protocols, new TypeReference<List<String>>() {
             });
             for (String protocol : protocolStrings) {
-                protocolList.add(Protocol.valueOf(CaseFormat.UPPER_CAMEL.to(CaseFormat.UPPER_UNDERSCORE, protocol)));
+                protocolList.add(Protocol.valueOf(Strings.asciiUpperCamelToUpperUnderscore(protocol)));
             }
             return protocolList;
         } catch (Exception e) {
@@ -1072,7 +1072,7 @@ public abstract class TestSuiteBase extends CosmosEncryptionAsyncClientTest {
             List<String> consistencyStrings = objectMapper.readValue(consistencies, new TypeReference<List<String>>() {
             });
             for (String consistency : consistencyStrings) {
-                consistencyLevels.add(ConsistencyLevel.valueOf(CaseFormat.UPPER_CAMEL.to(CaseFormat.UPPER_UNDERSCORE, consistency)));
+                consistencyLevels.add(ConsistencyLevel.valueOf(Strings.asciiUpperCamelToUpperUnderscore(consistency)));
             }
             return consistencyLevels;
         } catch (Exception e) {

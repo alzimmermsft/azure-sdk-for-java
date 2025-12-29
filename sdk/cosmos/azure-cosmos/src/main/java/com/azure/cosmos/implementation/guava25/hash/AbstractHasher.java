@@ -18,8 +18,6 @@
 
 package com.azure.cosmos.implementation.guava25.hash;
 
-import com.azure.cosmos.implementation.guava25.base.Preconditions;
-
 import java.nio.charset.Charset;
 
 /**
@@ -29,15 +27,6 @@ import java.nio.charset.Charset;
  * @author Dimitris Andreou
  */
 abstract class AbstractHasher implements Hasher {
-
-    @Override
-    public Hasher putUnencodedChars(CharSequence charSequence) {
-        for (int i = 0, len = charSequence.length(); i < len; i++) {
-            putChar(charSequence.charAt(i));
-        }
-        return this;
-    }
-
     @Override
     public Hasher putString(CharSequence charSequence, Charset charset) {
         return putBytes(charSequence.toString().getBytes(charset));
@@ -45,24 +34,9 @@ abstract class AbstractHasher implements Hasher {
 
     @Override
     public Hasher putBytes(byte[] bytes) {
-        return putBytes(bytes, 0, bytes.length);
-    }
-
-    @Override
-    public Hasher putBytes(byte[] bytes, int off, int len) {
-        Preconditions.checkPositionIndexes(off, off + len, bytes.length);
-        for (int i = 0; i < len; i++) {
-            putByte(bytes[off + i]);
+        for (byte aByte : bytes) {
+            putByte(aByte);
         }
-        return this;
-    }
-
-    @Override
-    public Hasher putInt(int i) {
-        putByte((byte) i);
-        putByte((byte) (i >>> 8));
-        putByte((byte) (i >>> 16));
-        putByte((byte) (i >>> 24));
         return this;
     }
 
@@ -71,13 +45,6 @@ abstract class AbstractHasher implements Hasher {
         for (int i = 0; i < 64; i += 8) {
             putByte((byte) (l >>> i));
         }
-        return this;
-    }
-
-    @Override
-    public Hasher putChar(char c) {
-        putByte((byte) c);
-        putByte((byte) (c >>> 8));
         return this;
     }
 

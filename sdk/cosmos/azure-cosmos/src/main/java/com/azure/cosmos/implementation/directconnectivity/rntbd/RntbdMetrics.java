@@ -4,8 +4,8 @@
 package com.azure.cosmos.implementation.directconnectivity.rntbd;
 
 import com.azure.cosmos.implementation.ConsoleLoggingRegistryFactory;
+import com.azure.cosmos.implementation.PercentEscaper;
 import com.azure.cosmos.implementation.directconnectivity.RntbdTransportClient;
-import com.azure.cosmos.implementation.guava25.net.PercentEscaper;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import io.micrometer.core.instrument.DistributionSummary;
@@ -29,7 +29,7 @@ public final class RntbdMetrics implements RntbdMetricsCompletionRecorder {
 
     // region Fields
 
-    private static final PercentEscaper PERCENT_ESCAPER = new PercentEscaper("_-", false);
+    private static final PercentEscaper PERCENT_ESCAPER = new PercentEscaper("_-");
 
     private static final Logger logger = LoggerFactory.getLogger(RntbdMetrics.class);
     private static final CompositeMeterRegistry registry = new CompositeMeterRegistry();

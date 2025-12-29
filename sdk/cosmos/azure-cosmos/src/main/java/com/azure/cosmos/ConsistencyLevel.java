@@ -49,7 +49,7 @@ public enum ConsistencyLevel {
      */
     CONSISTENT_PREFIX("ConsistentPrefix");
 
-    private static Map<String, ConsistencyLevel> consistencyLevelHashMap = new HashMap<>();
+    private static final Map<String, ConsistencyLevel> consistencyLevelHashMap = new HashMap<>();
 
     static {
         for (ConsistencyLevel cl : ConsistencyLevel.values()) {

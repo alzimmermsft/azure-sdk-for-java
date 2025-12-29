@@ -61,32 +61,7 @@ public interface Hasher extends PrimitiveSink {
     Hasher putBytes(byte[] bytes);
 
     @Override
-    Hasher putBytes(byte[] bytes, int off, int len);
-
-    @Override
-    Hasher putInt(int i);
-
-    @Override
     Hasher putLong(long l);
-
-    @Override
-    Hasher putChar(char c);
-
-    /**
-     * Equivalent to processing each {@code char} value in the {@code CharSequence}, in order. In
-     * other words, no character encoding is performed; the low byte and high byte of each {@code
-     * char} are hashed directly (in that order). The input must not be updated while this method is
-     * in progress.
-     *
-     * <p><b>Warning:</b> This method will produce different output than most other languages do when
-     * running the same hash function on the equivalent input. For cross-language compatibility, use
-     * {@link #putString}, usually with a charset of UTF-8. For other use cases, use {@code
-     * putUnencodedChars}.
-     *
-     * @since 15.0 (since 11.0 as putString(CharSequence)).
-     */
-    @Override
-    Hasher putUnencodedChars(CharSequence charSequence);
 
     /**
      * Equivalent to {@code putBytes(charSequence.toString().getBytes(charset))}.
@@ -107,14 +82,4 @@ public interface Hasher extends PrimitiveSink {
      * unspecified if this method is called more than once on the same instance.
      */
     HashCode hash();
-
-    /**
-     * {@inheritDoc}
-     *
-     * @deprecated This returns {@link Object#hashCode()}; you almost certainly mean to call {@code
-     *     hash().asInt()}.
-     */
-    @Override
-    @Deprecated
-    int hashCode();
 }

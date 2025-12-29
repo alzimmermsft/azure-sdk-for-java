@@ -20,7 +20,6 @@ package com.azure.cosmos.implementation.guava25.hash;
 
 import com.azure.cosmos.implementation.guava25.base.Preconditions;
 import com.azure.cosmos.implementation.guava25.math.LongMath;
-import com.azure.cosmos.implementation.guava25.primitives.Ints;
 import com.azure.cosmos.implementation.guava25.primitives.Longs;
 
 import java.util.Arrays;
@@ -106,7 +105,7 @@ enum BloomFilterStrategies implements BloomFilter.Strategy {
 //        private final LongAddable bitCount;
 
         LockFreeBitArray(long bits) {
-            this(new long[Ints.checkedCast(LongMath.divide(bits, 64))]);
+            this(new long[Math.toIntExact(LongMath.divide(bits, 64))]);
         }
 
         // Used by serialization

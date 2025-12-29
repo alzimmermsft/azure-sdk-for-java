@@ -3,6 +3,7 @@
 
 package com.azure.cosmos;
 
+import com.azure.cosmos.implementation.CollectionUtils;
 import com.azure.cosmos.implementation.ConnectionPolicy;
 import com.azure.cosmos.implementation.DatabaseAccount;
 import com.azure.cosmos.implementation.DatabaseAccountLocation;
@@ -11,7 +12,6 @@ import com.azure.cosmos.implementation.HttpConstants;
 import com.azure.cosmos.implementation.ISessionContainer;
 import com.azure.cosmos.implementation.ImplementationBridgeHelpers;
 import com.azure.cosmos.implementation.InternalObjectNode;
-import com.azure.cosmos.implementation.CollectionUtils;
 import com.azure.cosmos.implementation.PartitionKeyBasedBloomFilter;
 import com.azure.cosmos.implementation.RegionScopedSessionContainer;
 import com.azure.cosmos.implementation.RxDocumentClientImpl;
@@ -19,8 +19,6 @@ import com.azure.cosmos.implementation.SessionContainer;
 import com.azure.cosmos.implementation.directconnectivity.ReflectionUtils;
 import com.azure.cosmos.implementation.guava25.hash.BloomFilter;
 import com.azure.cosmos.implementation.guava25.hash.Funnel;
-import com.azure.cosmos.implementation.guava25.hash.Funnels;
-import com.azure.cosmos.implementation.guava25.hash.PrimitiveSink;
 import com.azure.cosmos.implementation.routing.PartitionKeyInternal;
 import com.azure.cosmos.models.CosmosBatch;
 import com.azure.cosmos.models.CosmosBatchOperationResult;
@@ -68,7 +66,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Random;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
@@ -1979,15 +1976,10 @@ public class SessionConsistencyWithRegionScopingTests extends TestSuiteBase {
     @Test(groups = {"unit"}, timeOut = TIMEOUT)
     public void testBloomFilterSetup() {
 
-        Funnel<PartitionKeyBasedBloomFilter.PartitionKeyBasedBloomFilterType> pkBasedTypeFunnel = new Funnel<PartitionKeyBasedBloomFilter.PartitionKeyBasedBloomFilterType>() {
-            @Override
-            public void funnel(PartitionKeyBasedBloomFilter.PartitionKeyBasedBloomFilterType from, PrimitiveSink into) {
-                into
-                    .putLong(from.getCollectionRid())
-                    .putString(from.getEffectivePartitionKeyString(), StandardCharsets.UTF_8)
-                    .putString(from.getRegion(), StandardCharsets.UTF_8);
-            }
-        };
+        Funnel<PartitionKeyBasedBloomFilter.PartitionKeyBasedBloomFilterType> pkBasedTypeFunnel = (from, into) -> into
+            .putLong(from.getCollectionRid())
+            .putString(from.getEffectivePartitionKeyString(), StandardCharsets.UTF_8)
+            .putString(from.getRegion(), StandardCharsets.UTF_8);
 
         BloomFilter<PartitionKeyBasedBloomFilter.PartitionKeyBasedBloomFilterType> partitionKeyBasedBloomFilter = BloomFilter.create(pkBasedTypeFunnel, 10_000, 0.001);
 
@@ -1997,62 +1989,63 @@ public class SessionConsistencyWithRegionScopingTests extends TestSuiteBase {
         assertThat(partitionKeyBasedBloomFilter.mightContain(new PartitionKeyBasedBloomFilter.PartitionKeyBasedBloomFilterType("pk2", "eastus", 1L))).isFalse();
     }
 
-    @Test(groups = {"unit"})
-    public void testFppRate() {
-
-        Funnel<Integer> integerFunnel = Funnels.integerFunnel();
-        Set<Integer> actualNumbers = new HashSet<>();
-        Random random = new Random();
-
-        BloomFilter<Integer> integerBasedBloomFilter = BloomFilter.create(integerFunnel, 10_000_000, 0.001);
-
-        int falsePositiveCount = 0;
-
-        for (int i = 1; i <= 10_000_000; i++) {
-            int valPicked = random.nextInt(Integer.MAX_VALUE);
-
-            actualNumbers.add(valPicked);
-            integerBasedBloomFilter.put(valPicked);
-        }
-
-        for (int i = 1; i <= 10_000_000; i++) {
-            boolean isPresentInBloomFilter = integerBasedBloomFilter.mightContain(i);
-            boolean isPresentInActualSet = actualNumbers.contains(i);
-
-            if (!isPresentInActualSet && isPresentInBloomFilter) {
-                falsePositiveCount++;
-            }
-        }
-
-        double fppRate = (double) falsePositiveCount / 10_000_000d;
-
-        logger.info("False positives count : {}", falsePositiveCount);
-        logger.info("FPP Rate : {}", fppRate);
-
-        falsePositiveCount = 0;
-        fppRate = 0d;
-
-        for (int i = 1; i <= 10_000_000; i++) {
-            int valPicked = random.nextInt(Integer.MAX_VALUE);
-
-            actualNumbers.add(valPicked);
-            integerBasedBloomFilter.put(valPicked);
-        }
-
-        for (int i = 1; i <= 20_000_000; i++) {
-            boolean isPresentInBloomFilter = integerBasedBloomFilter.mightContain(i);
-            boolean isPresentInActualSet = actualNumbers.contains(i);
-
-            if (!isPresentInActualSet && isPresentInBloomFilter) {
-                falsePositiveCount++;
-            }
-        }
-
-        fppRate = (double) falsePositiveCount / 20_000_000;
-
-        logger.info("False positives count : {}", falsePositiveCount);
-        logger.info("FPP Rate : {}", fppRate);
-    }
+    // Commenting out this test as it doesn't test any behaviors used in source code that isn't shaded.
+//    @Test(groups = {"unit"})
+//    public void testFppRate() {
+//
+//        Funnel<Integer> integerFunnel = Funnels.integerFunnel();
+//        Set<Integer> actualNumbers = new HashSet<>();
+//        Random random = new Random();
+//
+//        BloomFilter<Integer> integerBasedBloomFilter = BloomFilter.create(integerFunnel, 10_000_000, 0.001);
+//
+//        int falsePositiveCount = 0;
+//
+//        for (int i = 1; i <= 10_000_000; i++) {
+//            int valPicked = random.nextInt(Integer.MAX_VALUE);
+//
+//            actualNumbers.add(valPicked);
+//            integerBasedBloomFilter.put(valPicked);
+//        }
+//
+//        for (int i = 1; i <= 10_000_000; i++) {
+//            boolean isPresentInBloomFilter = integerBasedBloomFilter.mightContain(i);
+//            boolean isPresentInActualSet = actualNumbers.contains(i);
+//
+//            if (!isPresentInActualSet && isPresentInBloomFilter) {
+//                falsePositiveCount++;
+//            }
+//        }
+//
+//        double fppRate = (double) falsePositiveCount / 10_000_000d;
+//
+//        logger.info("False positives count : {}", falsePositiveCount);
+//        logger.info("FPP Rate : {}", fppRate);
+//
+//        falsePositiveCount = 0;
+//        fppRate = 0d;
+//
+//        for (int i = 1; i <= 10_000_000; i++) {
+//            int valPicked = random.nextInt(Integer.MAX_VALUE);
+//
+//            actualNumbers.add(valPicked);
+//            integerBasedBloomFilter.put(valPicked);
+//        }
+//
+//        for (int i = 1; i <= 20_000_000; i++) {
+//            boolean isPresentInBloomFilter = integerBasedBloomFilter.mightContain(i);
+//            boolean isPresentInActualSet = actualNumbers.contains(i);
+//
+//            if (!isPresentInActualSet && isPresentInBloomFilter) {
+//                falsePositiveCount++;
+//            }
+//        }
+//
+//        fppRate = (double) falsePositiveCount / 20_000_000;
+//
+//        logger.info("False positives count : {}", falsePositiveCount);
+//        logger.info("FPP Rate : {}", fppRate);
+//    }
 
     private static CosmosAsyncClient buildAsyncClient(
         CosmosClientBuilder clientBuilder,

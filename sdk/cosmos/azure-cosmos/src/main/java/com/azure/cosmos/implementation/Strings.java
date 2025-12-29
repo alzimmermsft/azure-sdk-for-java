@@ -59,6 +59,36 @@ public class Strings {
     }
 
     /**
+     * Strips the {@code str} of all {@code toStrip} characters it starts and ends with.
+     *
+     * @param str The string to strip characters from at the start and end.
+     * @param toStrip The character to strip.
+     * @return The string with characters stripped, or the string as-is if nothing was stripped.
+     */
+    public static String strip(String str, char toStrip) {
+        if (isEmpty(str)) {
+            return str;
+        }
+
+        int start = 0;
+        int end = str.length();
+        while (start < end && str.charAt(start) == toStrip) {
+            start++;
+        }
+
+        if (start == end) {
+            // str only contained toStrip characters, return an empty string.
+            return EMPTY;
+        }
+
+        while (str.charAt(end - 1) == toStrip) {
+            end--;
+        }
+
+        return str.substring(start, end);
+    }
+
+    /**
      * Strips the {@code str} of all {@code toStrip} characters it ends with.
      *
      * @param str The string to strip characters from at the end.
@@ -350,5 +380,72 @@ public class Strings {
             builder.append(padChar);
         }
         return builder.append(toPad).toString();
+    }
+
+    /**
+     * Converts the passed {@code str} from upper camel case ({@code UpperCamel}) to upper underscore
+     * ({@code UPPER_UNDERSCORE}).
+     * <p>
+     * This method bases upper camel word splits on the ASCII upper case range {@code A - Z}, where there is only a
+     * minimum requirement of one upper case character to determine a word, ex {@code ASingleEWord} becomes
+     * {@code A_SINGLE_E_WORD}.
+     *
+     * @param str The string to convert from upper camel case to upper underscore case.
+     * @return The converted string, or if {@code str} is null or empty {@code str} as is.
+     */
+    public static String asciiUpperCamelToUpperUnderscore(String str) {
+        if (isEmpty(str)) {
+            return str;
+        }
+
+        int length = str.length();
+        StringBuilder builder = new StringBuilder(length + 10);
+
+        // Tracking for underscore adding as it is done after an uppercase character was seen to prevent trailing
+        // underscores from being added to the final string. Ex, if 'CamelToConvertC' was passed we want
+        // 'CAMEL_TO_CONVERT_C' and not 'CAMEL_TO_CONVERT_C_', so underscore adding is done in the next iteraction of
+        // the loop.
+        boolean needToAddUnderscore = false;
+        for (int i = 0; i < length; i++) {
+            if (needToAddUnderscore) {
+                builder.append('_');
+                needToAddUnderscore = false;
+            }
+            char c = str.charAt(i);
+            if (c >= 'A' && c <= 'Z') {
+                // Uppercase letter, append as-is and indicate previous character was uppercase.
+                builder.append(c);
+                needToAddUnderscore = true;
+            } else if (c >= 'a' && c <= 'z') {
+                // Bitwise or the character with 0x20 to convert between ASCII lowercase to uppercase.
+                builder.append((char) (c ^ 0x20));
+            } else {
+                // Non-lowercase or uppercase character, append as-is.
+                builder.append(c);
+            }
+        }
+
+        return builder.toString();
+    }
+
+    /**
+     * Validates the passed {@code str} for only containing {@link Character#isDigit(char) digits}.
+     * <p>
+     * A null or empty string will return false as no character is a digit.
+     *
+     * @param str The string to check.
+     * @return true is the string isn't null or empty and only contains digits.
+     */
+    public static boolean isNumeric(final CharSequence str) {
+        if (isEmpty(str)) {
+            return false;
+        }
+        final int sz = str.length();
+        for (int i = 0; i < sz; i++) {
+            if (!Character.isDigit(str.charAt(i))) {
+                return false;
+            }
+        }
+        return true;
     }
 }

@@ -19,7 +19,6 @@
 package com.azure.cosmos.implementation.guava25.hash;
 
 import com.azure.cosmos.implementation.guava25.base.Preconditions;
-import com.azure.cosmos.implementation.guava25.base.Predicate;
 
 import java.io.Serializable;
 import java.util.Objects;
@@ -45,7 +44,7 @@ import java.util.Objects;
  * @author Kevin Bourrillion
  * @since 11.0 (thread-safe since 23.0)
  */
-public final class BloomFilter<T> implements Predicate<T>, Serializable {
+public final class BloomFilter<T> implements Serializable {
     /**
      * A strategy to translate T instances, to {@code numHashFunctions} bit indexes.
      *
@@ -108,16 +107,6 @@ public final class BloomFilter<T> implements Predicate<T>, Serializable {
      */
     public boolean mightContain(T object) {
         return strategy.mightContain(object, funnel, numHashFunctions, bits);
-    }
-
-    /**
-     * @deprecated Provided only to satisfy the {@link Predicate} interface; use {@link #mightContain}
-     *     instead.
-     */
-    @Deprecated
-    @Override
-    public boolean apply(T input) {
-        return mightContain(input);
     }
 
     /**

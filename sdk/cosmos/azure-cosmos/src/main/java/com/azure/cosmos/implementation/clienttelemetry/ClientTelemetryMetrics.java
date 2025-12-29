@@ -10,6 +10,7 @@ import com.azure.cosmos.implementation.ClientSideRequestStatistics;
 import com.azure.cosmos.implementation.FeedResponseDiagnostics;
 import com.azure.cosmos.implementation.ImplementationBridgeHelpers;
 import com.azure.cosmos.implementation.OperationType;
+import com.azure.cosmos.implementation.PercentEscaper;
 import com.azure.cosmos.implementation.RequestTimeline;
 import com.azure.cosmos.implementation.ResourceType;
 import com.azure.cosmos.implementation.Strings;
@@ -21,7 +22,6 @@ import com.azure.cosmos.implementation.directconnectivity.rntbd.RntbdEndpoint;
 import com.azure.cosmos.implementation.directconnectivity.rntbd.RntbdEndpointStatistics;
 import com.azure.cosmos.implementation.directconnectivity.rntbd.RntbdMetricsCompletionRecorder;
 import com.azure.cosmos.implementation.directconnectivity.rntbd.RntbdRequestRecord;
-import com.azure.cosmos.implementation.guava25.net.PercentEscaper;
 import com.azure.cosmos.implementation.query.QueryInfo;
 import com.azure.cosmos.models.CosmosMetricName;
 import io.micrometer.core.instrument.Counter;
@@ -64,7 +64,7 @@ public final class ClientTelemetryMetrics {
     ImplementationBridgeHelpers.CosmosDiagnosticsContextHelper.CosmosDiagnosticsContextAccessor diagnosticsCtxAccessor =
         ImplementationBridgeHelpers.CosmosDiagnosticsContextHelper.getCosmosDiagnosticsContextAccessor();
 
-    private static final PercentEscaper PERCENT_ESCAPER = new PercentEscaper("_-/.", false);
+    private static final PercentEscaper PERCENT_ESCAPER = new PercentEscaper("_-/.");
 
     private static CompositeMeterRegistry compositeRegistry = createFreshRegistry();
     private static final ConcurrentHashMap<MeterRegistry, AtomicLong> registryRefCount = new ConcurrentHashMap<>();
