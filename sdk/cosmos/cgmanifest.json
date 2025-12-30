@@ -11,16 +11,6 @@
           "version": "25.0-jre"
         }
       }
-    },
-    {
-      "component": {
-        "type": "maven",
-        "maven": {
-          "groupId": "org.apache.commons",
-          "artifactId": "commons-text",
-          "version": "1.10.0"
-        }
-      }
     }
   ]
 }

@@ -12,6 +12,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.function.BiFunction;
 
 /**
  * While this class is public, but it is not part of our published public APIs.
@@ -447,5 +448,155 @@ public class Strings {
             }
         }
         return true;
+    }
+
+    /**
+     * Unescapes the passed {@code str}.
+     * <p>
+     * Unescaping the {@code str} performs multiple iterations over the string performing the following in the order
+     * specified:
+     * <ol>
+     *     <li>Unescaping octal numbers to base 10 (ex: {@code '\012' -> '10'}</li>
+     *     <li>Unescaping Unicode (ex: {@code '\u0068\u0069' -> 'hi'}</li>
+     *     <li>Unescaping the following Java control characters, {@code '\\b' -> '\b'}, {@code '\\n' -> '\n'},
+     *     {@code '\\t' -> '\t'}, {@code '\\f' -> '\f'}, {@code '\\r' -> '\r'}</li>
+     *     <li>Unescaping the following, {@code '\\' -> '\'}, {@code '\\\"' -> '\"'}, {@code "\\'" -> "'"},
+     *     {@code '\\' -> ''}</li>
+     * </ol>
+     *
+     * @param str The string to unescape.
+     * @return The unescaped string, or the string as-is if null or empty or no escaping was performed.
+     */
+    public static String unescapeJava(String str) {
+        if (isEmpty(str)) {
+            return str;
+        }
+
+        str = unescapeJavaLoop(str, Strings::unescapeOctal);
+        str = unescapeJavaLoop(str, Strings::unescapeUnicode);
+        str = unescapeJavaLoop(str, Strings::unescapeControlCharacters);
+
+        return unescapeJavaLoop(str, Strings::unescapeAdditionalCharacters);
+    }
+
+    // Helper method for unescaping
+    private static String unescapeJavaLoop(String str, BiFunction<String, Integer, Pair<Integer, String>> unescaper) {
+        // Don't initialize the build until we find an unescape match.
+        StringBuilder builder = null;
+
+        int length = str.length();
+        int lastAppend = 0;
+        for (int i = 0; i < length; i++) {
+            Pair<Integer, String> consumedAndReplacement = unescaper.apply(str, i);
+            if (consumedAndReplacement == null) {
+                // unescaper didn't consume anything.
+                continue;
+            }
+
+            if (builder == null) {
+                builder = new StringBuilder(length);
+                builder.append(str, 0, i);
+            } else if (lastAppend != i - 1) {
+                builder.append(str, lastAppend, i);
+            }
+            i += consumedAndReplacement.getLeft();
+            lastAppend = i;
+            builder.append(consumedAndReplacement.getRight());
+        }
+
+        if (builder != null && lastAppend != length - 1) {
+            builder.append(str, lastAppend, length - lastAppend);
+        }
+
+        return builder != null ? builder.toString() : str;
+    }
+
+    // Unescapes octal escapes into base-10 numbers.
+    // Only supports octal range '\1' to '\377' to match behaviors of Apache Common's OctalUnescaper which this is
+    // replacing.
+    private static Pair<Integer, String> unescapeOctal(String str, int index) {
+        int length = str.length();
+        char next;
+        if (str.charAt(index) == '\\' && index + 1 < length && isOctalDigit((next = str.charAt(index + 1)))) {
+            StringBuilder octalBuilder = new StringBuilder(3); // At most will be 3 digits
+            octalBuilder.append(next);
+            char next2;
+            if (index + 2 < length && isOctalDigit((next2 = str.charAt(index + 2)))) {
+                octalBuilder.append(next2);
+                char next3;
+                if (index + 3 < length && isZeroToThree(next) && isOctalDigit((next3 = str.charAt(index + 3)))) {
+                    // Only append the possible third octal digit if the first is between 0 - 3.
+                    octalBuilder.append(next3);
+                }
+            }
+
+            return Pair.of(octalBuilder.length(), String.valueOf(Integer.parseInt(octalBuilder.toString(), 8)));
+        }
+
+        return null;
+    }
+
+    private static boolean isOctalDigit(char c) {
+        return c >= '0' && c <= '7';
+    }
+
+    private static boolean isZeroToThree(char c) {
+        return c >= '0' && c <= '3';
+    }
+
+    // Unescapes Unicode into the char it represents.
+    private static Pair<Integer, String> unescapeUnicode(String str, int index) {
+        int length = str.length();
+        if (str.charAt(index) == '\\' && index + 1 < length && str.charAt(index + 1) == 'u') {
+            int consumed = 2;
+            // '\uuuuuuu0068' is valid Unicode, consume subsequent 'u's
+            while (index + consumed < length && str.charAt(index + consumed) == 'u') {
+                consumed++;
+            }
+
+            // Unicode escapes may include a '+' before the 4 hex digits.
+            if (index + consumed < length && str.charAt(index + consumed) == '+') {
+                consumed++;
+            }
+
+            if (index + consumed + 4 < length) {
+                String unicode = str.substring(index + consumed, index + consumed + 4);
+                return Pair.of(consumed + 4, String.valueOf(Integer.parseInt(unicode, 16)));
+            }
+        }
+
+        return null;
+    }
+
+    // Unescapes the Java control characters '\\b', '\\n', '\\t', '\\f', and '\\r'
+    // into their '\b', '\n', '\t', '\f', and '\r' representations.
+    private static Pair<Integer, String> unescapeControlCharacters(String str, int index) {
+        if (str.charAt(index) == '\\' && index + 1 < str.length()) {
+            switch (str.charAt(index + 1)) {
+                case 'b': return Pair.of(2, "\b");
+                case 'n': return Pair.of(2, "\n");
+                case 't': return Pair.of(2, "\t");
+                case 'f': return Pair.of(2, "\f");
+                case 'r': return Pair.of(2, "\r");
+                default: return null;
+            }
+        }
+
+        return null;
+    }
+
+    // Unescapes the additional characters '\\\\', '\\\"', "\\'", and '\\'
+    // into their '\\', '\"', "'", and "" representations.
+    private static Pair<Integer, String> unescapeAdditionalCharacters(String str, int index) {
+        if (str.charAt(index) == '\\' && index + 1 < str.length()) {
+            switch (str.charAt(index + 1)) {
+                case '\\': return Pair.of(2, "\\");
+                case '"': return Pair.of(2, "\"");
+                case '\'': return Pair.of(2, "'");
+                default: return Pair.of(1, "");
+            }
+        }
+
+        return null;
     }
 }

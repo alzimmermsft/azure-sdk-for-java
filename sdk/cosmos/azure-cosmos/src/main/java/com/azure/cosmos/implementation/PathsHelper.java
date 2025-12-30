@@ -3,7 +3,6 @@
 
 package com.azure.cosmos.implementation;
 
-import com.azure.cosmos.implementation.apachecommons.text.StringEscapeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -505,7 +504,7 @@ public class PathsHelper {
         for (int startLoopIndex = startInclusiveIndex; startLoopIndex < endExclusiveIndex; startLoopIndex++) {
             if (resourceUrl.charAt(startLoopIndex)== Paths.ESCAPE_CHAR) {
                 // Found an escape character lets run the StringEscapeUtils.unescapeJava
-                return StringEscapeUtils.unescapeJava(Strings.strip(resourceUrl, Paths.ROOT.charAt(0)));
+                return Strings.unescapeJava(Strings.strip(resourceUrl, Paths.ROOT.charAt(0)));
             }
         }
 

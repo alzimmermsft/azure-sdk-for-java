@@ -18,11 +18,6 @@
 
 package com.azure.cosmos.implementation.guava25.base;
 
-import static java.lang.Character.MAX_SURROGATE;
-import static java.lang.Character.MIN_SURROGATE;
-
-
-
 /**
  * Low-level, high-performance utility methods related to the UTF-8 character encoding.
  * UTF-8 is defined in section D92 of <a
@@ -88,7 +83,7 @@ public final class Utf8 {
       } else {
         utf8Length += 2;
         // jdk7+: if (Character.isSurrogate(c)) {
-        if (MIN_SURROGATE <= c && c <= MAX_SURROGATE) {
+        if (Character.isSurrogate(c)) {
           // Check that we have a well-formed surrogate pair.
           if (Character.codePointAt(sequence, i) == c) {
             throw new IllegalArgumentException(unpairedSurrogateMsg(i));
