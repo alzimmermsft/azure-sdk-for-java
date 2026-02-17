@@ -16,8 +16,6 @@ public final class FormattedDuration {
     private static final long NANOSECONDS_PER_MINUTE = MINUTES.toNanos(1);
     private static final long NANOSECONDS_PER_SECOND = SECONDS.toNanos(1);
 
-    private static final ThreadLocal<StringBuilder> reusableStringBuilder = ThreadLocal.withInitial(StringBuilder::new);
-
     public static String fromNanos(long durationNanos) {
         long remainingNanos = durationNanos;
 
@@ -33,15 +31,40 @@ public final class FormattedDuration {
         long seconds = remainingNanos / NANOSECONDS_PER_SECOND;
         remainingNanos = remainingNanos % NANOSECONDS_PER_SECOND;
 
-        // TODO (trask) optimization: even better than reusing string builder would be to write this
-        //  directly to json stream during json serialization
-        StringBuilder sb = reusableStringBuilder.get();
-        sb.setLength(0);
+        // TODO (trask) optimization: write this directly to json stream during json serialization
+        StringBuilder sb = new StringBuilder(64);
 
         appendDaysHoursMinutesSeconds(sb, days, hours, minutes, seconds);
         appendMinSixDigits(sb, NANOSECONDS.toMicros(remainingNanos));
 
         return sb.toString();
+    }
+
+    // Returns duration in microseconds
+    public static long getDurationFromTelemetryItemDurationString(String duration) {
+        // duration in format: DD.HH:MM:SS.MMMMMM. Must be less than 1000 days.
+        try {
+            String[] parts = duration.split("\\.");
+            int days = 0;
+            String hms;
+            long microseconds;
+            if (parts.length == 3) {
+                days = Integer.parseInt(parts[0]);
+                hms = parts[1];
+                microseconds = Integer.parseInt(parts[2]);
+            } else { //length 2
+                hms = parts[0];
+                microseconds = Integer.parseInt(parts[1]);
+            }
+            String[] hmsParts = hms.split(":");
+            int hours = Integer.parseInt(hmsParts[0]);
+            int minutes = Integer.parseInt(hmsParts[1]);
+            int seconds = Integer.parseInt(hmsParts[2]);
+            return (days * 24L * 60L * 60L * 1000000L) + (hours * 60L * 60L * 1000000L) + (minutes * 60L * 1000000L)
+                + (seconds * 1000000L) + microseconds;
+        } catch (NumberFormatException e) {
+            return -1;
+        }
     }
 
     private static void appendDaysHoursMinutesSeconds(StringBuilder sb, long days, long hours, long minutes,
@@ -66,21 +89,18 @@ public final class FormattedDuration {
     }
 
     private static void appendMinSixDigits(StringBuilder sb, long value) {
-        if (value < 100000) {
-            sb.append('0');
-        }
-        if (value < 10000) {
-            sb.append('0');
-        }
-        if (value < 1000) {
-            sb.append('0');
-        }
-        if (value < 100) {
-            sb.append('0');
-        }
         if (value < 10) {
+            sb.append("00000");
+        } else if (value < 100) {
+            sb.append("0000");
+        } else if (value < 1_000) {
+            sb.append("000");
+        } else if (value < 10_000) {
+            sb.append("00");
+        } else if (value < 100_000) {
             sb.append('0');
         }
+
         sb.append(value);
     }
 

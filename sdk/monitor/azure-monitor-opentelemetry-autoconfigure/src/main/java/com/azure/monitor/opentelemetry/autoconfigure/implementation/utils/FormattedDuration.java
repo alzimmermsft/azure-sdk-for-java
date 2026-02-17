@@ -16,8 +16,6 @@ public final class FormattedDuration {
     private static final long NANOSECONDS_PER_MINUTE = MINUTES.toNanos(1);
     private static final long NANOSECONDS_PER_SECOND = SECONDS.toNanos(1);
 
-    private static final ThreadLocal<StringBuilder> reusableStringBuilder = ThreadLocal.withInitial(StringBuilder::new);
-
     public static String fromNanos(long durationNanos) {
         long remainingNanos = durationNanos;
 
@@ -33,10 +31,8 @@ public final class FormattedDuration {
         long seconds = remainingNanos / NANOSECONDS_PER_SECOND;
         remainingNanos = remainingNanos % NANOSECONDS_PER_SECOND;
 
-        // TODO (trask) optimization: even better than reusing string builder would be to write this
-        //  directly to json stream during json serialization
-        StringBuilder sb = reusableStringBuilder.get();
-        sb.setLength(0);
+        // TODO (trask) optimization: write this directly to json stream during json serialization
+        StringBuilder sb = new StringBuilder();
 
         appendDaysHoursMinutesSeconds(sb, days, hours, minutes, seconds);
         appendMinSixDigits(sb, NANOSECONDS.toMicros(remainingNanos));
@@ -93,21 +89,18 @@ public final class FormattedDuration {
     }
 
     private static void appendMinSixDigits(StringBuilder sb, long value) {
-        if (value < 100000) {
-            sb.append('0');
-        }
-        if (value < 10000) {
-            sb.append('0');
-        }
-        if (value < 1000) {
-            sb.append('0');
-        }
-        if (value < 100) {
-            sb.append('0');
-        }
         if (value < 10) {
+            sb.append("00000");
+        } else if (value < 100) {
+            sb.append("0000");
+        } else if (value < 1_000) {
+            sb.append("000");
+        } else if (value < 10_000) {
+            sb.append("00");
+        } else if (value < 100_000) {
             sb.append('0');
         }
+
         sb.append(value);
     }
 

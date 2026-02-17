@@ -18,7 +18,6 @@ import com.azure.storage.common.implementation.StorageImplUtils;
 import com.azure.storage.common.policy.StorageSharedKeyCredentialPolicy;
 
 import java.net.URL;
-import java.text.Collator;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -33,12 +32,6 @@ import static com.azure.storage.common.Utility.urlDecode;
  */
 public final class StorageSharedKeyCredential {
     private static final ClientLogger LOGGER = new ClientLogger(StorageSharedKeyCredential.class);
-
-    // Previous design used a constant for the ROOT_COLLATOR. This runs into performance issues as the ROOT Collator
-    // can have the comparison method synchronized. In highly threaded environments this can result in threads waiting
-    // to enter the synchronized block.
-    private static final ThreadLocal<Collator> THREAD_LOCAL_COLLATOR
-        = ThreadLocal.withInitial(() -> Collator.getInstance(Locale.ROOT));
 
     private static final Context LOG_STRING_TO_SIGN_CONTEXT = new Context(Constants.STORAGE_LOG_STRING_TO_SIGN, true);
 
@@ -181,7 +174,7 @@ public final class StorageSharedKeyCredential {
         return StorageImplUtils.computeHMac256(azureNamedKeyCredential.getAzureNamedKey().getKey(), stringToSign);
     }
 
-    private String buildStringToSign(URL requestURL, String httpMethod, HttpHeaders headers, boolean logStringToSign) {
+    private String buildStringToSign(URL requestUrl, String httpMethod, HttpHeaders headers, boolean logStringToSign) {
         String contentLength = headers.getValue(HttpHeaderName.CONTENT_LENGTH);
         contentLength = "0".equals(contentLength) ? "" : contentLength;
 
@@ -189,18 +182,16 @@ public final class StorageSharedKeyCredential {
         String dateHeader
             = (headers.getValue(X_MS_DATE) != null) ? "" : getStandardHeaderValue(headers, HttpHeaderName.DATE);
 
-        Collator collator = THREAD_LOCAL_COLLATOR.get();
-        String stringToSign
-            = String.join("\n", httpMethod, getStandardHeaderValue(headers, HttpHeaderName.CONTENT_ENCODING),
-                getStandardHeaderValue(headers, HttpHeaderName.CONTENT_LANGUAGE), contentLength,
-                getStandardHeaderValue(headers, HttpHeaderName.CONTENT_MD5),
-                getStandardHeaderValue(headers, HttpHeaderName.CONTENT_TYPE), dateHeader,
-                getStandardHeaderValue(headers, HttpHeaderName.IF_MODIFIED_SINCE),
-                getStandardHeaderValue(headers, HttpHeaderName.IF_MATCH),
-                getStandardHeaderValue(headers, HttpHeaderName.IF_NONE_MATCH),
-                getStandardHeaderValue(headers, HttpHeaderName.IF_UNMODIFIED_SINCE),
-                getStandardHeaderValue(headers, HttpHeaderName.RANGE), getAdditionalXmsHeaders(headers, collator),
-                getCanonicalizedResource(requestURL, collator));
+        String stringToSign = httpMethod + "\n" + getStandardHeaderValue(headers, HttpHeaderName.CONTENT_ENCODING)
+            + "\n" + getStandardHeaderValue(headers, HttpHeaderName.CONTENT_LANGUAGE) + "\n" + contentLength + "\n"
+            + getStandardHeaderValue(headers, HttpHeaderName.CONTENT_MD5) + "\n"
+            + getStandardHeaderValue(headers, HttpHeaderName.CONTENT_TYPE) + "\n" + dateHeader + "\n"
+            + getStandardHeaderValue(headers, HttpHeaderName.IF_MODIFIED_SINCE) + "\n"
+            + getStandardHeaderValue(headers, HttpHeaderName.IF_MATCH) + "\n"
+            + getStandardHeaderValue(headers, HttpHeaderName.IF_NONE_MATCH) + "\n"
+            + getStandardHeaderValue(headers, HttpHeaderName.IF_UNMODIFIED_SINCE) + "\n"
+            + getStandardHeaderValue(headers, HttpHeaderName.RANGE) + "\n" + getAdditionalXmsHeaders(headers) + "\n"
+            + getCanonicalizedResource(requestUrl);
 
         if (logStringToSign) {
             StorageImplUtils.logStringToSign(LOGGER, stringToSign, LOG_STRING_TO_SIGN_CONTEXT);
@@ -217,7 +208,7 @@ public final class StorageSharedKeyCredential {
         return header == null ? "" : header.getValue();
     }
 
-    private static String getAdditionalXmsHeaders(HttpHeaders headers, Collator collator) {
+    private static String getAdditionalXmsHeaders(HttpHeaders headers) {
         List<Header> xmsHeaders = new ArrayList<>();
 
         int stringBuilderSize = 0;
@@ -239,7 +230,7 @@ public final class StorageSharedKeyCredential {
 
         final StringBuilder canonicalizedHeaders = new StringBuilder(stringBuilderSize + (2 * xmsHeaders.size()) - 1);
 
-        xmsHeaders.sort((o1, o2) -> collator.compare(o1.getName(), o2.getName()));
+        xmsHeaders.sort((o1, o2) -> o1.getName().compareToIgnoreCase(o2.getName()));
 
         for (Header xmsHeader : xmsHeaders) {
             if (canonicalizedHeaders.length() > 0) {
@@ -253,7 +244,7 @@ public final class StorageSharedKeyCredential {
         return canonicalizedHeaders.toString();
     }
 
-    private String getCanonicalizedResource(URL requestURL, Collator collator) {
+    private String getCanonicalizedResource(URL requestURL) {
 
         // Resource path
         String resourcePath = azureNamedKeyCredential.getAzureNamedKey().getName();
@@ -277,7 +268,7 @@ public final class StorageSharedKeyCredential {
         //
         // Example 1: prefix=a%2cb => prefix={decode(a%2cb)} => prefix={"a,b"}
         // Example 2: prefix=a,2 => prefix={decode(a),decode(b) => prefix={"a","b"}
-        TreeMap<String, List<String>> pieces = new TreeMap<>(collator);
+        TreeMap<String, List<String>> pieces = new TreeMap<>(String::compareToIgnoreCase);
 
         StorageImplUtils.parseQueryParameters(query).forEachRemaining(kvp -> {
             String key = urlDecode(kvp.getKey()).toLowerCase(Locale.ROOT);
@@ -302,7 +293,7 @@ public final class StorageSharedKeyCredential {
 
         for (Map.Entry<String, List<String>> queryParam : pieces.entrySet()) {
             List<String> queryParamValues = queryParam.getValue();
-            queryParamValues.sort(collator);
+            queryParamValues.sort(String::compareToIgnoreCase);
             canonicalizedResource.append('\n').append(queryParam.getKey()).append(':');
 
             int size = queryParamValues.size();
