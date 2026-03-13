@@ -148,7 +148,7 @@ public final class KnowledgeBaseRetrievalClientImpl {
     @Host("{endpoint}")
     @ServiceInterface(name = "KnowledgeBaseRetrievalClient")
     public interface KnowledgeBaseRetrievalClientService {
-        @Post("/retrieve/{knowledgeBaseName}")
+        @Post("/knowledgebases('{knowledgeBaseName}')/retrieve")
         @ExpectedResponses({ 200, 206 })
         @UnexpectedResponseExceptionType(value = ClientAuthenticationException.class, code = { 401 })
         @UnexpectedResponseExceptionType(value = ResourceNotFoundException.class, code = { 404 })
@@ -159,7 +159,7 @@ public final class KnowledgeBaseRetrievalClientImpl {
             @PathParam("knowledgeBaseName") String knowledgeBaseName, @HeaderParam("Content-Type") String contentType,
             @BodyParam("application/json") BinaryData retrievalRequest, RequestOptions requestOptions, Context context);
 
-        @Post("/retrieve/{knowledgeBaseName}")
+        @Post("/knowledgebases('{knowledgeBaseName}')/retrieve")
         @ExpectedResponses({ 200, 206 })
         @UnexpectedResponseExceptionType(value = ClientAuthenticationException.class, code = { 401 })
         @UnexpectedResponseExceptionType(value = ResourceNotFoundException.class, code = { 404 })

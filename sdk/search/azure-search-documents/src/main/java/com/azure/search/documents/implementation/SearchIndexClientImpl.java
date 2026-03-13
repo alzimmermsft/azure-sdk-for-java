@@ -342,6 +342,26 @@ public final class SearchIndexClientImpl {
             @QueryParam("api-version") String apiVersion, @HeaderParam("Accept") String accept,
             RequestOptions requestOptions, Context context);
 
+        @Get("/indexes")
+        @ExpectedResponses({ 200 })
+        @UnexpectedResponseExceptionType(value = ClientAuthenticationException.class, code = { 401 })
+        @UnexpectedResponseExceptionType(value = ResourceNotFoundException.class, code = { 404 })
+        @UnexpectedResponseExceptionType(value = ResourceModifiedException.class, code = { 409 })
+        @UnexpectedResponseExceptionType(HttpResponseException.class)
+        Mono<Response<BinaryData>> listIndexesWithSelectedProperties(@HostParam("endpoint") String endpoint,
+            @QueryParam("api-version") String apiVersion, @HeaderParam("Accept") String accept,
+            RequestOptions requestOptions, Context context);
+
+        @Get("/indexes")
+        @ExpectedResponses({ 200 })
+        @UnexpectedResponseExceptionType(value = ClientAuthenticationException.class, code = { 401 })
+        @UnexpectedResponseExceptionType(value = ResourceNotFoundException.class, code = { 404 })
+        @UnexpectedResponseExceptionType(value = ResourceModifiedException.class, code = { 409 })
+        @UnexpectedResponseExceptionType(HttpResponseException.class)
+        Response<BinaryData> listIndexesWithSelectedPropertiesSync(@HostParam("endpoint") String endpoint,
+            @QueryParam("api-version") String apiVersion, @HeaderParam("Accept") String accept,
+            RequestOptions requestOptions, Context context);
+
         @Post("/indexes")
         @ExpectedResponses({ 201 })
         @UnexpectedResponseExceptionType(value = ClientAuthenticationException.class, code = { 401 })
@@ -2592,15 +2612,6 @@ public final class SearchIndexClientImpl {
 
     /**
      * Lists all indexes available for a search service.
-     * <p><strong>Query Parameters</strong></p>
-     * <table border="1">
-     * <caption>Query Parameters</caption>
-     * <tr><th>Name</th><th>Type</th><th>Required</th><th>Description</th></tr>
-     * <tr><td>$select</td><td>List&lt;String&gt;</td><td>No</td><td>Selects which top-level properties to retrieve.
-     * Specified as a comma-separated list of JSON property names, or '*' for all properties. The default is all
-     * properties. In the form of "," separated string.</td></tr>
-     * </table>
-     * You can add these to a request with {@link RequestOptions#addQueryParam}
      * <p><strong>Response Body Schema</strong></p>
      * 
      * <pre>
@@ -2798,15 +2809,6 @@ public final class SearchIndexClientImpl {
 
     /**
      * Lists all indexes available for a search service.
-     * <p><strong>Query Parameters</strong></p>
-     * <table border="1">
-     * <caption>Query Parameters</caption>
-     * <tr><th>Name</th><th>Type</th><th>Required</th><th>Description</th></tr>
-     * <tr><td>$select</td><td>List&lt;String&gt;</td><td>No</td><td>Selects which top-level properties to retrieve.
-     * Specified as a comma-separated list of JSON property names, or '*' for all properties. The default is all
-     * properties. In the form of "," separated string.</td></tr>
-     * </table>
-     * You can add these to a request with {@link RequestOptions#addQueryParam}
      * <p><strong>Response Body Schema</strong></p>
      * 
      * <pre>
@@ -2998,15 +3000,6 @@ public final class SearchIndexClientImpl {
 
     /**
      * Lists all indexes available for a search service.
-     * <p><strong>Query Parameters</strong></p>
-     * <table border="1">
-     * <caption>Query Parameters</caption>
-     * <tr><th>Name</th><th>Type</th><th>Required</th><th>Description</th></tr>
-     * <tr><td>$select</td><td>List&lt;String&gt;</td><td>No</td><td>Selects which top-level properties to retrieve.
-     * Specified as a comma-separated list of JSON property names, or '*' for all properties. The default is all
-     * properties. In the form of "," separated string.</td></tr>
-     * </table>
-     * You can add these to a request with {@link RequestOptions#addQueryParam}
      * <p><strong>Response Body Schema</strong></p>
      * 
      * <pre>
@@ -3202,15 +3195,6 @@ public final class SearchIndexClientImpl {
 
     /**
      * Lists all indexes available for a search service.
-     * <p><strong>Query Parameters</strong></p>
-     * <table border="1">
-     * <caption>Query Parameters</caption>
-     * <tr><th>Name</th><th>Type</th><th>Required</th><th>Description</th></tr>
-     * <tr><td>$select</td><td>List&lt;String&gt;</td><td>No</td><td>Selects which top-level properties to retrieve.
-     * Specified as a comma-separated list of JSON property names, or '*' for all properties. The default is all
-     * properties. In the form of "," separated string.</td></tr>
-     * </table>
-     * You can add these to a request with {@link RequestOptions#addQueryParam}
      * <p><strong>Response Body Schema</strong></p>
      * 
      * <pre>
@@ -3398,6 +3382,817 @@ public final class SearchIndexClientImpl {
     @ServiceMethod(returns = ReturnType.COLLECTION)
     public PagedIterable<BinaryData> listIndexes(RequestOptions requestOptions) {
         return new PagedIterable<>(() -> listIndexesSinglePage(requestOptions));
+    }
+
+    /**
+     * Lists all indexes available for a search service.
+     * <p><strong>Query Parameters</strong></p>
+     * <table border="1">
+     * <caption>Query Parameters</caption>
+     * <tr><th>Name</th><th>Type</th><th>Required</th><th>Description</th></tr>
+     * <tr><td>$select</td><td>List&lt;String&gt;</td><td>No</td><td>Selects which top-level properties to retrieve.
+     * Specified as a comma-separated list of JSON property names, or '*' for all properties. The default is all
+     * properties. In the form of "," separated string.</td></tr>
+     * </table>
+     * You can add these to a request with {@link RequestOptions#addQueryParam}
+     * <p><strong>Response Body Schema</strong></p>
+     * 
+     * <pre>
+     * {@code
+     * {
+     *     name: String (Required)
+     *     description: String (Optional)
+     *     fields (Optional): [
+     *          (Optional){
+     *             name: String (Required)
+     *             type: String(Edm.String/Edm.Int32/Edm.Int64/Edm.Double/Edm.Boolean/Edm.DateTimeOffset/Edm.GeographyPoint/Edm.ComplexType/Edm.Single/Edm.Half/Edm.Int16/Edm.SByte/Edm.Byte) (Required)
+     *             key: Boolean (Optional)
+     *             retrievable: Boolean (Optional)
+     *             stored: Boolean (Optional)
+     *             searchable: Boolean (Optional)
+     *             filterable: Boolean (Optional)
+     *             sortable: Boolean (Optional)
+     *             facetable: Boolean (Optional)
+     *             permissionFilter: String(userIds/groupIds/rbacScope) (Optional)
+     *             sensitivityLabel: Boolean (Optional)
+     *             analyzer: String(ar.microsoft/ar.lucene/hy.lucene/bn.microsoft/eu.lucene/bg.microsoft/bg.lucene/ca.microsoft/ca.lucene/zh-Hans.microsoft/zh-Hans.lucene/zh-Hant.microsoft/zh-Hant.lucene/hr.microsoft/cs.microsoft/cs.lucene/da.microsoft/da.lucene/nl.microsoft/nl.lucene/en.microsoft/en.lucene/et.microsoft/fi.microsoft/fi.lucene/fr.microsoft/fr.lucene/gl.lucene/de.microsoft/de.lucene/el.microsoft/el.lucene/gu.microsoft/he.microsoft/hi.microsoft/hi.lucene/hu.microsoft/hu.lucene/is.microsoft/id.microsoft/id.lucene/ga.lucene/it.microsoft/it.lucene/ja.microsoft/ja.lucene/kn.microsoft/ko.microsoft/ko.lucene/lv.microsoft/lv.lucene/lt.microsoft/ml.microsoft/ms.microsoft/mr.microsoft/nb.microsoft/no.lucene/fa.lucene/pl.microsoft/pl.lucene/pt-BR.microsoft/pt-BR.lucene/pt-PT.microsoft/pt-PT.lucene/pa.microsoft/ro.microsoft/ro.lucene/ru.microsoft/ru.lucene/sr-cyrillic.microsoft/sr-latin.microsoft/sk.microsoft/sl.microsoft/es.microsoft/es.lucene/sv.microsoft/sv.lucene/ta.microsoft/te.microsoft/th.microsoft/th.lucene/tr.microsoft/tr.lucene/uk.microsoft/ur.microsoft/vi.microsoft/standard.lucene/standardasciifolding.lucene/keyword/pattern/simple/stop/whitespace) (Optional)
+     *             searchAnalyzer: String(ar.microsoft/ar.lucene/hy.lucene/bn.microsoft/eu.lucene/bg.microsoft/bg.lucene/ca.microsoft/ca.lucene/zh-Hans.microsoft/zh-Hans.lucene/zh-Hant.microsoft/zh-Hant.lucene/hr.microsoft/cs.microsoft/cs.lucene/da.microsoft/da.lucene/nl.microsoft/nl.lucene/en.microsoft/en.lucene/et.microsoft/fi.microsoft/fi.lucene/fr.microsoft/fr.lucene/gl.lucene/de.microsoft/de.lucene/el.microsoft/el.lucene/gu.microsoft/he.microsoft/hi.microsoft/hi.lucene/hu.microsoft/hu.lucene/is.microsoft/id.microsoft/id.lucene/ga.lucene/it.microsoft/it.lucene/ja.microsoft/ja.lucene/kn.microsoft/ko.microsoft/ko.lucene/lv.microsoft/lv.lucene/lt.microsoft/ml.microsoft/ms.microsoft/mr.microsoft/nb.microsoft/no.lucene/fa.lucene/pl.microsoft/pl.lucene/pt-BR.microsoft/pt-BR.lucene/pt-PT.microsoft/pt-PT.lucene/pa.microsoft/ro.microsoft/ro.lucene/ru.microsoft/ru.lucene/sr-cyrillic.microsoft/sr-latin.microsoft/sk.microsoft/sl.microsoft/es.microsoft/es.lucene/sv.microsoft/sv.lucene/ta.microsoft/te.microsoft/th.microsoft/th.lucene/tr.microsoft/tr.lucene/uk.microsoft/ur.microsoft/vi.microsoft/standard.lucene/standardasciifolding.lucene/keyword/pattern/simple/stop/whitespace) (Optional)
+     *             indexAnalyzer: String(ar.microsoft/ar.lucene/hy.lucene/bn.microsoft/eu.lucene/bg.microsoft/bg.lucene/ca.microsoft/ca.lucene/zh-Hans.microsoft/zh-Hans.lucene/zh-Hant.microsoft/zh-Hant.lucene/hr.microsoft/cs.microsoft/cs.lucene/da.microsoft/da.lucene/nl.microsoft/nl.lucene/en.microsoft/en.lucene/et.microsoft/fi.microsoft/fi.lucene/fr.microsoft/fr.lucene/gl.lucene/de.microsoft/de.lucene/el.microsoft/el.lucene/gu.microsoft/he.microsoft/hi.microsoft/hi.lucene/hu.microsoft/hu.lucene/is.microsoft/id.microsoft/id.lucene/ga.lucene/it.microsoft/it.lucene/ja.microsoft/ja.lucene/kn.microsoft/ko.microsoft/ko.lucene/lv.microsoft/lv.lucene/lt.microsoft/ml.microsoft/ms.microsoft/mr.microsoft/nb.microsoft/no.lucene/fa.lucene/pl.microsoft/pl.lucene/pt-BR.microsoft/pt-BR.lucene/pt-PT.microsoft/pt-PT.lucene/pa.microsoft/ro.microsoft/ro.lucene/ru.microsoft/ru.lucene/sr-cyrillic.microsoft/sr-latin.microsoft/sk.microsoft/sl.microsoft/es.microsoft/es.lucene/sv.microsoft/sv.lucene/ta.microsoft/te.microsoft/th.microsoft/th.lucene/tr.microsoft/tr.lucene/uk.microsoft/ur.microsoft/vi.microsoft/standard.lucene/standardasciifolding.lucene/keyword/pattern/simple/stop/whitespace) (Optional)
+     *             normalizer: String(asciifolding/elision/lowercase/standard/uppercase) (Optional)
+     *             dimensions: Integer (Optional)
+     *             vectorSearchProfile: String (Optional)
+     *             vectorEncoding: String(packedBit) (Optional)
+     *             synonymMaps (Optional): [
+     *                 String (Optional)
+     *             ]
+     *             fields (Optional): [
+     *                 (recursive schema, see above)
+     *             ]
+     *         }
+     *     ]
+     *     scoringProfiles (Optional): [
+     *          (Optional){
+     *             name: String (Required)
+     *             text (Optional): {
+     *                 weights (Required): {
+     *                     String: double (Required)
+     *                 }
+     *             }
+     *             functions (Optional): [
+     *                  (Optional){
+     *                     type: String (Required)
+     *                     fieldName: String (Required)
+     *                     boost: double (Required)
+     *                     interpolation: String(linear/constant/quadratic/logarithmic) (Optional)
+     *                 }
+     *             ]
+     *             functionAggregation: String(sum/average/minimum/maximum/firstMatching/product) (Optional)
+     *         }
+     *     ]
+     *     defaultScoringProfile: String (Optional)
+     *     corsOptions (Optional): {
+     *         allowedOrigins (Required): [
+     *             String (Required)
+     *         ]
+     *         maxAgeInSeconds: Long (Optional)
+     *     }
+     *     suggesters (Optional): [
+     *          (Optional){
+     *             name: String (Required)
+     *             searchMode: String (Required)
+     *             sourceFields (Required): [
+     *                 String (Required)
+     *             ]
+     *         }
+     *     ]
+     *     analyzers (Optional): [
+     *          (Optional){
+     *             &#64;odata.type: String (Required)
+     *             name: String (Required)
+     *         }
+     *     ]
+     *     tokenizers (Optional): [
+     *          (Optional){
+     *             &#64;odata.type: String (Required)
+     *             name: String (Required)
+     *         }
+     *     ]
+     *     tokenFilters (Optional): [
+     *          (Optional){
+     *             &#64;odata.type: String (Required)
+     *             name: String (Required)
+     *         }
+     *     ]
+     *     charFilters (Optional): [
+     *          (Optional){
+     *             &#64;odata.type: String (Required)
+     *             name: String (Required)
+     *         }
+     *     ]
+     *     normalizers (Optional): [
+     *          (Optional){
+     *             &#64;odata.type: String (Required)
+     *             name: String (Required)
+     *         }
+     *     ]
+     *     encryptionKey (Optional): {
+     *         keyVaultKeyName: String (Required)
+     *         keyVaultKeyVersion: String (Optional)
+     *         keyVaultUri: String (Required)
+     *         accessCredentials (Optional): {
+     *             applicationId: String (Required)
+     *             applicationSecret: String (Optional)
+     *         }
+     *         identity (Optional): {
+     *             &#64;odata.type: String (Required)
+     *         }
+     *     }
+     *     similarity (Optional): {
+     *         &#64;odata.type: String (Required)
+     *     }
+     *     semantic (Optional): {
+     *         defaultConfiguration: String (Optional)
+     *         configurations (Optional): [
+     *              (Optional){
+     *                 name: String (Required)
+     *                 prioritizedFields (Required): {
+     *                     titleField (Optional): {
+     *                         fieldName: String (Required)
+     *                     }
+     *                     prioritizedContentFields (Optional): [
+     *                         (recursive schema, see above)
+     *                     ]
+     *                     prioritizedKeywordsFields (Optional): [
+     *                         (recursive schema, see above)
+     *                     ]
+     *                 }
+     *                 rankingOrder: String(BoostedRerankerScore/RerankerScore) (Optional)
+     *                 flightingOptIn: Boolean (Optional)
+     *             }
+     *         ]
+     *     }
+     *     vectorSearch (Optional): {
+     *         profiles (Optional): [
+     *              (Optional){
+     *                 name: String (Required)
+     *                 algorithm: String (Required)
+     *                 vectorizer: String (Optional)
+     *                 compression: String (Optional)
+     *             }
+     *         ]
+     *         algorithms (Optional): [
+     *              (Optional){
+     *                 kind: String(hnsw/exhaustiveKnn) (Required)
+     *                 name: String (Required)
+     *             }
+     *         ]
+     *         vectorizers (Optional): [
+     *              (Optional){
+     *                 kind: String(azureOpenAI/customWebApi/aiServicesVision/aml) (Required)
+     *                 name: String (Required)
+     *             }
+     *         ]
+     *         compressions (Optional): [
+     *              (Optional){
+     *                 kind: String(scalarQuantization/binaryQuantization) (Required)
+     *                 name: String (Required)
+     *                 rescoringOptions (Optional): {
+     *                     enableRescoring: Boolean (Optional)
+     *                     defaultOversampling: Double (Optional)
+     *                     rescoreStorageMethod: String(preserveOriginals/discardOriginals) (Optional)
+     *                 }
+     *                 truncationDimension: Integer (Optional)
+     *             }
+     *         ]
+     *     }
+     *     permissionFilterOption: String(enabled/disabled) (Optional)
+     *     purviewEnabled: Boolean (Optional)
+     *     &#64;odata.etag: String (Optional)
+     * }
+     * }
+     * </pre>
+     * 
+     * @param requestOptions The options to configure the HTTP request before HTTP client sends it.
+     * @throws HttpResponseException thrown if the request is rejected by server.
+     * @throws ClientAuthenticationException thrown if the request is rejected by server on status code 401.
+     * @throws ResourceNotFoundException thrown if the request is rejected by server on status code 404.
+     * @throws ResourceModifiedException thrown if the request is rejected by server on status code 409.
+     * @return response from a List Indexes request along with {@link PagedResponse} on successful completion of
+     * {@link Mono}.
+     */
+    @ServiceMethod(returns = ReturnType.SINGLE)
+    private Mono<PagedResponse<BinaryData>>
+        listIndexesWithSelectedPropertiesSinglePageAsync(RequestOptions requestOptions) {
+        final String accept = "application/json;odata.metadata=minimal";
+        return FluxUtil
+            .withContext(context -> service.listIndexesWithSelectedProperties(this.getEndpoint(),
+                this.getServiceVersion().getVersion(), accept, requestOptions, context))
+            .map(res -> new PagedResponseBase<>(res.getRequest(), res.getStatusCode(), res.getHeaders(),
+                getValues(res.getValue(), "value"), null, null));
+    }
+
+    /**
+     * Lists all indexes available for a search service.
+     * <p><strong>Query Parameters</strong></p>
+     * <table border="1">
+     * <caption>Query Parameters</caption>
+     * <tr><th>Name</th><th>Type</th><th>Required</th><th>Description</th></tr>
+     * <tr><td>$select</td><td>List&lt;String&gt;</td><td>No</td><td>Selects which top-level properties to retrieve.
+     * Specified as a comma-separated list of JSON property names, or '*' for all properties. The default is all
+     * properties. In the form of "," separated string.</td></tr>
+     * </table>
+     * You can add these to a request with {@link RequestOptions#addQueryParam}
+     * <p><strong>Response Body Schema</strong></p>
+     * 
+     * <pre>
+     * {@code
+     * {
+     *     name: String (Required)
+     *     description: String (Optional)
+     *     fields (Optional): [
+     *          (Optional){
+     *             name: String (Required)
+     *             type: String(Edm.String/Edm.Int32/Edm.Int64/Edm.Double/Edm.Boolean/Edm.DateTimeOffset/Edm.GeographyPoint/Edm.ComplexType/Edm.Single/Edm.Half/Edm.Int16/Edm.SByte/Edm.Byte) (Required)
+     *             key: Boolean (Optional)
+     *             retrievable: Boolean (Optional)
+     *             stored: Boolean (Optional)
+     *             searchable: Boolean (Optional)
+     *             filterable: Boolean (Optional)
+     *             sortable: Boolean (Optional)
+     *             facetable: Boolean (Optional)
+     *             permissionFilter: String(userIds/groupIds/rbacScope) (Optional)
+     *             sensitivityLabel: Boolean (Optional)
+     *             analyzer: String(ar.microsoft/ar.lucene/hy.lucene/bn.microsoft/eu.lucene/bg.microsoft/bg.lucene/ca.microsoft/ca.lucene/zh-Hans.microsoft/zh-Hans.lucene/zh-Hant.microsoft/zh-Hant.lucene/hr.microsoft/cs.microsoft/cs.lucene/da.microsoft/da.lucene/nl.microsoft/nl.lucene/en.microsoft/en.lucene/et.microsoft/fi.microsoft/fi.lucene/fr.microsoft/fr.lucene/gl.lucene/de.microsoft/de.lucene/el.microsoft/el.lucene/gu.microsoft/he.microsoft/hi.microsoft/hi.lucene/hu.microsoft/hu.lucene/is.microsoft/id.microsoft/id.lucene/ga.lucene/it.microsoft/it.lucene/ja.microsoft/ja.lucene/kn.microsoft/ko.microsoft/ko.lucene/lv.microsoft/lv.lucene/lt.microsoft/ml.microsoft/ms.microsoft/mr.microsoft/nb.microsoft/no.lucene/fa.lucene/pl.microsoft/pl.lucene/pt-BR.microsoft/pt-BR.lucene/pt-PT.microsoft/pt-PT.lucene/pa.microsoft/ro.microsoft/ro.lucene/ru.microsoft/ru.lucene/sr-cyrillic.microsoft/sr-latin.microsoft/sk.microsoft/sl.microsoft/es.microsoft/es.lucene/sv.microsoft/sv.lucene/ta.microsoft/te.microsoft/th.microsoft/th.lucene/tr.microsoft/tr.lucene/uk.microsoft/ur.microsoft/vi.microsoft/standard.lucene/standardasciifolding.lucene/keyword/pattern/simple/stop/whitespace) (Optional)
+     *             searchAnalyzer: String(ar.microsoft/ar.lucene/hy.lucene/bn.microsoft/eu.lucene/bg.microsoft/bg.lucene/ca.microsoft/ca.lucene/zh-Hans.microsoft/zh-Hans.lucene/zh-Hant.microsoft/zh-Hant.lucene/hr.microsoft/cs.microsoft/cs.lucene/da.microsoft/da.lucene/nl.microsoft/nl.lucene/en.microsoft/en.lucene/et.microsoft/fi.microsoft/fi.lucene/fr.microsoft/fr.lucene/gl.lucene/de.microsoft/de.lucene/el.microsoft/el.lucene/gu.microsoft/he.microsoft/hi.microsoft/hi.lucene/hu.microsoft/hu.lucene/is.microsoft/id.microsoft/id.lucene/ga.lucene/it.microsoft/it.lucene/ja.microsoft/ja.lucene/kn.microsoft/ko.microsoft/ko.lucene/lv.microsoft/lv.lucene/lt.microsoft/ml.microsoft/ms.microsoft/mr.microsoft/nb.microsoft/no.lucene/fa.lucene/pl.microsoft/pl.lucene/pt-BR.microsoft/pt-BR.lucene/pt-PT.microsoft/pt-PT.lucene/pa.microsoft/ro.microsoft/ro.lucene/ru.microsoft/ru.lucene/sr-cyrillic.microsoft/sr-latin.microsoft/sk.microsoft/sl.microsoft/es.microsoft/es.lucene/sv.microsoft/sv.lucene/ta.microsoft/te.microsoft/th.microsoft/th.lucene/tr.microsoft/tr.lucene/uk.microsoft/ur.microsoft/vi.microsoft/standard.lucene/standardasciifolding.lucene/keyword/pattern/simple/stop/whitespace) (Optional)
+     *             indexAnalyzer: String(ar.microsoft/ar.lucene/hy.lucene/bn.microsoft/eu.lucene/bg.microsoft/bg.lucene/ca.microsoft/ca.lucene/zh-Hans.microsoft/zh-Hans.lucene/zh-Hant.microsoft/zh-Hant.lucene/hr.microsoft/cs.microsoft/cs.lucene/da.microsoft/da.lucene/nl.microsoft/nl.lucene/en.microsoft/en.lucene/et.microsoft/fi.microsoft/fi.lucene/fr.microsoft/fr.lucene/gl.lucene/de.microsoft/de.lucene/el.microsoft/el.lucene/gu.microsoft/he.microsoft/hi.microsoft/hi.lucene/hu.microsoft/hu.lucene/is.microsoft/id.microsoft/id.lucene/ga.lucene/it.microsoft/it.lucene/ja.microsoft/ja.lucene/kn.microsoft/ko.microsoft/ko.lucene/lv.microsoft/lv.lucene/lt.microsoft/ml.microsoft/ms.microsoft/mr.microsoft/nb.microsoft/no.lucene/fa.lucene/pl.microsoft/pl.lucene/pt-BR.microsoft/pt-BR.lucene/pt-PT.microsoft/pt-PT.lucene/pa.microsoft/ro.microsoft/ro.lucene/ru.microsoft/ru.lucene/sr-cyrillic.microsoft/sr-latin.microsoft/sk.microsoft/sl.microsoft/es.microsoft/es.lucene/sv.microsoft/sv.lucene/ta.microsoft/te.microsoft/th.microsoft/th.lucene/tr.microsoft/tr.lucene/uk.microsoft/ur.microsoft/vi.microsoft/standard.lucene/standardasciifolding.lucene/keyword/pattern/simple/stop/whitespace) (Optional)
+     *             normalizer: String(asciifolding/elision/lowercase/standard/uppercase) (Optional)
+     *             dimensions: Integer (Optional)
+     *             vectorSearchProfile: String (Optional)
+     *             vectorEncoding: String(packedBit) (Optional)
+     *             synonymMaps (Optional): [
+     *                 String (Optional)
+     *             ]
+     *             fields (Optional): [
+     *                 (recursive schema, see above)
+     *             ]
+     *         }
+     *     ]
+     *     scoringProfiles (Optional): [
+     *          (Optional){
+     *             name: String (Required)
+     *             text (Optional): {
+     *                 weights (Required): {
+     *                     String: double (Required)
+     *                 }
+     *             }
+     *             functions (Optional): [
+     *                  (Optional){
+     *                     type: String (Required)
+     *                     fieldName: String (Required)
+     *                     boost: double (Required)
+     *                     interpolation: String(linear/constant/quadratic/logarithmic) (Optional)
+     *                 }
+     *             ]
+     *             functionAggregation: String(sum/average/minimum/maximum/firstMatching/product) (Optional)
+     *         }
+     *     ]
+     *     defaultScoringProfile: String (Optional)
+     *     corsOptions (Optional): {
+     *         allowedOrigins (Required): [
+     *             String (Required)
+     *         ]
+     *         maxAgeInSeconds: Long (Optional)
+     *     }
+     *     suggesters (Optional): [
+     *          (Optional){
+     *             name: String (Required)
+     *             searchMode: String (Required)
+     *             sourceFields (Required): [
+     *                 String (Required)
+     *             ]
+     *         }
+     *     ]
+     *     analyzers (Optional): [
+     *          (Optional){
+     *             &#64;odata.type: String (Required)
+     *             name: String (Required)
+     *         }
+     *     ]
+     *     tokenizers (Optional): [
+     *          (Optional){
+     *             &#64;odata.type: String (Required)
+     *             name: String (Required)
+     *         }
+     *     ]
+     *     tokenFilters (Optional): [
+     *          (Optional){
+     *             &#64;odata.type: String (Required)
+     *             name: String (Required)
+     *         }
+     *     ]
+     *     charFilters (Optional): [
+     *          (Optional){
+     *             &#64;odata.type: String (Required)
+     *             name: String (Required)
+     *         }
+     *     ]
+     *     normalizers (Optional): [
+     *          (Optional){
+     *             &#64;odata.type: String (Required)
+     *             name: String (Required)
+     *         }
+     *     ]
+     *     encryptionKey (Optional): {
+     *         keyVaultKeyName: String (Required)
+     *         keyVaultKeyVersion: String (Optional)
+     *         keyVaultUri: String (Required)
+     *         accessCredentials (Optional): {
+     *             applicationId: String (Required)
+     *             applicationSecret: String (Optional)
+     *         }
+     *         identity (Optional): {
+     *             &#64;odata.type: String (Required)
+     *         }
+     *     }
+     *     similarity (Optional): {
+     *         &#64;odata.type: String (Required)
+     *     }
+     *     semantic (Optional): {
+     *         defaultConfiguration: String (Optional)
+     *         configurations (Optional): [
+     *              (Optional){
+     *                 name: String (Required)
+     *                 prioritizedFields (Required): {
+     *                     titleField (Optional): {
+     *                         fieldName: String (Required)
+     *                     }
+     *                     prioritizedContentFields (Optional): [
+     *                         (recursive schema, see above)
+     *                     ]
+     *                     prioritizedKeywordsFields (Optional): [
+     *                         (recursive schema, see above)
+     *                     ]
+     *                 }
+     *                 rankingOrder: String(BoostedRerankerScore/RerankerScore) (Optional)
+     *                 flightingOptIn: Boolean (Optional)
+     *             }
+     *         ]
+     *     }
+     *     vectorSearch (Optional): {
+     *         profiles (Optional): [
+     *              (Optional){
+     *                 name: String (Required)
+     *                 algorithm: String (Required)
+     *                 vectorizer: String (Optional)
+     *                 compression: String (Optional)
+     *             }
+     *         ]
+     *         algorithms (Optional): [
+     *              (Optional){
+     *                 kind: String(hnsw/exhaustiveKnn) (Required)
+     *                 name: String (Required)
+     *             }
+     *         ]
+     *         vectorizers (Optional): [
+     *              (Optional){
+     *                 kind: String(azureOpenAI/customWebApi/aiServicesVision/aml) (Required)
+     *                 name: String (Required)
+     *             }
+     *         ]
+     *         compressions (Optional): [
+     *              (Optional){
+     *                 kind: String(scalarQuantization/binaryQuantization) (Required)
+     *                 name: String (Required)
+     *                 rescoringOptions (Optional): {
+     *                     enableRescoring: Boolean (Optional)
+     *                     defaultOversampling: Double (Optional)
+     *                     rescoreStorageMethod: String(preserveOriginals/discardOriginals) (Optional)
+     *                 }
+     *                 truncationDimension: Integer (Optional)
+     *             }
+     *         ]
+     *     }
+     *     permissionFilterOption: String(enabled/disabled) (Optional)
+     *     purviewEnabled: Boolean (Optional)
+     *     &#64;odata.etag: String (Optional)
+     * }
+     * }
+     * </pre>
+     * 
+     * @param requestOptions The options to configure the HTTP request before HTTP client sends it.
+     * @throws HttpResponseException thrown if the request is rejected by server.
+     * @throws ClientAuthenticationException thrown if the request is rejected by server on status code 401.
+     * @throws ResourceNotFoundException thrown if the request is rejected by server on status code 404.
+     * @throws ResourceModifiedException thrown if the request is rejected by server on status code 409.
+     * @return response from a List Indexes request as paginated response with {@link PagedFlux}.
+     */
+    @ServiceMethod(returns = ReturnType.COLLECTION)
+    public PagedFlux<BinaryData> listIndexesWithSelectedPropertiesAsync(RequestOptions requestOptions) {
+        return new PagedFlux<>(() -> listIndexesWithSelectedPropertiesSinglePageAsync(requestOptions));
+    }
+
+    /**
+     * Lists all indexes available for a search service.
+     * <p><strong>Query Parameters</strong></p>
+     * <table border="1">
+     * <caption>Query Parameters</caption>
+     * <tr><th>Name</th><th>Type</th><th>Required</th><th>Description</th></tr>
+     * <tr><td>$select</td><td>List&lt;String&gt;</td><td>No</td><td>Selects which top-level properties to retrieve.
+     * Specified as a comma-separated list of JSON property names, or '*' for all properties. The default is all
+     * properties. In the form of "," separated string.</td></tr>
+     * </table>
+     * You can add these to a request with {@link RequestOptions#addQueryParam}
+     * <p><strong>Response Body Schema</strong></p>
+     * 
+     * <pre>
+     * {@code
+     * {
+     *     name: String (Required)
+     *     description: String (Optional)
+     *     fields (Optional): [
+     *          (Optional){
+     *             name: String (Required)
+     *             type: String(Edm.String/Edm.Int32/Edm.Int64/Edm.Double/Edm.Boolean/Edm.DateTimeOffset/Edm.GeographyPoint/Edm.ComplexType/Edm.Single/Edm.Half/Edm.Int16/Edm.SByte/Edm.Byte) (Required)
+     *             key: Boolean (Optional)
+     *             retrievable: Boolean (Optional)
+     *             stored: Boolean (Optional)
+     *             searchable: Boolean (Optional)
+     *             filterable: Boolean (Optional)
+     *             sortable: Boolean (Optional)
+     *             facetable: Boolean (Optional)
+     *             permissionFilter: String(userIds/groupIds/rbacScope) (Optional)
+     *             sensitivityLabel: Boolean (Optional)
+     *             analyzer: String(ar.microsoft/ar.lucene/hy.lucene/bn.microsoft/eu.lucene/bg.microsoft/bg.lucene/ca.microsoft/ca.lucene/zh-Hans.microsoft/zh-Hans.lucene/zh-Hant.microsoft/zh-Hant.lucene/hr.microsoft/cs.microsoft/cs.lucene/da.microsoft/da.lucene/nl.microsoft/nl.lucene/en.microsoft/en.lucene/et.microsoft/fi.microsoft/fi.lucene/fr.microsoft/fr.lucene/gl.lucene/de.microsoft/de.lucene/el.microsoft/el.lucene/gu.microsoft/he.microsoft/hi.microsoft/hi.lucene/hu.microsoft/hu.lucene/is.microsoft/id.microsoft/id.lucene/ga.lucene/it.microsoft/it.lucene/ja.microsoft/ja.lucene/kn.microsoft/ko.microsoft/ko.lucene/lv.microsoft/lv.lucene/lt.microsoft/ml.microsoft/ms.microsoft/mr.microsoft/nb.microsoft/no.lucene/fa.lucene/pl.microsoft/pl.lucene/pt-BR.microsoft/pt-BR.lucene/pt-PT.microsoft/pt-PT.lucene/pa.microsoft/ro.microsoft/ro.lucene/ru.microsoft/ru.lucene/sr-cyrillic.microsoft/sr-latin.microsoft/sk.microsoft/sl.microsoft/es.microsoft/es.lucene/sv.microsoft/sv.lucene/ta.microsoft/te.microsoft/th.microsoft/th.lucene/tr.microsoft/tr.lucene/uk.microsoft/ur.microsoft/vi.microsoft/standard.lucene/standardasciifolding.lucene/keyword/pattern/simple/stop/whitespace) (Optional)
+     *             searchAnalyzer: String(ar.microsoft/ar.lucene/hy.lucene/bn.microsoft/eu.lucene/bg.microsoft/bg.lucene/ca.microsoft/ca.lucene/zh-Hans.microsoft/zh-Hans.lucene/zh-Hant.microsoft/zh-Hant.lucene/hr.microsoft/cs.microsoft/cs.lucene/da.microsoft/da.lucene/nl.microsoft/nl.lucene/en.microsoft/en.lucene/et.microsoft/fi.microsoft/fi.lucene/fr.microsoft/fr.lucene/gl.lucene/de.microsoft/de.lucene/el.microsoft/el.lucene/gu.microsoft/he.microsoft/hi.microsoft/hi.lucene/hu.microsoft/hu.lucene/is.microsoft/id.microsoft/id.lucene/ga.lucene/it.microsoft/it.lucene/ja.microsoft/ja.lucene/kn.microsoft/ko.microsoft/ko.lucene/lv.microsoft/lv.lucene/lt.microsoft/ml.microsoft/ms.microsoft/mr.microsoft/nb.microsoft/no.lucene/fa.lucene/pl.microsoft/pl.lucene/pt-BR.microsoft/pt-BR.lucene/pt-PT.microsoft/pt-PT.lucene/pa.microsoft/ro.microsoft/ro.lucene/ru.microsoft/ru.lucene/sr-cyrillic.microsoft/sr-latin.microsoft/sk.microsoft/sl.microsoft/es.microsoft/es.lucene/sv.microsoft/sv.lucene/ta.microsoft/te.microsoft/th.microsoft/th.lucene/tr.microsoft/tr.lucene/uk.microsoft/ur.microsoft/vi.microsoft/standard.lucene/standardasciifolding.lucene/keyword/pattern/simple/stop/whitespace) (Optional)
+     *             indexAnalyzer: String(ar.microsoft/ar.lucene/hy.lucene/bn.microsoft/eu.lucene/bg.microsoft/bg.lucene/ca.microsoft/ca.lucene/zh-Hans.microsoft/zh-Hans.lucene/zh-Hant.microsoft/zh-Hant.lucene/hr.microsoft/cs.microsoft/cs.lucene/da.microsoft/da.lucene/nl.microsoft/nl.lucene/en.microsoft/en.lucene/et.microsoft/fi.microsoft/fi.lucene/fr.microsoft/fr.lucene/gl.lucene/de.microsoft/de.lucene/el.microsoft/el.lucene/gu.microsoft/he.microsoft/hi.microsoft/hi.lucene/hu.microsoft/hu.lucene/is.microsoft/id.microsoft/id.lucene/ga.lucene/it.microsoft/it.lucene/ja.microsoft/ja.lucene/kn.microsoft/ko.microsoft/ko.lucene/lv.microsoft/lv.lucene/lt.microsoft/ml.microsoft/ms.microsoft/mr.microsoft/nb.microsoft/no.lucene/fa.lucene/pl.microsoft/pl.lucene/pt-BR.microsoft/pt-BR.lucene/pt-PT.microsoft/pt-PT.lucene/pa.microsoft/ro.microsoft/ro.lucene/ru.microsoft/ru.lucene/sr-cyrillic.microsoft/sr-latin.microsoft/sk.microsoft/sl.microsoft/es.microsoft/es.lucene/sv.microsoft/sv.lucene/ta.microsoft/te.microsoft/th.microsoft/th.lucene/tr.microsoft/tr.lucene/uk.microsoft/ur.microsoft/vi.microsoft/standard.lucene/standardasciifolding.lucene/keyword/pattern/simple/stop/whitespace) (Optional)
+     *             normalizer: String(asciifolding/elision/lowercase/standard/uppercase) (Optional)
+     *             dimensions: Integer (Optional)
+     *             vectorSearchProfile: String (Optional)
+     *             vectorEncoding: String(packedBit) (Optional)
+     *             synonymMaps (Optional): [
+     *                 String (Optional)
+     *             ]
+     *             fields (Optional): [
+     *                 (recursive schema, see above)
+     *             ]
+     *         }
+     *     ]
+     *     scoringProfiles (Optional): [
+     *          (Optional){
+     *             name: String (Required)
+     *             text (Optional): {
+     *                 weights (Required): {
+     *                     String: double (Required)
+     *                 }
+     *             }
+     *             functions (Optional): [
+     *                  (Optional){
+     *                     type: String (Required)
+     *                     fieldName: String (Required)
+     *                     boost: double (Required)
+     *                     interpolation: String(linear/constant/quadratic/logarithmic) (Optional)
+     *                 }
+     *             ]
+     *             functionAggregation: String(sum/average/minimum/maximum/firstMatching/product) (Optional)
+     *         }
+     *     ]
+     *     defaultScoringProfile: String (Optional)
+     *     corsOptions (Optional): {
+     *         allowedOrigins (Required): [
+     *             String (Required)
+     *         ]
+     *         maxAgeInSeconds: Long (Optional)
+     *     }
+     *     suggesters (Optional): [
+     *          (Optional){
+     *             name: String (Required)
+     *             searchMode: String (Required)
+     *             sourceFields (Required): [
+     *                 String (Required)
+     *             ]
+     *         }
+     *     ]
+     *     analyzers (Optional): [
+     *          (Optional){
+     *             &#64;odata.type: String (Required)
+     *             name: String (Required)
+     *         }
+     *     ]
+     *     tokenizers (Optional): [
+     *          (Optional){
+     *             &#64;odata.type: String (Required)
+     *             name: String (Required)
+     *         }
+     *     ]
+     *     tokenFilters (Optional): [
+     *          (Optional){
+     *             &#64;odata.type: String (Required)
+     *             name: String (Required)
+     *         }
+     *     ]
+     *     charFilters (Optional): [
+     *          (Optional){
+     *             &#64;odata.type: String (Required)
+     *             name: String (Required)
+     *         }
+     *     ]
+     *     normalizers (Optional): [
+     *          (Optional){
+     *             &#64;odata.type: String (Required)
+     *             name: String (Required)
+     *         }
+     *     ]
+     *     encryptionKey (Optional): {
+     *         keyVaultKeyName: String (Required)
+     *         keyVaultKeyVersion: String (Optional)
+     *         keyVaultUri: String (Required)
+     *         accessCredentials (Optional): {
+     *             applicationId: String (Required)
+     *             applicationSecret: String (Optional)
+     *         }
+     *         identity (Optional): {
+     *             &#64;odata.type: String (Required)
+     *         }
+     *     }
+     *     similarity (Optional): {
+     *         &#64;odata.type: String (Required)
+     *     }
+     *     semantic (Optional): {
+     *         defaultConfiguration: String (Optional)
+     *         configurations (Optional): [
+     *              (Optional){
+     *                 name: String (Required)
+     *                 prioritizedFields (Required): {
+     *                     titleField (Optional): {
+     *                         fieldName: String (Required)
+     *                     }
+     *                     prioritizedContentFields (Optional): [
+     *                         (recursive schema, see above)
+     *                     ]
+     *                     prioritizedKeywordsFields (Optional): [
+     *                         (recursive schema, see above)
+     *                     ]
+     *                 }
+     *                 rankingOrder: String(BoostedRerankerScore/RerankerScore) (Optional)
+     *                 flightingOptIn: Boolean (Optional)
+     *             }
+     *         ]
+     *     }
+     *     vectorSearch (Optional): {
+     *         profiles (Optional): [
+     *              (Optional){
+     *                 name: String (Required)
+     *                 algorithm: String (Required)
+     *                 vectorizer: String (Optional)
+     *                 compression: String (Optional)
+     *             }
+     *         ]
+     *         algorithms (Optional): [
+     *              (Optional){
+     *                 kind: String(hnsw/exhaustiveKnn) (Required)
+     *                 name: String (Required)
+     *             }
+     *         ]
+     *         vectorizers (Optional): [
+     *              (Optional){
+     *                 kind: String(azureOpenAI/customWebApi/aiServicesVision/aml) (Required)
+     *                 name: String (Required)
+     *             }
+     *         ]
+     *         compressions (Optional): [
+     *              (Optional){
+     *                 kind: String(scalarQuantization/binaryQuantization) (Required)
+     *                 name: String (Required)
+     *                 rescoringOptions (Optional): {
+     *                     enableRescoring: Boolean (Optional)
+     *                     defaultOversampling: Double (Optional)
+     *                     rescoreStorageMethod: String(preserveOriginals/discardOriginals) (Optional)
+     *                 }
+     *                 truncationDimension: Integer (Optional)
+     *             }
+     *         ]
+     *     }
+     *     permissionFilterOption: String(enabled/disabled) (Optional)
+     *     purviewEnabled: Boolean (Optional)
+     *     &#64;odata.etag: String (Optional)
+     * }
+     * }
+     * </pre>
+     * 
+     * @param requestOptions The options to configure the HTTP request before HTTP client sends it.
+     * @throws HttpResponseException thrown if the request is rejected by server.
+     * @throws ClientAuthenticationException thrown if the request is rejected by server on status code 401.
+     * @throws ResourceNotFoundException thrown if the request is rejected by server on status code 404.
+     * @throws ResourceModifiedException thrown if the request is rejected by server on status code 409.
+     * @return response from a List Indexes request along with {@link PagedResponse}.
+     */
+    @ServiceMethod(returns = ReturnType.SINGLE)
+    private PagedResponse<BinaryData> listIndexesWithSelectedPropertiesSinglePage(RequestOptions requestOptions) {
+        final String accept = "application/json;odata.metadata=minimal";
+        Response<BinaryData> res = service.listIndexesWithSelectedPropertiesSync(this.getEndpoint(),
+            this.getServiceVersion().getVersion(), accept, requestOptions, Context.NONE);
+        return new PagedResponseBase<>(res.getRequest(), res.getStatusCode(), res.getHeaders(),
+            getValues(res.getValue(), "value"), null, null);
+    }
+
+    /**
+     * Lists all indexes available for a search service.
+     * <p><strong>Query Parameters</strong></p>
+     * <table border="1">
+     * <caption>Query Parameters</caption>
+     * <tr><th>Name</th><th>Type</th><th>Required</th><th>Description</th></tr>
+     * <tr><td>$select</td><td>List&lt;String&gt;</td><td>No</td><td>Selects which top-level properties to retrieve.
+     * Specified as a comma-separated list of JSON property names, or '*' for all properties. The default is all
+     * properties. In the form of "," separated string.</td></tr>
+     * </table>
+     * You can add these to a request with {@link RequestOptions#addQueryParam}
+     * <p><strong>Response Body Schema</strong></p>
+     * 
+     * <pre>
+     * {@code
+     * {
+     *     name: String (Required)
+     *     description: String (Optional)
+     *     fields (Optional): [
+     *          (Optional){
+     *             name: String (Required)
+     *             type: String(Edm.String/Edm.Int32/Edm.Int64/Edm.Double/Edm.Boolean/Edm.DateTimeOffset/Edm.GeographyPoint/Edm.ComplexType/Edm.Single/Edm.Half/Edm.Int16/Edm.SByte/Edm.Byte) (Required)
+     *             key: Boolean (Optional)
+     *             retrievable: Boolean (Optional)
+     *             stored: Boolean (Optional)
+     *             searchable: Boolean (Optional)
+     *             filterable: Boolean (Optional)
+     *             sortable: Boolean (Optional)
+     *             facetable: Boolean (Optional)
+     *             permissionFilter: String(userIds/groupIds/rbacScope) (Optional)
+     *             sensitivityLabel: Boolean (Optional)
+     *             analyzer: String(ar.microsoft/ar.lucene/hy.lucene/bn.microsoft/eu.lucene/bg.microsoft/bg.lucene/ca.microsoft/ca.lucene/zh-Hans.microsoft/zh-Hans.lucene/zh-Hant.microsoft/zh-Hant.lucene/hr.microsoft/cs.microsoft/cs.lucene/da.microsoft/da.lucene/nl.microsoft/nl.lucene/en.microsoft/en.lucene/et.microsoft/fi.microsoft/fi.lucene/fr.microsoft/fr.lucene/gl.lucene/de.microsoft/de.lucene/el.microsoft/el.lucene/gu.microsoft/he.microsoft/hi.microsoft/hi.lucene/hu.microsoft/hu.lucene/is.microsoft/id.microsoft/id.lucene/ga.lucene/it.microsoft/it.lucene/ja.microsoft/ja.lucene/kn.microsoft/ko.microsoft/ko.lucene/lv.microsoft/lv.lucene/lt.microsoft/ml.microsoft/ms.microsoft/mr.microsoft/nb.microsoft/no.lucene/fa.lucene/pl.microsoft/pl.lucene/pt-BR.microsoft/pt-BR.lucene/pt-PT.microsoft/pt-PT.lucene/pa.microsoft/ro.microsoft/ro.lucene/ru.microsoft/ru.lucene/sr-cyrillic.microsoft/sr-latin.microsoft/sk.microsoft/sl.microsoft/es.microsoft/es.lucene/sv.microsoft/sv.lucene/ta.microsoft/te.microsoft/th.microsoft/th.lucene/tr.microsoft/tr.lucene/uk.microsoft/ur.microsoft/vi.microsoft/standard.lucene/standardasciifolding.lucene/keyword/pattern/simple/stop/whitespace) (Optional)
+     *             searchAnalyzer: String(ar.microsoft/ar.lucene/hy.lucene/bn.microsoft/eu.lucene/bg.microsoft/bg.lucene/ca.microsoft/ca.lucene/zh-Hans.microsoft/zh-Hans.lucene/zh-Hant.microsoft/zh-Hant.lucene/hr.microsoft/cs.microsoft/cs.lucene/da.microsoft/da.lucene/nl.microsoft/nl.lucene/en.microsoft/en.lucene/et.microsoft/fi.microsoft/fi.lucene/fr.microsoft/fr.lucene/gl.lucene/de.microsoft/de.lucene/el.microsoft/el.lucene/gu.microsoft/he.microsoft/hi.microsoft/hi.lucene/hu.microsoft/hu.lucene/is.microsoft/id.microsoft/id.lucene/ga.lucene/it.microsoft/it.lucene/ja.microsoft/ja.lucene/kn.microsoft/ko.microsoft/ko.lucene/lv.microsoft/lv.lucene/lt.microsoft/ml.microsoft/ms.microsoft/mr.microsoft/nb.microsoft/no.lucene/fa.lucene/pl.microsoft/pl.lucene/pt-BR.microsoft/pt-BR.lucene/pt-PT.microsoft/pt-PT.lucene/pa.microsoft/ro.microsoft/ro.lucene/ru.microsoft/ru.lucene/sr-cyrillic.microsoft/sr-latin.microsoft/sk.microsoft/sl.microsoft/es.microsoft/es.lucene/sv.microsoft/sv.lucene/ta.microsoft/te.microsoft/th.microsoft/th.lucene/tr.microsoft/tr.lucene/uk.microsoft/ur.microsoft/vi.microsoft/standard.lucene/standardasciifolding.lucene/keyword/pattern/simple/stop/whitespace) (Optional)
+     *             indexAnalyzer: String(ar.microsoft/ar.lucene/hy.lucene/bn.microsoft/eu.lucene/bg.microsoft/bg.lucene/ca.microsoft/ca.lucene/zh-Hans.microsoft/zh-Hans.lucene/zh-Hant.microsoft/zh-Hant.lucene/hr.microsoft/cs.microsoft/cs.lucene/da.microsoft/da.lucene/nl.microsoft/nl.lucene/en.microsoft/en.lucene/et.microsoft/fi.microsoft/fi.lucene/fr.microsoft/fr.lucene/gl.lucene/de.microsoft/de.lucene/el.microsoft/el.lucene/gu.microsoft/he.microsoft/hi.microsoft/hi.lucene/hu.microsoft/hu.lucene/is.microsoft/id.microsoft/id.lucene/ga.lucene/it.microsoft/it.lucene/ja.microsoft/ja.lucene/kn.microsoft/ko.microsoft/ko.lucene/lv.microsoft/lv.lucene/lt.microsoft/ml.microsoft/ms.microsoft/mr.microsoft/nb.microsoft/no.lucene/fa.lucene/pl.microsoft/pl.lucene/pt-BR.microsoft/pt-BR.lucene/pt-PT.microsoft/pt-PT.lucene/pa.microsoft/ro.microsoft/ro.lucene/ru.microsoft/ru.lucene/sr-cyrillic.microsoft/sr-latin.microsoft/sk.microsoft/sl.microsoft/es.microsoft/es.lucene/sv.microsoft/sv.lucene/ta.microsoft/te.microsoft/th.microsoft/th.lucene/tr.microsoft/tr.lucene/uk.microsoft/ur.microsoft/vi.microsoft/standard.lucene/standardasciifolding.lucene/keyword/pattern/simple/stop/whitespace) (Optional)
+     *             normalizer: String(asciifolding/elision/lowercase/standard/uppercase) (Optional)
+     *             dimensions: Integer (Optional)
+     *             vectorSearchProfile: String (Optional)
+     *             vectorEncoding: String(packedBit) (Optional)
+     *             synonymMaps (Optional): [
+     *                 String (Optional)
+     *             ]
+     *             fields (Optional): [
+     *                 (recursive schema, see above)
+     *             ]
+     *         }
+     *     ]
+     *     scoringProfiles (Optional): [
+     *          (Optional){
+     *             name: String (Required)
+     *             text (Optional): {
+     *                 weights (Required): {
+     *                     String: double (Required)
+     *                 }
+     *             }
+     *             functions (Optional): [
+     *                  (Optional){
+     *                     type: String (Required)
+     *                     fieldName: String (Required)
+     *                     boost: double (Required)
+     *                     interpolation: String(linear/constant/quadratic/logarithmic) (Optional)
+     *                 }
+     *             ]
+     *             functionAggregation: String(sum/average/minimum/maximum/firstMatching/product) (Optional)
+     *         }
+     *     ]
+     *     defaultScoringProfile: String (Optional)
+     *     corsOptions (Optional): {
+     *         allowedOrigins (Required): [
+     *             String (Required)
+     *         ]
+     *         maxAgeInSeconds: Long (Optional)
+     *     }
+     *     suggesters (Optional): [
+     *          (Optional){
+     *             name: String (Required)
+     *             searchMode: String (Required)
+     *             sourceFields (Required): [
+     *                 String (Required)
+     *             ]
+     *         }
+     *     ]
+     *     analyzers (Optional): [
+     *          (Optional){
+     *             &#64;odata.type: String (Required)
+     *             name: String (Required)
+     *         }
+     *     ]
+     *     tokenizers (Optional): [
+     *          (Optional){
+     *             &#64;odata.type: String (Required)
+     *             name: String (Required)
+     *         }
+     *     ]
+     *     tokenFilters (Optional): [
+     *          (Optional){
+     *             &#64;odata.type: String (Required)
+     *             name: String (Required)
+     *         }
+     *     ]
+     *     charFilters (Optional): [
+     *          (Optional){
+     *             &#64;odata.type: String (Required)
+     *             name: String (Required)
+     *         }
+     *     ]
+     *     normalizers (Optional): [
+     *          (Optional){
+     *             &#64;odata.type: String (Required)
+     *             name: String (Required)
+     *         }
+     *     ]
+     *     encryptionKey (Optional): {
+     *         keyVaultKeyName: String (Required)
+     *         keyVaultKeyVersion: String (Optional)
+     *         keyVaultUri: String (Required)
+     *         accessCredentials (Optional): {
+     *             applicationId: String (Required)
+     *             applicationSecret: String (Optional)
+     *         }
+     *         identity (Optional): {
+     *             &#64;odata.type: String (Required)
+     *         }
+     *     }
+     *     similarity (Optional): {
+     *         &#64;odata.type: String (Required)
+     *     }
+     *     semantic (Optional): {
+     *         defaultConfiguration: String (Optional)
+     *         configurations (Optional): [
+     *              (Optional){
+     *                 name: String (Required)
+     *                 prioritizedFields (Required): {
+     *                     titleField (Optional): {
+     *                         fieldName: String (Required)
+     *                     }
+     *                     prioritizedContentFields (Optional): [
+     *                         (recursive schema, see above)
+     *                     ]
+     *                     prioritizedKeywordsFields (Optional): [
+     *                         (recursive schema, see above)
+     *                     ]
+     *                 }
+     *                 rankingOrder: String(BoostedRerankerScore/RerankerScore) (Optional)
+     *                 flightingOptIn: Boolean (Optional)
+     *             }
+     *         ]
+     *     }
+     *     vectorSearch (Optional): {
+     *         profiles (Optional): [
+     *              (Optional){
+     *                 name: String (Required)
+     *                 algorithm: String (Required)
+     *                 vectorizer: String (Optional)
+     *                 compression: String (Optional)
+     *             }
+     *         ]
+     *         algorithms (Optional): [
+     *              (Optional){
+     *                 kind: String(hnsw/exhaustiveKnn) (Required)
+     *                 name: String (Required)
+     *             }
+     *         ]
+     *         vectorizers (Optional): [
+     *              (Optional){
+     *                 kind: String(azureOpenAI/customWebApi/aiServicesVision/aml) (Required)
+     *                 name: String (Required)
+     *             }
+     *         ]
+     *         compressions (Optional): [
+     *              (Optional){
+     *                 kind: String(scalarQuantization/binaryQuantization) (Required)
+     *                 name: String (Required)
+     *                 rescoringOptions (Optional): {
+     *                     enableRescoring: Boolean (Optional)
+     *                     defaultOversampling: Double (Optional)
+     *                     rescoreStorageMethod: String(preserveOriginals/discardOriginals) (Optional)
+     *                 }
+     *                 truncationDimension: Integer (Optional)
+     *             }
+     *         ]
+     *     }
+     *     permissionFilterOption: String(enabled/disabled) (Optional)
+     *     purviewEnabled: Boolean (Optional)
+     *     &#64;odata.etag: String (Optional)
+     * }
+     * }
+     * </pre>
+     * 
+     * @param requestOptions The options to configure the HTTP request before HTTP client sends it.
+     * @throws HttpResponseException thrown if the request is rejected by server.
+     * @throws ClientAuthenticationException thrown if the request is rejected by server on status code 401.
+     * @throws ResourceNotFoundException thrown if the request is rejected by server on status code 404.
+     * @throws ResourceModifiedException thrown if the request is rejected by server on status code 409.
+     * @return response from a List Indexes request as paginated response with {@link PagedIterable}.
+     */
+    @ServiceMethod(returns = ReturnType.COLLECTION)
+    public PagedIterable<BinaryData> listIndexesWithSelectedProperties(RequestOptions requestOptions) {
+        return new PagedIterable<>(() -> listIndexesWithSelectedPropertiesSinglePage(requestOptions));
     }
 
     /**

@@ -163,7 +163,7 @@ public final class SearchClient {
     public long getDocumentCount() {
         // Generated convenience method for hiddenGeneratedGetDocumentCountWithResponse
         RequestOptions requestOptions = new RequestOptions();
-        return hiddenGeneratedGetDocumentCountWithResponse(requestOptions).getValue().toObject(Long.class);
+        return Long.parseLong(hiddenGeneratedGetDocumentCountWithResponse(requestOptions).getValue().toString());
     }
 
     /**

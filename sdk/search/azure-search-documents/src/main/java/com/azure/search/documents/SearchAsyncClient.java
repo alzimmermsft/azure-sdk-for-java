@@ -164,7 +164,7 @@ public final class SearchAsyncClient {
         // Generated convenience method for hiddenGeneratedGetDocumentCountWithResponse
         RequestOptions requestOptions = new RequestOptions();
         return hiddenGeneratedGetDocumentCountWithResponse(requestOptions).flatMap(FluxUtil::toMono)
-            .map(protocolMethodData -> protocolMethodData.toObject(Long.class));
+            .map(protocolMethodData -> Long.parseLong(protocolMethodData.toString()));
     }
 
     /**
